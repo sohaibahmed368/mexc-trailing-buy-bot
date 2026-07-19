@@ -699,7 +699,25 @@ class OrderTracker {
             }
 
             try {
-              const sellQty = order.quantity || (order.quoteOrderQty / order.executionPrice);
+              const grossQty = order.quantity || (order.quoteOrderQty / order.executionPrice);
+              let sellQty = Math.floor(grossQty * 10000) / 10000;
+              
+              // Query exact free balance instantly and truncate to prevent quantity scale errors
+              try {
+                const balances = await this.mexcClient.getBalances();
+                const asset = order.symbol.replace('USDT', '').toUpperCase();
+                const assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+                if (assetBal && assetBal.free > 0) {
+                  const truncated = Math.floor(assetBal.free * 10000) / 10000;
+                  if (truncated > 0) {
+                    sellQty = truncated;
+                    this.log(`[REAL] Stop Loss balance match: using free balance ${sellQty} instead of gross ${grossQty}`, 'info', order.symbol);
+                  }
+                }
+              } catch (balErr) {
+                this.log(`[REAL] Stop Loss balance query failed: ${balErr.message}. Falling back to estimated quantity.`, 'warning', order.symbol);
+              }
+
               const sellParams = {
                 symbol: order.symbol,
                 side: 'SELL',
