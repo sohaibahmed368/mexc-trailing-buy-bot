@@ -567,17 +567,42 @@ class OrderTracker {
                 this.log(`[REAL] Stop Loss balance query failed: ${balErr.message}. Falling back to estimated quantity.`, 'warning', order.symbol);
               }
 
-              const sellParams = {
-                symbol: order.symbol,
-                side: 'SELL',
-                type: 'MARKET',
-                quantity: sellQty
-              };
-              const sellResult = await this.mexcClient.placeOrder(sellParams);
+              let sellResult = null;
+              const decimalsToTry = [10000, 100, 1];
+              let lastErr = null;
+
+              for (const mult of decimalsToTry) {
+                const qtyToTry = Math.floor(sellQty * mult) / mult;
+                if (qtyToTry <= 0) continue;
+                try {
+                  const sellParams = {
+                    symbol: order.symbol,
+                    side: 'SELL',
+                    type: 'MARKET',
+                    quantity: qtyToTry
+                  };
+                  sellResult = await this.mexcClient.placeOrder(sellParams);
+                  if (sellResult && sellResult.orderId) {
+                    this.log(`[REAL] Stop Loss Market Sell order executed successfully! Sell Qty: ${qtyToTry}, Order ID: ${sellResult.orderId}`, 'success', order.symbol);
+                    break;
+                  }
+                } catch (err) {
+                  lastErr = err;
+                  if (err.message && (err.message.includes('quantity scale') || err.message.includes('400') || err.message.includes('code":400'))) {
+                    this.log(`[REAL] Quantity scale invalid for ${qtyToTry}. Retrying with broader decimal precision...`, 'warning', order.symbol);
+                    continue;
+                  }
+                  throw err;
+                }
+              }
+
+              if (!sellResult) {
+                throw lastErr || new Error('Failed to execute market sell after precision retries.');
+              }
+
               order.status = 'TRIGGERED';
               order.sellExecutionPrice = currentPrice;
               order.sellTriggeredAt = new Date().toISOString();
-              this.log(`[REAL] Stop Loss Market Sell order executed successfully! Sell Order ID: ${sellResult.orderId}`, 'success', order.symbol);
               this.handleOrderCycleComplete(order);
             } catch (e) {
               order.status = 'TP_SL_ACTIVE'; // Revert state
