@@ -789,6 +789,9 @@ class OrderTracker {
                       this.log(`[REAL] Retry TP Limit Sell order also failed: ${retryErr.message}. Bot will still monitor Stop Loss.`, 'error', order.symbol);
                     }
                   }
+                } catch (tpErr) {
+                  this.log(`[REAL] Failed to place TP Limit Sell order on MEXC: ${tpErr.message}. Bot will still monitor Stop Loss.`, 'error', order.symbol);
+                }
               }
             } else {
               order.status = 'TRIGGERED';
