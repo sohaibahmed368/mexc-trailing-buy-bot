@@ -153,6 +153,7 @@ class OrderTracker {
     order.status = 'PENDING_ACTIVATION';
     order.peakPrice = sellPrice;
     order.activationPrice = order.peakPrice - (order.activationOffset || 0);
+    order.activationDirection = 'DOWN';
     order.bottomPrice = null;
     order.triggerPrice = null;
     order.mexcOrderId = null;
@@ -441,7 +442,9 @@ class OrderTracker {
         let shouldActivateDip = false;
         let activationReason = '';
 
-        if (order.activationDirection === 'DOWN' && currentPrice <= order.activationPrice) {
+        const isDownDirection = order.activationDirection === 'DOWN' || !order.activationDirection || (order.autoRepeat && order.activationOffset);
+
+        if (isDownDirection && currentPrice <= order.activationPrice) {
           shouldActivateDip = true;
           activationReason = `price ${currentPrice} hit dip activation target ${order.activationPrice}`;
         } else if (order.activationDirection === 'UP' && currentPrice >= order.activationPrice) {
