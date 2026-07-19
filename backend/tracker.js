@@ -106,16 +106,17 @@ class OrderTracker {
       const assetBal = balances.find(b => b.asset.toUpperCase() === asset);
       if (assetBal && assetBal.free > 0) {
         this.log(`Fetched asset balance for ${asset}: free balance is ${assetBal.free} (gross quantity estimated: ${grossQty}).`, 'info', symbol);
-        // Truncate to 4 decimal places to satisfy MEXC lot/step size precision limits
-        const truncated = Math.floor(assetBal.free * 10000) / 10000;
+        // Apply 0.2% safety buffer + truncate to 4 decimal places to prevent 30005 Oversold errors
+        const safeFree = assetBal.free * 0.998;
+        const truncated = Math.floor(safeFree * 10000) / 10000;
         if (truncated > 0) return truncated;
       }
     } catch (err) {
       this.log(`Balance lookup failed: ${err.message}. Falling back to estimated quantity with fee margin.`, 'warning', symbol);
     }
     
-    // Fallback: estimate gross quantity and deduct a 0.2% fee safety margin
-    const estimated = grossQty * 0.998;
+    // Fallback: estimate gross quantity and deduct a 0.3% fee safety margin
+    const estimated = grossQty * 0.997;
     const truncatedEst = Math.floor(estimated * 10000) / 10000;
     this.log(`Using fee-adjusted estimated quantity: ${truncatedEst} (gross: ${grossQty})`, 'info', symbol);
     return truncatedEst;
@@ -313,8 +314,25 @@ class OrderTracker {
               quantity: sellQty,
               price: tpPrice
             };
-            const tpResult = await this.mexcClient.placeOrder(tpParams);
-            newOrder.mexcSellOrderId = tpResult.orderId;
+            try {
+              const tpResult = await this.mexcClient.placeOrder(tpParams);
+              newOrder.mexcSellOrderId = tpResult.orderId;
+            } catch (firstTpErr) {
+              this.log(`Initial TP Limit Sell failed (${firstTpErr.message}). Retrying with fee buffer safety quantity...`, 'warning', symbol);
+              const retryQty = Math.floor(sellQty * 0.998 * 10000) / 10000;
+              if (retryQty > 0) {
+                const retryParams = {
+                  symbol,
+                  side: 'SELL',
+                  type: 'LIMIT',
+                  quantity: retryQty,
+                  price: tpPrice
+                };
+                const retryResult = await this.mexcClient.placeOrder(retryParams);
+                newOrder.mexcSellOrderId = retryResult.orderId;
+                this.log(`Retry TP Limit Sell placed successfully! ID: ${retryResult.orderId}`, 'success', symbol);
+              }
+            }
           }
         } catch (err) {
           newOrder.status = 'FAILED';
@@ -747,12 +765,30 @@ class OrderTracker {
                     price: tpPrice
                   };
                   
-                  const tpResult = await this.mexcClient.placeOrder(tpParams);
-                  order.mexcSellOrderId = tpResult.orderId;
-                  this.log(`[REAL] Take Profit Limit Sell order placed on MEXC. Order ID: ${tpResult.orderId}`, 'success', order.symbol);
-                } catch (tpErr) {
-                  this.log(`[REAL] Failed to place TP Limit Sell order on MEXC: ${tpErr.message}. Bot will still monitor Stop Loss.`, 'error', order.symbol);
-                }
+                  try {
+                    const tpResult = await this.mexcClient.placeOrder(tpParams);
+                    order.mexcSellOrderId = tpResult.orderId;
+                    this.log(`[REAL] Take Profit Limit Sell order placed on MEXC. Order ID: ${tpResult.orderId}`, 'success', order.symbol);
+                  } catch (firstTpErr) {
+                    this.log(`[REAL] First TP Limit Sell failed (${firstTpErr.message}). Retrying with fee buffer safety quantity...`, 'warning', order.symbol);
+                    try {
+                      const retryQty = Math.floor(sellQty * 0.998 * 10000) / 10000;
+                      if (retryQty > 0) {
+                        const retryParams = {
+                          symbol: order.symbol,
+                          side: 'SELL',
+                          type: 'LIMIT',
+                          quantity: retryQty,
+                          price: tpPrice
+                        };
+                        const retryResult = await this.mexcClient.placeOrder(retryParams);
+                        order.mexcSellOrderId = retryResult.orderId;
+                        this.log(`[REAL] Retry TP Limit Sell order placed successfully on MEXC! Order ID: ${retryResult.orderId} for ${retryQty} tokens.`, 'success', order.symbol);
+                      }
+                    } catch (retryErr) {
+                      this.log(`[REAL] Retry TP Limit Sell order also failed: ${retryErr.message}. Bot will still monitor Stop Loss.`, 'error', order.symbol);
+                    }
+                  }
               }
             } else {
               order.status = 'TRIGGERED';
