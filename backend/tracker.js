@@ -632,6 +632,7 @@ class OrderTracker {
         // Run indicators filters confirmation checks if enabled
         let passedFilters = true;
         const failedReasons = [];
+        const confirmedReasons = [];
 
         if (order.filterObi) {
           try {
@@ -656,9 +657,12 @@ class OrderTracker {
 
             const totalValue = bidsValue + asksValue;
             const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
+            const pctStr = (bidsRatio * 100).toFixed(1);
             if (bidsRatio < 0.55) {
               passedFilters = false;
-              failedReasons.push(`OBI Support ${(bidsRatio * 100).toFixed(1)}% < 55%`);
+              failedReasons.push(`OBI Support ${pctStr}% < 55%`);
+            } else {
+              confirmedReasons.push(`OBI Support ${pctStr}% >= 55%`);
             }
           } catch (e) {
             this.log(`OBI Filter query failed: ${e.message}`, 'warning', order.symbol);
@@ -680,6 +684,8 @@ class OrderTracker {
               if (currentVol < avgPrevVol * 1.5) {
                 passedFilters = false;
                 failedReasons.push(`Volume Spike ${currentVol.toFixed(1)} < 1.5x avg (${(avgPrevVol * 1.5).toFixed(1)})`);
+              } else {
+                confirmedReasons.push(`Volume Spike ${currentVol.toFixed(1)} >= 1.5x avg`);
               }
             } else {
               passedFilters = false;
@@ -701,6 +707,8 @@ class OrderTracker {
               if (rsi > 35) {
                 passedFilters = false;
                 failedReasons.push(`RSI ${rsi.toFixed(1)} > 35`);
+              } else {
+                confirmedReasons.push(`RSI ${rsi.toFixed(1)} <= 35`);
               }
             } else {
               passedFilters = false;
@@ -725,8 +733,9 @@ class OrderTracker {
 
         order.triggeredAt = new Date().toISOString();
         const mode = order.dryRun ? '[DRY RUN]' : '[REAL]';
+        const indicatorLog = confirmedReasons.length > 0 ? ` (Confirmed: ${confirmedReasons.join(', ')})` : '';
         this.log(
-          `${mode} Trailing stop buy triggered for ${order.symbol}! Current price: ${currentPrice} >= Trigger price: ${order.triggerPrice}`,
+          `${mode} Trailing stop buy triggered for ${order.symbol}! Current price: ${currentPrice} >= Trigger price: ${order.triggerPrice}${indicatorLog}. Executing buy...`,
           'success',
           order.symbol
         );
