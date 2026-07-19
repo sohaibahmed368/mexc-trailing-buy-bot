@@ -236,7 +236,7 @@ app.get('/api/orders', (req, res) => {
 
 // Create trailing stop order
 app.post('/api/orders', async (req, res) => {
-  const { symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, reboundOffset, startImmediately } = req.body;
+  const { symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, startImmediately } = req.body;
   
   try {
     const order = await tracker.addOrder({
@@ -254,7 +254,6 @@ app.post('/api/orders', async (req, res) => {
       filterRsi,
       autoRepeat,
       activationOffset,
-      reboundOffset,
       startImmediately
     });
     res.json(order);

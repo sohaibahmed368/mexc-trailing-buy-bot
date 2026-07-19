@@ -153,7 +153,6 @@ class OrderTracker {
     order.status = 'PENDING_ACTIVATION';
     order.peakPrice = sellPrice;
     order.activationPrice = order.peakPrice - (order.activationOffset || 0);
-    order.localBottom = sellPrice;
     order.bottomPrice = null;
     order.triggerPrice = null;
     order.mexcOrderId = null;
@@ -172,7 +171,7 @@ class OrderTracker {
   }
 
   // Add a new trailing buy order
-  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, reboundOffset, startImmediately }) {
+  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, startImmediately }) {
     symbol = symbol.toUpperCase().trim();
     trailValue = parseFloat(trailValue);
     
@@ -263,9 +262,7 @@ class OrderTracker {
       autoRepeat: !!autoRepeat,
       startImmediately: !!startImmediately,
       activationOffset: activationOffset ? parseFloat(activationOffset) : null,
-      reboundOffset: reboundOffset ? parseFloat(reboundOffset) : null,
       peakPrice: initialPrice,
-      localBottom: initialPrice,
       tradeHistory: [],
       initialPrice,
       bottomPrice,
@@ -348,16 +345,10 @@ class OrderTracker {
     return newOrder;
   }
 
-  // Cancel an active order
-  async cancelOrder(orderId) {
-    const order = this.orders.find(o => o.id === orderId);
-    if (!order) {
-      throw new Error('Order not found.');
-    }
-
-    if (order.status !== 'RUNNING' && order.status !== 'PENDING_ACTIVATION' && order.status !== 'TP_SL_ACTIVE') {
-      throw new Error('Only active orders can be cancelled.');
-    }
+  // Cancel tracking of an active order
+  async cancelOrder(id) {
+    const order = this.orders.find(o => o.id === id);
+    if (!order) return;
 
     if (order.status === 'TP_SL_ACTIVE' && !order.dryRun && order.mexcSellOrderId) {
       try {
@@ -378,7 +369,7 @@ class OrderTracker {
 
   // Clear completed order history
   clearHistory() {
-    this.orders = this.orders.filter(o => o.status === 'RUNNING');
+    this.orders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
     this.saveOrders();
     this.log('Historical orders cleared.', 'info');
   }
@@ -442,23 +433,11 @@ class OrderTracker {
           if (!order.peakPrice || currentPrice > order.peakPrice) {
             order.peakPrice = currentPrice;
             order.activationPrice = order.peakPrice - order.activationOffset;
-            // Reset local bottom to new peak price to prevent false rebounds while price is dropping from a higher peak
-            if (order.reboundOffset) {
-              order.localBottom = currentPrice;
-            }
             changed = true;
           }
         }
 
-        // Track local bottom for rebound bounce trigger
-        if (order.autoRepeat && order.reboundOffset) {
-          if (order.localBottom === null || currentPrice < order.localBottom) {
-            order.localBottom = currentPrice;
-            changed = true;
-          }
-        }
-
-        // 1. Check Standard Dip Activation -> Trails buy
+        // Check Standard Dip Activation -> Trails buy
         let shouldActivateDip = false;
         let activationReason = '';
 
@@ -475,7 +454,6 @@ class OrderTracker {
           order.activatedAt = new Date().toISOString();
           order.bottomPrice = currentPrice;
           order.triggerPrice = currentPrice + order.trailValue;
-          order.localBottom = null; // Clear local bottom
           this.log(
             `Trailing stop buy activated via Dip: ${activationReason}. (Trigger target: >= ${order.triggerPrice}).`,
             'success',
@@ -483,156 +461,6 @@ class OrderTracker {
           );
           changed = true;
           continue;
-        }
-
-        // 2. Check Rebound Bounce Trigger -> Immediate Execution!
-        if (order.autoRepeat && order.reboundOffset && order.localBottom !== null && currentPrice >= (order.localBottom + order.reboundOffset)) {
-          // Verify indicators first before placing immediate buy order
-          let passedFilters = true;
-          const failedReasons = [];
-
-          if (order.filterObi) {
-            try {
-              const depth = await this.mexcClient.getDepth(order.symbol, 100);
-              let bidsValue = 0;
-              let asksValue = 0;
-              const range = currentPrice * 0.015;
-              if (depth && depth.bids && depth.asks) {
-                depth.bids.forEach(b => {
-                  const p = parseFloat(b[0]);
-                  if (p >= currentPrice - range) bidsValue += parseFloat(b[1]) * p;
-                });
-                depth.asks.forEach(a => {
-                  const p = parseFloat(a[0]);
-                  if (p <= currentPrice + range) asksValue += parseFloat(a[1]) * p;
-                });
-              }
-              const totalValue = bidsValue + asksValue;
-              const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
-              if (bidsRatio < 0.55) {
-                passedFilters = false;
-                failedReasons.push(`OBI Support ${(bidsRatio * 100).toFixed(1)}% < 55%`);
-              }
-            } catch (e) {
-              passedFilters = false;
-              failedReasons.push(`OBI Query Error`);
-            }
-          }
-
-          if (order.filterVolume && passedFilters) {
-            try {
-              const klines = await this.mexcClient.getKlines(order.symbol, '1m', 6);
-              if (klines && klines.length >= 6) {
-                const currentVol = parseFloat(klines[5][5]);
-                let totalPrevVol = 0;
-                for (let j = 0; j < 5; j++) totalPrevVol += parseFloat(klines[j][5]);
-                const avgPrevVol = totalPrevVol / 5;
-                if (currentVol < avgPrevVol * 1.5) {
-                  passedFilters = false;
-                  failedReasons.push(`Volume Spike ${currentVol.toFixed(1)} < 1.5x avg`);
-                }
-              } else {
-                passedFilters = false;
-                failedReasons.push(`Insufficient Volume Data`);
-              }
-            } catch (e) {
-              passedFilters = false;
-              failedReasons.push(`Volume Query Error`);
-            }
-          }
-
-          if (order.filterRsi && passedFilters) {
-            try {
-              const klines = await this.mexcClient.getKlines(order.symbol, '1m', 30);
-              if (klines && klines.length >= 15) {
-                const closes = klines.map(k => parseFloat(k[4]));
-                const rsi = this.calculateRSI(closes);
-                if (rsi > 35) {
-                  passedFilters = false;
-                  failedReasons.push(`RSI ${rsi.toFixed(1)} > 35`);
-                }
-              } else {
-                passedFilters = false;
-                failedReasons.push(`Insufficient RSI Data`);
-              }
-            } catch (e) {
-              passedFilters = false;
-              failedReasons.push(`RSI Calc Error`);
-            }
-          }
-
-          if (passedFilters) {
-            order.triggeredAt = new Date().toISOString();
-            const mode = order.dryRun ? '[DRY RUN]' : '[REAL]';
-            this.log(
-              `${mode} Rebound buy triggered at ${currentPrice} USDT! Price bounced by $${order.reboundOffset} from bottom ${order.localBottom}.`,
-              'success',
-              order.symbol
-            );
-
-            if (order.dryRun) {
-              order.executionPrice = currentPrice;
-              order.status = 'TP_SL_ACTIVE';
-              order.localBottom = null;
-              this.log(`[DRY RUN] Simulated Spot Buy order executed immediately at ${currentPrice} USDT due to rebound confirmation.`, 'success', order.symbol);
-            } else {
-              try {
-                order.status = 'PENDING_EXECUTION';
-                const orderParams = {
-                  symbol: order.symbol,
-                  side: 'BUY',
-                  type: order.orderType,
-                  quantity: order.quantity,
-                  quoteOrderQty: order.quoteOrderQty
-                };
-                const result = await this.mexcClient.placeOrder(orderParams);
-                order.mexcOrderId = result.orderId;
-                
-                const fills = await this.getActualOrderFills(order.symbol, result.orderId, currentPrice);
-                order.executionPrice = fills.avgPrice;
-                order.status = 'TP_SL_ACTIVE';
-                order.localBottom = null;
-
-                this.log(
-                  `[REAL] Rebound BUY placed! Avg price: ${fills.avgPrice}. Setting Take Profit limit sell order.`,
-                  'success',
-                  order.symbol
-                );
-
-                if (order.takeProfit) {
-                  try {
-                    const tpPrice = fills.avgPrice + order.takeProfit;
-                    const grossQty = fills.executedQty || order.quantity || (order.quoteOrderQty / fills.avgPrice);
-                    const sellQty = await this.getFeeAdjustedBalance(order.symbol, grossQty);
-                    const tpParams = {
-                      symbol: order.symbol,
-                      side: 'SELL',
-                      type: 'LIMIT',
-                      quantity: sellQty,
-                      price: tpPrice
-                    };
-                    const tpResult = await this.mexcClient.placeOrder(tpParams);
-                    order.mexcSellOrderId = tpResult.orderId;
-                    this.log(`[REAL] TP Limit Sell placed at ${tpPrice} for ${sellQty} tokens. ID: ${tpResult.orderId}`, 'success', order.symbol);
-                  } catch (tpErr) {
-                    this.log(`[REAL] Failed to place TP Limit Sell: ${tpErr.message}. SL still active.`, 'error', order.symbol);
-                  }
-                }
-              } catch (e) {
-                order.status = 'PENDING_ACTIVATION'; // revert state
-                order.error = e.message;
-                this.log(`[REAL] Rebound BUY order failed: ${e.message}`, 'error', order.symbol);
-              }
-            }
-            changed = true;
-          } else {
-            // Throttling filter fail logs
-            const now = Date.now();
-            if (!order.lastFilterFailLogTime || (now - order.lastFilterFailLogTime > 5000)) {
-              order.lastFilterFailLogTime = now;
-              this.log(`Rebound bounce detected at ${currentPrice} but buy deferred due to indicators: ${failedReasons.join(', ')}. Waiting for alignment.`, 'info', order.symbol);
-            }
-          }
         }
 
         continue; // Wait for next tick to monitor trailing stop
