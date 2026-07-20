@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ord_1784562782736_lfa2d",
+    "symbol": "SOLUSDT",
+    "trailValue": 0.3,
+    "quantity": 2,
+    "quoteOrderQty": null,
+    "orderType": "MARKET",
+    "dryRun": true,
+    "status": "PENDING_ACTIVATION",
+    "activationPrice": 75.61234567,
+    "activationDirection": null,
+    "activatedAt": null,
+    "takeProfit": 2,
+    "stopLoss": 0.8,
+    "filterSmartSl": true,
+    "slBuffer": 0.3,
+    "isSlExtended": false,
+    "isSlProfitLocked": false,
+    "lockedSlPrice": null,
+    "mexcSellOrderId": null,
+    "sellExecutionPrice": null,
+    "sellTriggeredAt": null,
+    "filterObi": false,
+    "filterVolume": false,
+    "filterRsi": false,
+    "autoRepeat": true,
+    "startImmediately": true,
+    "activationOffset": 1.5,
+    "peakPrice": 77.11234567,
+    "tradeHistory": [
+      {
+        "cycle": 1,
+        "buyPrice": 76.51234567,
+        "sellPrice": 77.11234567,
+        "type": "STOP_LOSS",
+        "profit": 0.5999999999999943,
+        "timestamp": "2026-07-20T15:53:02.823Z"
+      }
+    ],
+    "initialPrice": 76.51234567,
+    "bottomPrice": null,
+    "triggerPrice": null,
+    "currentPrice": 77.11234567,
+    "createdAt": "2026-07-20T15:53:02.736Z",
+    "triggeredAt": null,
+    "mexcOrderId": null,
+    "executionPrice": null,
+    "error": null,
+    "localBottom": 77.11234567
+  }
+]
