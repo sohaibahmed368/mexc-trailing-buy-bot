@@ -166,6 +166,7 @@ class OrderTracker {
     order.peakPrice = sellPrice;
     order.activationPrice = order.peakPrice - (order.activationOffset || 0);
     order.activationDirection = 'DOWN';
+    order.isSlExtended = false;
     order.bottomPrice = null;
     order.triggerPrice = null;
     order.mexcOrderId = null;
@@ -184,7 +185,7 @@ class OrderTracker {
   }
 
   // Add a new trailing buy order
-  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, startImmediately }) {
+  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, startImmediately }) {
     symbol = symbol.toUpperCase().trim();
     trailValue = parseFloat(trailValue);
     
@@ -216,14 +217,22 @@ class OrderTracker {
       throw new Error('Stop Loss offset must be a positive number.');
     }
 
+    const parsedSlBuffer = slBuffer && slBuffer.toString().trim() !== ''
+      ? parseFloat(slBuffer)
+      : 2.0;
+
+    if (isNaN(parsedSlBuffer) || parsedSlBuffer <= 0) {
+      throw new Error('Smart SL Buffer must be a positive number.');
+    }
+
     // Check if MEXC client is initialized for real orders
     if (!dryRun && !this.mexcClient.hasCredentials()) {
-      throw new Error('API Credentials must be configured to place real orders. Enable Dry Run to test without keys.');
+      throw new Error('MEXC API Key and Secret are required for real order tracking.');
     }
 
     this.log(`Fetching initial price for ${symbol}...`, 'info', symbol);
     
-    let initialPrice;
+    let initialPrice = 0;
     try {
       initialPrice = await this.mexcClient.getTickerPrice(symbol);
     } catch (e) {
@@ -266,6 +275,9 @@ class OrderTracker {
       activatedAt: startInstantBuy ? new Date().toISOString() : null,
       takeProfit: parsedTakeProfit,
       stopLoss: parsedStopLoss,
+      filterSmartSl: !!filterSmartSl,
+      slBuffer: parsedSlBuffer,
+      isSlExtended: false,
       mexcSellOrderId: null,
       sellExecutionPrice: null,
       sellTriggeredAt: null,
@@ -545,9 +557,59 @@ class OrderTracker {
           }
 
           // Real Order Stop Loss Check
-          if (order.stopLoss && currentPrice <= (order.executionPrice - order.stopLoss)) {
+          const effectiveSlOffset = (order.filterSmartSl && order.isSlExtended && order.slBuffer)
+            ? (order.stopLoss + order.slBuffer)
+            : order.stopLoss;
+
+          if (order.stopLoss && currentPrice <= (order.executionPrice - effectiveSlOffset)) {
+            // Check Smart SL Guard seller exhaustion before executing base SL
+            if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
+              let isSellerExhausted = false;
+              let bidsRatioPct = '0';
+              try {
+                const depth = await this.mexcClient.getDepth(order.symbol, 100);
+                let bidsValue = 0;
+                let asksValue = 0;
+                const rangeLower = currentPrice * 0.985;
+                const rangeUpper = currentPrice * 1.015;
+                if (depth && Array.isArray(depth.bids)) {
+                  depth.bids.forEach(([p, q]) => {
+                    const price = parseFloat(p);
+                    if (price >= rangeLower && price <= rangeUpper) bidsValue += (price * parseFloat(q));
+                  });
+                }
+                if (depth && Array.isArray(depth.asks)) {
+                  depth.asks.forEach(([p, q]) => {
+                    const price = parseFloat(p);
+                    if (price >= rangeLower && price <= rangeUpper) asksValue += (price * parseFloat(q));
+                  });
+                }
+                const totalValue = bidsValue + asksValue;
+                const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
+                bidsRatioPct = (bidsRatio * 100).toFixed(1);
+                if (bidsRatio >= 0.45) {
+                  isSellerExhausted = true;
+                }
+              } catch (e) {
+                this.log(`Smart SL Guard depth query failed: ${e.message}`, 'warning', order.symbol);
+              }
+
+              if (isSellerExhausted) {
+                order.isSlExtended = true;
+                const oldSlTarget = (order.executionPrice - order.stopLoss).toFixed(4);
+                const newSlTarget = (order.executionPrice - (order.stopLoss + order.slBuffer)).toFixed(4);
+                this.log(
+                  `🛡️ [SMART SL GUARD] Seller exhaustion detected at SL level! (Bids Support ${bidsRatioPct}% >= 45%). Stretching Stop Loss by +$${order.slBuffer} buffer. (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Waiting for bounce...`,
+                  'success',
+                  order.symbol
+                );
+                changed = true;
+                continue;
+              }
+            }
+
             order.status = 'PENDING_EXECUTION'; // block double trigger
-            this.log(`[REAL] Stop Loss hit! Market price ${currentPrice} <= Stop Loss level ${order.executionPrice - order.stopLoss}. Executing market sell on MEXC...`, 'warning', order.symbol);
+            this.log(`[REAL] Stop Loss hit! Market price ${currentPrice} <= Stop Loss level ${(order.executionPrice - effectiveSlOffset).toFixed(4)}. Executing market sell on MEXC...`, 'warning', order.symbol);
             
             if (order.mexcSellOrderId) {
               try {
