@@ -736,7 +736,7 @@ class OrderTracker {
               }
 
               let sellResult = null;
-              const decimalsToTry = [100000000, 1000000, 100000, 10000, 1000, 100, 10, 1];
+              const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
               let lastErr = null;
 
               for (const mult of decimalsToTry) {
@@ -758,7 +758,7 @@ class OrderTracker {
                   lastErr = err;
                   const errMsg = err.message || '';
                   if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                    this.log(`[REAL] Quantity scale invalid for ${qtyToTry}. Retrying with broader decimal precision...`, 'warning', order.symbol);
+                    // Silently retry with next broader/standard precision to avoid console log clutter
                     continue;
                   }
                   if (errMsg.includes('Oversold') || errMsg.includes('30005')) {
@@ -964,7 +964,7 @@ class OrderTracker {
             
             let result = null;
             let lastBuyErr = null;
-            const decimalsToTry = [100000000, 1000000, 100000, 10000, 1000, 100, 10, 1];
+            const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
 
             if (order.quantity) {
               for (const mult of decimalsToTry) {
@@ -983,7 +983,7 @@ class OrderTracker {
                   lastBuyErr = err;
                   const errMsg = err.message || '';
                   if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                    this.log(`[REAL] BUY Quantity scale invalid for ${qtyToTry}. Retrying with broader precision...`, 'warning', order.symbol);
+                    // Silently retry with next precision
                     continue;
                   }
                   throw err;
@@ -1030,6 +1030,7 @@ class OrderTracker {
                   let tpResult = null;
                   let lastTpErr = null;
                   const safeQty = sellQty * 0.998;
+                  const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
                   
                   for (const mult of decimalsToTry) {
                     const qtyToTry = Math.floor(safeQty * mult) / mult;
@@ -1052,7 +1053,7 @@ class OrderTracker {
                       lastTpErr = err;
                       const errMsg = err.message || '';
                       if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                        this.log(`[REAL] TP Limit Sell quantity scale invalid for ${qtyToTry}. Retrying with broader precision...`, 'warning', order.symbol);
+                        // Silently retry with next precision
                         continue;
                       }
                       if (errMsg.includes('30002') || errMsg.includes('1USDT')) {
