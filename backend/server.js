@@ -285,73 +285,120 @@ app.delete('/api/orders', (req, res) => {
   }
 });
 
-// Independent Short-Term Scalp Radar Endpoint (Zero Logging to Tracker Console)
+const https = require('https');
+
+function fetchJson(url) {
+  return new Promise((resolve) => {
+    const req = https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' }, timeout: 3000 }, (res) => {
+      let body = '';
+      res.on('data', chunk => body += chunk);
+      res.on('end', () => {
+        try { resolve(JSON.parse(body)); } catch (e) { resolve(null); }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => { req.destroy(); resolve(null); });
+  });
+}
+
+// Multi-Exchange Aggregated Short-Term Scalp Radar (Binance + MEXC Consensus, Zero Logging)
 app.get('/api/scalp-radar/:symbol', async (req, res) => {
   const symbol = (req.params.symbol || 'ETHUSDT').toUpperCase();
   try {
     const price = await mexcClient.getTickerPrice(symbol);
-    const [depth, klines] = await Promise.all([
+    const rangeLower = price * 0.985;
+    const rangeUpper = price * 1.015;
+
+    const [mexcDepth, mexcKlines, binanceDepth] = await Promise.all([
       mexcClient.getDepth(symbol, 100).catch(() => null),
-      mexcClient.getKlines(symbol, '1m', 30).catch(() => null)
+      mexcClient.getKlines(symbol, '1m', 30).catch(() => null),
+      fetchJson(`https://api.binance.com/api/v3/depth?symbol=${symbol}&limit=100`)
     ]);
 
-    let bidsRatio = 0.5;
-    let bidsValue = 0;
-    let asksValue = 0;
-
-    if (depth) {
-      const rangeLower = price * 0.985;
-      const rangeUpper = price * 1.015;
-      if (Array.isArray(depth.bids)) {
-        depth.bids.forEach(([p, q]) => {
+    // 1. MEXC Order Book Depth calculation
+    let mexcBidsRatio = 0.5;
+    let mexcBidsVal = 0;
+    let mexcAsksVal = 0;
+    if (mexcDepth) {
+      if (Array.isArray(mexcDepth.bids)) {
+        mexcDepth.bids.forEach(([p, q]) => {
           const pr = parseFloat(p);
-          if (pr >= rangeLower && pr <= rangeUpper) bidsValue += (pr * parseFloat(q));
+          if (pr >= rangeLower && pr <= rangeUpper) mexcBidsVal += (pr * parseFloat(q));
         });
       }
-      if (Array.isArray(depth.asks)) {
-        depth.asks.forEach(([p, q]) => {
+      if (Array.isArray(mexcDepth.asks)) {
+        mexcDepth.asks.forEach(([p, q]) => {
           const pr = parseFloat(p);
-          if (pr >= rangeLower && pr <= rangeUpper) asksValue += (pr * parseFloat(q));
+          if (pr >= rangeLower && pr <= rangeUpper) mexcAsksVal += (pr * parseFloat(q));
         });
       }
-      const total = bidsValue + asksValue;
-      if (total > 0) bidsRatio = bidsValue / total;
+      const totalMexc = mexcBidsVal + mexcAsksVal;
+      if (totalMexc > 0) mexcBidsRatio = mexcBidsVal / totalMexc;
     }
 
+    // 2. Binance Global Public Order Book Depth calculation
+    let binanceBidsRatio = 0.5;
+    let binanceBidsVal = 0;
+    let binanceAsksVal = 0;
+    if (binanceDepth && Array.isArray(binanceDepth.bids)) {
+      binanceDepth.bids.forEach(([p, q]) => {
+        const pr = parseFloat(p);
+        if (pr >= rangeLower && pr <= rangeUpper) binanceBidsVal += (pr * parseFloat(q));
+      });
+      if (Array.isArray(binanceDepth.asks)) {
+        binanceDepth.asks.forEach(([p, q]) => {
+          const pr = parseFloat(p);
+          if (pr >= rangeLower && pr <= rangeUpper) binanceAsksVal += (pr * parseFloat(q));
+        });
+      }
+      const totalBinance = binanceBidsVal + binanceAsksVal;
+      if (totalBinance > 0) binanceBidsRatio = binanceBidsVal / totalBinance;
+    }
+
+    // 3. Technical Indicators (Volume & RSI)
     let volumeRatio = 1.0;
     let rsiValue = 50.0;
-
-    if (klines && klines.length >= 15) {
-      const currentVol = parseFloat(klines[klines.length - 1][5]);
+    if (mexcKlines && mexcKlines.length >= 15) {
+      const currentVol = parseFloat(mexcKlines[mexcKlines.length - 1][5]);
       let totalPrevVol = 0;
-      for (let j = klines.length - 6; j < klines.length - 1; j++) {
-        if (klines[j]) totalPrevVol += parseFloat(klines[j][5]);
+      for (let j = mexcKlines.length - 6; j < mexcKlines.length - 1; j++) {
+        if (mexcKlines[j]) totalPrevVol += parseFloat(mexcKlines[j][5]);
       }
       const avgPrevVol = totalPrevVol / 5;
       volumeRatio = avgPrevVol > 0 ? (currentVol / avgPrevVol) : 1.0;
 
-      const closes = klines.map(k => parseFloat(k[4]));
+      const closes = mexcKlines.map(k => parseFloat(k[4]));
       rsiValue = tracker.calculateRSI(closes, 14);
     }
 
-    const obiBidsPct = parseFloat((bidsRatio * 100).toFixed(1));
+    const mexcBidsPct = parseFloat((mexcBidsRatio * 100).toFixed(1));
+    const binanceBidsPct = parseFloat((binanceBidsRatio * 100).toFixed(1));
+    const avgBidsPct = parseFloat(((mexcBidsPct + binanceBidsPct) / 2).toFixed(1));
     const volMultiplier = parseFloat(volumeRatio.toFixed(2));
     const rsi = parseFloat(rsiValue.toFixed(1));
 
-    const obiPass = obiBidsPct >= 55.0;
+    const mexcPass = mexcBidsPct >= 55.0;
+    const binancePass = binanceBidsPct >= 55.0;
+    const avgObiPass = avgBidsPct >= 55.0;
     const volPass = volMultiplier >= 1.5;
     const rsiPass = rsi <= 40.0;
 
-    const signalActive = obiPass && volPass && rsiPass;
+    const consensusVerified = mexcPass && binancePass;
+    const signalActive = avgObiPass && volPass && rsiPass;
 
     res.json({
       symbol,
       price,
       timestamp: new Date().toISOString(),
-      obiBidsPct,
+      mexcBidsPct,
+      binanceBidsPct,
+      avgBidsPct,
       volMultiplier,
       rsi,
-      obiPass,
+      mexcPass,
+      binancePass,
+      consensusVerified,
+      avgObiPass,
       volPass,
       rsiPass,
       signalActive
