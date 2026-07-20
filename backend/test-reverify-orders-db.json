@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ord_1784570284735_0w1n9",
+    "symbol": "EGLDUSDT",
+    "trailValue": 0.05,
+    "quantity": 10,
+    "quoteOrderQty": null,
+    "orderType": "MARKET",
+    "dryRun": true,
+    "status": "PENDING_ACTIVATION",
+    "activationPrice": 2.3000000000000003,
+    "activationDirection": null,
+    "activatedAt": null,
+    "takeProfit": 0.25,
+    "stopLoss": 0.1,
+    "filterSmartSl": true,
+    "slBuffer": 0.05,
+    "isSlExtended": false,
+    "isSlProfitLocked": false,
+    "lockedSlPrice": null,
+    "mexcSellOrderId": null,
+    "sellExecutionPrice": null,
+    "sellTriggeredAt": null,
+    "filterObi": true,
+    "filterVolume": false,
+    "filterRsi": false,
+    "autoRepeat": true,
+    "startImmediately": true,
+    "activationOffset": 0.25,
+    "peakPrice": 2.5500000000000003,
+    "tradeHistory": [
+      {
+        "cycle": 1,
+        "buyPrice": 2.5,
+        "sellPrice": 2.5500000000000003,
+        "type": "STOP_LOSS",
+        "profit": 0.050000000000000266,
+        "timestamp": "2026-07-20T17:58:04.851Z"
+      }
+    ],
+    "initialPrice": 2.5,
+    "bottomPrice": null,
+    "triggerPrice": null,
+    "currentPrice": 2.5500000000000003,
+    "createdAt": "2026-07-20T17:58:04.735Z",
+    "triggeredAt": null,
+    "mexcOrderId": null,
+    "executionPrice": null,
+    "error": null,
+    "localBottom": 2.5500000000000003
+  }
+]
