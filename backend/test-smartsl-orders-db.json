@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ord_1784552536617_m322b",
+    "symbol": "ETHUSDT",
+    "trailValue": 2,
+    "quantity": 0.1,
+    "quoteOrderQty": null,
+    "orderType": "MARKET",
+    "dryRun": false,
+    "status": "PENDING_ACTIVATION",
+    "activationPrice": 1848,
+    "activationDirection": "DOWN",
+    "activatedAt": null,
+    "takeProfit": 8,
+    "stopLoss": 4,
+    "filterSmartSl": true,
+    "slBuffer": 2,
+    "isSlExtended": false,
+    "mexcSellOrderId": null,
+    "sellExecutionPrice": null,
+    "sellTriggeredAt": null,
+    "filterObi": true,
+    "filterVolume": false,
+    "filterRsi": false,
+    "autoRepeat": true,
+    "startImmediately": true,
+    "activationOffset": 10,
+    "peakPrice": 1858,
+    "tradeHistory": [
+      {
+        "cycle": 1,
+        "buyPrice": 1850,
+        "sellPrice": 1858,
+        "type": "TAKE_PROFIT",
+        "profit": 8,
+        "timestamp": "2026-07-20T13:02:19.233Z"
+      }
+    ],
+    "initialPrice": 1850,
+    "bottomPrice": null,
+    "triggerPrice": null,
+    "currentPrice": 1858,
+    "createdAt": "2026-07-20T13:02:16.617Z",
+    "triggeredAt": null,
+    "mexcOrderId": null,
+    "executionPrice": null,
+    "error": null,
+    "lastStatusCheckTime": 1784552539215
+  }
+]

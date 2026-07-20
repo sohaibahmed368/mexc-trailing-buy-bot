@@ -1,0 +1,310 @@
+[
+  {
+    "id": "1784554345191-9okwe",
+    "timestamp": "2026-07-20T13:32:25.191Z",
+    "message": "[REAL] Take Profit Limit Sell order placed on MEXC for 132.0135 tokens. Order ID: mock_mexc_9",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554345190-iisrh",
+    "timestamp": "2026-07-20T13:32:25.190Z",
+    "message": "Fetched confirmed asset balance for SUI: free balance is 132.5432 (gross quantity estimated: 100).",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554345062-o7ci3",
+    "timestamp": "2026-07-20T13:32:25.062Z",
+    "message": "[REAL] Take Profit Limit Sell order placed on MEXC for 0.0996 tokens. Order ID: mock_mexc_8",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554345060-6ev1g",
+    "timestamp": "2026-07-20T13:32:25.060Z",
+    "message": "Fetched confirmed asset balance for ETH: free balance is 0.1 (gross quantity estimated: 0.1).",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554343688-nn8m1",
+    "timestamp": "2026-07-20T13:32:23.688Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554343688-j41wm",
+    "timestamp": "2026-07-20T13:32:23.688Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: mock_mexc_7. Avg Fill Price: 1842. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554343686-yygji",
+    "timestamp": "2026-07-20T13:32:23.686Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_7: 1842.0000 USDT (estimated fallback was 1842).",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554343558-3toct",
+    "timestamp": "2026-07-20T13:32:23.558Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554343557-00tkw",
+    "timestamp": "2026-07-20T13:32:23.557Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: mock_mexc_6. Avg Fill Price: 1842. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554343556-zkych",
+    "timestamp": "2026-07-20T13:32:23.556Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_6: 1842.0000 USDT (estimated fallback was 1842).",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554342684-h2v7l",
+    "timestamp": "2026-07-20T13:32:22.684Z",
+    "message": "Placing Spot BUY order on MEXC for SUIUSDT...",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554342682-vh0xo",
+    "timestamp": "2026-07-20T13:32:22.682Z",
+    "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 1842 USDT! (Confirmed Metrics: OBI Support 60.0% >= 55%). Executing [REAL] buy...",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554342537-i3zq0",
+    "timestamp": "2026-07-20T13:32:22.537Z",
+    "message": "Placing Spot BUY order on MEXC for ETHUSDT...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554342519-t0agp",
+    "timestamp": "2026-07-20T13:32:22.519Z",
+    "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 1842 USDT! (Confirmed Metrics: OBI Support 60.0% >= 55%). Executing [REAL] buy...",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554342515-q8tpf",
+    "timestamp": "2026-07-20T13:32:22.515Z",
+    "message": "⏳ Trailing buy trigger reached at 1840 USDT, but BUY DEFERRED. Failed confirmations: OBI Support 30.0% < 55%. Waiting for indicator alignment.",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554342494-bst70",
+    "timestamp": "2026-07-20T13:32:22.494Z",
+    "message": "Trailing stop buy activated via Dip: price 1840 hit dip activation target 1840. (Trigger target: >= 1842).",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554342476-bllw2",
+    "timestamp": "2026-07-20T13:32:22.476Z",
+    "message": "Created [REAL] trailing stop buy for ETHUSDT. Initial price: 1850. Waiting for activation price: 1840 (Direction: DOWN). Trail: 2",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554342454-8grp7",
+    "timestamp": "2026-07-20T13:32:22.454Z",
+    "message": "Fetching initial price for ETHUSDT...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784554342426-eruum",
+    "timestamp": "2026-07-20T13:32:22.426Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Resetting order to pending activation. New peak: 76.2, Activation price: 75.95",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554342425-t0n7e",
+    "timestamp": "2026-07-20T13:32:22.425Z",
+    "message": "[REAL] Stop Loss Market Sell order executed successfully! Sell Qty: 1.2992, Order ID: mock_mexc_5",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554342424-mn4vw",
+    "timestamp": "2026-07-20T13:32:22.424Z",
+    "message": "[REAL] Stop Loss balance match: using free balance 1.2993 (unlocked free: 1.302)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554341681-evths",
+    "timestamp": "2026-07-20T13:32:21.681Z",
+    "message": "Trailing stop buy activated via Dip: price 76.2 hit dip activation target 76.49. (Trigger target: >= 76.205).",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554341388-885w3",
+    "timestamp": "2026-07-20T13:32:21.388Z",
+    "message": "[REAL] Cancelled TP Limit Sell order mock_mexc_4 on MEXC. Waiting 1.0s for balance unlock...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554341387-q7n6v",
+    "timestamp": "2026-07-20T13:32:21.387Z",
+    "message": "[REAL] Stop Loss hit! Market price 76.2 <= Stop Loss level 76.2500. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554341386-euvsa",
+    "timestamp": "2026-07-20T13:32:21.386Z",
+    "message": "🚨 [SMART SL GUARD] Heavy selling pressure confirmed at SL level! Bids Support 30.0% < 45% (Asks Dumping 70.0%). Proceeding with IMMEDIATE Stop Loss Market Sell!",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554341360-d3f04",
+    "timestamp": "2026-07-20T13:32:21.360Z",
+    "message": "🛡️ [SMART SL GUARD] Evaluating selling pressure at SL target 76.2000 USDT... Order Book Bids Support: 30.0%, Asks Selling Pressure: 70.0%.",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554341331-2l60w",
+    "timestamp": "2026-07-20T13:32:21.331Z",
+    "message": "Created [REAL] trailing stop buy for SOLUSDT. Initial price: 76.5. Bottom: 76.5. Trail: 0.05. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554341329-hjttc",
+    "timestamp": "2026-07-20T13:32:21.329Z",
+    "message": "Initial TP Limit Sell order placed successfully! Sell Qty: 1.2967, ID: mock_mexc_4",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554341328-sna0n",
+    "timestamp": "2026-07-20T13:32:21.328Z",
+    "message": "Fetched confirmed asset balance for SOL: free balance is 1.302 (gross quantity estimated: 1.302).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554339827-bdo7y",
+    "timestamp": "2026-07-20T13:32:19.827Z",
+    "message": "Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554339826-k1pam",
+    "timestamp": "2026-07-20T13:32:19.826Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_3: 76.5000 USDT (estimated fallback was 76.5).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554338825-fgeiv",
+    "timestamp": "2026-07-20T13:32:18.825Z",
+    "message": "Auto-Loop started: Placing first Spot BUY order immediately at market price on MEXC...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554338808-7uffz",
+    "timestamp": "2026-07-20T13:32:18.808Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784554338790-smea1",
+    "timestamp": "2026-07-20T13:32:18.790Z",
+    "message": "Cycle #1 completed (TAKE_PROFIT). Resetting order to pending activation. New peak: 0.7743, Activation price: 0.7643",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554338775-97mhp",
+    "timestamp": "2026-07-20T13:32:18.775Z",
+    "message": "[REAL] Take Profit hit! Limit Sell filled on MEXC at 0.7743 USDT.",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554338773-zojdl",
+    "timestamp": "2026-07-20T13:32:18.773Z",
+    "message": "🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support 49.9% >= 45% (Buyers absorbing dip). Extending Stop Loss by +$0.005 buffer. (Old SL: 0.7443, Extended SL: 0.7393). Market sell DEFERRED, waiting for bounce!",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554338772-hpykz",
+    "timestamp": "2026-07-20T13:32:18.772Z",
+    "message": "🛡️ [SMART SL GUARD] Evaluating selling pressure at SL target 0.7443 USDT... Order Book Bids Support: 49.9%, Asks Selling Pressure: 50.1%.",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554338657-adj3o",
+    "timestamp": "2026-07-20T13:32:18.657Z",
+    "message": "Created [REAL] trailing stop buy for SUIUSDT. Initial price: 0.7543. Bottom: 0.7543. Trail: 0.005. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554338655-egay9",
+    "timestamp": "2026-07-20T13:32:18.655Z",
+    "message": "Initial TP Limit Sell order placed successfully! Sell Qty: 132.0135, ID: mock_mexc_2",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554338653-9lutx",
+    "timestamp": "2026-07-20T13:32:18.653Z",
+    "message": "Fetched confirmed asset balance for SUI: free balance is 132.5432 (gross quantity estimated: 100).",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554337151-qd3ub",
+    "timestamp": "2026-07-20T13:32:17.151Z",
+    "message": "Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554337150-4jqp5",
+    "timestamp": "2026-07-20T13:32:17.150Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_1: 0.7543 USDT (estimated fallback was 0.7543).",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554336132-hmr43",
+    "timestamp": "2026-07-20T13:32:16.132Z",
+    "message": "Auto-Loop started: Placing first Spot BUY order immediately at market price on MEXC...",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1784554336127-lcsy6",
+    "timestamp": "2026-07-20T13:32:16.127Z",
+    "message": "Fetching initial price for SUIUSDT...",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  }
+]

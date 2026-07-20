@@ -1,0 +1,597 @@
+[
+  {
+    "id": "1784553773688-p64fh",
+    "timestamp": "2026-07-20T13:22:53.688Z",
+    "message": "Cycle #2 completed (TAKE_PROFIT). Resetting order to pending activation. New peak: 1837.4999999999998, Activation price: 1837.2999999999997",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553773687-spqiv",
+    "timestamp": "2026-07-20T13:22:53.687Z",
+    "message": "[REAL] Take Profit hit! Limit Sell filled on MEXC at 1837.4999999999998 USDT.",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553769211-n91ar",
+    "timestamp": "2026-07-20T13:22:49.211Z",
+    "message": "[REAL] Take Profit Limit Sell order placed on MEXC for 1.2967 tokens. Order ID: mock_mexc_16",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553769209-grp0g",
+    "timestamp": "2026-07-20T13:22:49.209Z",
+    "message": "Fetched confirmed asset balance for SOL: free balance is 1.302 (gross quantity estimated: 1.302).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553768227-zw4hn",
+    "timestamp": "2026-07-20T13:22:48.227Z",
+    "message": "[REAL] Take Profit Limit Sell order placed on MEXC for 63.8138 tokens. Order ID: mock_mexc_15",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553768226-murl2",
+    "timestamp": "2026-07-20T13:22:48.226Z",
+    "message": "Fetched confirmed asset balance for BANK: free balance is 64.0699 (gross quantity estimated: 63.9331).",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553768037-rr49q",
+    "timestamp": "2026-07-20T13:22:48.037Z",
+    "message": "Cycle #1 completed (TAKE_PROFIT). Resetting order to pending activation. New peak: 1847, Activation price: 1837",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553768017-gg2it",
+    "timestamp": "2026-07-20T13:22:48.017Z",
+    "message": "[REAL] Take Profit hit! Limit Sell filled on MEXC at 1847 USDT.",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553767995-r1zmq",
+    "timestamp": "2026-07-20T13:22:47.996Z",
+    "message": "🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support 50.0% >= 45% (Buyers absorbing dip). Extending Stop Loss by +$0.2 buffer. (Old SL: 1836.7500, Extended SL: 1836.5500). Market sell DEFERRED, waiting for bounce!",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553767994-fpa24",
+    "timestamp": "2026-07-20T13:22:47.995Z",
+    "message": "🛡️ [SMART SL GUARD] Evaluating selling pressure at SL target 1832.0000 USDT... Order Book Bids Support: 50.0%, Asks Selling Pressure: 50.0%.",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553767994-qocfu",
+    "timestamp": "2026-07-20T13:22:47.994Z",
+    "message": "Cycle #2 completed (STOP_LOSS). Resetting order to pending activation. New peak: 1832, Activation price: 1831.9",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553767977-zf3sf",
+    "timestamp": "2026-07-20T13:22:47.977Z",
+    "message": "[REAL] Stop Loss Market Sell order executed successfully! Sell Qty: 63.9417, Order ID: mock_mexc_14",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553767976-7k9r9",
+    "timestamp": "2026-07-20T13:22:47.976Z",
+    "message": "[REAL] Stop Loss balance match: using free balance 63.9417 (unlocked free: 64.0699)",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553767956-411qh",
+    "timestamp": "2026-07-20T13:22:47.956Z",
+    "message": "[REAL] Stop Loss hit! Market price 1832 <= Stop Loss level 1836.9800. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553767955-glqlh",
+    "timestamp": "2026-07-20T13:22:47.955Z",
+    "message": "🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support 50.0% >= 45% (Buyers absorbing dip). Extending Stop Loss by +$2 buffer. (Old SL: 1832.0000, Extended SL: 1830.0000). Market sell DEFERRED, waiting for bounce!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553767936-4vric",
+    "timestamp": "2026-07-20T13:22:47.936Z",
+    "message": "🛡️ [SMART SL GUARD] Evaluating selling pressure at SL target 1832.0000 USDT... Order Book Bids Support: 50.0%, Asks Selling Pressure: 50.0%.",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553767934-kviw2",
+    "timestamp": "2026-07-20T13:22:47.934Z",
+    "message": "[REAL] Take Profit Limit Sell order placed on MEXC for 0.0996 tokens. Order ID: mock_mexc_13",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553767932-oczap",
+    "timestamp": "2026-07-20T13:22:47.932Z",
+    "message": "Fetched confirmed asset balance for ETH: free balance is 0.1 (gross quantity estimated: 0.1).",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553767688-jg97q",
+    "timestamp": "2026-07-20T13:22:47.688Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553767687-4kx8y",
+    "timestamp": "2026-07-20T13:22:47.687Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: mock_mexc_12. Avg Fill Price: 1836.9999999999998. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553767686-3kxo2",
+    "timestamp": "2026-07-20T13:22:47.686Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_12: 1837.0000 USDT (estimated fallback was 1837).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553766725-egh43",
+    "timestamp": "2026-07-20T13:22:46.725Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553766707-i744o",
+    "timestamp": "2026-07-20T13:22:46.708Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: mock_mexc_11. Avg Fill Price: 1837. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553766685-g2tx4",
+    "timestamp": "2026-07-20T13:22:46.685Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_11: 1837.0000 USDT (estimated fallback was 1837).",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553766683-lmvwn",
+    "timestamp": "2026-07-20T13:22:46.683Z",
+    "message": "Placing Spot BUY order on MEXC for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553766681-t35y5",
+    "timestamp": "2026-07-20T13:22:46.681Z",
+    "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 1837 USDT! (Confirmed Metrics: OBI Support 65.0% >= 55%). Executing [REAL] buy...",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553766412-ikjbk",
+    "timestamp": "2026-07-20T13:22:46.412Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553766411-35pkn",
+    "timestamp": "2026-07-20T13:22:46.411Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: mock_mexc_10. Avg Fill Price: 1837. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553766409-bca6u",
+    "timestamp": "2026-07-20T13:22:46.409Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_10: 1837.0000 USDT (estimated fallback was 1837).",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553765680-drvio",
+    "timestamp": "2026-07-20T13:22:45.680Z",
+    "message": "Placing Spot BUY order on MEXC for BANKUSDT...",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553765679-hps1e",
+    "timestamp": "2026-07-20T13:22:45.679Z",
+    "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 1837 USDT!. Executing [REAL] buy...",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553765406-57gai",
+    "timestamp": "2026-07-20T13:22:45.406Z",
+    "message": "Placing Spot BUY order on MEXC for ETHUSDT...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553765387-wghfo",
+    "timestamp": "2026-07-20T13:22:45.387Z",
+    "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 1837 USDT! (Confirmed Metrics: OBI Support 65.0% >= 55%). Executing [REAL] buy...",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553765385-b51gy",
+    "timestamp": "2026-07-20T13:22:45.385Z",
+    "message": "[REAL] Stop Loss Market Sell order executed successfully! Sell Qty: 1.2992, Order ID: mock_mexc_9",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553765384-xr8oy",
+    "timestamp": "2026-07-20T13:22:45.384Z",
+    "message": "[REAL] Stop Loss balance match: using free balance 1.2993 (unlocked free: 1.302)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553764679-0nxat",
+    "timestamp": "2026-07-20T13:22:44.679Z",
+    "message": "Trailing stop buy activated via Dip: price 1835 hit dip activation target 1841.9. (Trigger target: >= 1835.01).",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553764381-xv8z2",
+    "timestamp": "2026-07-20T13:22:44.381Z",
+    "message": "[REAL] Cancelled TP Limit Sell order mock_mexc_8 on MEXC. Waiting 1.0s for balance unlock...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553764379-osg5k",
+    "timestamp": "2026-07-20T13:22:44.379Z",
+    "message": "[REAL] Stop Loss hit! Market price 1835 <= Stop Loss level 1839.5000. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553764356-hsov0",
+    "timestamp": "2026-07-20T13:22:44.356Z",
+    "message": "New bottom detected for ETHUSDT: 1835 (was 1840). Recalculated trigger to: 1837",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553764329-j80s1",
+    "timestamp": "2026-07-20T13:22:44.329Z",
+    "message": "⏳ Trailing buy trigger reached at 1842 USDT, but BUY DEFERRED. Failed confirmations: OBI Support 42.0% < 55%. Waiting for indicator alignment.",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553764325-hmgbo",
+    "timestamp": "2026-07-20T13:22:44.325Z",
+    "message": "[REAL] Take Profit Limit Sell order placed on MEXC for 1.2967 tokens. Order ID: mock_mexc_8",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553764324-jaab2",
+    "timestamp": "2026-07-20T13:22:44.324Z",
+    "message": "Fetched confirmed asset balance for SOL: free balance is 1.302 (gross quantity estimated: 0.0049).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553762822-l8wlv",
+    "timestamp": "2026-07-20T13:22:42.822Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553762821-290s3",
+    "timestamp": "2026-07-20T13:22:42.821Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: mock_mexc_7. Avg Fill Price: 1840. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553762820-e1hfy",
+    "timestamp": "2026-07-20T13:22:42.820Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_7: 1840.0000 USDT (estimated fallback was 1840).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553762677-5wsmp",
+    "timestamp": "2026-07-20T13:22:42.677Z",
+    "message": "⏳ Trailing buy trigger reached at 1840 USDT, but BUY DEFERRED. Failed confirmations: OBI Support 30.0% < 55%. Waiting for indicator alignment.",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553761818-2xhiu",
+    "timestamp": "2026-07-20T13:22:41.818Z",
+    "message": "Placing Spot BUY order on MEXC for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553761817-huvhg",
+    "timestamp": "2026-07-20T13:22:41.817Z",
+    "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 1840 USDT!. Executing [REAL] buy...",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553761797-c03o8",
+    "timestamp": "2026-07-20T13:22:41.797Z",
+    "message": "Trailing stop buy activated via Dip: price 1840 hit dip activation target 1840. (Trigger target: >= 1842).",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553761778-krw9u",
+    "timestamp": "2026-07-20T13:22:41.778Z",
+    "message": "Created [REAL] trailing stop buy for ETHUSDT. Initial price: 1850. Waiting for activation price: 1840 (Direction: DOWN). Trail: 2",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553761761-dfw7i",
+    "timestamp": "2026-07-20T13:22:41.761Z",
+    "message": "Fetching initial price for ETHUSDT...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784553761740-877fn",
+    "timestamp": "2026-07-20T13:22:41.740Z",
+    "message": "Created [REAL] trailing stop buy for SOLUSDT. Initial price: 10. Bottom: 10. Trail: 0.1. Trigger targets: >= 10.1",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553761718-08fd2",
+    "timestamp": "2026-07-20T13:22:41.718Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553761716-kexxu",
+    "timestamp": "2026-07-20T13:22:41.716Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Resetting order to pending activation. New peak: 0.2, Activation price: 0.1",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553761700-bu1wo",
+    "timestamp": "2026-07-20T13:22:41.700Z",
+    "message": "[REAL] Stop Loss Market Sell order executed successfully! Sell Qty: 63.94, Order ID: mock_mexc_6",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553761699-1bebc",
+    "timestamp": "2026-07-20T13:22:41.699Z",
+    "message": "[REAL] Quantity scale invalid for 63.9417. Retrying with broader decimal precision...",
+    "type": "warning",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553761698-4xvu3",
+    "timestamp": "2026-07-20T13:22:41.698Z",
+    "message": "[REAL] Stop Loss balance match: using free balance 63.9417 (unlocked free: 64.0699)",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553761675-f5gvo",
+    "timestamp": "2026-07-20T13:22:41.675Z",
+    "message": "Trailing stop buy activated via Dip: price 0.2 hit dip activation target 76. (Trigger target: >= 0.25).",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553760677-410yg",
+    "timestamp": "2026-07-20T13:22:40.677Z",
+    "message": "[REAL] Cancelled TP Limit Sell order mock_mexc_5 on MEXC. Waiting 1.0s for balance unlock...",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553760676-qh0yd",
+    "timestamp": "2026-07-20T13:22:40.676Z",
+    "message": "[REAL] Stop Loss hit! Market price 0.2 <= Stop Loss level 0.2100. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553760674-zr0h6",
+    "timestamp": "2026-07-20T13:22:40.674Z",
+    "message": "Created [REAL] trailing stop buy for BANKUSDT. Initial price: 0.23. Bottom: 0.23. Trail: 0.01. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553760673-toa6i",
+    "timestamp": "2026-07-20T13:22:40.673Z",
+    "message": "Initial TP Limit Sell order placed successfully! Sell Qty: 63.81, ID: mock_mexc_5",
+    "type": "success",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553760671-p0l7w",
+    "timestamp": "2026-07-20T13:22:40.671Z",
+    "message": "Initial TP Limit Sell quantity scale invalid for 63.8138. Retrying with broader precision...",
+    "type": "warning",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553760669-jkbwh",
+    "timestamp": "2026-07-20T13:22:40.669Z",
+    "message": "Fetched confirmed asset balance for BANK: free balance is 64.0699 (gross quantity estimated: 63.93).",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553759167-a9ilm",
+    "timestamp": "2026-07-20T13:22:39.167Z",
+    "message": "Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553759161-hqrly",
+    "timestamp": "2026-07-20T13:22:39.161Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_4: 0.2300 USDT (estimated fallback was 0.23).",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553758146-93qu8",
+    "timestamp": "2026-07-20T13:22:38.146Z",
+    "message": "[REAL] BUY Quantity scale invalid for 63.9331. Retrying with broader precision...",
+    "type": "warning",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553758129-0dkc9",
+    "timestamp": "2026-07-20T13:22:38.129Z",
+    "message": "Auto-Loop started: Placing first Spot BUY order immediately at market price on MEXC...",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553758108-na09f",
+    "timestamp": "2026-07-20T13:22:38.108Z",
+    "message": "Fetching initial price for BANKUSDT...",
+    "type": "info",
+    "symbol": "BANKUSDT"
+  },
+  {
+    "id": "1784553758104-rxvwf",
+    "timestamp": "2026-07-20T13:22:38.104Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Resetting order to pending activation. New peak: 76.2, Activation price: 76",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553758102-436ho",
+    "timestamp": "2026-07-20T13:22:38.102Z",
+    "message": "[REAL] Stop Loss Market Sell order executed successfully! Sell Qty: 1, Order ID: mock_mexc_3",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553758083-mxbm9",
+    "timestamp": "2026-07-20T13:22:38.083Z",
+    "message": "[REAL] Oversold (30005) detected for 1.29. Reducing quantity by 0.5% buffer and retrying...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553758083-092gu",
+    "timestamp": "2026-07-20T13:22:38.083Z",
+    "message": "[REAL] Quantity scale invalid for 1.2992. Retrying with broader decimal precision...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553758081-r7g8q",
+    "timestamp": "2026-07-20T13:22:38.081Z",
+    "message": "[REAL] Stop Loss balance match: using free balance 1.2993 (unlocked free: 1.302)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553757063-rgvzh",
+    "timestamp": "2026-07-20T13:22:37.063Z",
+    "message": "[REAL] Cancelled TP Limit Sell order mock_mexc_2 on MEXC. Waiting 1.0s for balance unlock...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553757061-6umpc",
+    "timestamp": "2026-07-20T13:22:37.061Z",
+    "message": "[REAL] Stop Loss hit! Market price 76.2 <= Stop Loss level 76.2500. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553757060-yp6wf",
+    "timestamp": "2026-07-20T13:22:37.060Z",
+    "message": "🚨 [SMART SL GUARD] Heavy selling pressure confirmed at SL level! Bids Support 29.5% < 45% (Asks Dumping 70.5%). Proceeding with IMMEDIATE Stop Loss Market Sell!",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553757046-zaghb",
+    "timestamp": "2026-07-20T13:22:37.046Z",
+    "message": "🛡️ [SMART SL GUARD] Evaluating selling pressure at SL target 76.2000 USDT... Order Book Bids Support: 29.5%, Asks Selling Pressure: 70.5%.",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553757023-axo8h",
+    "timestamp": "2026-07-20T13:22:37.023Z",
+    "message": "Created [REAL] trailing stop buy for SOLUSDT. Initial price: 76.5. Bottom: 76.5. Trail: 0.05. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553757021-zp457",
+    "timestamp": "2026-07-20T13:22:37.021Z",
+    "message": "Initial TP Limit Sell order placed successfully! Sell Qty: 1.2967, ID: mock_mexc_2",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553757020-mc2vb",
+    "timestamp": "2026-07-20T13:22:37.020Z",
+    "message": "Fetched confirmed asset balance for SOL: free balance is 1.302 (gross quantity estimated: 1.302).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553755517-yh6g0",
+    "timestamp": "2026-07-20T13:22:35.517Z",
+    "message": "Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553755516-igjhy",
+    "timestamp": "2026-07-20T13:22:35.516Z",
+    "message": "Fetched actual MEXC fill price for order mock_mexc_1: 76.5000 USDT (estimated fallback was 76.5).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553754514-sngno",
+    "timestamp": "2026-07-20T13:22:34.514Z",
+    "message": "Auto-Loop started: Placing first Spot BUY order immediately at market price on MEXC...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784553754512-kn6e6",
+    "timestamp": "2026-07-20T13:22:34.512Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  }
+]

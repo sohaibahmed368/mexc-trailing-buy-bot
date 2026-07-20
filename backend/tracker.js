@@ -554,6 +554,24 @@ class OrderTracker {
 
       // 1.5 Check TP/SL OCO checks if already bought and holding
       if (order.status === 'TP_SL_ACTIVE') {
+        // Profit Lock Guard: Check if price reached 50% progress to Take Profit
+        if (order.takeProfit && order.trailValue && !order.isSlProfitLocked && order.executionPrice) {
+          const tpTargetProgress = order.takeProfit * 0.5;
+          if (currentPrice >= (order.executionPrice + tpTargetProgress)) {
+            order.isSlProfitLocked = true;
+            // Requested Formula: executionPrice + (trailValue * 2)
+            order.lockedSlPrice = order.executionPrice + (order.trailValue * 2);
+            const tpTriggerPrice = (order.executionPrice + tpTargetProgress).toFixed(4);
+            const newSlTarget = order.lockedSlPrice.toFixed(4);
+            this.log(
+              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to +$${(order.trailValue * 2).toFixed(2)} above Buy Price (${newSlTarget} USDT). Profit Locked!`,
+              'success',
+              order.symbol
+            );
+            changed = true;
+          }
+        }
+
         if (order.dryRun) {
           // Dry Run TP Check
           if (order.takeProfit && currentPrice >= (order.executionPrice + order.takeProfit)) {
@@ -565,10 +583,20 @@ class OrderTracker {
             this.handleOrderCycleComplete(order);
             continue;
           }
+
+          // Determine effective Stop Loss Target Price
+          let targetSlPrice = order.isSlProfitLocked && order.lockedSlPrice
+            ? order.lockedSlPrice
+            : (order.executionPrice - order.stopLoss);
+          
+          if (order.filterSmartSl && order.isSlExtended && order.slBuffer) {
+            targetSlPrice -= order.slBuffer;
+          }
+
           // Dry Run SL Check
-          if (order.stopLoss && currentPrice <= (order.executionPrice - order.stopLoss)) {
+          if (order.stopLoss && currentPrice <= targetSlPrice) {
             order.status = 'TRIGGERED';
-            order.sellExecutionPrice = order.executionPrice - order.stopLoss;
+            order.sellExecutionPrice = targetSlPrice;
             order.sellTriggeredAt = new Date().toISOString();
             this.log(`[DRY RUN] Stop Loss hit! Simulated Market Sell executed at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
             changed = true;
@@ -598,13 +626,17 @@ class OrderTracker {
             }
           }
 
-          // Real Order Stop Loss Check
-          const effectiveSlOffset = (order.filterSmartSl && order.isSlExtended && order.slBuffer)
-            ? (order.stopLoss + order.slBuffer)
-            : order.stopLoss;
+          // Real Order Stop Loss Target Price calculation
+          let targetSlPrice = order.isSlProfitLocked && order.lockedSlPrice
+            ? order.lockedSlPrice
+            : (order.executionPrice - order.stopLoss);
 
-          if (order.stopLoss && currentPrice <= (order.executionPrice - effectiveSlOffset)) {
-            // Check Smart SL Guard seller exhaustion before executing base SL
+          if (order.filterSmartSl && order.isSlExtended && order.slBuffer) {
+            targetSlPrice -= order.slBuffer;
+          }
+
+          if (order.stopLoss && currentPrice <= targetSlPrice) {
+            // Check Smart SL Guard seller exhaustion before executing base/profit-locked SL
             if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
               let isSellerExhausted = false;
               let bidsRatioPct = '0';
@@ -647,8 +679,8 @@ class OrderTracker {
 
               if (isSellerExhausted) {
                 order.isSlExtended = true;
-                const oldSlTarget = (order.executionPrice - order.stopLoss).toFixed(4);
-                const newSlTarget = (order.executionPrice - (order.stopLoss + order.slBuffer)).toFixed(4);
+                const oldSlTarget = targetSlPrice.toFixed(4);
+                const newSlTarget = (targetSlPrice - order.slBuffer).toFixed(4);
                 this.log(
                   `🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support ${bidsRatioPct}% >= 45% (Buyers absorbing dip). Extending Stop Loss by +$${order.slBuffer} buffer. (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Market sell DEFERRED, waiting for bounce!`,
                   'success',
@@ -666,7 +698,7 @@ class OrderTracker {
             }
 
             order.status = 'PENDING_EXECUTION'; // block double trigger
-            this.log(`[REAL] Stop Loss hit! Market price ${currentPrice} <= Stop Loss level ${(order.executionPrice - effectiveSlOffset).toFixed(4)}. Executing market sell on MEXC...`, 'warning', order.symbol);
+            this.log(`[REAL] Stop Loss hit! Market price ${currentPrice} <= Stop Loss level ${targetSlPrice.toFixed(4)}. Executing market sell on MEXC...`, 'warning', order.symbol);
             
             if (order.mexcSellOrderId) {
               try {
@@ -1094,6 +1126,9 @@ class OrderTracker {
         order.sellTriggeredAt = null;
         order.triggeredAt = null;
         order.activatedAt = null;
+        order.isSlExtended = false;
+        order.isSlProfitLocked = false;
+        order.lockedSlPrice = null;
 
         this.log(
           `Cycle #${cycleNum} completed (${type}). Resetting order to pending activation. New peak: ${order.peakPrice}, Activation price: ${order.activationPrice}`,
