@@ -572,33 +572,13 @@ class OrderTracker {
           }
         }
 
-        if (order.dryRun) {
+                if (order.dryRun) {
           // Dry Run TP Check
           if (order.takeProfit && currentPrice >= (order.executionPrice + order.takeProfit)) {
             order.status = 'TRIGGERED';
             order.sellExecutionPrice = order.executionPrice + order.takeProfit;
             order.sellTriggeredAt = new Date().toISOString();
             this.log(`[DRY RUN] Take Profit hit! Simulated Limit Sell executed at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
-            changed = true;
-            this.handleOrderCycleComplete(order);
-            continue;
-          }
-
-          // Determine effective Stop Loss Target Price
-          let targetSlPrice = order.isSlProfitLocked && order.lockedSlPrice
-            ? order.lockedSlPrice
-            : (order.executionPrice - order.stopLoss);
-          
-          if (order.filterSmartSl && order.isSlExtended && order.slBuffer) {
-            targetSlPrice -= order.slBuffer;
-          }
-
-          // Dry Run SL Check
-          if (order.stopLoss && currentPrice <= targetSlPrice) {
-            order.status = 'TRIGGERED';
-            order.sellExecutionPrice = targetSlPrice;
-            order.sellTriggeredAt = new Date().toISOString();
-            this.log(`[DRY RUN] Stop Loss hit! Simulated Market Sell executed at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
             changed = true;
             this.handleOrderCycleComplete(order);
             continue;
@@ -625,78 +605,89 @@ class OrderTracker {
               }
             }
           }
+        }
 
-          // Real Order Stop Loss Target Price calculation
-          let targetSlPrice = order.isSlProfitLocked && order.lockedSlPrice
-            ? order.lockedSlPrice
-            : (order.executionPrice - order.stopLoss);
+        // Common Stop Loss Target Price calculation (Dry Run & Real Mode)
+        let targetSlPrice = order.isSlProfitLocked && order.lockedSlPrice
+          ? order.lockedSlPrice
+          : (order.executionPrice - order.stopLoss);
+        
+        if (order.filterSmartSl && order.isSlExtended && order.slBuffer) {
+          targetSlPrice -= order.slBuffer;
+        }
 
-          if (order.filterSmartSl && order.isSlExtended && order.slBuffer) {
-            targetSlPrice -= order.slBuffer;
-          }
-
-          if (order.stopLoss && currentPrice <= targetSlPrice) {
-            // Check Smart SL Guard seller exhaustion before executing base/profit-locked SL
-            if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
-              let isSellerExhausted = false;
-              let bidsRatioPct = '0';
-              let asksRatioPct = '0';
-              try {
-                const depth = await this.mexcClient.getDepth(order.symbol, 100);
-                let bidsValue = 0;
-                let asksValue = 0;
-                const rangeLower = currentPrice * 0.985;
-                const rangeUpper = currentPrice * 1.015;
-                if (depth && Array.isArray(depth.bids)) {
-                  depth.bids.forEach(([p, q]) => {
-                    const price = parseFloat(p);
-                    if (price >= rangeLower && price <= rangeUpper) bidsValue += (price * parseFloat(q));
-                  });
-                }
-                if (depth && Array.isArray(depth.asks)) {
-                  depth.asks.forEach(([p, q]) => {
-                    const price = parseFloat(p);
-                    if (price >= rangeLower && price <= rangeUpper) asksValue += (price * parseFloat(q));
-                  });
-                }
-                const totalValue = bidsValue + asksValue;
-                const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
-                bidsRatioPct = (bidsRatio * 100).toFixed(1);
-                asksRatioPct = ((1 - bidsRatio) * 100).toFixed(1);
-
-                this.log(
-                  `🛡️ [SMART SL GUARD] Evaluating selling pressure at SL target ${currentPrice.toFixed(4)} USDT... Order Book Bids Support: ${bidsRatioPct}%, Asks Selling Pressure: ${asksRatioPct}%.`,
-                  'info',
-                  order.symbol
-                );
-
-                if (bidsRatio >= 0.45) {
-                  isSellerExhausted = true;
-                }
-              } catch (e) {
-                this.log(`Smart SL Guard depth query failed: ${e.message}`, 'warning', order.symbol);
+        // Check if Stop Loss target is hit
+        if (order.stopLoss && currentPrice <= targetSlPrice) {
+          // Smart SL Guard seller exhaustion evaluation (common to both Dry Run and Real Mode)
+          if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
+            let isSellerExhausted = false;
+            let bidsRatioPct = '0';
+            let asksRatioPct = '0';
+            try {
+              const depth = await this.mexcClient.getDepth(order.symbol, 100);
+              let bidsValue = 0;
+              let asksValue = 0;
+              const rangeLower = currentPrice * 0.985;
+              const rangeUpper = currentPrice * 1.015;
+              if (depth && Array.isArray(depth.bids)) {
+                depth.bids.forEach(([p, q]) => {
+                  const price = parseFloat(p);
+                  if (price >= rangeLower && price <= rangeUpper) bidsValue += (price * parseFloat(q));
+                });
               }
-
-              if (isSellerExhausted) {
-                order.isSlExtended = true;
-                const oldSlTarget = targetSlPrice.toFixed(4);
-                const newSlTarget = (targetSlPrice - order.slBuffer).toFixed(4);
-                this.log(
-                  `🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support ${bidsRatioPct}% >= 45% (Buyers absorbing dip). Extending Stop Loss by +$${order.slBuffer} buffer. (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Market sell DEFERRED, waiting for bounce!`,
-                  'success',
-                  order.symbol
-                );
-                changed = true;
-                continue;
-              } else {
-                this.log(
-                  `🚨 [SMART SL GUARD] Heavy selling pressure confirmed at SL level! Bids Support ${bidsRatioPct}% < 45% (Asks Dumping ${asksRatioPct}%). Proceeding with IMMEDIATE Stop Loss Market Sell!`,
-                  'warning',
-                  order.symbol
-                );
+              if (depth && Array.isArray(depth.asks)) {
+                depth.asks.forEach(([p, q]) => {
+                  const price = parseFloat(p);
+                  if (price >= rangeLower && price <= rangeUpper) asksValue += (price * parseFloat(q));
+                });
               }
+              const totalValue = bidsValue + asksValue;
+              const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
+              bidsRatioPct = (bidsRatio * 100).toFixed(1);
+              asksRatioPct = ((1 - bidsRatio) * 100).toFixed(1);
+
+              this.log(
+                `🛡️ [SMART SL GUARD] Evaluating selling pressure at SL target ${currentPrice.toFixed(4)} USDT... Order Book Bids Support: ${bidsRatioPct}%, Asks Selling Pressure: ${asksRatioPct}%.`,
+                'info',
+                order.symbol
+              );
+
+              if (bidsRatio >= 0.45) {
+                isSellerExhausted = true;
+              }
+            } catch (e) {
+              this.log(`Smart SL Guard depth query failed: ${e.message}`, 'warning', order.symbol);
             }
 
+            if (isSellerExhausted) {
+              order.isSlExtended = true;
+              const oldSlTarget = targetSlPrice.toFixed(4);
+              const newSlTarget = (targetSlPrice - order.slBuffer).toFixed(4);
+              this.log(
+                `🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support ${bidsRatioPct}% >= 45% (Buyers absorbing dip). Extending Stop Loss by +$${order.slBuffer} buffer. (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Market sell DEFERRED, waiting for bounce!`,
+                'success',
+                order.symbol
+              );
+              changed = true;
+              continue;
+            } else {
+              this.log(
+                `🚨 [SMART SL GUARD] Heavy selling pressure confirmed at SL level! Bids Support ${bidsRatioPct}% < 45% (Asks Dumping ${asksRatioPct}%). Proceeding with IMMEDIATE Stop Loss Market Sell!`,
+                'warning',
+                order.symbol
+              );
+            }
+          }
+
+          if (order.dryRun) {
+            order.status = 'TRIGGERED';
+            order.sellExecutionPrice = targetSlPrice;
+            order.sellTriggeredAt = new Date().toISOString();
+            this.log(`[DRY RUN] Stop Loss hit! Simulated Market Sell executed at ${targetSlPrice} USDT.`, 'success', order.symbol);
+            changed = true;
+            this.handleOrderCycleComplete(order);
+            continue;
+          } else {
             order.status = 'PENDING_EXECUTION'; // block double trigger
             this.log(`[REAL] Stop Loss hit! Market price ${currentPrice} <= Stop Loss level ${targetSlPrice.toFixed(4)}. Executing market sell on MEXC...`, 'warning', order.symbol);
             
@@ -721,7 +712,6 @@ class OrderTracker {
                 const asset = order.symbol.replace('USDT', '').toUpperCase();
                 let assetBal = balances.find(b => b.asset.toUpperCase() === asset);
 
-                // If balance is still unlocking/settling, wait 1.0s more and re-query
                 if (!assetBal || assetBal.free < (grossQty * 0.5)) {
                   await new Promise(r => setTimeout(r, 1000));
                   balances = await this.mexcClient.getBalances();
