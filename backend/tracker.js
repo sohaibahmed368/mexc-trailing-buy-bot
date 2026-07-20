@@ -480,11 +480,14 @@ class OrderTracker {
 
   // Execute a single iteration of tracking
   async tick() {
-    const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
-    if (activeOrders.length === 0) {
-      this.checkTrackingLoop();
-      return;
-    }
+    if (this.isTicking) return;
+    this.isTicking = true;
+    try {
+      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
+      if (activeOrders.length === 0) {
+        this.checkTrackingLoop();
+        return;
+      }
 
     // Get unique active symbols to minimize API calls
     const symbols = [...new Set(activeOrders.map(o => o.symbol))];
@@ -623,6 +626,8 @@ class OrderTracker {
         if (order.justProfitLocked) {
           delete order.justProfitLocked;
         } else if (order.stopLoss && currentPrice <= targetSlPrice) {
+          order.status = 'PENDING_EXECUTION'; // Transition immediately to block duplicate execution!
+
           // Smart SL Guard seller exhaustion evaluation (common to both Dry Run and Real Mode)
           if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
             let isSellerExhausted = false;
@@ -666,6 +671,7 @@ class OrderTracker {
 
             if (isSellerExhausted) {
               order.isSlExtended = true;
+              order.status = 'TP_SL_ACTIVE'; // Revert back to active state for extended tracking!
               const oldSlTarget = targetSlPrice.toFixed(4);
               const newSlTarget = (targetSlPrice - order.slBuffer).toFixed(4);
               this.log(
@@ -693,17 +699,18 @@ class OrderTracker {
             this.handleOrderCycleComplete(order);
             continue;
           } else {
-            order.status = 'PENDING_EXECUTION'; // block double trigger
             this.log(`[REAL] Stop Loss hit! Market price ${currentPrice} <= Stop Loss level ${targetSlPrice.toFixed(4)}. Executing market sell on MEXC...`, 'warning', order.symbol);
             
-            if (order.mexcSellOrderId) {
+            const mexcSellId = order.mexcSellOrderId;
+            order.mexcSellOrderId = null; // Clear immediately to prevent duplicate cancellation calls
+
+            if (mexcSellId) {
               try {
-                await this.mexcClient.cancelOrder(order.symbol, order.mexcSellOrderId);
-                this.log(`[REAL] Cancelled TP Limit Sell order ${order.mexcSellOrderId} on MEXC. Waiting 1.0s for balance unlock...`, 'info', order.symbol);
-                order.mexcSellOrderId = null;
+                await this.mexcClient.cancelOrder(order.symbol, mexcSellId);
+                this.log(`[REAL] Cancelled TP Limit Sell order ${mexcSellId} on MEXC. Waiting 1.0s for balance unlock...`, 'info', order.symbol);
                 await new Promise(r => setTimeout(r, 1000));
               } catch (e) {
-                this.log(`[REAL] Failed to cancel TP order: ${e.message}. Proceeding with market sell.`, 'error', order.symbol);
+                this.log(`[REAL] Failed to cancel TP order ${mexcSellId}: ${e.message}. Proceeding with market sell.`, 'error', order.symbol);
               }
             }
 
@@ -1087,6 +1094,9 @@ class OrderTracker {
 
     if (changed) {
       this.saveOrders();
+    }
+    } finally {
+      this.isTicking = false;
     }
   }
 
