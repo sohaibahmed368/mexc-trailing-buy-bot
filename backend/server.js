@@ -285,6 +285,82 @@ app.delete('/api/orders', (req, res) => {
   }
 });
 
+// Independent Short-Term Scalp Radar Endpoint (Zero Logging to Tracker Console)
+app.get('/api/scalp-radar/:symbol', async (req, res) => {
+  const symbol = (req.params.symbol || 'ETHUSDT').toUpperCase();
+  try {
+    const price = await mexcClient.getTickerPrice(symbol);
+    const [depth, klines] = await Promise.all([
+      mexcClient.getDepth(symbol, 100).catch(() => null),
+      mexcClient.getKlines(symbol, '1m', 30).catch(() => null)
+    ]);
+
+    let bidsRatio = 0.5;
+    let bidsValue = 0;
+    let asksValue = 0;
+
+    if (depth) {
+      const rangeLower = price * 0.985;
+      const rangeUpper = price * 1.015;
+      if (Array.isArray(depth.bids)) {
+        depth.bids.forEach(([p, q]) => {
+          const pr = parseFloat(p);
+          if (pr >= rangeLower && pr <= rangeUpper) bidsValue += (pr * parseFloat(q));
+        });
+      }
+      if (Array.isArray(depth.asks)) {
+        depth.asks.forEach(([p, q]) => {
+          const pr = parseFloat(p);
+          if (pr >= rangeLower && pr <= rangeUpper) asksValue += (pr * parseFloat(q));
+        });
+      }
+      const total = bidsValue + asksValue;
+      if (total > 0) bidsRatio = bidsValue / total;
+    }
+
+    let volumeRatio = 1.0;
+    let rsiValue = 50.0;
+
+    if (klines && klines.length >= 15) {
+      const currentVol = parseFloat(klines[klines.length - 1][5]);
+      let totalPrevVol = 0;
+      for (let j = klines.length - 6; j < klines.length - 1; j++) {
+        if (klines[j]) totalPrevVol += parseFloat(klines[j][5]);
+      }
+      const avgPrevVol = totalPrevVol / 5;
+      volumeRatio = avgPrevVol > 0 ? (currentVol / avgPrevVol) : 1.0;
+
+      const closes = klines.map(k => parseFloat(k[4]));
+      rsiValue = tracker.calculateRSI(closes, 14);
+    }
+
+    const obiBidsPct = parseFloat((bidsRatio * 100).toFixed(1));
+    const volMultiplier = parseFloat(volumeRatio.toFixed(2));
+    const rsi = parseFloat(rsiValue.toFixed(1));
+
+    const obiPass = obiBidsPct >= 55.0;
+    const volPass = volMultiplier >= 1.5;
+    const rsiPass = rsi <= 40.0;
+
+    const signalActive = obiPass && volPass && rsiPass;
+
+    res.json({
+      symbol,
+      price,
+      timestamp: new Date().toISOString(),
+      obiBidsPct,
+      volMultiplier,
+      rsi,
+      obiPass,
+      volPass,
+      rsiPass,
+      signalActive
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Fetch logs
 app.get('/api/logs', (req, res) => {
   res.json(tracker.getLogs());
