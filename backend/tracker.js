@@ -102,14 +102,25 @@ class OrderTracker {
       // Wait 1.5 seconds for order fill settlement and balance updating on MEXC
       await new Promise(r => setTimeout(r, 1500));
       
-      const balances = await this.mexcClient.getBalances();
-      const assetBal = balances.find(b => b.asset.toUpperCase() === asset);
-      if (assetBal && assetBal.free > 0) {
-        this.log(`Fetched asset balance for ${asset}: free balance is ${assetBal.free} (gross quantity estimated: ${grossQty}).`, 'info', symbol);
+      let balances = await this.mexcClient.getBalances();
+      let assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+      
+      // If balance update is still settling (free balance is significantly less than expected bought qty), wait 1.5s more and re-query
+      if (!assetBal || assetBal.free < (grossQty * 0.5)) {
+        this.log(`Asset balance for ${asset} (${assetBal ? assetBal.free : 0}) is less than expected bought qty (${grossQty}). Waiting 1.5s for MEXC settlement...`, 'warning', symbol);
+        await new Promise(r => setTimeout(r, 1500));
+        balances = await this.mexcClient.getBalances();
+        assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+      }
+
+      if (assetBal && assetBal.free >= (grossQty * 0.5)) {
+        this.log(`Fetched confirmed asset balance for ${asset}: free balance is ${assetBal.free} (gross quantity estimated: ${grossQty}).`, 'info', symbol);
         // Apply 0.2% safety buffer + truncate to 4 decimal places to prevent 30005 Oversold errors
         const safeFree = assetBal.free * 0.998;
         const truncated = Math.floor(safeFree * 10000) / 10000;
         if (truncated > 0) return truncated;
+      } else {
+        this.log(`Balance query returned insufficient balance for ${asset} (${assetBal ? assetBal.free : 0}). Using fee-adjusted gross estimate (${grossQty}).`, 'warning', symbol);
       }
     } catch (err) {
       this.log(`Balance lookup failed: ${err.message}. Falling back to estimated quantity with fee margin.`, 'warning', symbol);
