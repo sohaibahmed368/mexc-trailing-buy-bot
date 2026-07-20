@@ -307,14 +307,48 @@ class OrderTracker {
       } else {
         try {
           this.log(`Auto-Loop started: Placing first Spot BUY order immediately at market price on MEXC...`, 'info', symbol);
-          const orderParams = {
-            symbol,
-            side: 'BUY',
-            type: orderType || 'MARKET',
-            quantity: newOrder.quantity,
-            quoteOrderQty: newOrder.quoteOrderQty
-          };
-          const result = await this.mexcClient.placeOrder(orderParams);
+          
+          let result = null;
+          let lastBuyErr = null;
+          const decimalsToTry = [10000, 100, 1];
+
+          if (newOrder.quantity) {
+            for (const mult of decimalsToTry) {
+              const qtyToTry = Math.floor(newOrder.quantity * mult) / mult;
+              if (qtyToTry <= 0) continue;
+              try {
+                const orderParams = {
+                  symbol,
+                  side: 'BUY',
+                  type: orderType || 'MARKET',
+                  quantity: qtyToTry
+                };
+                result = await this.mexcClient.placeOrder(orderParams);
+                if (result && result.orderId) break;
+              } catch (err) {
+                lastBuyErr = err;
+                const errMsg = err.message || '';
+                if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
+                  this.log(`[REAL] BUY Quantity scale invalid for ${qtyToTry}. Retrying with broader precision...`, 'warning', symbol);
+                  continue;
+                }
+                throw err;
+              }
+            }
+          } else {
+            const orderParams = {
+              symbol,
+              side: 'BUY',
+              type: orderType || 'MARKET',
+              quoteOrderQty: newOrder.quoteOrderQty
+            };
+            result = await this.mexcClient.placeOrder(orderParams);
+          }
+
+          if (!result || !result.orderId) {
+            throw lastBuyErr || new Error('Failed to execute initial buy order.');
+          }
+
           newOrder.mexcOrderId = result.orderId;
           
           // Fetch actual fill price and quantity from MEXC to protect against slippage
@@ -329,31 +363,39 @@ class OrderTracker {
             this.log(`Querying asset balance to calculate fee-adjusted sell quantity...`, 'info', symbol);
             const sellQty = await this.getFeeAdjustedBalance(symbol, grossQty);
             
-            this.log(`Placing first Take Profit LIMIT SELL order on MEXC for ${sellQty} tokens at ${tpPrice}...`, 'info', symbol);
-            const tpParams = {
-              symbol,
-              side: 'SELL',
-              type: 'LIMIT',
-              quantity: sellQty,
-              price: tpPrice
-            };
-            try {
-              const tpResult = await this.mexcClient.placeOrder(tpParams);
-              newOrder.mexcSellOrderId = tpResult.orderId;
-            } catch (firstTpErr) {
-              this.log(`Initial TP Limit Sell failed (${firstTpErr.message}). Retrying with fee buffer safety quantity...`, 'warning', symbol);
-              const retryQty = Math.floor(sellQty * 0.998 * 10000) / 10000;
-              if (retryQty > 0) {
-                const retryParams = {
+            let tpResult = null;
+            let lastTpErr = null;
+            const safeQty = sellQty * 0.998;
+            
+            for (const mult of decimalsToTry) {
+              const qtyToTry = Math.floor(safeQty * mult) / mult;
+              if (qtyToTry <= 0) continue;
+              try {
+                const tpParams = {
                   symbol,
                   side: 'SELL',
                   type: 'LIMIT',
-                  quantity: retryQty,
+                  quantity: qtyToTry,
                   price: tpPrice
                 };
-                const retryResult = await this.mexcClient.placeOrder(retryParams);
-                newOrder.mexcSellOrderId = retryResult.orderId;
-                this.log(`Retry TP Limit Sell placed successfully! ID: ${retryResult.orderId}`, 'success', symbol);
+                tpResult = await this.mexcClient.placeOrder(tpParams);
+                if (tpResult && tpResult.orderId) {
+                  newOrder.mexcSellOrderId = tpResult.orderId;
+                  this.log(`Initial TP Limit Sell order placed successfully! Sell Qty: ${qtyToTry}, ID: ${tpResult.orderId}`, 'success', symbol);
+                  break;
+                }
+              } catch (err) {
+                lastTpErr = err;
+                const errMsg = err.message || '';
+                if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
+                  this.log(`Initial TP Limit Sell quantity scale invalid for ${qtyToTry}. Retrying with broader precision...`, 'warning', symbol);
+                  continue;
+                }
+                if (errMsg.includes('30002') || errMsg.includes('1USDT')) {
+                  this.log(`Initial TP Limit Sell value < 1 USDT (${qtyToTry} @ ${tpPrice}). TP order skipped, bot will monitor SL.`, 'warning', symbol);
+                  break;
+                }
+                throw err;
               }
             }
           }
@@ -687,8 +729,14 @@ class OrderTracker {
                   }
                 } catch (err) {
                   lastErr = err;
-                  if (err.message && (err.message.includes('quantity scale') || err.message.includes('400') || err.message.includes('code":400'))) {
+                  const errMsg = err.message || '';
+                  if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
                     this.log(`[REAL] Quantity scale invalid for ${qtyToTry}. Retrying with broader decimal precision...`, 'warning', order.symbol);
+                    continue;
+                  }
+                  if (errMsg.includes('Oversold') || errMsg.includes('30005')) {
+                    this.log(`[REAL] Oversold (30005) detected for ${qtyToTry}. Reducing quantity by 0.5% buffer and retrying...`, 'warning', order.symbol);
+                    sellQty = Math.floor(sellQty * 0.995 * 10000) / 10000;
                     continue;
                   }
                   throw err;
@@ -850,15 +898,46 @@ class OrderTracker {
             order.status = 'PENDING_EXECUTION'; // intermediate state
             this.log(`Placing Spot BUY order on MEXC for ${order.symbol}...`, 'info', order.symbol);
             
-            const orderParams = {
-              symbol: order.symbol,
-              side: 'BUY',
-              type: order.orderType,
-              quantity: order.quantity,
-              quoteOrderQty: order.quoteOrderQty
-            };
+            let result = null;
+            let lastBuyErr = null;
+            const decimalsToTry = [10000, 100, 1];
 
-            const result = await this.mexcClient.placeOrder(orderParams);
+            if (order.quantity) {
+              for (const mult of decimalsToTry) {
+                const qtyToTry = Math.floor(order.quantity * mult) / mult;
+                if (qtyToTry <= 0) continue;
+                try {
+                  const orderParams = {
+                    symbol: order.symbol,
+                    side: 'BUY',
+                    type: order.orderType,
+                    quantity: qtyToTry
+                  };
+                  result = await this.mexcClient.placeOrder(orderParams);
+                  if (result && result.orderId) break;
+                } catch (err) {
+                  lastBuyErr = err;
+                  const errMsg = err.message || '';
+                  if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
+                    this.log(`[REAL] BUY Quantity scale invalid for ${qtyToTry}. Retrying with broader precision...`, 'warning', order.symbol);
+                    continue;
+                  }
+                  throw err;
+                }
+              }
+            } else {
+              const orderParams = {
+                symbol: order.symbol,
+                side: 'BUY',
+                type: order.orderType,
+                quoteOrderQty: order.quoteOrderQty
+              };
+              result = await this.mexcClient.placeOrder(orderParams);
+            }
+
+            if (!result || !result.orderId) {
+              throw lastBuyErr || new Error('Failed to execute trailing buy order.');
+            }
             
             order.mexcOrderId = result.orderId;
             
@@ -884,38 +963,39 @@ class OrderTracker {
                   this.log(`[REAL] Querying asset balance to calculate fee-adjusted sell quantity...`, 'info', order.symbol);
                   const sellQty = await this.getFeeAdjustedBalance(order.symbol, grossQty);
                   
-                  this.log(`[REAL] Placing Take Profit LIMIT SELL order on MEXC for ${sellQty} tokens at ${tpPrice}...`, 'info', order.symbol);
+                  let tpResult = null;
+                  let lastTpErr = null;
+                  const safeQty = sellQty * 0.998;
                   
-                  const tpParams = {
-                    symbol: order.symbol,
-                    side: 'SELL',
-                    type: 'LIMIT',
-                    quantity: sellQty,
-                    price: tpPrice
-                  };
-                  
-                  try {
-                    const tpResult = await this.mexcClient.placeOrder(tpParams);
-                    order.mexcSellOrderId = tpResult.orderId;
-                    this.log(`[REAL] Take Profit Limit Sell order placed on MEXC. Order ID: ${tpResult.orderId}`, 'success', order.symbol);
-                  } catch (firstTpErr) {
-                    this.log(`[REAL] First TP Limit Sell failed (${firstTpErr.message}). Retrying with fee buffer safety quantity...`, 'warning', order.symbol);
+                  for (const mult of decimalsToTry) {
+                    const qtyToTry = Math.floor(safeQty * mult) / mult;
+                    if (qtyToTry <= 0) continue;
                     try {
-                      const retryQty = Math.floor(sellQty * 0.998 * 10000) / 10000;
-                      if (retryQty > 0) {
-                        const retryParams = {
-                          symbol: order.symbol,
-                          side: 'SELL',
-                          type: 'LIMIT',
-                          quantity: retryQty,
-                          price: tpPrice
-                        };
-                        const retryResult = await this.mexcClient.placeOrder(retryParams);
-                        order.mexcSellOrderId = retryResult.orderId;
-                        this.log(`[REAL] Retry TP Limit Sell order placed successfully on MEXC! Order ID: ${retryResult.orderId} for ${retryQty} tokens.`, 'success', order.symbol);
+                      const tpParams = {
+                        symbol: order.symbol,
+                        side: 'SELL',
+                        type: 'LIMIT',
+                        quantity: qtyToTry,
+                        price: tpPrice
+                      };
+                      tpResult = await this.mexcClient.placeOrder(tpParams);
+                      if (tpResult && tpResult.orderId) {
+                        order.mexcSellOrderId = tpResult.orderId;
+                        this.log(`[REAL] Take Profit Limit Sell order placed on MEXC for ${qtyToTry} tokens. Order ID: ${tpResult.orderId}`, 'success', order.symbol);
+                        break;
                       }
-                    } catch (retryErr) {
-                      this.log(`[REAL] Retry TP Limit Sell order also failed: ${retryErr.message}. Bot will still monitor Stop Loss.`, 'error', order.symbol);
+                    } catch (err) {
+                      lastTpErr = err;
+                      const errMsg = err.message || '';
+                      if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
+                        this.log(`[REAL] TP Limit Sell quantity scale invalid for ${qtyToTry}. Retrying with broader precision...`, 'warning', order.symbol);
+                        continue;
+                      }
+                      if (errMsg.includes('30002') || errMsg.includes('1USDT')) {
+                        this.log(`[REAL] TP Limit Sell value < 1 USDT (${qtyToTry} @ ${tpPrice}). TP order skipped, bot will monitor SL.`, 'warning', order.symbol);
+                        break;
+                      }
+                      throw err;
                     }
                   }
                 } catch (tpErr) {
