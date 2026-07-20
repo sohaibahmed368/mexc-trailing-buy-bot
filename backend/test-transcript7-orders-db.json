@@ -1,0 +1,52 @@
+[
+  {
+    "id": "ord_1784563405292_0947g",
+    "symbol": "XAUTUSDT",
+    "trailValue": 1,
+    "quantity": 10,
+    "quoteOrderQty": null,
+    "orderType": "MARKET",
+    "dryRun": true,
+    "status": "PENDING_ACTIVATION",
+    "activationPrice": 3999.64,
+    "activationDirection": null,
+    "activatedAt": null,
+    "takeProfit": 8,
+    "stopLoss": 3,
+    "filterSmartSl": true,
+    "slBuffer": 1,
+    "isSlExtended": false,
+    "isSlProfitLocked": false,
+    "lockedSlPrice": null,
+    "mexcSellOrderId": null,
+    "sellExecutionPrice": null,
+    "sellTriggeredAt": null,
+    "filterObi": true,
+    "filterVolume": false,
+    "filterRsi": false,
+    "autoRepeat": true,
+    "startImmediately": true,
+    "activationOffset": 5,
+    "peakPrice": 4004.64,
+    "tradeHistory": [
+      {
+        "cycle": 1,
+        "buyPrice": 4003.64,
+        "sellPrice": 4004.64,
+        "type": "STOP_LOSS",
+        "profit": 1,
+        "timestamp": "2026-07-20T16:03:25.370Z"
+      }
+    ],
+    "initialPrice": 4003.64,
+    "bottomPrice": null,
+    "triggerPrice": null,
+    "currentPrice": 4004.64,
+    "createdAt": "2026-07-20T16:03:25.292Z",
+    "triggeredAt": null,
+    "mexcOrderId": null,
+    "executionPrice": null,
+    "error": null,
+    "localBottom": 4004.64
+  }
+]

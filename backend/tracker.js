@@ -556,11 +556,12 @@ class OrderTracker {
 
       // 1.5 Check TP/SL OCO checks if already bought and holding
       if (order.status === 'TP_SL_ACTIVE') {
-        // Profit Lock Guard: Check if price reached 50% progress to Take Profit
+            // Profit Lock Guard: Check if price reached 50% progress to Take Profit
         if (order.takeProfit && order.trailValue && !order.isSlProfitLocked && order.executionPrice) {
           const tpTargetProgress = order.takeProfit * 0.5;
-          if (currentPrice >= (order.executionPrice + tpTargetProgress)) {
+          if (currentPrice >= (order.executionPrice + tpTargetProgress - 0.00000001)) {
             order.isSlProfitLocked = true;
+            order.justProfitLocked = true;
             // Requested Formula: executionPrice + (trailValue * 2)
             order.lockedSlPrice = order.executionPrice + (order.trailValue * 2);
             const tpTriggerPrice = (order.executionPrice + tpTargetProgress).toFixed(4);
@@ -619,7 +620,9 @@ class OrderTracker {
         }
 
         // Check if Stop Loss target is hit
-        if (order.stopLoss && currentPrice <= targetSlPrice) {
+        if (order.justProfitLocked) {
+          delete order.justProfitLocked;
+        } else if (order.stopLoss && currentPrice <= targetSlPrice) {
           // Smart SL Guard seller exhaustion evaluation (common to both Dry Run and Real Mode)
           if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
             let isSellerExhausted = false;
@@ -706,7 +709,7 @@ class OrderTracker {
 
             try {
               const grossQty = order.quantity || (order.quoteOrderQty / order.executionPrice);
-              let sellQty = Math.floor(grossQty * 0.998 * 10000) / 10000;
+              let sellQty = Math.floor(grossQty * 0.998 * 100000000) / 100000000;
               
               // Query exact free balance and truncate to prevent quantity scale/oversold errors
               try {
@@ -722,7 +725,7 @@ class OrderTracker {
 
                 if (assetBal && assetBal.free > 0) {
                   const safeFree = assetBal.free * 0.998;
-                  const truncated = Math.floor(safeFree * 10000) / 10000;
+                  const truncated = Math.floor(safeFree * 100000000) / 100000000;
                   if (truncated > 0) {
                     sellQty = truncated;
                     this.log(`[REAL] Stop Loss balance match: using free balance ${sellQty} (unlocked free: ${assetBal.free})`, 'info', order.symbol);
@@ -733,7 +736,7 @@ class OrderTracker {
               }
 
               let sellResult = null;
-              const decimalsToTry = [10000, 100, 1];
+              const decimalsToTry = [100000000, 1000000, 100000, 10000, 1000, 100, 10, 1];
               let lastErr = null;
 
               for (const mult of decimalsToTry) {
@@ -961,7 +964,7 @@ class OrderTracker {
             
             let result = null;
             let lastBuyErr = null;
-            const decimalsToTry = [10000, 100, 1];
+            const decimalsToTry = [100000000, 1000000, 100000, 10000, 1000, 100, 10, 1];
 
             if (order.quantity) {
               for (const mult of decimalsToTry) {
