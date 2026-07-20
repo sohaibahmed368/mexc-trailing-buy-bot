@@ -552,7 +552,9 @@ class OrderTracker {
             if (order.mexcSellOrderId) {
               try {
                 await this.mexcClient.cancelOrder(order.symbol, order.mexcSellOrderId);
-                this.log(`[REAL] Cancelled TP Limit Sell order ${order.mexcSellOrderId} on MEXC.`, 'info', order.symbol);
+                this.log(`[REAL] Cancelled TP Limit Sell order ${order.mexcSellOrderId} on MEXC. Waiting 1.0s for balance unlock...`, 'info', order.symbol);
+                order.mexcSellOrderId = null;
+                await new Promise(r => setTimeout(r, 1000));
               } catch (e) {
                 this.log(`[REAL] Failed to cancel TP order: ${e.message}. Proceeding with market sell.`, 'error', order.symbol);
               }
@@ -560,18 +562,27 @@ class OrderTracker {
 
             try {
               const grossQty = order.quantity || (order.quoteOrderQty / order.executionPrice);
-              let sellQty = Math.floor(grossQty * 10000) / 10000;
+              let sellQty = Math.floor(grossQty * 0.998 * 10000) / 10000;
               
-              // Query exact free balance instantly and truncate to prevent quantity scale errors
+              // Query exact free balance and truncate to prevent quantity scale/oversold errors
               try {
-                const balances = await this.mexcClient.getBalances();
+                let balances = await this.mexcClient.getBalances();
                 const asset = order.symbol.replace('USDT', '').toUpperCase();
-                const assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+                let assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+
+                // If balance is still unlocking/settling, wait 1.0s more and re-query
+                if (!assetBal || assetBal.free < (grossQty * 0.5)) {
+                  await new Promise(r => setTimeout(r, 1000));
+                  balances = await this.mexcClient.getBalances();
+                  assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+                }
+
                 if (assetBal && assetBal.free > 0) {
-                  const truncated = Math.floor(assetBal.free * 10000) / 10000;
+                  const safeFree = assetBal.free * 0.998;
+                  const truncated = Math.floor(safeFree * 10000) / 10000;
                   if (truncated > 0) {
                     sellQty = truncated;
-                    this.log(`[REAL] Stop Loss balance match: using free balance ${sellQty} instead of gross ${grossQty}`, 'info', order.symbol);
+                    this.log(`[REAL] Stop Loss balance match: using free balance ${sellQty} (unlocked free: ${assetBal.free})`, 'info', order.symbol);
                   }
                 }
               } catch (balErr) {
