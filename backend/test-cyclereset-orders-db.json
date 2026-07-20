@@ -1,0 +1,60 @@
+[
+  {
+    "id": "ord_1784562009180_5a9j0",
+    "symbol": "ETHUSDT",
+    "trailValue": 2,
+    "quantity": 0.1,
+    "quoteOrderQty": null,
+    "orderType": "MARKET",
+    "dryRun": true,
+    "status": "PENDING_ACTIVATION",
+    "activationPrice": 1838,
+    "activationDirection": "DOWN",
+    "activatedAt": null,
+    "takeProfit": 10,
+    "stopLoss": 4,
+    "filterSmartSl": true,
+    "slBuffer": 2,
+    "isSlExtended": false,
+    "isSlProfitLocked": false,
+    "lockedSlPrice": null,
+    "mexcSellOrderId": null,
+    "sellExecutionPrice": null,
+    "sellTriggeredAt": null,
+    "filterObi": false,
+    "filterVolume": false,
+    "filterRsi": false,
+    "autoRepeat": true,
+    "startImmediately": false,
+    "activationOffset": 10,
+    "peakPrice": 1848,
+    "tradeHistory": [
+      {
+        "cycle": 1,
+        "buyPrice": 1842,
+        "sellPrice": 1852,
+        "type": "TAKE_PROFIT",
+        "profit": 10,
+        "timestamp": "2026-07-20T15:40:09.237Z"
+      },
+      {
+        "cycle": 2,
+        "buyPrice": 1844,
+        "sellPrice": 1848,
+        "type": "STOP_LOSS",
+        "profit": 4,
+        "timestamp": "2026-07-20T15:40:09.312Z"
+      }
+    ],
+    "initialPrice": 1850,
+    "bottomPrice": null,
+    "triggerPrice": null,
+    "currentPrice": 1848,
+    "createdAt": "2026-07-20T15:40:09.180Z",
+    "triggeredAt": null,
+    "mexcOrderId": null,
+    "executionPrice": null,
+    "error": null,
+    "localBottom": 1848
+  }
+]

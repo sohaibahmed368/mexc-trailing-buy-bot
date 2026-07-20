@@ -278,6 +278,8 @@ class OrderTracker {
       filterSmartSl: !!filterSmartSl,
       slBuffer: parsedSlBuffer,
       isSlExtended: false,
+      isSlProfitLocked: false,
+      lockedSlPrice: null,
       mexcSellOrderId: null,
       sellExecutionPrice: null,
       sellTriggeredAt: null,
@@ -1077,59 +1079,62 @@ class OrderTracker {
         }
       }
 
-      // Check if this order just reached TRIGGERED state and has autoRepeat enabled
-      if (order.status === 'TRIGGERED' && order.autoRepeat) {
-        const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
-        const buyPrice = order.executionPrice;
-        const sellPrice = order.sellExecutionPrice || order.currentPrice;
-        const profit = sellPrice - buyPrice; // per unit profit
-
-        // Determine if Take Profit or Stop Loss hit
-        let type = 'MANUAL_SELL';
-        if (order.takeProfit && sellPrice >= (buyPrice + order.takeProfit - 0.0001)) {
-          type = 'TAKE_PROFIT';
-        } else if (order.stopLoss && sellPrice <= (buyPrice - order.stopLoss + 0.0001)) {
-          type = 'STOP_LOSS';
-        }
-
-        if (!order.tradeHistory) order.tradeHistory = [];
-        order.tradeHistory.push({
-          cycle: cycleNum,
-          buyPrice,
-          sellPrice,
-          type,
-          profit,
-          timestamp: new Date().toISOString()
-        });
-
-        // Reset to pending activation for next cycle
-        order.status = 'PENDING_ACTIVATION';
-        order.peakPrice = sellPrice;
-        order.activationPrice = order.peakPrice - (order.activationOffset || 0);
-        order.localBottom = sellPrice;
-        order.bottomPrice = null;
-        order.triggerPrice = null;
-        order.mexcOrderId = null;
-        order.executionPrice = null;
-        order.mexcSellOrderId = null;
-        order.sellExecutionPrice = null;
-        order.sellTriggeredAt = null;
-        order.triggeredAt = null;
-        order.activatedAt = null;
-        order.isSlExtended = false;
-        order.isSlProfitLocked = false;
-        order.lockedSlPrice = null;
-
-        this.log(
-          `Cycle #${cycleNum} completed (${type}). Resetting order to pending activation. New peak: ${order.peakPrice}, Activation price: ${order.activationPrice}`,
-          'success',
-          order.symbol
-        );
-        changed = true;
-      }
     }
 
     if (changed) {
+      this.saveOrders();
+    }
+  }
+
+  // Handle cycle completion, trade recording, and auto-repeat re-activation
+  handleOrderCycleComplete(order) {
+    if (order.status === 'TRIGGERED' && order.autoRepeat) {
+      const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
+      const buyPrice = order.executionPrice;
+      const sellPrice = order.sellExecutionPrice || order.currentPrice;
+      const profit = sellPrice - buyPrice; // per unit profit
+
+      // Determine if Take Profit or Stop Loss hit
+      let type = 'MANUAL_SELL';
+      if (order.takeProfit && sellPrice >= (buyPrice + order.takeProfit - 0.0001)) {
+        type = 'TAKE_PROFIT';
+      } else if (order.isSlProfitLocked || (order.stopLoss && sellPrice <= (buyPrice - order.stopLoss + 0.0001))) {
+        type = 'STOP_LOSS';
+      }
+
+      if (!order.tradeHistory) order.tradeHistory = [];
+      order.tradeHistory.push({
+        cycle: cycleNum,
+        buyPrice,
+        sellPrice,
+        type,
+        profit,
+        timestamp: new Date().toISOString()
+      });
+
+      // Reset to pending activation for next cycle
+      order.status = 'PENDING_ACTIVATION';
+      order.peakPrice = sellPrice;
+      order.activationPrice = order.peakPrice - (order.activationOffset || 0);
+      order.localBottom = sellPrice;
+      order.bottomPrice = null;
+      order.triggerPrice = null;
+      order.mexcOrderId = null;
+      order.executionPrice = null;
+      order.mexcSellOrderId = null;
+      order.sellExecutionPrice = null;
+      order.sellTriggeredAt = null;
+      order.triggeredAt = null;
+      order.activatedAt = null;
+      order.isSlExtended = false;
+      order.isSlProfitLocked = false;
+      order.lockedSlPrice = null;
+
+      this.log(
+        `Cycle #${cycleNum} completed (${type}). Resetting order to pending activation. New peak: ${order.peakPrice}, Activation price: ${order.activationPrice}`,
+        'success',
+        order.symbol
+      );
       this.saveOrders();
     }
   }
