@@ -566,6 +566,7 @@ class OrderTracker {
             if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
               let isSellerExhausted = false;
               let bidsRatioPct = '0';
+              let asksRatioPct = '0';
               try {
                 const depth = await this.mexcClient.getDepth(order.symbol, 100);
                 let bidsValue = 0;
@@ -587,6 +588,14 @@ class OrderTracker {
                 const totalValue = bidsValue + asksValue;
                 const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
                 bidsRatioPct = (bidsRatio * 100).toFixed(1);
+                asksRatioPct = ((1 - bidsRatio) * 100).toFixed(1);
+
+                this.log(
+                  `🛡️ [SMART SL GUARD] Evaluating selling pressure at SL target ${currentPrice.toFixed(4)} USDT... Order Book Bids Support: ${bidsRatioPct}%, Asks Selling Pressure: ${asksRatioPct}%.`,
+                  'info',
+                  order.symbol
+                );
+
                 if (bidsRatio >= 0.45) {
                   isSellerExhausted = true;
                 }
@@ -599,12 +608,18 @@ class OrderTracker {
                 const oldSlTarget = (order.executionPrice - order.stopLoss).toFixed(4);
                 const newSlTarget = (order.executionPrice - (order.stopLoss + order.slBuffer)).toFixed(4);
                 this.log(
-                  `🛡️ [SMART SL GUARD] Seller exhaustion detected at SL level! (Bids Support ${bidsRatioPct}% >= 45%). Stretching Stop Loss by +$${order.slBuffer} buffer. (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Waiting for bounce...`,
+                  `🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support ${bidsRatioPct}% >= 45% (Buyers absorbing dip). Extending Stop Loss by +$${order.slBuffer} buffer. (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Market sell DEFERRED, waiting for bounce!`,
                   'success',
                   order.symbol
                 );
                 changed = true;
                 continue;
+              } else {
+                this.log(
+                  `🚨 [SMART SL GUARD] Heavy selling pressure confirmed at SL level! Bids Support ${bidsRatioPct}% < 45% (Asks Dumping ${asksRatioPct}%). Proceeding with IMMEDIATE Stop Loss Market Sell!`,
+                  'warning',
+                  order.symbol
+                );
               }
             }
 
@@ -810,19 +825,15 @@ class OrderTracker {
           const now = Date.now();
           if (!order.lastFilterFailLogTime || (now - order.lastFilterFailLogTime > 5000)) {
             order.lastFilterFailLogTime = now;
-            this.log(`Buy condition met but execution deferred. Failed confirmations: ${failedReasons.join(', ')}. Waiting for indicator alignment.`, 'info', order.symbol);
+            this.log(`⏳ Trailing buy trigger reached at ${currentPrice} USDT, but BUY DEFERRED. Failed confirmations: ${failedReasons.join(', ')}. Waiting for indicator alignment.`, 'info', order.symbol);
           }
           continue;
         }
 
         order.triggeredAt = new Date().toISOString();
         const mode = order.dryRun ? '[DRY RUN]' : '[REAL]';
-        const indicatorLog = confirmedReasons.length > 0 ? ` (Confirmed: ${confirmedReasons.join(', ')})` : '';
-        this.log(
-          `${mode} Trailing stop buy triggered for ${order.symbol}! Current price: ${currentPrice} >= Trigger price: ${order.triggerPrice}${indicatorLog}. Executing buy...`,
-          'success',
-          order.symbol
-        );
+        const indicatorLog = confirmedReasons.length > 0 ? ` (Confirmed Metrics: ${confirmedReasons.join(', ')})` : '';
+        this.log(`🟢 ENTRY CONFIRMED! Trailing stop buy triggered at ${currentPrice} USDT!${indicatorLog}. Executing ${mode} buy...`, 'success', order.symbol);
 
         if (order.dryRun) {
           order.executionPrice = currentPrice;
