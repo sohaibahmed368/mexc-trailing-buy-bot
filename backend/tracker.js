@@ -868,6 +868,43 @@ class OrderTracker {
           }
         }
 
+        if (order.filterSmartSl && passedFilters) {
+          try {
+            const depth = await this.mexcClient.getDepth(order.symbol, 100);
+            let bidsValue = 0;
+            let asksValue = 0;
+            const rangeLower = currentPrice * 0.985;
+            const rangeUpper = currentPrice * 1.015;
+
+            if (depth && Array.isArray(depth.bids)) {
+              depth.bids.forEach(([p, q]) => {
+                const price = parseFloat(p);
+                if (price >= rangeLower && price <= rangeUpper) bidsValue += (price * parseFloat(q));
+              });
+            }
+            if (depth && Array.isArray(depth.asks)) {
+              depth.asks.forEach(([p, q]) => {
+                const price = parseFloat(p);
+                if (price >= rangeLower && price <= rangeUpper) asksValue += (price * parseFloat(q));
+              });
+            }
+
+            const totalValue = bidsValue + asksValue;
+            const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
+            const pctStr = (bidsRatio * 100).toFixed(1);
+            if (bidsRatio < 0.55) {
+              passedFilters = false;
+              failedReasons.push(`Smart SL Entry Guard ${pctStr}% bids < 55%`);
+            } else {
+              confirmedReasons.push(`Smart SL Entry Guard ${pctStr}% bids >= 55%`);
+            }
+          } catch (e) {
+            this.log(`Smart SL Entry Guard Filter query failed: ${e.message}`, 'warning', order.symbol);
+            passedFilters = false;
+            failedReasons.push(`Smart SL Entry Guard Error`);
+          }
+        }
+
         if (!passedFilters) {
           // Throttling logs to once every 5 seconds per order symbol
           const now = Date.now();
