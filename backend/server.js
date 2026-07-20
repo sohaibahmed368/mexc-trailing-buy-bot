@@ -517,12 +517,18 @@ app.post('/api/analysis/orderflow', async (req, res) => {
   }
 });
 
-// Serve frontend build in production
-const frontendBuildPath = path.join(__dirname, '..', 'frontend', 'dist');
-if (fs.existsSync(frontendBuildPath)) {
-  app.use(express.static(frontendBuildPath));
+// Serve frontend build in production (prioritize committed backend/public, fallback to frontend/dist)
+const backendPublicPath = path.join(__dirname, 'public');
+const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
+
+const staticPath = fs.existsSync(backendPublicPath)
+  ? backendPublicPath
+  : (fs.existsSync(frontendDistPath) ? frontendDistPath : null);
+
+if (staticPath) {
+  app.use(express.static(staticPath));
   app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendBuildPath, 'index.html'));
+    res.sendFile(path.join(staticPath, 'index.html'));
   });
 }
 
