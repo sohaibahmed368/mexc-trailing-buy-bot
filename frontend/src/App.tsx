@@ -381,7 +381,7 @@ export default function App() {
         {/* Right Column: Trading & Logs */}
         <div className="main-content">
           {mainMode === 'stock' ? (
-            <StockBotTab apiBaseUrl={BACKEND_URL} />
+            <StockBotTab apiBaseUrl={BACKEND_URL} availableSymbols={availableSymbols} />
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
               {/* Top Independent Scalp Radar */}

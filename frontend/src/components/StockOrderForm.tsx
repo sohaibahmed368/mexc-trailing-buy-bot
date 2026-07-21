@@ -1,37 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 interface StockOrderFormProps {
   onOrderCreated: () => void;
   apiBaseUrl: string;
+  availableSymbols?: string[];
 }
 
-export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, apiBaseUrl }) => {
+export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, apiBaseUrl, availableSymbols = [] }) => {
   const [symbol, setSymbol] = useState('GOLD(XAUT)USDT');
   const [trailValue, setTrailValue] = useState('2.0');
   const [quantity, setQuantity] = useState('1.0');
   const [takeProfit, setTakeProfit] = useState('10.0');
   const [stopLoss, setStopLoss] = useState('4.0');
   const [maxSlippagePct, setMaxSlippagePct] = useState('0.5');
-  const [filterSmartSl, setFilterSmartSl] = useState(true);
+  
+  // All checkboxes default to UNCHECKED (false) as requested by user
+  const [filterSmartSl, setFilterSmartSl] = useState(false);
   const [slBuffer, setSlBuffer] = useState('2.0');
-  const [filterObi, setFilterObi] = useState(true);
-  const [filterVolumeSpike, setFilterVolumeSpike] = useState(true);
-  const [filterRsi, setFilterRsi] = useState(true);
-  const [autoRepeat, setAutoRepeat] = useState(true);
+  const [filterObi, setFilterObi] = useState(false);
+  const [filterVolumeSpike, setFilterVolumeSpike] = useState(false);
+  const [filterRsi, setFilterRsi] = useState(false);
+  const [autoRepeat, setAutoRepeat] = useState(false);
   const [activationOffset, setActivationOffset] = useState('10.0');
-  const [startImmediately, setStartImmediately] = useState(true);
-  const [dryRun, setDryRun] = useState(true);
+  const [startImmediately, setStartImmediately] = useState(false);
+  const [dryRun, setDryRun] = useState(false);
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const presets = [
-    { label: 'GOLD (XAUT)', value: 'GOLD(XAUT)USDT' },
-    { label: 'PAX GOLD', value: 'GOLD(PAXG)USDT' },
-    { label: 'NVDA Stock (Ondo)', value: 'NVDAONUSDT' },
-    { label: 'USO Oil Stock', value: 'USOONUSDT' },
-    { label: 'Intel Stock', value: 'INTKONUSDT' },
-    { label: 'Ethereum', value: 'ETHUSDT' }
+  const defaultPresets = [
+    'GOLD(XAUT)USDT',
+    'GOLD(PAXG)USDT',
+    'NVDAONUSDT',
+    'USOONUSDT',
+    'INTKONUSDT',
+    'ETHUSDT',
+    'BTCUSDT',
+    'SOLUSDT'
   ];
+
+  // Merge MEXC live availableSymbols with stock presets
+  const allSymbolsList = useMemo(() => {
+    const set = new Set<string>([...defaultPresets, ...availableSymbols]);
+    return Array.from(set);
+  }, [availableSymbols]);
+
+  // Filtered dropdown suggestions
+  const filteredSymbols = useMemo(() => {
+    if (!symbol) return allSymbolsList.slice(0, 15);
+    const query = symbol.toUpperCase().trim();
+    return allSymbolsList.filter(s => s.includes(query)).slice(0, 20);
+  }, [symbol, allSymbolsList]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +99,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#38bdf8' }}>📈 Stock Bot (Low Liquidity Tokenized Engine)</h2>
         <span style={{ background: '#0284c7', color: '#ffffff', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold' }}>
-          MAX SLIPPAGE PROTECTED
+          LIVE MEXC SYNCED & MAX SLIPPAGE PROTECTED
         </span>
       </div>
 
@@ -91,25 +111,52 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
 
       <form onSubmit={handleSubmit}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-          {/* Symbol */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>Stock / Token Symbol</label>
+          
+          {/* Symbol Autocomplete Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
+              Stock / Token Symbol (MEXC Synced)
+            </label>
             <input
               type="text"
               value={symbol}
-              onChange={e => setSymbol(e.target.value)}
-              style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.95rem' }}
+              onChange={e => {
+                setSymbol(e.target.value);
+                setIsDropdownOpen(true);
+              }}
+              onFocus={() => setIsDropdownOpen(true)}
+              onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+              style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#fff', fontSize: '0.95rem', fontWeight: 'bold' }}
+              placeholder="Search MEXC symbol e.g. NVDA, USO, GOLD..."
               required
             />
+            
+            {isDropdownOpen && filteredSymbols.length > 0 && (
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: '#0f172a', border: '1px solid #0284c7', borderRadius: '0 0 6px 6px', maxHeight: '180px', overflowY: 'auto', zIndex: 100, boxShadow: '0 8px 16px rgba(0,0,0,0.5)' }}>
+                {filteredSymbols.map(s => (
+                  <div
+                    key={s}
+                    onMouseDown={() => {
+                      setSymbol(s);
+                      setIsDropdownOpen(false);
+                    }}
+                    style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid #1e293b', fontSize: '0.85rem', color: '#38bdf8' }}
+                  >
+                    {s}
+                  </div>
+                ))}
+              </div>
+            )}
+            
             <div style={{ marginTop: '8px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              {presets.map(p => (
+              {defaultPresets.slice(0, 5).map(p => (
                 <button
-                  key={p.value}
+                  key={p}
                   type="button"
-                  onClick={() => setSymbol(p.value)}
+                  onClick={() => setSymbol(p)}
                   style={{ background: '#334155', border: 'none', color: '#cbd5e1', padding: '3px 8px', borderRadius: '4px', fontSize: '0.75rem', cursor: 'pointer' }}
                 >
-                  {p.label}
+                  {p}
                 </button>
               ))}
             </div>
@@ -186,7 +233,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           </div>
         </div>
 
-        {/* Toggles Row */}
+        {/* Toggles Row - ALL UNCHECKED (DEFAULT FALSE) */}
         <div style={{ marginTop: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap', background: '#0f172a', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
             <input type="checkbox" checked={startImmediately} onChange={e => setStartImmediately(e.target.checked)} />

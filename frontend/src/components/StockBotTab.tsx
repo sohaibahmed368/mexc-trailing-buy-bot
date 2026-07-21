@@ -5,9 +5,10 @@ import { StockOrderHistory } from './StockOrderHistory';
 
 interface StockBotTabProps {
   apiBaseUrl: string;
+  availableSymbols?: string[];
 }
 
-export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl }) => {
+export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableSymbols = [] }) => {
   const [orders, setOrders] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
 
@@ -54,7 +55,7 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl }) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <StockOrderForm onOrderCreated={fetchStockOrders} apiBaseUrl={apiBaseUrl} />
+      <StockOrderForm onOrderCreated={fetchStockOrders} apiBaseUrl={apiBaseUrl} availableSymbols={availableSymbols} />
       
       <div>
         <h3 style={{ color: '#38bdf8', marginBottom: '12px' }}>⚡ Active Stock Bot Orders</h3>
