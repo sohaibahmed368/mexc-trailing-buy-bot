@@ -243,6 +243,11 @@ class OrderTracker {
           }
         }
 
+        if (orderInfo.status === 'NEW') {
+          this.log(`[MAKER PEG LOG] Check #${attempts} (1.5s elapsed): Order ${orderId} is still UNFILLED on MEXC at price ${fallbackPrice}. Monitoring next 1.5s window...`, 'info', symbol);
+          continue;
+        }
+
         if (orderInfo.status === 'PARTIALLY_FILLED') {
           this.log(`[MAKER LIMIT] Order ${orderId} partially filled (${orderInfo.executedQty}/${quantity}). Re-checking in 1.5s...`, 'info', symbol);
           continue;
