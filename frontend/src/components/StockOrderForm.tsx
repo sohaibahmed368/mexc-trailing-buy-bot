@@ -17,7 +17,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
   const [stopLoss, setStopLoss] = useState('4.0');
   const [maxSlippagePct, setMaxSlippagePct] = useState('0.5');
   
-  // Activation Price & Offset
+  // Explicit Activation Inputs (Prominent in Main Grid)
   const [activationPrice, setActivationPrice] = useState('');
   const [activationOffset, setActivationOffset] = useState('2.0');
 
@@ -75,7 +75,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           stopLoss: stopLoss ? parseFloat(stopLoss) : null,
           maxSlippagePct: parseFloat(maxSlippagePct),
           activationPrice: autoRepeat ? '' : activationPrice,
-          activationOffset: autoRepeat ? parseFloat(activationOffset) : '',
+          activationOffset: activationOffset ? parseFloat(activationOffset) : '',
           filterSmartSl,
           slBuffer: parseFloat(slBuffer),
           filterObi,
@@ -245,6 +245,42 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
             />
           </div>
 
+          {/* Activation Dip Offset Input Field */}
+          <div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 'bold', marginBottom: '6px' }}>
+              Activation Dip Offset (- USDT)
+              <span title="The price drop required from the current/peak price to activate trailing stop buy." style={{ cursor: 'help', color: '#94a3b8' }}>
+                <HelpCircle size={13} />
+              </span>
+            </label>
+            <input
+              type="number"
+              step="any"
+              value={activationOffset}
+              onChange={e => setActivationOffset(e.target.value)}
+              placeholder="e.g. 1.0 USDT dip (leave 0 for immediate)"
+              style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#38bdf8', fontSize: '0.95rem', fontWeight: 'bold' }}
+            />
+          </div>
+
+          {/* Activation Price Input Field */}
+          <div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
+              Activation Price (Trigger Boundary)
+              <span title="Bot starts trailing buy tracking only when price crosses this limit. Leave blank to activate immediately." style={{ cursor: 'help', color: '#94a3b8' }}>
+                <HelpCircle size={13} />
+              </span>
+            </label>
+            <input
+              type="number"
+              step="any"
+              value={activationPrice}
+              onChange={e => setActivationPrice(e.target.value)}
+              placeholder="e.g. 120 (blank for immediate market)"
+              style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff' }}
+            />
+          </div>
+
           {/* Take Profit */}
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
@@ -282,54 +318,19 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           </div>
         </div>
 
-        {/* Auto Repeat Toggle Block & Activation Inputs */}
+        {/* Auto Repeat Toggle Block */}
         <div style={{ background: 'rgba(255, 255, 255, 0.01)', padding: '12px', borderRadius: '8px', border: '1px solid #334155', marginTop: '16px' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
             <input type="checkbox" checked={autoRepeat} onChange={e => setAutoRepeat(e.target.checked)} />
             Enable Auto-Cycle Loop 🔄
           </label>
 
-          {autoRepeat ? (
-            <div style={{ marginTop: '10px', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {autoRepeat && (
+            <div style={{ marginTop: '10px', paddingLeft: '24px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.8rem', color: '#cbd5e1' }}>
                 <input type="checkbox" checked={startImmediately} onChange={e => setStartImmediately(e.target.checked)} />
                 Start First Trade Immediately at Market Price ⚡
               </label>
-
-              <div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: '#38bdf8', marginBottom: '4px' }}>
-                  Activation Dip Offset (- USDT)
-                  <span title="The price drop required from the previous peak to activate the trailing stop buy." style={{ cursor: 'help', color: '#94a3b8' }}>
-                    <HelpCircle size={12} />
-                  </span>
-                </label>
-                <input
-                  type="number"
-                  step="any"
-                  value={activationOffset}
-                  onChange={e => setActivationOffset(e.target.value)}
-                  placeholder="e.g. 2.0 (dip from peak)"
-                  style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#38bdf8', fontSize: '0.85rem', fontWeight: 'bold' }}
-                  required={autoRepeat}
-                />
-              </div>
-            </div>
-          ) : (
-            <div style={{ marginTop: '10px', paddingLeft: '24px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>
-                Activation Price (Trigger Boundary)
-                <span title="Bot starts trailing buy tracking only when price crosses this target limit. Leave blank to activate immediately." style={{ cursor: 'help', color: '#94a3b8' }}>
-                  <HelpCircle size={12} />
-                </span>
-              </label>
-              <input
-                type="number"
-                step="any"
-                value={activationPrice}
-                onChange={e => setActivationPrice(e.target.value)}
-                placeholder="e.g. 120 (leave blank to activate immediately)"
-                style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
-              />
             </div>
           )}
         </div>
