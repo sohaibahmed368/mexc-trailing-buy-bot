@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1784669427035415",
+    "timestamp": "2026-07-21T21:30:27.035Z",
+    "message": "Activation price hit (125.5 <= 128.52). Status set to RUNNING. Initial bottom: 125.5",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784669426094674",
+    "timestamp": "2026-07-21T21:30:26.094Z",
+    "message": "Stock Bot Cycle #1 completed (TAKE_PROFIT). Resetting order to pending activation. New peak: 130.52, Activation price: 128.52",
+    "type": "success",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784669426064366",
+    "timestamp": "2026-07-21T21:30:26.064Z",
+    "message": "🎉 [REAL] Pegged Limit Buy order ult_ord_1 FILLED at 125.52 USDT! Transitioning to TP_SL_ACTIVE state.",
+    "type": "success",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784669426039239",
+    "timestamp": "2026-07-21T21:30:26.039Z",
+    "message": "[REAL] Pegged Limit Buy order placed! Order ID: ult_ord_1. Status set to PENDING_EXECUTION (Waiting for limit buy order fill)...",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784669426037853",
+    "timestamp": "2026-07-21T21:30:26.037Z",
+    "message": "⚠️ [MAX SLIPPAGE GUARD] Market Buy Slippage (999.00% > 0.1%) too high! BLOCKING MARKET DUMP. Top Bid: 125.3700 USDT. Placing Pegged Limit Buy Order at 125.3900 USDT (+0.02 front-of-queue)...",
+    "type": "warning",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784669426036505",
+    "timestamp": "2026-07-21T21:30:26.036Z",
+    "message": "Placing Stock BUY order on MEXC for SPCXONUSDT...",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784669426032014",
+    "timestamp": "2026-07-21T21:30:26.032Z",
+    "message": "Stock Bot Order tracking loop started.",
+    "type": "info",
+    "symbol": null
+  },
+  {
+    "id": "1784669426030908",
+    "timestamp": "2026-07-21T21:30:26.030Z",
+    "message": "New Stock Bot order created for SPCXONUSDT (Max Slippage: 0.1%)",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  }
+]
