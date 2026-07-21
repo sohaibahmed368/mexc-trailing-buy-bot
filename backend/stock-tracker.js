@@ -737,18 +737,13 @@ class StockOrderTracker {
     }
   }
 
-  // Handle cycle completion, trade recording, and auto-repeat re-activation
+  // Handle cycle completion, trade recording, and auto-repeat re-activation with exact MEXC Fee Deduction
   handleOrderCycleComplete(order) {
     if (order.status === 'TRIGGERED' && order.autoRepeat) {
       const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
       const buyPrice = order.executionPrice;
       const sellPrice = order.sellExecutionPrice || order.currentPrice;
-      const unitProfit = sellPrice - buyPrice;
-
       const qty = order.quantity || (order.quoteOrderQty && buyPrice > 0 ? (order.quoteOrderQty / buyPrice) : 1);
-      const cycleUsdtProfit = unitProfit * qty;
-
-      order.totalNetProfit = (order.totalNetProfit || 0) + cycleUsdtProfit;
 
       let type = 'MANUAL_SELL';
       if (order.takeProfit && Math.abs(sellPrice - (buyPrice + order.takeProfit)) < 0.0001) {
@@ -757,11 +752,38 @@ class StockOrderTracker {
         type = 'STOP_LOSS';
       }
 
+      // MEXC Spot Fee Structure:
+      // Maker (Limit Orders): 0.0% (0.0000) -> Take Profit Limit Sell / Pegged Limit Buy
+      // Taker (Market Orders): 0.1% (0.0010) -> Market Buy / Stop Loss Market Sell
+      const isBuyMaker = order.buyOrderType === 'LIMIT' || order.isBuyPegged || order.status === 'PENDING_EXECUTION';
+      const isSellMaker = (type === 'TAKE_PROFIT');
+
+      const buyFeeRate = isBuyMaker ? 0.0 : 0.0010;
+      const sellFeeRate = isSellMaker ? 0.0 : 0.0010;
+
+      const grossBuyValue = buyPrice * qty;
+      const buyFeeUsdt = grossBuyValue * buyFeeRate;
+      const totalBuyCost = grossBuyValue + buyFeeUsdt;
+
+      const grossSellValue = sellPrice * qty;
+      const sellFeeUsdt = grossSellValue * sellFeeRate;
+      const netSellProceeds = grossSellValue - sellFeeUsdt;
+
+      // Net USDT Profit after MEXC Trading Fees
+      const cycleUsdtProfit = netSellProceeds - totalBuyCost;
+      const netUnitProfit = cycleUsdtProfit / (qty || 1);
+
+      order.totalNetProfit = (order.totalNetProfit || 0) + cycleUsdtProfit;
+
       const tradeRecord = {
         cycle: cycleNum,
         buyPrice,
         sellPrice,
-        profit: unitProfit,
+        grossProfitUsdt: grossSellValue - grossBuyValue,
+        mexcBuyFeeUsdt: buyFeeUsdt,
+        mexcSellFeeUsdt: sellFeeUsdt,
+        totalMexcFeesUsdt: buyFeeUsdt + sellFeeUsdt,
+        profit: netUnitProfit,
         profitUsdt: cycleUsdtProfit,
         type,
         timestamp: new Date().toISOString()
