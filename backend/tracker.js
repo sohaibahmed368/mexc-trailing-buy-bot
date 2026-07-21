@@ -853,7 +853,7 @@ class OrderTracker {
           }
         }
 
-        if (order.filterVolume && passedFilters) {
+        if (order.filterVolume) {
           try {
             const klines = await this.mexcClient.getKlines(order.symbol, '1m', 6);
             if (klines && klines.length >= 6) {
@@ -880,7 +880,7 @@ class OrderTracker {
           }
         }
 
-        if (order.filterRsi && passedFilters) {
+        if (order.filterRsi) {
           try {
             const klines = await this.mexcClient.getKlines(order.symbol, '1m', 30);
             if (klines && klines.length >= 15) {
@@ -903,7 +903,7 @@ class OrderTracker {
           }
         }
 
-        if (order.filterSmartSl && passedFilters) {
+        if (order.filterSmartSl) {
           try {
             const depth = await this.mexcClient.getDepth(order.symbol, 100);
             let bidsValue = 0;
