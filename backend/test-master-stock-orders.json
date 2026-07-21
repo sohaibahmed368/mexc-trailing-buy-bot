@@ -1,6 +1,6 @@
 [
   {
-    "id": "1784662894623",
+    "id": "1784660403164",
     "symbol": "NVDAONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -27,7 +27,7 @@
     "sellExecutionPrice": null,
     "mexcOrderId": null,
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-21T19:41:34.623Z",
+    "createdAt": "2026-07-21T19:00:03.165Z",
     "totalNetProfit": -50,
     "tradeHistory": [
       {
@@ -37,7 +37,7 @@
         "profit": -10,
         "profitUsdt": -50,
         "type": "STOP_LOSS",
-        "timestamp": "2026-07-21T19:41:34.684Z"
+        "timestamp": "2026-07-21T19:00:03.202Z"
       }
     ],
     "isSlExtended": false,
@@ -46,6 +46,6 @@
     "currentPrice": 105,
     "sellTriggeredAt": null,
     "triggeredAt": null,
-    "activatedAt": "2026-07-21T19:41:35.626Z"
+    "activatedAt": "2026-07-21T19:00:04.168Z"
   }
 ]

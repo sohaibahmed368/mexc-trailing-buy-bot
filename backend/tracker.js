@@ -1102,7 +1102,7 @@ class OrderTracker {
   }
 
   // Handle cycle completion, trade recording, and auto-repeat re-activation with exact MEXC Fee Deduction
-  handleOrderCycleComplete(order) {
+  async handleOrderCycleComplete(order) {
     if (order.status === 'TRIGGERED' && order.autoRepeat) {
       const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
       const buyPrice = order.executionPrice;
@@ -1117,14 +1117,22 @@ class OrderTracker {
         type = 'STOP_LOSS';
       }
 
-      // MEXC Spot Fee Structure:
-      // Maker (Limit Orders): 0.0% (0.0000) -> Take Profit Limit Sell
-      // Taker (Market Orders): 0.1% (0.0010) -> Market Buy / Stop Loss Market Sell
+      // Account Specific Fee Rates (User Account: Taker = 0.0% promotion, Maker = 0.04% MX Token Discount)
+      let accountFees = { makerCommission: 0.0004, takerCommission: 0.0000 };
+      try {
+        if (this.mexcClient && typeof this.mexcClient.getTradeFee === 'function') {
+          const fetchedFees = await this.mexcClient.getTradeFee(order.symbol);
+          if (fetchedFees) accountFees = fetchedFees;
+        }
+      } catch (fErr) {
+        // Fallback default for user's account
+      }
+
       const isBuyMaker = order.buyOrderType === 'LIMIT' || order.isBuyPegged;
       const isSellMaker = (type === 'TAKE_PROFIT');
 
-      const buyFeeRate = isBuyMaker ? 0.0 : 0.0010;
-      const sellFeeRate = isSellMaker ? 0.0 : 0.0010;
+      const buyFeeRate = isBuyMaker ? accountFees.makerCommission : accountFees.takerCommission;
+      const sellFeeRate = isSellMaker ? accountFees.makerCommission : accountFees.takerCommission;
 
       const grossBuyValue = buyPrice * qty;
       const buyFeeUsdt = grossBuyValue * buyFeeRate;

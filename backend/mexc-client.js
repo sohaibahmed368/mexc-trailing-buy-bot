@@ -182,6 +182,31 @@ class MexcClient {
       orderId
     }, true);
   }
+
+  // Query account specific trade fee rates from MEXC API
+  async getTradeFee(symbol) {
+    if (!this.hasCredentials()) {
+      return { makerCommission: 0.0004, takerCommission: 0.0000 };
+    }
+    try {
+      const data = await this._request('GET', '/api/v3/tradeFee', { symbol: symbol.toUpperCase() }, true);
+      if (Array.isArray(data) && data.length > 0) {
+        return {
+          makerCommission: parseFloat(data[0].makerCommission) || 0.0004,
+          takerCommission: parseFloat(data[0].takerCommission) || 0.0000
+        };
+      }
+      if (data && data.makerCommission !== undefined) {
+        return {
+          makerCommission: parseFloat(data.makerCommission) || 0.0004,
+          takerCommission: parseFloat(data.takerCommission) || 0.0000
+        };
+      }
+    } catch (err) {
+      // Fallback to user account default: 0% Taker promotion, 0.04% MX discount Maker fee
+    }
+    return { makerCommission: 0.0004, takerCommission: 0.0000 };
+  }
 }
 
 module.exports = MexcClient;

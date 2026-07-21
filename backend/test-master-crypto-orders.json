@@ -1,6 +1,6 @@
 [
   {
-    "id": "ord_1784660403024_focjf",
+    "id": "ord_1784662894534_n62y3",
     "symbol": "ETHUSDT",
     "trailValue": 10,
     "quantity": null,
@@ -10,7 +10,7 @@
     "status": "RUNNING",
     "activationPrice": 2020,
     "activationDirection": null,
-    "activatedAt": "2026-07-21T19:00:03.853Z",
+    "activatedAt": "2026-07-21T19:41:35.372Z",
     "takeProfit": 100,
     "stopLoss": 50,
     "filterSmartSl": false,
@@ -37,14 +37,14 @@
         "type": "STOP_LOSS",
         "profit": 20,
         "profitUsdt": 10,
-        "timestamp": "2026-07-21T19:00:03.132Z"
+        "timestamp": "2026-07-21T19:41:34.607Z"
       }
     ],
     "initialPrice": 2000,
     "bottomPrice": 2015,
     "triggerPrice": 2025,
     "currentPrice": 2015,
-    "createdAt": "2026-07-21T19:00:03.024Z",
+    "createdAt": "2026-07-21T19:41:34.534Z",
     "triggeredAt": null,
     "mexcOrderId": null,
     "executionPrice": null,
@@ -52,7 +52,7 @@
     "localBottom": 2020
   },
   {
-    "id": "ord_1784660402818_x4afc",
+    "id": "ord_1784662894328_5yjnn",
     "symbol": "SOLUSDT",
     "trailValue": 2,
     "quantity": null,
@@ -62,7 +62,7 @@
     "status": "RUNNING",
     "activationPrice": 143.5,
     "activationDirection": null,
-    "activatedAt": "2026-07-21T19:00:03.088Z",
+    "activatedAt": "2026-07-21T19:41:34.576Z",
     "takeProfit": 10,
     "stopLoss": 5,
     "filterSmartSl": false,
@@ -89,7 +89,7 @@
         "type": "TAKE_PROFIT",
         "profit": 10,
         "profitUsdt": 7.142857142857143,
-        "timestamp": "2026-07-21T19:00:02.882Z"
+        "timestamp": "2026-07-21T19:41:34.401Z"
       },
       {
         "cycle": 2,
@@ -98,14 +98,14 @@
         "type": "STOP_LOSS",
         "profit": -5,
         "profitUsdt": -3.367003367003367,
-        "timestamp": "2026-07-21T19:00:02.986Z"
+        "timestamp": "2026-07-21T19:41:34.503Z"
       }
     ],
     "initialPrice": 140,
     "bottomPrice": 142,
     "triggerPrice": 144,
     "currentPrice": 142,
-    "createdAt": "2026-07-21T19:00:02.818Z",
+    "createdAt": "2026-07-21T19:41:34.328Z",
     "triggeredAt": null,
     "mexcOrderId": null,
     "executionPrice": null,
