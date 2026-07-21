@@ -1,140 +1,140 @@
 [
   {
-    "id": "1784659594705-zin00",
-    "timestamp": "2026-07-21T18:46:34.705Z",
+    "id": "1784660403853-w20k0",
+    "timestamp": "2026-07-21T19:00:03.853Z",
     "message": "Trailing stop buy activated via Dip: price 2015 hit dip activation target 2020. (Trigger target: >= 2025).",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1784659594065-a0s7w",
-    "timestamp": "2026-07-21T18:46:34.065Z",
+    "id": "1784660403132-jqgiu",
+    "timestamp": "2026-07-21T19:00:03.132Z",
     "message": "Cycle #1 completed (STOP_LOSS). Resetting order to pending activation. New peak: 2020, Activation price: 2020",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1784659594037-5nqvd",
-    "timestamp": "2026-07-21T18:46:34.037Z",
+    "id": "1784660403111-1nu5m",
+    "timestamp": "2026-07-21T19:00:03.111Z",
     "message": "[DRY RUN] Stop Loss hit! Simulated Market Sell executed at 2020 USDT.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1784659594012-y1qt6",
-    "timestamp": "2026-07-21T18:46:34.012Z",
+    "id": "1784660403088-ar539",
+    "timestamp": "2026-07-21T19:00:03.088Z",
     "message": "Trailing stop buy activated via Dip: price 142 hit dip activation target 143.5. (Trigger target: >= 144).",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593980-3qgvv",
-    "timestamp": "2026-07-21T18:46:33.980Z",
+    "id": "1784660403068-zhv47",
+    "timestamp": "2026-07-21T19:00:03.068Z",
     "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (2055.0000 >= 2050.0000 USDT)! Stop Loss shifted UP to +$20.00 above Buy Price (2020.0000 USDT). Profit Locked!",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1784659593958-j21gy",
-    "timestamp": "2026-07-21T18:46:33.958Z",
+    "id": "1784660403046-dky9x",
+    "timestamp": "2026-07-21T19:00:03.046Z",
     "message": "Created [DRY RUN] trailing stop buy for ETHUSDT. Initial price: 2000. Bottom: 2000. Trail: 10. Trigger targets: >= null",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1784659593937-1oc54",
-    "timestamp": "2026-07-21T18:46:33.937Z",
+    "id": "1784660403024-3tdm5",
+    "timestamp": "2026-07-21T19:00:03.024Z",
     "message": "[DRY RUN] Auto-Loop started: First trade bought immediately at market price 2000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1784659593934-zr89q",
-    "timestamp": "2026-07-21T18:46:33.934Z",
+    "id": "1784660403006-t1ecu",
+    "timestamp": "2026-07-21T19:00:03.006Z",
     "message": "Fetching initial price for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1784659593902-1jfd8",
-    "timestamp": "2026-07-21T18:46:33.902Z",
+    "id": "1784660402986-uhvud",
+    "timestamp": "2026-07-21T19:00:02.986Z",
     "message": "Cycle #2 completed (STOP_LOSS). Resetting order to pending activation. New peak: 143.5, Activation price: 143.5",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593898-8f7kr",
-    "timestamp": "2026-07-21T18:46:33.898Z",
+    "id": "1784660402971-u5qif",
+    "timestamp": "2026-07-21T19:00:02.971Z",
     "message": "[DRY RUN] Stop Loss hit! Simulated Market Sell executed at 143.5 USDT.",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593890-5prym",
-    "timestamp": "2026-07-21T18:46:33.890Z",
+    "id": "1784660402957-sbe2h",
+    "timestamp": "2026-07-21T19:00:02.957Z",
     "message": "[DRY RUN] Simulated Spot Buy order executed at 148.5 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593887-ucff1",
-    "timestamp": "2026-07-21T18:46:33.887Z",
+    "id": "1784660402938-zi9np",
+    "timestamp": "2026-07-21T19:00:02.938Z",
     "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 148.5 USDT!. Executing [DRY RUN] buy...",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593810-vcrlo",
-    "timestamp": "2026-07-21T18:46:33.810Z",
+    "id": "1784660402919-89k0e",
+    "timestamp": "2026-07-21T19:00:02.919Z",
     "message": "New bottom detected for SOLUSDT: 146 (was 147). Recalculated trigger to: 148",
     "type": "info",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593783-2mfhb",
-    "timestamp": "2026-07-21T18:46:33.784Z",
+    "id": "1784660402899-xi9ee",
+    "timestamp": "2026-07-21T19:00:02.899Z",
     "message": "Trailing stop buy activated via Dip: price 147 hit dip activation target 150. (Trigger target: >= 149).",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593753-cvpu8",
-    "timestamp": "2026-07-21T18:46:33.753Z",
+    "id": "1784660402882-m84kw",
+    "timestamp": "2026-07-21T19:00:02.882Z",
     "message": "Cycle #1 completed (TAKE_PROFIT). Resetting order to pending activation. New peak: 150, Activation price: 150",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593731-76ulu",
-    "timestamp": "2026-07-21T18:46:33.731Z",
+    "id": "1784660402867-ic8by",
+    "timestamp": "2026-07-21T19:00:02.867Z",
     "message": "[DRY RUN] Take Profit hit! Simulated Limit Sell executed at 150 USDT.",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593706-evyr0",
-    "timestamp": "2026-07-21T18:46:33.706Z",
+    "id": "1784660402854-n8ern",
+    "timestamp": "2026-07-21T19:00:02.854Z",
     "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (151.0000 >= 145.0000 USDT)! Stop Loss shifted UP to +$4.00 above Buy Price (144.0000 USDT). Profit Locked!",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593676-1vu3w",
-    "timestamp": "2026-07-21T18:46:33.676Z",
+    "id": "1784660402822-90l1g",
+    "timestamp": "2026-07-21T19:00:02.822Z",
     "message": "Created [DRY RUN] trailing stop buy for SOLUSDT. Initial price: 140. Bottom: 140. Trail: 2. Trigger targets: >= null",
     "type": "info",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593652-infre",
-    "timestamp": "2026-07-21T18:46:33.652Z",
+    "id": "1784660402818-nxahg",
+    "timestamp": "2026-07-21T19:00:02.818Z",
     "message": "[DRY RUN] Auto-Loop started: First trade bought immediately at market price 140 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "SOLUSDT"
   },
   {
-    "id": "1784659593644-3yrkx",
-    "timestamp": "2026-07-21T18:46:33.644Z",
+    "id": "1784660402808-7l5ui",
+    "timestamp": "2026-07-21T19:00:02.808Z",
     "message": "Fetching initial price for SOLUSDT...",
     "type": "info",
     "symbol": "SOLUSDT"

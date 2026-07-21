@@ -443,9 +443,23 @@ class StockOrderTracker {
                   };
                   result = await this.mexcClient.placeOrder(orderParams);
                 } else {
-                  // Slippage too high -> BLOCK MARKET ORDER & Place Pegged Limit Order
-                  const peggedPrice = sim.bestPrice ? (sim.bestPrice * (1 + (maxAllowed / 100))) : currentPrice;
-                  this.log(`⚠️ [MAX SLIPPAGE GUARD] Market Buy Slippage (${sim.slippagePct.toFixed(2)}% > ${maxAllowed}%) too high! BLOCKING MARKET DUMP. Placing Pegged Limit Buy Order at ${peggedPrice.toFixed(4)} USDT...`, 'warning', order.symbol);
+                  // Slippage too high -> BLOCK MARKET ORDER & Place Pegged Limit Order at (Top Bid + 0.02)
+                  let topBid = currentPrice;
+                  try {
+                    const depth = await this.mexcClient.getDepth(order.symbol, 10);
+                    if (depth && Array.isArray(depth.bids) && depth.bids.length > 0) {
+                      topBid = parseFloat(depth.bids[0][0]);
+                    }
+                  } catch (dErr) {
+                    this.log(`Failed to fetch top bid for pegged order: ${dErr.message}`, 'warning', order.symbol);
+                  }
+
+                  const peggedPrice = Math.round((topBid + 0.02) * 10000) / 10000;
+                  this.log(
+                    `⚠️ [MAX SLIPPAGE GUARD] Market Buy Slippage (${sim.slippagePct.toFixed(2)}% > ${maxAllowed}%) too high! BLOCKING MARKET DUMP. Top Bid: ${topBid.toFixed(4)} USDT. Placing Pegged Limit Buy Order at ${peggedPrice.toFixed(4)} USDT (+0.02 front-of-queue)...`,
+                    'warning',
+                    order.symbol
+                  );
                   
                   const orderParams = {
                     symbol: order.symbol,

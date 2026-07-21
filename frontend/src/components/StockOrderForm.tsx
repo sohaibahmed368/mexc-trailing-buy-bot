@@ -17,7 +17,6 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
   const [stopLoss, setStopLoss] = useState('4.0');
   const [maxSlippagePct, setMaxSlippagePct] = useState('0.5');
   
-  // Explicit Activation Inputs (Prominent in Main Grid)
   const [activationPrice, setActivationPrice] = useState('');
   const [activationOffset, setActivationOffset] = useState('2.0');
 
@@ -206,11 +205,11 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
             )}
           </div>
 
-          {/* Custom Field: Max Allowed Slippage % */}
+          {/* Single Stock Bot Extra Field: Max Allowed Slippage % */}
           <div style={{ background: 'rgba(56, 189, 248, 0.1)', padding: '12px', borderRadius: '8px', border: '1px solid #0284c7' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 'bold', marginBottom: '6px' }}>
               🛡️ Max Allowed Slippage (%)
-              <span title="Blocks market dump if order book depth slippage > maxAllowedSlippage. Converts to pegged limit order." style={{ cursor: 'help', color: '#94a3b8' }}>
+              <span title="Blocks market buy/sell if order book depth slippage > maxAllowedSlippage. Converts to Pegged Limit Order (Top Bid + 0.02)." style={{ cursor: 'help', color: '#94a3b8' }}>
                 <HelpCircle size={13} />
               </span>
             </label>
@@ -245,41 +244,43 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
             />
           </div>
 
-          {/* Activation Dip Offset Input Field */}
-          <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 'bold', marginBottom: '6px' }}>
-              Activation Dip Offset (- USDT)
-              <span title="The price drop required from the current/peak price to activate trailing stop buy." style={{ cursor: 'help', color: '#94a3b8' }}>
-                <HelpCircle size={13} />
-              </span>
-            </label>
-            <input
-              type="number"
-              step="any"
-              value={activationOffset}
-              onChange={e => setActivationOffset(e.target.value)}
-              placeholder="e.g. 1.0 USDT dip (leave 0 for immediate)"
-              style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#38bdf8', fontSize: '0.95rem', fontWeight: 'bold' }}
-            />
-          </div>
-
-          {/* Activation Price Input Field */}
-          <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
-              Activation Price (Trigger Boundary)
-              <span title="Bot starts trailing buy tracking only when price crosses this limit. Leave blank to activate immediately." style={{ cursor: 'help', color: '#94a3b8' }}>
-                <HelpCircle size={13} />
-              </span>
-            </label>
-            <input
-              type="number"
-              step="any"
-              value={activationPrice}
-              onChange={e => setActivationPrice(e.target.value)}
-              placeholder="e.g. 120 (blank for immediate market)"
-              style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff' }}
-            />
-          </div>
+          {/* Activation Price or Activation Dip Offset (Conditioned on Auto-Cycle like OrderForm.tsx) */}
+          {autoRepeat ? (
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 'bold', marginBottom: '6px' }}>
+                Activation Dip Offset (- USDT)
+                <span title="The price drop required from the previous peak to activate the trailing stop buy." style={{ cursor: 'help', color: '#94a3b8' }}>
+                  <HelpCircle size={13} />
+                </span>
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={activationOffset}
+                onChange={e => setActivationOffset(e.target.value)}
+                placeholder="e.g. 2.0 (dip from peak)"
+                style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#38bdf8', fontSize: '0.95rem', fontWeight: 'bold' }}
+                required
+              />
+            </div>
+          ) : (
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
+                Activation Price (Trigger Boundary)
+                <span title="Bot starts trailing buy tracking only when price crosses this limit. Leave blank to activate immediately." style={{ cursor: 'help', color: '#94a3b8' }}>
+                  <HelpCircle size={13} />
+                </span>
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={activationPrice}
+                onChange={e => setActivationPrice(e.target.value)}
+                placeholder="e.g. 120 (blank for immediate market)"
+                style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff' }}
+              />
+            </div>
+          )}
 
           {/* Take Profit */}
           <div>
