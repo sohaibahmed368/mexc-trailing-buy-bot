@@ -1,25 +1,36 @@
 import React from 'react';
+import { XOctagon, Trash2 } from 'lucide-react';
 
 interface StockOrder {
   id: string;
   symbol: string;
-  status: string;
   trailValue: number;
-  quantity?: number;
-  takeProfit?: number;
-  stopLoss?: number;
-  maxSlippagePct?: number;
+  quantity: number | null;
+  quoteOrderQty: number | null;
+  orderType?: string;
   dryRun: boolean;
-  peakPrice?: number;
-  activationPrice?: number;
-  bottomPrice?: number;
-  triggerPrice?: number;
-  currentPrice?: number;
-  executionPrice?: number;
+  status: string;
+  activationPrice: number | null;
+  takeProfit: number | null;
+  stopLoss: number | null;
+  maxSlippagePct?: number;
+  filterSmartSl?: boolean;
+  slBuffer?: number;
+  isSlExtended?: boolean;
   isSlProfitLocked?: boolean;
   lockedSlPrice?: number;
-  isSlExtended?: boolean;
-  tradeHistory?: any[];
+  executionPrice: number | null;
+  filterObi?: boolean;
+  filterVolumeSpike?: boolean;
+  filterRsi?: boolean;
+  autoRepeat?: boolean;
+  startImmediately?: boolean;
+  activationOffset: number | null;
+  peakPrice: number | null;
+  bottomPrice: number | null;
+  triggerPrice: number | null;
+  currentPrice: number;
+  tradeHistory?: Array<{ cycle: number; buyPrice: number; sellPrice: number; type: string; profit: number; timestamp: string }>;
 }
 
 interface StockActiveOrdersProps {
@@ -27,79 +38,232 @@ interface StockActiveOrdersProps {
   onCancelOrder: (id: string) => void;
 }
 
+export function fmtPrice(val: number | string | null | undefined): string {
+  if (val === null || val === undefined || val === '') return '-';
+  const num = typeof val === 'string' ? parseFloat(val) : val;
+  if (isNaN(num)) return '-';
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 8
+  });
+}
+
 export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, onCancelOrder }) => {
-  const activeOrders = orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
+  const activeOrders = orders.filter(
+    (o) => o.status === 'RUNNING' || o.status === 'PENDING_EXECUTION' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE'
+  );
 
   if (activeOrders.length === 0) {
     return (
-      <div style={{ background: '#1e293b', padding: '24px', borderRadius: '12px', border: '1px solid #334155', color: '#94a3b8', textAlign: 'center' }}>
-        No active Stock Bot orders. Create a new stock order above.
+      <div className="empty-state">
+        <XOctagon size={48} className="empty-state-icon" style={{ color: 'var(--text-muted)' }} />
+        <h3>No Active Stock Bot Orders</h3>
+        <p>Use the form above to set up a new low-liquidity stock trailing order.</p>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-      {activeOrders.map(order => (
-        <div key={order.id} style={{ background: '#1e293b', padding: '20px', borderRadius: '12px', border: '1px solid #0284c7', color: '#f8fafc', position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h3 style={{ margin: 0, fontSize: '1.1rem', color: '#38bdf8' }}>{order.symbol}</h3>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <span style={{ background: order.dryRun ? '#eab308' : '#22c55e', color: '#000', padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                {order.dryRun ? 'DRY RUN' : 'REAL'}
-              </span>
-              <span style={{ background: '#0284c7', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 'bold' }}>
-                SLIPPAGE &le; {order.maxSlippagePct || 0.5}%
+    <div className="active-orders-grid">
+      {activeOrders.map((order) => {
+        const priceDiff = order.currentPrice - (order.bottomPrice || 0);
+        const triggerDiff = order.trailValue;
+        const progressPercent = Math.max(
+          0,
+          Math.min(100, (priceDiff / triggerDiff) * 100)
+        );
+
+        const currentSlOffset = order.isSlExtended ? (order.stopLoss! + (order.slBuffer || 0)) : order.stopLoss;
+
+        return (
+          <div
+            className="order-card"
+            key={order.id}
+            style={{
+              borderColor: order.status === 'PENDING_ACTIVATION'
+                ? 'rgba(0, 242, 254, 0.4)'
+                : order.status === 'TP_SL_ACTIVE'
+                ? 'rgba(155, 93, 229, 0.5)'
+                : progressPercent > 80
+                ? 'rgba(255, 179, 0, 0.5)'
+                : 'var(--border-color)'
+            }}
+          >
+            {/* Header */}
+            <div className="order-header">
+              <div className="order-symbol-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                <span className="order-symbol">{order.symbol}</span>
+                {order.autoRepeat && (
+                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(0, 230, 118, 0.15)', color: 'var(--color-green)', fontWeight: 600 }}>
+                    Loop 🔄
+                  </span>
+                )}
+                <span className={`order-mode ${order.dryRun ? 'dry' : 'real'}`}>
+                  {order.dryRun ? 'Simulation' : 'Live Trade'}
+                </span>
+                <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--color-cyan)', fontWeight: 600, border: '1px solid rgba(0, 242, 254, 0.3)' }}>
+                  Slippage &le; {order.maxSlippagePct || 0.5}%
+                </span>
+              </div>
+              <span className={`status-badge ${order.status === 'PENDING_ACTIVATION' ? 'cancelled' : 'running'}`} style={
+                order.status === 'PENDING_ACTIVATION' 
+                  ? { backgroundColor: 'rgba(69, 104, 220, 0.15)', color: '#a5b4fc', border: '1px solid rgba(69, 104, 220, 0.3)' }
+                  : order.status === 'TP_SL_ACTIVE'
+                    ? { backgroundColor: 'rgba(155, 93, 229, 0.15)', color: '#b388ff', border: '1px solid rgba(155, 93, 229, 0.3)' }
+                    : undefined
+              }>
+                {order.status === 'PENDING_ACTIVATION' ? 'Waiting' : order.status === 'PENDING_EXECUTION' ? 'Executing' : order.status === 'TP_SL_ACTIVE' ? 'Holding (TP/SL)' : 'Trailing'}
               </span>
             </div>
-          </div>
 
-          <div style={{ fontSize: '0.85rem', lineHeight: '1.6', color: '#cbd5e1' }}>
-            <div>Status: <strong style={{ color: order.status === 'TP_SL_ACTIVE' ? '#22c55e' : '#38bdf8' }}>{order.status}</strong></div>
-            <div>Current Price: <strong>{order.currentPrice ? `$${order.currentPrice}` : '-'}</strong></div>
-            {order.executionPrice && <div>Buy Execution Price: <strong style={{ color: '#38bdf8' }}>${order.executionPrice}</strong></div>}
+            {/* Config details */}
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              <span>Buy Condition: </span>
+              <strong style={{ color: 'var(--text-primary)' }}>
+                {order.quoteOrderQty
+                  ? `Spend ${order.quoteOrderQty} USDT`
+                  : `Buy ${order.quantity} Tokens`}
+              </strong>
+            </div>
 
-            {order.status === 'PENDING_ACTIVATION' && (
-              <>
-                <div>Peak Price: <strong>${order.peakPrice}</strong></div>
-                <div>Activation Price: <strong style={{ color: '#eab308' }}>${order.activationPrice}</strong></div>
-              </>
-            )}
-
-            {order.status === 'RUNNING' && (
-              <>
-                <div>Bottom Price: <strong>${order.bottomPrice}</strong></div>
-                <div>Buy Trigger Price: <strong style={{ color: '#22c55e' }}>${order.triggerPrice}</strong></div>
-              </>
-            )}
-
-            {order.status === 'TP_SL_ACTIVE' && (
-              <>
-                {order.takeProfit && <div>Take Profit Target: <strong style={{ color: '#22c55e' }}>${(order.executionPrice! + order.takeProfit).toFixed(4)}</strong></div>}
-                {order.isSlProfitLocked ? (
-                  <div style={{ color: '#06b6d4', fontWeight: 'bold' }}>🔒 Locked Profit SL: ${order.lockedSlPrice?.toFixed(4)}</div>
+            {/* Activation status details */}
+            {order.activationPrice !== null && (
+              <div style={{ 
+                fontSize: '0.85rem', 
+                color: 'var(--text-secondary)', 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                marginTop: '0.25rem',
+                padding: '0.25rem 0.5rem',
+                background: 'rgba(255, 255, 255, 0.02)',
+                borderRadius: '6px'
+              }}>
+                {order.autoRepeat && order.peakPrice !== null ? (
+                  <>
+                    <span>Peak Price: <strong style={{ color: 'var(--text-primary)' }}>${fmtPrice(order.peakPrice)}</strong></span>
+                    <span>Target Dip: <strong style={{ color: 'var(--color-cyan)' }}>${fmtPrice(order.activationPrice)}</strong></span>
+                  </>
                 ) : (
-                  order.stopLoss && <div>Stop Loss Target: <strong style={{ color: '#ef4444' }}>${(order.executionPrice! - order.stopLoss).toFixed(4)}</strong></div>
+                  <>
+                    <span>Activation Target: <strong style={{ color: 'var(--text-primary)' }}>${fmtPrice(order.activationPrice)}</strong></span>
+                    <span style={{ 
+                      color: order.status !== 'PENDING_ACTIVATION' ? 'var(--color-green)' : 'var(--text-muted)',
+                      fontWeight: 600
+                    }}>
+                      {order.status !== 'PENDING_ACTIVATION' ? 'Activated ✓' : 'Pending ✗'}
+                    </span>
+                  </>
                 )}
-                {order.isSlExtended && <div style={{ color: '#22c55e', fontSize: '0.75rem' }}>🛡️ Smart SL Extended (+Buffer)</div>}
-              </>
-            )}
-
-            {order.tradeHistory && order.tradeHistory.length > 0 && (
-              <div style={{ marginTop: '8px', color: '#a855f7', fontSize: '0.8rem' }}>
-                Completed Cycles: {order.tradeHistory.length}
               </div>
             )}
-          </div>
 
-          <button
-            onClick={() => onCancelOrder(order.id)}
-            style={{ marginTop: '16px', width: '100%', padding: '8px', background: '#ef4444', border: 'none', borderRadius: '6px', color: '#fff', fontSize: '0.85rem', cursor: 'pointer', fontWeight: 'bold' }}
-          >
-            Cancel Stock Order
-          </button>
-        </div>
-      ))}
+            {/* Take Profit & Stop Loss details */}
+            {(order.takeProfit !== null || order.stopLoss !== null) && (
+              <div style={{ 
+                fontSize: '0.85rem', 
+                color: 'var(--text-secondary)', 
+                display: 'flex', 
+                flexDirection: 'column',
+                gap: '0.2rem',
+                marginTop: '0.25rem',
+                padding: '0.4rem 0.5rem',
+                background: 'rgba(255, 255, 255, 0.01)',
+                borderRadius: '6px',
+                border: '1px solid rgba(255, 255, 255, 0.03)'
+              }}>
+                {order.takeProfit !== null && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Take Profit Target:</span>
+                    <strong style={{ color: 'var(--color-green)' }}>
+                      {order.executionPrice 
+                        ? `$${fmtPrice(order.executionPrice + order.takeProfit)}` 
+                        : `Buy Price + ${fmtPrice(order.takeProfit)}`}
+                    </strong>
+                  </div>
+                )}
+                {order.stopLoss !== null && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>Stop Loss Target:</span>
+                    <div style={{ textAlign: 'right' }}>
+                      <strong style={{ color: order.isSlProfitLocked ? 'var(--color-green)' : 'var(--color-red)' }}>
+                        {order.executionPrice 
+                          ? `$${fmtPrice(
+                              order.isSlProfitLocked && order.lockedSlPrice
+                                ? (order.isSlExtended && order.slBuffer ? order.lockedSlPrice - order.slBuffer : order.lockedSlPrice)
+                                : (order.executionPrice - currentSlOffset!)
+                            )}` 
+                          : `Buy Price - ${fmtPrice(currentSlOffset!)}`}
+                      </strong>
+                      {order.isSlProfitLocked && (
+                        <div style={{ fontSize: '0.7rem', color: 'var(--color-cyan)', fontWeight: 600 }}>
+                          🔒 Profit Lock Active (+${fmtPrice(order.trailValue * 2)} USDT)
+                        </div>
+                      )}
+                      {order.filterSmartSl && (
+                        <div style={{ fontSize: '0.7rem', color: 'var(--color-green)', fontWeight: 500 }}>
+                          🛡️ Smart Guard Active (+${fmtPrice(order.slBuffer || 2)} Buffer)
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Price levels info */}
+            <div className="order-prices">
+              <div className="price-item">
+                <span className="price-label">Current</span>
+                <span className="price-value" style={{ fontSize: '1.05rem' }}>${fmtPrice(order.currentPrice)}</span>
+              </div>
+
+              {order.status === 'TP_SL_ACTIVE' ? (
+                <div className="price-item highlight">
+                  <span className="price-label">Bought At</span>
+                  <span className="price-value" style={{ color: 'var(--color-green)' }}>${fmtPrice(order.executionPrice)}</span>
+                </div>
+              ) : (
+                <>
+                  <div className="price-item">
+                    <span className="price-label">Low Dip</span>
+                    <span className="price-value">${fmtPrice(order.bottomPrice)}</span>
+                  </div>
+                  <div className="price-item highlight">
+                    <span className="price-label">Buy Trigger</span>
+                    <span className="price-value">${fmtPrice(order.triggerPrice)}</span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Trailing Buy Progress bar */}
+            {order.status === 'RUNNING' && order.bottomPrice !== null && (
+              <div style={{ marginTop: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>
+                  <span>Trailing Rebound Progress</span>
+                  <span>{progressPercent.toFixed(1)}%</span>
+                </div>
+                <div style={{ width: '100%', height: '6px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: `${progressPercent}%`, height: '100%', background: progressPercent > 80 ? 'var(--color-gold)' : 'var(--color-cyan)', transition: 'width 0.3s ease' }} />
+                </div>
+              </div>
+            )}
+
+            {/* Footer action button */}
+            <div className="order-footer" style={{ marginTop: '0.75rem' }}>
+              <button
+                type="button"
+                className="btn btn-danger btn-sm"
+                onClick={() => onCancelOrder(order.id)}
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <Trash2 size={14} />
+                Cancel Stock Order
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
