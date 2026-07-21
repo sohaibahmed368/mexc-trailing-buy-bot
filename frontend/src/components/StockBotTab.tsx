@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Terminal, Ban } from 'lucide-react';
 import { StockOrderForm } from './StockOrderForm';
 import { StockActiveOrders } from './StockActiveOrders';
 import { StockOrderHistory } from './StockOrderHistory';
@@ -11,6 +12,7 @@ interface StockBotTabProps {
 export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableSymbols = [] }) => {
   const [orders, setOrders] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
+  const consoleRef = useRef<HTMLDivElement>(null);
 
   const fetchStockOrders = async () => {
     try {
@@ -53,6 +55,15 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
     return () => clearInterval(interval);
   }, []);
 
+  // Auto scroll to bottom when new logs arrive
+  useEffect(() => {
+    if (consoleRef.current) {
+      consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
+    }
+  }, [logs]);
+
+  const chronologicalLogs = [...logs].reverse();
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <StockOrderForm onOrderCreated={fetchStockOrders} apiBaseUrl={apiBaseUrl} availableSymbols={availableSymbols} />
@@ -64,16 +75,38 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
 
       <StockOrderHistory orders={orders} />
 
-      {/* Stock Logs Console */}
-      <div style={{ background: '#0f172a', padding: '16px', borderRadius: '12px', border: '1px solid #334155', maxHeight: '250px', overflowY: 'auto' }}>
-        <h4 style={{ margin: '0 0 10px 0', color: '#38bdf8', fontSize: '0.9rem' }}>📟 Stock Bot Live Console Logs</h4>
-        <div style={{ fontFamily: 'monospace', fontSize: '0.8rem', lineHeight: '1.5' }}>
-          {logs.slice(0, 50).map((log, idx) => (
-            <div key={log.id || idx} style={{ color: log.type === 'error' ? '#ef4444' : log.type === 'warning' ? '#eab308' : log.type === 'success' ? '#22c55e' : '#94a3b8' }}>
-              [{new Date(log.timestamp).toLocaleTimeString()}] {log.symbol ? `[${log.symbol}] ` : ''}{log.message}
-            </div>
-          ))}
+      {/* Stock Bot Terminal Console Logs (Identical to Crypto LogsConsole) */}
+      <div className="card">
+        <div className="card-title">
+          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Terminal size={18} /> Stock Bot Live Terminal Operations Logs
+          </span>
+          <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--color-cyan)', fontWeight: 600 }}>
+            Live Stream
+          </span>
         </div>
+
+        {logs.length === 0 ? (
+          <div className="console-logs" style={{ justifyContent: 'center', alignItems: 'center', color: 'var(--text-muted)' }}>
+            <Ban size={24} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
+            No stock logs recorded yet. Start a stock trailing order to begin operations.
+          </div>
+        ) : (
+          <div className="console-logs" ref={consoleRef} style={{ maxHeight: '280px', overflowY: 'auto' }}>
+            {chronologicalLogs.map((log) => {
+              const timeStr = new Date(log.timestamp).toLocaleTimeString();
+              return (
+                <div className={`log-line ${log.type}`} key={log.id}>
+                  <span className="log-time">[{timeStr}]</span>
+                  <span className="log-msg">
+                    {log.symbol && <span style={{ color: 'var(--color-cyan)', fontWeight: 600 }}>{log.symbol}: </span>}
+                    {log.message}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
