@@ -1,49 +1,49 @@
 [
   {
-    "id": "1784660404168769",
-    "timestamp": "2026-07-21T19:00:04.168Z",
+    "id": "1784662895626059",
+    "timestamp": "2026-07-21T19:41:35.626Z",
     "message": "Activation price hit (105 <= 108). Status set to RUNNING. Initial bottom: 105",
     "type": "info",
     "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1784660403202573",
-    "timestamp": "2026-07-21T19:00:03.202Z",
+    "id": "1784662894684926",
+    "timestamp": "2026-07-21T19:41:34.684Z",
     "message": "Stock Bot Cycle #1 completed (STOP_LOSS). Resetting order to pending activation. New peak: 110, Activation price: 108",
     "type": "success",
     "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1784660403189716",
-    "timestamp": "2026-07-21T19:00:03.189Z",
+    "id": "1784662894664369",
+    "timestamp": "2026-07-21T19:41:34.664Z",
     "message": "[REAL] Stock Stop Loss Sell order executed! Order ID: mock_master_1",
     "type": "success",
     "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1784660403174489",
-    "timestamp": "2026-07-21T19:00:03.174Z",
+    "id": "1784662894651565",
+    "timestamp": "2026-07-21T19:41:34.651Z",
     "message": "⚠️ [MAX SLIPPAGE GUARD] Stock Market Sell Slippage (9.53% > 0.5%) too high! BLOCKING MARKET DUMP. Placing Pegged Limit Sell Order at 100.8184 USDT...",
     "type": "warning",
     "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1784660403172035",
-    "timestamp": "2026-07-21T19:00:03.172Z",
+    "id": "1784662894629021",
+    "timestamp": "2026-07-21T19:41:34.629Z",
     "message": "[REAL] Stock Stop Loss hit! Market price 105 <= SL level 110.0000. Executing sell...",
     "type": "warning",
     "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1784660403169284",
-    "timestamp": "2026-07-21T19:00:03.169Z",
+    "id": "1784662894626335",
+    "timestamp": "2026-07-21T19:41:34.626Z",
     "message": "Stock Bot Order tracking loop started.",
     "type": "info",
     "symbol": null
   },
   {
-    "id": "1784660403167025",
-    "timestamp": "2026-07-21T19:00:03.167Z",
+    "id": "1784662894625321",
+    "timestamp": "2026-07-21T19:41:34.625Z",
     "message": "New Stock Bot order created for NVDAONUSDT (Max Slippage: 0.5%)",
     "type": "info",
     "symbol": "NVDAONUSDT"

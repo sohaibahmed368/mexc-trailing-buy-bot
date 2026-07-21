@@ -230,6 +230,53 @@ class StockOrderTracker {
     this.log('Stock Bot Order tracking loop started.', 'info');
   }
 
+  // Robust Helper: Retry order placement with varying quantity precisions to overcome MEXC 400 "quantity scale is invalid" errors
+  async placeOrderWithPrecisionRetry(orderParams, quoteOrderQty = null) {
+    let lastErr = null;
+    const decimalsToTry = [10000, 1000, 100, 10, 1, 0.1];
+
+    if (orderParams.quantity) {
+      const rawQty = orderParams.quantity;
+      for (const mult of decimalsToTry) {
+        let qtyToTry = Math.floor(rawQty * mult) / mult;
+        if (qtyToTry <= 0) qtyToTry = Math.round(rawQty);
+        if (qtyToTry <= 0) continue;
+
+        try {
+          const attemptParams = { ...orderParams, quantity: qtyToTry };
+          const res = await this.mexcClient.placeOrder(attemptParams);
+          if (res && res.orderId) return res;
+        } catch (err) {
+          lastErr = err;
+          const msg = err.message || '';
+          if (msg.includes('quantity scale') || msg.includes('400') || msg.includes('code":400')) {
+            this.log(`[REAL] Quantity scale retry for ${orderParams.symbol} at multiplier ${mult} (Qty: ${qtyToTry})...`, 'warning', orderParams.symbol);
+            continue;
+          }
+          throw err;
+        }
+      }
+    }
+
+    // Fallback for MARKET BUY: use quoteOrderQty if available
+    if (orderParams.type === 'MARKET' && orderParams.side === 'BUY' && quoteOrderQty) {
+      try {
+        const attemptParams = {
+          symbol: orderParams.symbol,
+          side: 'BUY',
+          type: 'MARKET',
+          quoteOrderQty
+        };
+        const res = await this.mexcClient.placeOrder(attemptParams);
+        if (res && res.orderId) return res;
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+
+    throw lastErr || new Error('Failed to execute order after quantity scale precision retries.');
+  }
+
   stopTracking() {
     if (!this.isTracking) return;
     this.isTracking = false;
@@ -441,7 +488,7 @@ class StockOrderTracker {
                     type: 'MARKET',
                     quantity: buyQty
                   };
-                  result = await this.mexcClient.placeOrder(orderParams);
+                  result = await this.placeOrderWithPrecisionRetry(orderParams, order.quoteOrderQty);
                 } else {
                   // Slippage too high -> BLOCK MARKET ORDER & Place Pegged Limit Order at (Top Bid + 0.02)
                   let topBid = currentPrice;
@@ -468,7 +515,7 @@ class StockOrderTracker {
                     quantity: buyQty,
                     price: peggedPrice
                   };
-                  result = await this.mexcClient.placeOrder(orderParams);
+                  result = await this.placeOrderWithPrecisionRetry(orderParams, order.quoteOrderQty);
                 }
 
                 if (result && result.orderId) {
@@ -623,7 +670,7 @@ class StockOrderTracker {
                     type: 'MARKET',
                     quantity: sellQty
                   };
-                  sellResult = await this.mexcClient.placeOrder(sellParams);
+                  sellResult = await this.placeOrderWithPrecisionRetry(sellParams);
                 } else {
                   const peggedSellPrice = sim.bestPrice ? (sim.bestPrice * (1 - (maxAllowed / 100))) : targetSlPrice;
                   this.log(`⚠️ [MAX SLIPPAGE GUARD] Stock Market Sell Slippage (${sim.slippagePct.toFixed(2)}% > ${maxAllowed}%) too high! BLOCKING MARKET DUMP. Placing Pegged Limit Sell Order at ${peggedSellPrice.toFixed(4)} USDT...`, 'warning', order.symbol);
@@ -635,7 +682,7 @@ class StockOrderTracker {
                     quantity: sellQty,
                     price: peggedSellPrice
                   };
-                  sellResult = await this.mexcClient.placeOrder(sellParams);
+                  sellResult = await this.placeOrderWithPrecisionRetry(sellParams);
                 }
 
                 if (sellResult && sellResult.orderId) {
