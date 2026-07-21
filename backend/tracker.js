@@ -12,8 +12,73 @@ class OrderTracker {
     this.logs = [];
     this.intervalId = null;
     this.pollInterval = 1000; // default 1 second polling
+    this.cachedFeeSummary = null;
+    this.lastFeeCheckTime = 0;
     
     this.initStorage();
+  }
+
+  async getTotalMexcFeesPaid(forceRefresh = false) {
+    const now = Date.now();
+    if (!forceRefresh && this.cachedFeeSummary && (now - this.lastFeeCheckTime < 10000)) {
+      return this.cachedFeeSummary;
+    }
+
+    if (!this.mexcClient || !this.mexcClient.hasCredentials()) {
+      return { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
+    }
+
+    try {
+      const symbolsToCheck = new Set([
+        'ONDOUSDT', 'BTCUSDT', 'XRPUSDT', 'SOLUSDT', 'ETHUSDT', 'BNBUSDT', 'SUIUSDT', 'UNIUSDT', 'MXUSDT'
+      ]);
+
+      (this.orders || []).forEach(o => {
+        if (o.symbol) symbolsToCheck.add(o.symbol.toUpperCase());
+      });
+
+      let totalUsdtFees = 0;
+      let totalMxFees = 0;
+      let feeCount = 0;
+
+      for (const symbol of symbolsToCheck) {
+        try {
+          const trades = await this.mexcClient.getMyTrades(symbol, 1000);
+          if (Array.isArray(trades)) {
+            trades.forEach(t => {
+              const fee = parseFloat(t.commission || 0);
+              const fa = t.commissionAsset || '';
+              if (fee > 0) {
+                feeCount++;
+                if (fa === 'USDT') totalUsdtFees += fee;
+                else if (fa === 'MX') totalMxFees += fee;
+              }
+            });
+          }
+        } catch (e) {
+          // symbol not traded
+        }
+      }
+
+      let mxPrice = 1.65;
+      try {
+        const p = await this.mexcClient.getTickerPrice('MXUSDT');
+        if (p) mxPrice = parseFloat(p);
+      } catch(e) {}
+
+      const totalFeesInUsdt = totalUsdtFees + (totalMxFees * mxPrice);
+
+      this.cachedFeeSummary = {
+        usdtFees: parseFloat(totalUsdtFees.toFixed(4)),
+        mxFees: parseFloat(totalMxFees.toFixed(4)),
+        totalFeesInUsdt: parseFloat(totalFeesInUsdt.toFixed(4)),
+        feeCount
+      };
+      this.lastFeeCheckTime = now;
+      return this.cachedFeeSummary;
+    } catch (err) {
+      return this.cachedFeeSummary || { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
+    }
   }
 
   // Ensure storage directories and files exist

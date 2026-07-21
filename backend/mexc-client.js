@@ -207,6 +207,13 @@ class MexcClient {
     }
     return { makerCommission: 0.0004, takerCommission: 0.0000 };
   }
+
+  async getMyTrades(symbol, limit = 1000) {
+    return await this._request('GET', '/api/v3/myTrades', {
+      symbol: symbol.toUpperCase(),
+      limit
+    }, true);
+  }
 }
 
 module.exports = MexcClient;

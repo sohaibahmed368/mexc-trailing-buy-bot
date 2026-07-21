@@ -173,9 +173,10 @@ app.get('/api/balances', async (req, res) => {
     return res.status(400).json({ error: 'API Credentials not configured.' });
   }
   try {
-    const [balances, tickerPrices] = await Promise.all([
+    const [balances, tickerPrices, feesSummary] = await Promise.all([
       mexcClient.getBalances(),
-      mexcClient.getAllTickerPrices()
+      mexcClient.getAllTickerPrices(),
+      tracker.getTotalMexcFeesPaid()
     ]);
 
     // Create a map of symbol prices for fast lookup
@@ -224,6 +225,7 @@ app.get('/api/balances', async (req, res) => {
 
     res.json({
       totalUsdt: parseFloat(totalUsdt.toFixed(2)),
+      totalMexcFeesPaid: feesSummary,
       balances: enrichedBalances
     });
   } catch (error) {
