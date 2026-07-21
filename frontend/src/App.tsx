@@ -76,6 +76,13 @@ interface LogEntry {
   symbol: string | null;
 }
 
+interface FeeSummary {
+  usdtFees: number;
+  mxFees: number;
+  totalFeesInUsdt: number;
+  feeCount: number;
+}
+
 export default function App() {
   const [config, setConfig] = useState<Config>({
     hasCredentials: false,
@@ -85,6 +92,7 @@ export default function App() {
   });
   const [balances, setBalances] = useState<Balance[]>([]);
   const [totalUsdt, setTotalUsdt] = useState<number>(0);
+  const [totalMexcFeesPaid, setTotalMexcFeesPaid] = useState<FeeSummary | null>(null);
   const [availableSymbols, setAvailableSymbols] = useState<string[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -119,14 +127,17 @@ export default function App() {
         const data = await res.json();
         setBalances(data.balances || []);
         setTotalUsdt(data.totalUsdt || 0);
+        setTotalMexcFeesPaid(data.totalMexcFeesPaid || null);
       } else {
         setBalances([]);
         setTotalUsdt(0);
+        setTotalMexcFeesPaid(null);
       }
     } catch (e) {
       console.error('Failed to fetch balances', e);
       setBalances([]);
       setTotalUsdt(0);
+      setTotalMexcFeesPaid(null);
     } finally {
       setBalancesLoading(false);
     }
@@ -372,6 +383,7 @@ export default function App() {
           <Balances 
             balances={balances} 
             totalUsdt={totalUsdt}
+            totalMexcFeesPaid={totalMexcFeesPaid}
             loading={balancesLoading} 
             onRefresh={fetchBalances} 
             hasCredentials={config.hasCredentials}

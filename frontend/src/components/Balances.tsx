@@ -8,15 +8,23 @@ interface Balance {
   estUsdtValue?: number;
 }
 
+interface FeeSummary {
+  usdtFees: number;
+  mxFees: number;
+  totalFeesInUsdt: number;
+  feeCount: number;
+}
+
 interface BalancesProps {
   balances: Balance[];
   totalUsdt: number;
+  totalMexcFeesPaid?: FeeSummary | null;
   loading: boolean;
   onRefresh: () => void;
   hasCredentials: boolean;
 }
 
-export default function Balances({ balances, totalUsdt, loading, onRefresh, hasCredentials }: BalancesProps) {
+export default function Balances({ balances, totalUsdt, totalMexcFeesPaid, loading, onRefresh, hasCredentials }: BalancesProps) {
   return (
     <div className="card">
       <div className="card-title">
@@ -37,28 +45,61 @@ export default function Balances({ balances, totalUsdt, loading, onRefresh, hasC
       </div>
 
       {hasCredentials && !loading && (
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(155, 93, 229, 0.05) 100%)',
-          border: '1px solid var(--border-color)',
-          borderRadius: '10px',
-          padding: '0.75rem 1rem',
-          marginBottom: '1.25rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Net Portfolio Value</span>
-          <span style={{ 
-            fontSize: '1.25rem', 
-            fontWeight: 700, 
-            background: 'linear-gradient(to right, var(--color-cyan), var(--color-purple))', 
-            WebkitBackgroundClip: 'text', 
-            WebkitTextFillColor: 'transparent',
-            fontFamily: 'var(--font-sans)' 
+        <>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, rgba(155, 93, 229, 0.05) 100%)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '10px',
+            padding: '0.75rem 1rem',
+            marginBottom: '0.75rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}>
-            ${totalUsdt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT
-          </span>
-        </div>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Net Portfolio Value</span>
+            <span style={{ 
+              fontSize: '1.25rem', 
+              fontWeight: 700, 
+              background: 'linear-gradient(to right, var(--color-cyan), var(--color-purple))', 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent',
+              fontFamily: 'var(--font-sans)' 
+            }}>
+              ${totalUsdt.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDT
+            </span>
+          </div>
+
+          {totalMexcFeesPaid && (
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.08)',
+              border: '1px solid rgba(239, 68, 68, 0.25)',
+              borderRadius: '10px',
+              padding: '0.65rem 1rem',
+              marginBottom: '1.25rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#f87171', display: 'block' }}>Total Paid MEXC Fees</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                  {totalMexcFeesPaid.usdtFees > 0 && `${totalMexcFeesPaid.usdtFees.toFixed(2)} USDT`} 
+                  {totalMexcFeesPaid.usdtFees > 0 && totalMexcFeesPaid.mxFees > 0 && ' + '} 
+                  {totalMexcFeesPaid.mxFees > 0 && `${totalMexcFeesPaid.mxFees.toFixed(2)} MX`}
+                  {` (${totalMexcFeesPaid.feeCount} trades)`}
+                </span>
+              </div>
+              <span style={{ 
+                fontSize: '1.1rem', 
+                fontWeight: 700, 
+                color: '#ef4444',
+                fontFamily: 'var(--font-sans)' 
+              }}>
+                ${totalMexcFeesPaid.totalFeesInUsdt.toFixed(2)} USDT
+              </span>
+            </div>
+          )}
+        </>
       )}
 
       {!hasCredentials ? (
