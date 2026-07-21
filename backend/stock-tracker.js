@@ -334,7 +334,7 @@ class StockOrderTracker {
     if (this.isTicking) return;
     this.isTicking = true;
     try {
-      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
+      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION');
       if (activeOrders.length === 0) {
         this.checkTrackingLoop();
         return;
@@ -362,6 +362,28 @@ class StockOrderTracker {
 
         order.currentPrice = currentPrice;
         changed = true;
+
+        // 0.5. PENDING_EXECUTION (Waiting for Pegged Limit Buy Fill)
+        if (order.status === 'PENDING_EXECUTION' && order.mexcOrderId && !order.dryRun) {
+          try {
+            const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcOrderId);
+            if (queryRes && queryRes.status === 'FILLED') {
+              order.executionPrice = parseFloat(queryRes.price) || currentPrice;
+              order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
+              this.log(`🎉 [REAL] Pegged Limit Buy order ${order.mexcOrderId} FILLED at ${order.executionPrice} USDT! Transitioning to TP_SL_ACTIVE state.`, 'success', order.symbol);
+              changed = true;
+
+              if (!order.takeProfit && !order.stopLoss) {
+                this.handleOrderCycleComplete(order);
+              }
+            } else {
+              this.log(`⏳ [REAL] Pegged Limit Buy order ${order.mexcOrderId} still pending fill on MEXC...`, 'info', order.symbol);
+            }
+          } catch (qErr) {
+            this.log(`Failed to query order fill status for ${order.mexcOrderId}: ${qErr.message}`, 'warning', order.symbol);
+          }
+          continue;
+        }
 
         // 1. PENDING_ACTIVATION (Dynamic Peak Trailing)
         if (order.status === 'PENDING_ACTIVATION') {
@@ -521,13 +543,18 @@ class StockOrderTracker {
                 if (result && result.orderId) {
                   order.mexcOrderId = result.orderId;
                   order.executionPrice = currentPrice;
-                  order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
-                  this.log(`[REAL] Stock Buy order placed! Order ID: ${result.orderId}. Status: ${order.status}`, 'success', order.symbol);
-                  changed = true;
-
-                  if (!order.takeProfit && !order.stopLoss) {
-                    this.handleOrderCycleComplete(order);
+                  const maxAllowed = order.maxSlippagePct || 0.5;
+                  if (!sim.isLiquid || sim.slippagePct > maxAllowed) {
+                    order.status = 'PENDING_EXECUTION';
+                    this.log(`[REAL] Pegged Limit Buy order placed! Order ID: ${result.orderId}. Status set to PENDING_EXECUTION (Waiting for limit buy order fill)...`, 'info', order.symbol);
+                  } else {
+                    order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
+                    this.log(`[REAL] Stock Market Buy order placed! Order ID: ${result.orderId}. Status: ${order.status}`, 'success', order.symbol);
+                    if (!order.takeProfit && !order.stopLoss) {
+                      this.handleOrderCycleComplete(order);
+                    }
                   }
+                  changed = true;
                 }
               } catch (err) {
                 order.status = 'FAILED';
