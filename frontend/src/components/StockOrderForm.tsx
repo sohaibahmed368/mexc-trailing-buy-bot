@@ -198,16 +198,48 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           </label>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
             <input type="checkbox" checked={filterSmartSl} onChange={e => setFilterSmartSl(e.target.checked)} />
-            Smart SL Seller Exhaustion Guard
+            Smart SL Guard
           </label>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
             <input type="checkbox" checked={filterObi} onChange={e => setFilterObi(e.target.checked)} />
-            OBI Support Guard (&ge; 55%)
+            OBI Support Guard
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+            <input type="checkbox" checked={filterVolumeSpike} onChange={e => setFilterVolumeSpike(e.target.checked)} />
+            Volume Spike Guard
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+            <input type="checkbox" checked={filterRsi} onChange={e => setFilterRsi(e.target.checked)} />
+            RSI Oversold Guard
           </label>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
             <input type="checkbox" checked={dryRun} onChange={e => setDryRun(e.target.checked)} />
-            Dry Run (Simulated Paper Trading)
+            Dry Run
           </label>
+        </div>
+
+        {/* Extra Settings Row */}
+        <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>SL Buffer Gap (+USDT)</label>
+            <input
+              type="number"
+              step="0.0001"
+              value={slBuffer}
+              onChange={e => setSlBuffer(e.target.value)}
+              style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>Activation Offset (-USDT)</label>
+            <input
+              type="number"
+              step="0.0001"
+              value={activationOffset}
+              onChange={e => setActivationOffset(e.target.value)}
+              style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+            />
+          </div>
         </div>
 
         <button
