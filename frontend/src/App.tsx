@@ -9,6 +9,7 @@ import OrderHistory from './components/OrderHistory';
 import LogsConsole from './components/LogsConsole';
 import OrderBookAnalysis from './components/OrderBookAnalysis';
 import ScalpRadar from './components/ScalpRadar';
+import { StockBotTab } from './components/StockBotTab';
 
 const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:3001' : window.location.origin;
 
@@ -290,6 +291,8 @@ export default function App() {
     (o) => o.status === 'RUNNING' || o.status === 'PENDING_EXECUTION'
   ).length;
 
+  const [mainMode, setMainMode] = useState<'crypto' | 'stock'>('crypto');
+
   return (
     <div className="app-container">
       {/* Header */}
@@ -297,9 +300,45 @@ export default function App() {
         <div className="brand-section">
           <div className="brand-logo">M</div>
           <div className="brand-title">
-            <h1>MEXC Trailing Stop Buy Bot</h1>
-            <p>Spot Trading Bot with Absolute Price Offset Triggers</p>
+            <h1>MEXC Trailing Stop Trading Platform</h1>
+            <p>Crypto Trailing Bot & Tokenized Stock Protection Engine</p>
           </div>
+        </div>
+
+        {/* Main Mode Navigation Bar */}
+        <div style={{ display: 'flex', gap: '8px', background: '#0f172a', padding: '6px', borderRadius: '8px', border: '1px solid #334155' }}>
+          <button
+            type="button"
+            onClick={() => setMainMode('crypto')}
+            style={{
+              background: mainMode === 'crypto' ? 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)' : 'transparent',
+              color: '#fff',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: '0.9rem'
+            }}
+          >
+            🚀 Crypto Trailing Bot
+          </button>
+          <button
+            type="button"
+            onClick={() => setMainMode('stock')}
+            style={{
+              background: mainMode === 'stock' ? 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)' : 'transparent',
+              color: '#fff',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: '0.9rem'
+            }}
+          >
+            📈 Stock Bot (Low Liquidity)
+          </button>
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
@@ -341,59 +380,63 @@ export default function App() {
 
         {/* Right Column: Trading & Logs */}
         <div className="main-content">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
-            {/* Top Independent Scalp Radar */}
-            <ScalpRadar availableSymbols={availableSymbols} />
+          {mainMode === 'stock' ? (
+            <StockBotTab apiBaseUrl={BACKEND_URL} />
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+              {/* Top Independent Scalp Radar */}
+              <ScalpRadar availableSymbols={availableSymbols} />
 
-            {/* Set Trailing Buy order form */}
-            <OrderForm 
-              onSubmit={handleCreateOrder} 
-              hasCredentials={config.hasCredentials} 
-              availableSymbols={availableSymbols}
-            />
+              {/* Set Trailing Buy order form */}
+              <OrderForm 
+                onSubmit={handleCreateOrder} 
+                hasCredentials={config.hasCredentials} 
+                availableSymbols={availableSymbols}
+              />
 
-            {/* Trading Console tabs */}
-            <div className="card">
-              <div className="tabs-header">
-                <button
-                  type="button"
-                  className={`tab-btn ${activeTab === 'tracking' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('tracking')}
-                >
-                  Active Tracking ({activeOrdersCount})
-                </button>
-                <button
-                  type="button"
-                  className={`tab-btn ${activeTab === 'orderbook' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('orderbook')}
-                >
-                  Order Book Range Scanner
-                </button>
-                <button
-                  type="button"
-                  className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('history')}
-                >
-                  Order Audit History
-                </button>
+              {/* Trading Console tabs */}
+              <div className="card">
+                <div className="tabs-header">
+                  <button
+                    type="button"
+                    className={`tab-btn ${activeTab === 'tracking' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('tracking')}
+                  >
+                    Active Tracking ({activeOrdersCount})
+                  </button>
+                  <button
+                    type="button"
+                    className={`tab-btn ${activeTab === 'orderbook' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('orderbook')}
+                  >
+                    Order Book Range Scanner
+                  </button>
+                  <button
+                    type="button"
+                    className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('history')}
+                  >
+                    Order Audit History
+                  </button>
+                </div>
+
+                {activeTab === 'tracking' ? (
+                  <ActiveOrders orders={orders} onCancel={handleCancelOrder} />
+                ) : activeTab === 'orderbook' ? (
+                  <OrderBookAnalysis availableSymbols={availableSymbols} />
+                ) : (
+                  <OrderHistory orders={orders} onClear={handleClearHistory} />
+                )}
               </div>
 
-              {activeTab === 'tracking' ? (
-                <ActiveOrders orders={orders} onCancel={handleCancelOrder} />
-              ) : activeTab === 'orderbook' ? (
-                <OrderBookAnalysis availableSymbols={availableSymbols} />
-              ) : (
-                <OrderHistory orders={orders} onClear={handleClearHistory} />
-              )}
+              {/* Operations Console */}
+              <LogsConsole 
+                logs={logs} 
+                pollInterval={config.pollInterval} 
+                onUpdateInterval={handleUpdateInterval} 
+              />
             </div>
-
-            {/* Operations Console */}
-            <LogsConsole 
-              logs={logs} 
-              pollInterval={config.pollInterval} 
-              onUpdateInterval={handleUpdateInterval} 
-            />
-          </div>
+          )}
         </div>
       </div>
     </div>

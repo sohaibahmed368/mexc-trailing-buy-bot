@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const MexcClient = require('./mexc-client');
 const OrderTracker = require('./tracker');
+const StockOrderTracker = require('./stock-tracker');
 
 const app = express();
 const server = http.createServer(app);
@@ -21,9 +22,10 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
-// Initialize MEXC client and Tracker
+// Initialize MEXC client and Trackers
 const mexcClient = new MexcClient();
 const tracker = new OrderTracker(mexcClient, io);
+const stockTracker = new StockOrderTracker(mexcClient, io);
 
 // Port configuration
 const PORT = process.env.PORT || 3001;
@@ -283,6 +285,34 @@ app.delete('/api/orders', (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
+});
+
+// --- STOCK BOT ENDPOINTS ---
+app.get('/api/stock-orders', (req, res) => {
+  res.json(stockTracker.getOrders());
+});
+
+app.post('/api/stock-orders', async (req, res) => {
+  try {
+    const order = await stockTracker.addOrder(req.body);
+    res.json(order);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.delete('/api/stock-orders/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await stockTracker.cancelOrder(id);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.get('/api/stock-logs', (req, res) => {
+  res.json(stockTracker.getLogs());
 });
 
 const https = require('https');
