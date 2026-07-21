@@ -85,6 +85,15 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
 
         const currentSlOffset = order.isSlExtended ? (order.stopLoss! + (order.slBuffer || 0)) : order.stopLoss;
 
+        const cumulativeProfit = (order.tradeHistory && order.tradeHistory.length > 0)
+          ? order.tradeHistory.reduce((acc: number, t: any) => {
+              if (typeof t.profitUsdt === 'number') return acc + t.profitUsdt;
+              const buyP = t.buyPrice || 1;
+              const qty = order.quantity || (order.quoteOrderQty ? order.quoteOrderQty / buyP : 1);
+              return acc + ((t.sellPrice - t.buyPrice) * qty);
+            }, 0)
+          : ((order as any).totalNetProfit || 0);
+
         return (
           <div className="order-card" key={order.id} style={{
             borderColor: order.status === 'PENDING_ACTIVATION'
@@ -119,14 +128,26 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
               </span>
             </div>
 
-            {/* Config details */}
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              <span>Buy Condition: </span>
-              <strong style={{ color: 'var(--text-primary)' }}>
-                {order.quoteOrderQty
-                  ? `Spend ${order.quoteOrderQty} USDT`
-                  : `Buy ${order.quantity} Coin`}
-              </strong>
+            {/* Config & Profit details */}
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <span>Buy Condition: </span>
+                <strong style={{ color: 'var(--text-primary)' }}>
+                  {order.quoteOrderQty
+                    ? `Spend ${order.quoteOrderQty} USDT`
+                    : `Buy ${order.quantity} Coin`}
+                </strong>
+              </div>
+              <div style={{ textAlign: 'right', background: 'rgba(255, 255, 255, 0.03)', padding: '0.2rem 0.6rem', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Profit</span>
+                <strong style={{
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  color: cumulativeProfit > 0 ? 'var(--color-green)' : cumulativeProfit < 0 ? 'var(--color-red)' : 'var(--color-cyan)'
+                }}>
+                  {cumulativeProfit > 0 ? `+${cumulativeProfit.toFixed(4)} USDT` : `${cumulativeProfit.toFixed(4)} USDT`}
+                </strong>
+              </div>
             </div>
 
             {/* Activation status details */}

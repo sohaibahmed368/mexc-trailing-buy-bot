@@ -290,6 +290,7 @@ class OrderTracker {
       startImmediately: !!startImmediately,
       activationOffset: activationOffset ? parseFloat(activationOffset) : null,
       peakPrice: initialPrice,
+      totalNetProfit: 0,
       tradeHistory: [],
       initialPrice,
       bottomPrice,
@@ -1106,7 +1107,12 @@ class OrderTracker {
       const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
       const buyPrice = order.executionPrice;
       const sellPrice = order.sellExecutionPrice || order.currentPrice;
-      const profit = sellPrice - buyPrice; // per unit profit
+      const unitProfit = sellPrice - buyPrice; // per unit price difference
+
+      const qty = order.quantity || (order.quoteOrderQty && buyPrice > 0 ? (order.quoteOrderQty / buyPrice) : 1);
+      const cycleUsdtProfit = unitProfit * qty;
+
+      order.totalNetProfit = (order.totalNetProfit || 0) + cycleUsdtProfit;
 
       // Determine if Take Profit or Stop Loss hit
       let type = 'MANUAL_SELL';
@@ -1122,7 +1128,8 @@ class OrderTracker {
         buyPrice,
         sellPrice,
         type,
-        profit,
+        profit: unitProfit,
+        profitUsdt: cycleUsdtProfit,
         timestamp: new Date().toISOString()
       });
 

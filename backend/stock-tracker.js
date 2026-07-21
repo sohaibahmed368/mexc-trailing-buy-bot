@@ -187,6 +187,7 @@ class StockOrderTracker {
       mexcOrderId: null,
       mexcSellOrderId: null,
       createdAt: new Date().toISOString(),
+      totalNetProfit: 0,
       tradeHistory: [],
       isSlExtended: false,
       isSlProfitLocked: false,
@@ -654,7 +655,12 @@ class StockOrderTracker {
       const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
       const buyPrice = order.executionPrice;
       const sellPrice = order.sellExecutionPrice || order.currentPrice;
-      const profit = sellPrice - buyPrice;
+      const unitProfit = sellPrice - buyPrice;
+
+      const qty = order.quantity || (order.quoteOrderQty && buyPrice > 0 ? (order.quoteOrderQty / buyPrice) : 1);
+      const cycleUsdtProfit = unitProfit * qty;
+
+      order.totalNetProfit = (order.totalNetProfit || 0) + cycleUsdtProfit;
 
       let type = 'MANUAL_SELL';
       if (order.takeProfit && Math.abs(sellPrice - (buyPrice + order.takeProfit)) < 0.0001) {
@@ -667,7 +673,8 @@ class StockOrderTracker {
         cycle: cycleNum,
         buyPrice,
         sellPrice,
-        profit,
+        profit: unitProfit,
+        profitUsdt: cycleUsdtProfit,
         type,
         timestamp: new Date().toISOString()
       };
