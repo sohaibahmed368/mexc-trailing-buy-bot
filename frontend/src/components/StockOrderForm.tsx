@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { HelpCircle } from 'lucide-react';
 
 interface StockOrderFormProps {
   onOrderCreated: () => void;
@@ -9,12 +10,14 @@ interface StockOrderFormProps {
 export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, apiBaseUrl, availableSymbols = [] }) => {
   const [symbol, setSymbol] = useState('GOLD(XAUT)USDT');
   const [trailValue, setTrailValue] = useState('2.0');
-  const [quantity, setQuantity] = useState('1.0');
+  const [qtyMode, setQtyMode] = useState<'usdt' | 'coin'>('usdt');
+  const [quoteOrderQty, setQuoteOrderQty] = useState('100');
+  const [quantity, setQuantity] = useState('');
   const [takeProfit, setTakeProfit] = useState('10.0');
   const [stopLoss, setStopLoss] = useState('4.0');
   const [maxSlippagePct, setMaxSlippagePct] = useState('0.5');
   
-  // All checkboxes default to UNCHECKED (false) as requested by user
+  // All checkboxes default to UNCHECKED (false) as requested
   const [filterSmartSl, setFilterSmartSl] = useState(false);
   const [slBuffer, setSlBuffer] = useState('2.0');
   const [filterObi, setFilterObi] = useState(false);
@@ -40,13 +43,11 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
     'SOLUSDT'
   ];
 
-  // Merge MEXC live availableSymbols with stock presets
   const allSymbolsList = useMemo(() => {
     const set = new Set<string>([...defaultPresets, ...availableSymbols]);
     return Array.from(set);
   }, [availableSymbols]);
 
-  // Filtered dropdown suggestions
   const filteredSymbols = useMemo(() => {
     if (!symbol) return allSymbolsList.slice(0, 15);
     const query = symbol.toUpperCase().trim();
@@ -65,7 +66,8 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
         body: JSON.stringify({
           symbol: symbol.trim().toUpperCase(),
           trailValue: parseFloat(trailValue),
-          quantity: parseFloat(quantity),
+          quantity: qtyMode === 'coin' ? parseFloat(quantity) : null,
+          quoteOrderQty: qtyMode === 'usdt' ? parseFloat(quoteOrderQty) : null,
           takeProfit: takeProfit ? parseFloat(takeProfit) : null,
           stopLoss: stopLoss ? parseFloat(stopLoss) : null,
           maxSlippagePct: parseFloat(maxSlippagePct),
@@ -99,7 +101,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
         <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#38bdf8' }}>📈 Stock Bot (Low Liquidity Tokenized Engine)</h2>
         <span style={{ background: '#0284c7', color: '#ffffff', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: 'bold' }}>
-          LIVE MEXC SYNCED & MAX SLIPPAGE PROTECTED
+          {dryRun ? 'Simulation Mode' : 'Live Trading'}
         </span>
       </div>
 
@@ -115,19 +117,19 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           {/* Symbol Autocomplete Dropdown */}
           <div style={{ position: 'relative' }}>
             <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
-              Stock / Token Symbol (MEXC Synced)
+              Symbol (e.g. NVDAONUSDT, GOLD(XAUT)USDT)
             </label>
             <input
               type="text"
               value={symbol}
               onChange={e => {
-                setSymbol(e.target.value);
+                setSymbol(e.target.value.toUpperCase());
                 setIsDropdownOpen(true);
               }}
               onFocus={() => setIsDropdownOpen(true)}
               onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
               style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#fff', fontSize: '0.95rem', fontWeight: 'bold' }}
-              placeholder="Search MEXC symbol e.g. NVDA, USO, GOLD..."
+              placeholder="e.g. NVDAONUSDT"
               required
             />
             
@@ -162,10 +164,51 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
             </div>
           </div>
 
-          {/* Max Allowed Slippage % */}
+          {/* Investment Amount (USDT) vs Coin Quantity Switcher */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+                {qtyMode === 'usdt' ? 'Investment Amount (USDT)' : 'Quantity (Tokens)'}
+              </label>
+              <button
+                type="button"
+                onClick={() => setQtyMode(qtyMode === 'usdt' ? 'coin' : 'usdt')}
+                style={{ background: 'transparent', border: 'none', color: '#38bdf8', fontSize: '0.75rem', cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                Switch to {qtyMode === 'usdt' ? 'Token Qty' : 'USDT Amount'}
+              </button>
+            </div>
+
+            {qtyMode === 'usdt' ? (
+              <input
+                type="number"
+                step="any"
+                value={quoteOrderQty}
+                onChange={e => setQuoteOrderQty(e.target.value)}
+                placeholder="e.g. 100 USDT investment"
+                style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#38bdf8', fontSize: '0.95rem', fontWeight: 'bold' }}
+                required
+              />
+            ) : (
+              <input
+                type="number"
+                step="any"
+                value={quantity}
+                onChange={e => setQuantity(e.target.value)}
+                placeholder="e.g. 1.5 Tokens"
+                style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.95rem' }}
+                required
+              />
+            )}
+          </div>
+
+          {/* Custom Field: Max Allowed Slippage % */}
           <div style={{ background: 'rgba(56, 189, 248, 0.1)', padding: '12px', borderRadius: '8px', border: '1px solid #0284c7' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 'bold', marginBottom: '6px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 'bold', marginBottom: '6px' }}>
               🛡️ Max Allowed Slippage (%)
+              <span title="Blocks market dump if order book depth slippage > maxAllowedSlippage. Converts to pegged limit order." style={{ cursor: 'help', color: '#94a3b8' }}>
+                <HelpCircle size={13} />
+              </span>
             </label>
             <input
               type="number"
@@ -177,32 +220,22 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
               style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#38bdf8', fontSize: '1.05rem', fontWeight: 'bold' }}
               required
             />
-            <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '4px', display: 'block' }}>
-              Blocks market dump if depth slippage &gt; {maxSlippagePct}%. Converts to pegged limit order.
-            </span>
           </div>
 
           {/* Trail Value */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>Trailing Buy Gap (USDT)</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
+              Trail Value (Absolute Price Offset)
+              <span title="If price bottoms at $50.00 and trail is $0.50, buy triggers if price goes up to $50.50" style={{ cursor: 'help', color: '#94a3b8' }}>
+                <HelpCircle size={13} />
+              </span>
+            </label>
             <input
               type="number"
-              step="0.0001"
+              step="any"
               value={trailValue}
               onChange={e => setTrailValue(e.target.value)}
-              style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff' }}
-              required
-            />
-          </div>
-
-          {/* Quantity */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>Quantity (Tokens)</label>
-            <input
-              type="number"
-              step="0.0001"
-              value={quantity}
-              onChange={e => setQuantity(e.target.value)}
+              placeholder="e.g. 2.0"
               style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff' }}
               required
             />
@@ -210,82 +243,119 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
 
           {/* Take Profit */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>Take Profit Target (+USDT)</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
+              Take Profit Offset
+              <span title="The price offset added to the execution buy price for placing the Limit Sell order." style={{ cursor: 'help', color: '#94a3b8' }}>
+                <HelpCircle size={13} />
+              </span>
+            </label>
             <input
               type="number"
-              step="0.0001"
+              step="any"
               value={takeProfit}
               onChange={e => setTakeProfit(e.target.value)}
+              placeholder="e.g. 10 (value to add)"
               style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#22c55e' }}
             />
           </div>
 
           {/* Stop Loss */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>Stop Loss Distance (-USDT)</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
+              Stop Loss Offset
+              <span title="The price offset subtracted from the execution buy price for monitoring the Market Sell level." style={{ cursor: 'help', color: '#94a3b8' }}>
+                <HelpCircle size={13} />
+              </span>
+            </label>
             <input
               type="number"
-              step="0.0001"
+              step="any"
               value={stopLoss}
               onChange={e => setStopLoss(e.target.value)}
+              placeholder="e.g. 4 (value to subtract)"
               style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#ef4444' }}
             />
           </div>
         </div>
 
-        {/* Toggles Row - ALL UNCHECKED (DEFAULT FALSE) */}
-        <div style={{ marginTop: '20px', display: 'flex', gap: '16px', flexWrap: 'wrap', background: '#0f172a', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
-            <input type="checkbox" checked={startImmediately} onChange={e => setStartImmediately(e.target.checked)} />
-            Start Immediately (Bypass Activation Dip)
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+        {/* Auto Repeat Toggle Block */}
+        <div style={{ background: 'rgba(255, 255, 255, 0.01)', padding: '12px', borderRadius: '8px', border: '1px solid #334155', marginTop: '16px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
             <input type="checkbox" checked={autoRepeat} onChange={e => setAutoRepeat(e.target.checked)} />
-            Auto-Repeat (Autonomous Multi-Cycle)
+            Enable Auto-Cycle Loop 🔄
           </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
-            <input type="checkbox" checked={filterSmartSl} onChange={e => setFilterSmartSl(e.target.checked)} />
-            Smart SL Guard
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
-            <input type="checkbox" checked={filterObi} onChange={e => setFilterObi(e.target.checked)} />
-            OBI Support Guard
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
-            <input type="checkbox" checked={filterVolumeSpike} onChange={e => setFilterVolumeSpike(e.target.checked)} />
-            Volume Spike Guard
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
-            <input type="checkbox" checked={filterRsi} onChange={e => setFilterRsi(e.target.checked)} />
-            RSI Oversold Guard
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
-            <input type="checkbox" checked={dryRun} onChange={e => setDryRun(e.target.checked)} />
-            Dry Run
-          </label>
+
+          {autoRepeat && (
+            <div style={{ marginTop: '10px', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.8rem', color: '#cbd5e1' }}>
+                <input type="checkbox" checked={startImmediately} onChange={e => setStartImmediately(e.target.checked)} />
+                Start First Trade Immediately at Market Price ⚡
+              </label>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>
+                  Activation Dip Offset (- USDT)
+                </label>
+                <input
+                  type="number"
+                  step="any"
+                  value={activationOffset}
+                  onChange={e => setActivationOffset(e.target.value)}
+                  placeholder="e.g. 10 USDT dip"
+                  style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Extra Settings Row */}
-        <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>SL Buffer Gap (+USDT)</label>
-            <input
-              type="number"
-              step="0.0001"
-              value={slBuffer}
-              onChange={e => setSlBuffer(e.target.value)}
-              style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>Activation Offset (-USDT)</label>
-            <input
-              type="number"
-              step="0.0001"
-              value={activationOffset}
-              onChange={e => setActivationOffset(e.target.value)}
-              style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
-            />
+        {/* Smart Stop Loss Guard Toggle & Buffer */}
+        <div style={{ background: 'rgba(255, 255, 255, 0.01)', padding: '12px', borderRadius: '8px', border: '1px solid #334155', marginTop: '12px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
+            <input type="checkbox" checked={filterSmartSl} onChange={e => setFilterSmartSl(e.target.checked)} />
+            Enable Smart Dynamic Stop Loss Guard 🛡️
+          </label>
+
+          {filterSmartSl && (
+            <div style={{ marginTop: '8px', paddingLeft: '24px' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>
+                Smart SL Stretch Buffer (+ USDT)
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={slBuffer}
+                onChange={e => setSlBuffer(e.target.value)}
+                placeholder="e.g. 2.0 (buffer to stretch SL)"
+                style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Consensus Confirmation Filters Row */}
+        <div style={{ background: 'rgba(255, 255, 255, 0.01)', padding: '12px', borderRadius: '8px', border: '1px solid #334155', marginTop: '12px' }}>
+          <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: '#cbd5e1', display: 'block', marginBottom: '8px' }}>
+            Buy Entry Confirmation Filters (Optional)
+          </span>
+
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+              <input type="checkbox" checked={filterObi} onChange={e => setFilterObi(e.target.checked)} />
+              OBI Support Guard (&ge; 55%)
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+              <input type="checkbox" checked={filterVolumeSpike} onChange={e => setFilterVolumeSpike(e.target.checked)} />
+              Volume Spike Guard (&ge; 1.5x)
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+              <input type="checkbox" checked={filterRsi} onChange={e => setFilterRsi(e.target.checked)} />
+              RSI Oversold Guard (&le; 35)
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+              <input type="checkbox" checked={dryRun} onChange={e => setDryRun(e.target.checked)} />
+              Simulation Mode (Dry Run)
+            </label>
           </div>
         </div>
 
