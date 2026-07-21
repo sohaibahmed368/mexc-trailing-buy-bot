@@ -133,16 +133,29 @@ class StockOrderTracker {
   async addOrder(config) {
     const currentPrice = await this.mexcClient.getTickerPrice(config.symbol);
 
-    const isStartImmediate = config.startImmediately === true;
-    const initialStatus = isStartImmediate ? 'RUNNING' : 'PENDING_ACTIVATION';
-
+    let isStartImmediate = config.startImmediately === true;
+    let initialStatus = 'RUNNING';
     let initialPeak = null;
     let initialActivationPrice = null;
 
-    if (!isStartImmediate) {
-      initialPeak = currentPrice;
-      const offset = config.activationOffset ? parseFloat(config.activationOffset) : parseFloat(config.trailValue);
-      initialActivationPrice = initialPeak - offset;
+    if (config.autoRepeat) {
+      if (!isStartImmediate) {
+        initialStatus = 'PENDING_ACTIVATION';
+        initialPeak = currentPrice;
+        const offset = config.activationOffset !== undefined && config.activationOffset !== null && config.activationOffset !== '' 
+          ? parseFloat(config.activationOffset) 
+          : parseFloat(config.trailValue);
+        initialActivationPrice = initialPeak - offset;
+      }
+    } else {
+      if (config.activationPrice !== undefined && config.activationPrice !== null && config.activationPrice !== '') {
+        isStartImmediate = false;
+        initialStatus = 'PENDING_ACTIVATION';
+        initialActivationPrice = parseFloat(config.activationPrice);
+      } else {
+        isStartImmediate = true;
+        initialStatus = 'RUNNING';
+      }
     }
 
     const newOrder = {
