@@ -1150,6 +1150,7 @@ class OrderTracker {
       order.isSlExtended = false;
       order.isSlProfitLocked = false;
       order.lockedSlPrice = null;
+      delete order.justProfitLocked;
 
       this.log(
         `Cycle #${cycleNum} completed (${type}). Resetting order to pending activation. New peak: ${order.peakPrice}, Activation price: ${order.activationPrice}`,

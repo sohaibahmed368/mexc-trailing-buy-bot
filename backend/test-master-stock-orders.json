@@ -1,0 +1,51 @@
+[
+  {
+    "id": "1784659594090",
+    "symbol": "NVDAONUSDT",
+    "trailValue": 2,
+    "orderType": "MARKET",
+    "quantity": 5,
+    "quoteOrderQty": null,
+    "takeProfit": 20,
+    "stopLoss": 10,
+    "filterSmartSl": false,
+    "slBuffer": 0,
+    "filterObi": false,
+    "filterVolumeSpike": false,
+    "filterRsi": false,
+    "autoRepeat": true,
+    "activationOffset": null,
+    "maxSlippagePct": 0.5,
+    "isStockBot": true,
+    "status": "RUNNING",
+    "dryRun": false,
+    "peakPrice": 110,
+    "activationPrice": 108,
+    "bottomPrice": 105,
+    "triggerPrice": 107,
+    "executionPrice": null,
+    "sellExecutionPrice": null,
+    "mexcOrderId": null,
+    "mexcSellOrderId": null,
+    "createdAt": "2026-07-21T18:46:34.090Z",
+    "totalNetProfit": -50,
+    "tradeHistory": [
+      {
+        "cycle": 1,
+        "buyPrice": 120,
+        "sellPrice": 110,
+        "profit": -10,
+        "profitUsdt": -50,
+        "type": "STOP_LOSS",
+        "timestamp": "2026-07-21T18:46:34.159Z"
+      }
+    ],
+    "isSlExtended": false,
+    "isSlProfitLocked": false,
+    "lockedSlPrice": null,
+    "currentPrice": 105,
+    "sellTriggeredAt": null,
+    "triggeredAt": null,
+    "activatedAt": "2026-07-21T18:46:35.096Z"
+  }
+]

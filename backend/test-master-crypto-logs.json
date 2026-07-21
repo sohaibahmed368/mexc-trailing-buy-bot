@@ -1,0 +1,3502 @@
+[
+  {
+    "id": "1784659594705-zin00",
+    "timestamp": "2026-07-21T18:46:34.705Z",
+    "message": "Trailing stop buy activated via Dip: price 2015 hit dip activation target 2020. (Trigger target: >= 2025).",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784659594065-a0s7w",
+    "timestamp": "2026-07-21T18:46:34.065Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Resetting order to pending activation. New peak: 2020, Activation price: 2020",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784659594037-5nqvd",
+    "timestamp": "2026-07-21T18:46:34.037Z",
+    "message": "[DRY RUN] Stop Loss hit! Simulated Market Sell executed at 2020 USDT.",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784659594012-y1qt6",
+    "timestamp": "2026-07-21T18:46:34.012Z",
+    "message": "Trailing stop buy activated via Dip: price 142 hit dip activation target 143.5. (Trigger target: >= 144).",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593980-3qgvv",
+    "timestamp": "2026-07-21T18:46:33.980Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (2055.0000 >= 2050.0000 USDT)! Stop Loss shifted UP to +$20.00 above Buy Price (2020.0000 USDT). Profit Locked!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784659593958-j21gy",
+    "timestamp": "2026-07-21T18:46:33.958Z",
+    "message": "Created [DRY RUN] trailing stop buy for ETHUSDT. Initial price: 2000. Bottom: 2000. Trail: 10. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784659593937-1oc54",
+    "timestamp": "2026-07-21T18:46:33.937Z",
+    "message": "[DRY RUN] Auto-Loop started: First trade bought immediately at market price 2000 USDT. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784659593934-zr89q",
+    "timestamp": "2026-07-21T18:46:33.934Z",
+    "message": "Fetching initial price for ETHUSDT...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784659593902-1jfd8",
+    "timestamp": "2026-07-21T18:46:33.902Z",
+    "message": "Cycle #2 completed (STOP_LOSS). Resetting order to pending activation. New peak: 143.5, Activation price: 143.5",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593898-8f7kr",
+    "timestamp": "2026-07-21T18:46:33.898Z",
+    "message": "[DRY RUN] Stop Loss hit! Simulated Market Sell executed at 143.5 USDT.",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593890-5prym",
+    "timestamp": "2026-07-21T18:46:33.890Z",
+    "message": "[DRY RUN] Simulated Spot Buy order executed at 148.5 USDT. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593887-ucff1",
+    "timestamp": "2026-07-21T18:46:33.887Z",
+    "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 148.5 USDT!. Executing [DRY RUN] buy...",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593810-vcrlo",
+    "timestamp": "2026-07-21T18:46:33.810Z",
+    "message": "New bottom detected for SOLUSDT: 146 (was 147). Recalculated trigger to: 148",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593783-2mfhb",
+    "timestamp": "2026-07-21T18:46:33.784Z",
+    "message": "Trailing stop buy activated via Dip: price 147 hit dip activation target 150. (Trigger target: >= 149).",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593753-cvpu8",
+    "timestamp": "2026-07-21T18:46:33.753Z",
+    "message": "Cycle #1 completed (TAKE_PROFIT). Resetting order to pending activation. New peak: 150, Activation price: 150",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593731-76ulu",
+    "timestamp": "2026-07-21T18:46:33.731Z",
+    "message": "[DRY RUN] Take Profit hit! Simulated Limit Sell executed at 150 USDT.",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593706-evyr0",
+    "timestamp": "2026-07-21T18:46:33.706Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (151.0000 >= 145.0000 USDT)! Stop Loss shifted UP to +$4.00 above Buy Price (144.0000 USDT). Profit Locked!",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593676-1vu3w",
+    "timestamp": "2026-07-21T18:46:33.676Z",
+    "message": "Created [DRY RUN] trailing stop buy for SOLUSDT. Initial price: 140. Bottom: 140. Trail: 2. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593652-infre",
+    "timestamp": "2026-07-21T18:46:33.652Z",
+    "message": "[DRY RUN] Auto-Loop started: First trade bought immediately at market price 140 USDT. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784659593644-3yrkx",
+    "timestamp": "2026-07-21T18:46:33.644Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1784482610509-f8atb",
+    "timestamp": "2026-07-19T17:36:50.510Z",
+    "message": "Loaded API keys from local credentials file.",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784441084497-hqwq9",
+    "timestamp": "2026-07-19T06:04:44.497Z",
+    "message": "Successfully cached 1763 active USDT trading pairs from MEXC.",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784441082873-fafvs",
+    "timestamp": "2026-07-19T06:04:42.873Z",
+    "message": "MEXC Trailing Buy Bot Server is running on port 3001",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784441082789-ncqjv",
+    "timestamp": "2026-07-19T06:04:42.789Z",
+    "message": "Loaded API keys from local credentials file.",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784420050269-vic7f",
+    "timestamp": "2026-07-19T00:14:10.269Z",
+    "message": "Trailing buy order for ETHUSDT has been cancelled by user.",
+    "type": "warning",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784420050266-seujo",
+    "timestamp": "2026-07-19T00:14:10.266Z",
+    "message": "Cancelled active TP Limit Sell order C02__707293378563239936032 on MEXC.",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1784419802850-lk3zp",
+    "timestamp": "2026-07-19T00:10:02.850Z",
+    "message": "Successfully cached 1763 active USDT trading pairs from MEXC.",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784419801556-xp74m",
+    "timestamp": "2026-07-19T00:10:01.556Z",
+    "message": "MEXC Trailing Buy Bot Server is running on port 3001",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784419801482-b1gi8",
+    "timestamp": "2026-07-19T00:10:01.482Z",
+    "message": "Loaded API keys from local credentials file.",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784417941164-u0nkg",
+    "timestamp": "2026-07-18T23:39:01.164Z",
+    "message": "Successfully cached 1763 active USDT trading pairs from MEXC.",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784417940601-youxh",
+    "timestamp": "2026-07-18T23:39:00.601Z",
+    "message": "MEXC Trailing Buy Bot Server is running on port 3001",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784417940492-03shc",
+    "timestamp": "2026-07-18T23:39:00.492Z",
+    "message": "Loaded API keys from local credentials file.",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784416644887-tvk9v",
+    "timestamp": "2026-07-18T23:17:24.887Z",
+    "message": "Loaded API keys from local credentials file.",
+    "type": "success",
+    "symbol": null
+  },
+  {
+    "id": "1784416442219-wn8sk",
+    "timestamp": "2026-07-18T23:14:02.219Z",
+    "message": "[REAL] Take Profit hit! Limit Sell filled on MEXC at 141.37 USDT.",
+    "type": "success",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416439558-1be5m",
+    "timestamp": "2026-07-18T23:13:59.558Z",
+    "message": "[REAL] Take Profit hit! Limit Sell filled on MEXC at 140.57 USDT.",
+    "type": "success",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416182338-q35ao",
+    "timestamp": "2026-07-18T23:09:42.338Z",
+    "message": "[REAL] Take Profit Limit Sell order placed on MEXC. Order ID: C02__707302035896119296032",
+    "type": "success",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416182094-g88f4",
+    "timestamp": "2026-07-18T23:09:42.094Z",
+    "message": "[REAL] Placing Take Profit LIMIT SELL order on MEXC for 0.1429 tokens at 141.37000000000003...",
+    "type": "info",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416182092-qnkmr",
+    "timestamp": "2026-07-18T23:09:42.092Z",
+    "message": "Fetched asset balance for OIL(USOON): free balance is 0.143 (gross quantity estimated: 0.071).",
+    "type": "info",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416180288-f0z24",
+    "timestamp": "2026-07-18T23:09:40.288Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416180278-gjmeg",
+    "timestamp": "2026-07-18T23:09:40.278Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: C02__707302020138098689032. Avg Fill Price: 140.57000000000002. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416180276-szux2",
+    "timestamp": "2026-07-18T23:09:40.276Z",
+    "message": "Fetched actual MEXC fill price for order C02__707302020138098689032: 140.5700 USDT (estimated fallback was 140.26).",
+    "type": "info",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416179364-m59eh",
+    "timestamp": "2026-07-18T23:09:39.364Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416179082-anhlc",
+    "timestamp": "2026-07-18T23:09:39.082Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416178868-b8vf3",
+    "timestamp": "2026-07-18T23:09:38.868Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416178300-xbda9",
+    "timestamp": "2026-07-18T23:09:38.300Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416178032-t1rgh",
+    "timestamp": "2026-07-18T23:09:38.032Z",
+    "message": "Placing Spot BUY order on MEXC for OIL(USOON)USDT...",
+    "type": "info",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416178030-mnmhu",
+    "timestamp": "2026-07-18T23:09:38.030Z",
+    "message": "[REAL] Trailing stop buy triggered for OIL(USOON)USDT! Current price: 140.26 >= Trigger price: null",
+    "type": "success",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416178008-8vjx9",
+    "timestamp": "2026-07-18T23:09:38.008Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416177667-k5d3d",
+    "timestamp": "2026-07-18T23:09:37.667Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416176454-g2isr",
+    "timestamp": "2026-07-18T23:09:36.454Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416176253-mg9pt",
+    "timestamp": "2026-07-18T23:09:36.253Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416175982-9vg1z",
+    "timestamp": "2026-07-18T23:09:35.982Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416175655-e5miw",
+    "timestamp": "2026-07-18T23:09:35.655Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416175083-8n7ht",
+    "timestamp": "2026-07-18T23:09:35.083Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416174872-kffn7",
+    "timestamp": "2026-07-18T23:09:34.872Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416174382-5s9zk",
+    "timestamp": "2026-07-18T23:09:34.382Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416174178-pfjz8",
+    "timestamp": "2026-07-18T23:09:34.178Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416173889-85h3p",
+    "timestamp": "2026-07-18T23:09:33.889Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416173593-511vb",
+    "timestamp": "2026-07-18T23:09:33.593Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416173385-i2ti8",
+    "timestamp": "2026-07-18T23:09:33.385Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416173090-yjp7s",
+    "timestamp": "2026-07-18T23:09:33.090Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416172421-ydvnx",
+    "timestamp": "2026-07-18T23:09:32.421Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416172163-5d2m3",
+    "timestamp": "2026-07-18T23:09:32.163Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416171957-odmvd",
+    "timestamp": "2026-07-18T23:09:31.957Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416170891-vo0tm",
+    "timestamp": "2026-07-18T23:09:30.891Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416170382-b9227",
+    "timestamp": "2026-07-18T23:09:30.382Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416169861-8htm2",
+    "timestamp": "2026-07-18T23:09:29.861Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416169441-z3mcr",
+    "timestamp": "2026-07-18T23:09:29.441Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416169162-zemgs",
+    "timestamp": "2026-07-18T23:09:29.162Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416168882-iymbf",
+    "timestamp": "2026-07-18T23:09:28.882Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416168269-citda",
+    "timestamp": "2026-07-18T23:09:28.269Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416168061-xf46i",
+    "timestamp": "2026-07-18T23:09:28.061Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416167859-84r5o",
+    "timestamp": "2026-07-18T23:09:27.859Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416167301-n6lr4",
+    "timestamp": "2026-07-18T23:09:27.301Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416167024-4tozh",
+    "timestamp": "2026-07-18T23:09:27.024Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416166739-c145i",
+    "timestamp": "2026-07-18T23:09:26.739Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416166071-i533s",
+    "timestamp": "2026-07-18T23:09:26.071Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416165472-r10o7",
+    "timestamp": "2026-07-18T23:09:25.472Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416165273-zpm37",
+    "timestamp": "2026-07-18T23:09:25.273Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416164489-n7r2c",
+    "timestamp": "2026-07-18T23:09:24.489Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416164282-out01",
+    "timestamp": "2026-07-18T23:09:24.282Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416163739-lgztv",
+    "timestamp": "2026-07-18T23:09:23.739Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416163485-a7wzi",
+    "timestamp": "2026-07-18T23:09:23.485Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416163274-14co5",
+    "timestamp": "2026-07-18T23:09:23.274Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416162740-x5rpe",
+    "timestamp": "2026-07-18T23:09:22.740Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416162503-8kx6y",
+    "timestamp": "2026-07-18T23:09:22.503Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416162298-ynvq1",
+    "timestamp": "2026-07-18T23:09:22.298Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416162085-t1ucb",
+    "timestamp": "2026-07-18T23:09:22.085Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416161587-sh6we",
+    "timestamp": "2026-07-18T23:09:21.587Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416161061-ynm0y",
+    "timestamp": "2026-07-18T23:09:21.061Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416160860-2q0f2",
+    "timestamp": "2026-07-18T23:09:20.860Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416160072-jeyiy",
+    "timestamp": "2026-07-18T23:09:20.072Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416159475-fedfu",
+    "timestamp": "2026-07-18T23:09:19.475Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416158952-ibpc8",
+    "timestamp": "2026-07-18T23:09:18.952Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416158084-kj67d",
+    "timestamp": "2026-07-18T23:09:18.084Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416157881-j9nq9",
+    "timestamp": "2026-07-18T23:09:17.881Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416157681-lxsc4",
+    "timestamp": "2026-07-18T23:09:17.681Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416156812-j6jdi",
+    "timestamp": "2026-07-18T23:09:16.812Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416156602-a1p1o",
+    "timestamp": "2026-07-18T23:09:16.602Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416156068-g96a3",
+    "timestamp": "2026-07-18T23:09:16.068Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416155188-ues60",
+    "timestamp": "2026-07-18T23:09:15.188Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416154984-0rz0l",
+    "timestamp": "2026-07-18T23:09:14.984Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416154773-gh2sx",
+    "timestamp": "2026-07-18T23:09:14.773Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416153874-1obly",
+    "timestamp": "2026-07-18T23:09:13.874Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416153578-hroee",
+    "timestamp": "2026-07-18T23:09:13.578Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416153050-i7li1",
+    "timestamp": "2026-07-18T23:09:13.050Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416152253-8b8si",
+    "timestamp": "2026-07-18T23:09:12.253Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416152048-2lf52",
+    "timestamp": "2026-07-18T23:09:12.048Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416151845-n8vcx",
+    "timestamp": "2026-07-18T23:09:11.845Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416151501-6jvel",
+    "timestamp": "2026-07-18T23:09:11.501Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416150941-sggem",
+    "timestamp": "2026-07-18T23:09:10.941Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416150727-xm00b",
+    "timestamp": "2026-07-18T23:09:10.727Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416150135-kmgea",
+    "timestamp": "2026-07-18T23:09:10.135Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416149934-c2ofp",
+    "timestamp": "2026-07-18T23:09:09.934Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416149725-tm4n4",
+    "timestamp": "2026-07-18T23:09:09.725Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416149084-6au1r",
+    "timestamp": "2026-07-18T23:09:09.084Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416148879-bsceo",
+    "timestamp": "2026-07-18T23:09:08.879Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416148670-isdxx",
+    "timestamp": "2026-07-18T23:09:08.670Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416147735-u494u",
+    "timestamp": "2026-07-18T23:09:07.735Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416147472-eizsq",
+    "timestamp": "2026-07-18T23:09:07.472Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416147269-g2pgz",
+    "timestamp": "2026-07-18T23:09:07.269Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416146393-c91eh",
+    "timestamp": "2026-07-18T23:09:06.393Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416145875-h2n98",
+    "timestamp": "2026-07-18T23:09:05.875Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416145665-4nrca",
+    "timestamp": "2026-07-18T23:09:05.665Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416144826-pmoka",
+    "timestamp": "2026-07-18T23:09:04.826Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416144267-t5j71",
+    "timestamp": "2026-07-18T23:09:04.267Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416144062-mqc9y",
+    "timestamp": "2026-07-18T23:09:04.062Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416143572-ymq6z",
+    "timestamp": "2026-07-18T23:09:03.572Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416143047-mbn05",
+    "timestamp": "2026-07-18T23:09:03.047Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416142846-101b6",
+    "timestamp": "2026-07-18T23:09:02.846Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416141790-o5obp",
+    "timestamp": "2026-07-18T23:09:01.790Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416141488-6jizk",
+    "timestamp": "2026-07-18T23:09:01.488Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416141281-xfufv",
+    "timestamp": "2026-07-18T23:09:01.281Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416139767-o1vv7",
+    "timestamp": "2026-07-18T23:08:59.767Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416139246-k9j6l",
+    "timestamp": "2026-07-18T23:08:59.246Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416138716-p9qox",
+    "timestamp": "2026-07-18T23:08:58.716Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416138219-759pb",
+    "timestamp": "2026-07-18T23:08:58.219Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416138021-6c4eg",
+    "timestamp": "2026-07-18T23:08:58.021Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416137788-bfbsc",
+    "timestamp": "2026-07-18T23:08:57.788Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416136790-fdtxg",
+    "timestamp": "2026-07-18T23:08:56.790Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416136265-pxw0h",
+    "timestamp": "2026-07-18T23:08:56.265Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416136043-d6lsq",
+    "timestamp": "2026-07-18T23:08:56.043Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416135547-vogg4",
+    "timestamp": "2026-07-18T23:08:55.547Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416135280-bol4r",
+    "timestamp": "2026-07-18T23:08:55.280Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416135049-tou14",
+    "timestamp": "2026-07-18T23:08:55.049Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416134136-g3ehj",
+    "timestamp": "2026-07-18T23:08:54.136Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416133923-gxdf7",
+    "timestamp": "2026-07-18T23:08:53.923Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416133715-2oy3e",
+    "timestamp": "2026-07-18T23:08:53.715Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416133440-5kzmo",
+    "timestamp": "2026-07-18T23:08:53.440Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416132919-cpedw",
+    "timestamp": "2026-07-18T23:08:52.919Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416132711-0aeob",
+    "timestamp": "2026-07-18T23:08:52.711Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416132471-522i1",
+    "timestamp": "2026-07-18T23:08:52.471Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416132260-c79fy",
+    "timestamp": "2026-07-18T23:08:52.260Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416132056-zzf23",
+    "timestamp": "2026-07-18T23:08:52.056Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416131245-t1xs1",
+    "timestamp": "2026-07-18T23:08:51.245Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416131038-ywg5i",
+    "timestamp": "2026-07-18T23:08:51.038Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416130828-zussb",
+    "timestamp": "2026-07-18T23:08:50.828Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416130111-pn8cy",
+    "timestamp": "2026-07-18T23:08:50.111Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416129909-vclbl",
+    "timestamp": "2026-07-18T23:08:49.909Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416129708-c2wck",
+    "timestamp": "2026-07-18T23:08:49.708Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416129507-zdw11",
+    "timestamp": "2026-07-18T23:08:49.507Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416129234-yzivf",
+    "timestamp": "2026-07-18T23:08:49.234Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416129028-rauju",
+    "timestamp": "2026-07-18T23:08:49.029Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416128253-ku4pc",
+    "timestamp": "2026-07-18T23:08:48.253Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416128037-ogcu0",
+    "timestamp": "2026-07-18T23:08:48.037Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416127826-gk23a",
+    "timestamp": "2026-07-18T23:08:47.826Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416127165-8fmor",
+    "timestamp": "2026-07-18T23:08:47.165Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416126970-davyk",
+    "timestamp": "2026-07-18T23:08:46.970Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416126713-sbxk3",
+    "timestamp": "2026-07-18T23:08:46.713Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416126124-a60de",
+    "timestamp": "2026-07-18T23:08:46.124Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416125914-np8he",
+    "timestamp": "2026-07-18T23:08:45.914Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416125705-wvznj",
+    "timestamp": "2026-07-18T23:08:45.705Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416125431-aq2e4",
+    "timestamp": "2026-07-18T23:08:45.431Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416125231-s3dik",
+    "timestamp": "2026-07-18T23:08:45.231Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416125033-jaqsq",
+    "timestamp": "2026-07-18T23:08:45.033Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416124337-cdi4h",
+    "timestamp": "2026-07-18T23:08:44.337Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416124061-rf2kk",
+    "timestamp": "2026-07-18T23:08:44.061Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416123861-y6bmk",
+    "timestamp": "2026-07-18T23:08:43.861Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416122624-y4fwq",
+    "timestamp": "2026-07-18T23:08:42.624Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416122384-t5v64",
+    "timestamp": "2026-07-18T23:08:42.384Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416121846-ab3es",
+    "timestamp": "2026-07-18T23:08:41.846Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416121446-yzif1",
+    "timestamp": "2026-07-18T23:08:41.446Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416120911-169c8",
+    "timestamp": "2026-07-18T23:08:40.911Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416120697-3cwtq",
+    "timestamp": "2026-07-18T23:08:40.697Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416120240-9bvp3",
+    "timestamp": "2026-07-18T23:08:40.240Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416120037-cmtsx",
+    "timestamp": "2026-07-18T23:08:40.037Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416119814-qh81p",
+    "timestamp": "2026-07-18T23:08:39.814Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416118691-ehtw7",
+    "timestamp": "2026-07-18T23:08:38.691Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416118437-2x0te",
+    "timestamp": "2026-07-18T23:08:38.437Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416118236-cduwi",
+    "timestamp": "2026-07-18T23:08:38.236Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416117558-8qqol",
+    "timestamp": "2026-07-18T23:08:37.558Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416117359-m97rq",
+    "timestamp": "2026-07-18T23:08:37.359Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416116819-3b9xu",
+    "timestamp": "2026-07-18T23:08:36.819Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416116581-qp7c6",
+    "timestamp": "2026-07-18T23:08:36.581Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416116378-4tu5b",
+    "timestamp": "2026-07-18T23:08:36.378Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416115837-dbyp0",
+    "timestamp": "2026-07-18T23:08:35.837Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416115416-fihzf",
+    "timestamp": "2026-07-18T23:08:35.416Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416114889-2q7xy",
+    "timestamp": "2026-07-18T23:08:34.889Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416114689-9r831",
+    "timestamp": "2026-07-18T23:08:34.689Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416113711-mjbzn",
+    "timestamp": "2026-07-18T23:08:33.711Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416113107-u3ldc",
+    "timestamp": "2026-07-18T23:08:33.107Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416112896-zg8b6",
+    "timestamp": "2026-07-18T23:08:32.896Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416112144-8vhjt",
+    "timestamp": "2026-07-18T23:08:32.144Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416111935-okd7t",
+    "timestamp": "2026-07-18T23:08:31.935Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416111703-osuwp",
+    "timestamp": "2026-07-18T23:08:31.703Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416111121-m7jyn",
+    "timestamp": "2026-07-18T23:08:31.121Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416110905-s22du",
+    "timestamp": "2026-07-18T23:08:30.905Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416110695-zkhl5",
+    "timestamp": "2026-07-18T23:08:30.695Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416110456-76lmt",
+    "timestamp": "2026-07-18T23:08:30.456Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416109908-x1ejk",
+    "timestamp": "2026-07-18T23:08:29.908Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416109697-rm3kt",
+    "timestamp": "2026-07-18T23:08:29.697Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416109425-s3v3k",
+    "timestamp": "2026-07-18T23:08:29.425Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416109218-mj66u",
+    "timestamp": "2026-07-18T23:08:29.218Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416109015-vrtrz",
+    "timestamp": "2026-07-18T23:08:29.015Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416108301-x6p2r",
+    "timestamp": "2026-07-18T23:08:28.301Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416108049-4v8ss",
+    "timestamp": "2026-07-18T23:08:28.049Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416107838-yclum",
+    "timestamp": "2026-07-18T23:08:27.838Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416106775-vljsw",
+    "timestamp": "2026-07-18T23:08:26.775Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416106236-cd878",
+    "timestamp": "2026-07-18T23:08:26.236Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416106028-8vlxo",
+    "timestamp": "2026-07-18T23:08:26.028Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416105397-gp4dh",
+    "timestamp": "2026-07-18T23:08:25.397Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416105188-rnofv",
+    "timestamp": "2026-07-18T23:08:25.188Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416104971-pfke8",
+    "timestamp": "2026-07-18T23:08:24.971Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416103769-7jsiq",
+    "timestamp": "2026-07-18T23:08:23.769Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416103566-5y3sp",
+    "timestamp": "2026-07-18T23:08:23.566Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416103016-5eg90",
+    "timestamp": "2026-07-18T23:08:23.016Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.26 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416102513-pgm05",
+    "timestamp": "2026-07-18T23:08:22.513Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416102257-gq1e3",
+    "timestamp": "2026-07-18T23:08:22.257Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416102054-b2s2t",
+    "timestamp": "2026-07-18T23:08:22.054Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416101062-bu8y7",
+    "timestamp": "2026-07-18T23:08:21.062Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416100862-j1tla",
+    "timestamp": "2026-07-18T23:08:20.862Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416100630-3fb1s",
+    "timestamp": "2026-07-18T23:08:20.630Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416099713-kp16q",
+    "timestamp": "2026-07-18T23:08:19.713Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416099198-aesgh",
+    "timestamp": "2026-07-18T23:08:19.198Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416098686-mnc9g",
+    "timestamp": "2026-07-18T23:08:18.686Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416098103-mx3vb",
+    "timestamp": "2026-07-18T23:08:18.103Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416097899-a84mv",
+    "timestamp": "2026-07-18T23:08:17.899Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416097684-twl1a",
+    "timestamp": "2026-07-18T23:08:17.684Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416097360-hiqq7",
+    "timestamp": "2026-07-18T23:08:17.360Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416097098-j9nt7",
+    "timestamp": "2026-07-18T23:08:17.098Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416096900-rwmg5",
+    "timestamp": "2026-07-18T23:08:16.900Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416096027-28a0u",
+    "timestamp": "2026-07-18T23:08:16.027Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416095831-ivbxw",
+    "timestamp": "2026-07-18T23:08:15.831Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416095627-20n2l",
+    "timestamp": "2026-07-18T23:08:15.627Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416094724-yghq8",
+    "timestamp": "2026-07-18T23:08:14.724Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416094201-x1byb",
+    "timestamp": "2026-07-18T23:08:14.201Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416093676-scqhu",
+    "timestamp": "2026-07-18T23:08:13.676Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416093533-2ky8y",
+    "timestamp": "2026-07-18T23:08:13.533Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416093324-r2rog",
+    "timestamp": "2026-07-18T23:08:13.324Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416092793-o2s69",
+    "timestamp": "2026-07-18T23:08:12.793Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416092349-gr61i",
+    "timestamp": "2026-07-18T23:08:12.349Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416092092-qlqcx",
+    "timestamp": "2026-07-18T23:08:12.092Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416091885-zhsd8",
+    "timestamp": "2026-07-18T23:08:11.885Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416091105-nr8uf",
+    "timestamp": "2026-07-18T23:08:11.105Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416090889-3mpza",
+    "timestamp": "2026-07-18T23:08:10.889Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416090682-r0zyo",
+    "timestamp": "2026-07-18T23:08:10.682Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416090443-tfsem",
+    "timestamp": "2026-07-18T23:08:10.443Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416090226-v0qe2",
+    "timestamp": "2026-07-18T23:08:10.226Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416089688-fbihs",
+    "timestamp": "2026-07-18T23:08:09.688Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416089118-7pr8q",
+    "timestamp": "2026-07-18T23:08:09.118Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416088908-ewoqc",
+    "timestamp": "2026-07-18T23:08:08.908Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416088687-yugbu",
+    "timestamp": "2026-07-18T23:08:08.687Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416088380-t6l3a",
+    "timestamp": "2026-07-18T23:08:08.380Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416087844-wljdh",
+    "timestamp": "2026-07-18T23:08:07.844Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416087624-7hep9",
+    "timestamp": "2026-07-18T23:08:07.624Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416086593-bizan",
+    "timestamp": "2026-07-18T23:08:06.593Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416086284-8fmpv",
+    "timestamp": "2026-07-18T23:08:06.284Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416086071-4mwzf",
+    "timestamp": "2026-07-18T23:08:06.071Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416084703-4w14b",
+    "timestamp": "2026-07-18T23:08:04.703Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416084162-8kncn",
+    "timestamp": "2026-07-18T23:08:04.162Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416083951-vkzt4",
+    "timestamp": "2026-07-18T23:08:03.951Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416082595-mnu2z",
+    "timestamp": "2026-07-18T23:08:02.595Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416082039-xvzmu",
+    "timestamp": "2026-07-18T23:08:02.039Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416081813-el3fv",
+    "timestamp": "2026-07-18T23:08:01.813Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416081204-bvi3y",
+    "timestamp": "2026-07-18T23:08:01.204Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416080998-lj7lu",
+    "timestamp": "2026-07-18T23:08:00.998Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416080782-i0sqg",
+    "timestamp": "2026-07-18T23:08:00.782Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416079697-f84xx",
+    "timestamp": "2026-07-18T23:07:59.697Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416079426-fml2m",
+    "timestamp": "2026-07-18T23:07:59.426Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416079197-jkvea",
+    "timestamp": "2026-07-18T23:07:59.197Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416078354-jj05a",
+    "timestamp": "2026-07-18T23:07:58.354Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416077826-v4wz0",
+    "timestamp": "2026-07-18T23:07:57.826Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416077609-u4tgg",
+    "timestamp": "2026-07-18T23:07:57.609Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416076706-p9bpf",
+    "timestamp": "2026-07-18T23:07:56.706Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416076176-upc0j",
+    "timestamp": "2026-07-18T23:07:56.176Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416075651-63m8x",
+    "timestamp": "2026-07-18T23:07:55.651Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416075191-szjbe",
+    "timestamp": "2026-07-18T23:07:55.191Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416074992-f2khg",
+    "timestamp": "2026-07-18T23:07:54.992Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416074783-l3dij",
+    "timestamp": "2026-07-18T23:07:54.783Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416073892-3wbym",
+    "timestamp": "2026-07-18T23:07:53.892Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416073687-773od",
+    "timestamp": "2026-07-18T23:07:53.687Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416073143-nx9dj",
+    "timestamp": "2026-07-18T23:07:53.143Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416071769-mzcfq",
+    "timestamp": "2026-07-18T23:07:51.769Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416071239-46eu8",
+    "timestamp": "2026-07-18T23:07:51.239Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416071022-ee69h",
+    "timestamp": "2026-07-18T23:07:51.022Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416070499-l4a4v",
+    "timestamp": "2026-07-18T23:07:50.499Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416070289-or3gi",
+    "timestamp": "2026-07-18T23:07:50.289Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416069995-k9lwt",
+    "timestamp": "2026-07-18T23:07:49.995Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416069087-z31u0",
+    "timestamp": "2026-07-18T23:07:49.087Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416068871-ygye9",
+    "timestamp": "2026-07-18T23:07:48.871Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416068598-u2p9d",
+    "timestamp": "2026-07-18T23:07:48.598Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416067582-jgjwa",
+    "timestamp": "2026-07-18T23:07:47.582Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416067235-jxmr8",
+    "timestamp": "2026-07-18T23:07:47.235Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416067024-fp3nb",
+    "timestamp": "2026-07-18T23:07:47.024Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416066477-poph5",
+    "timestamp": "2026-07-18T23:07:46.477Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416066169-ddftc",
+    "timestamp": "2026-07-18T23:07:46.169Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416065645-lmjvm",
+    "timestamp": "2026-07-18T23:07:45.645Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416065150-sr96w",
+    "timestamp": "2026-07-18T23:07:45.150Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416064940-qj4rm",
+    "timestamp": "2026-07-18T23:07:44.940Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416064654-6rvxb",
+    "timestamp": "2026-07-18T23:07:44.654Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416064087-whcvf",
+    "timestamp": "2026-07-18T23:07:44.087Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416063818-r34cu",
+    "timestamp": "2026-07-18T23:07:43.818Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416063608-mc904",
+    "timestamp": "2026-07-18T23:07:43.608Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416062756-7g2oj",
+    "timestamp": "2026-07-18T23:07:42.756Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416062404-1yoj5",
+    "timestamp": "2026-07-18T23:07:42.404Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416062037-bg8fc",
+    "timestamp": "2026-07-18T23:07:42.037Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416061296-f24an",
+    "timestamp": "2026-07-18T23:07:41.296Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416060990-wl0wn",
+    "timestamp": "2026-07-18T23:07:40.990Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416060710-ixt8z",
+    "timestamp": "2026-07-18T23:07:40.710Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416059685-eeveu",
+    "timestamp": "2026-07-18T23:07:39.685Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416059396-7nmbe",
+    "timestamp": "2026-07-18T23:07:39.396Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416058865-lrcsu",
+    "timestamp": "2026-07-18T23:07:38.865Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416058187-ia2rs",
+    "timestamp": "2026-07-18T23:07:38.187Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416057914-xy8k9",
+    "timestamp": "2026-07-18T23:07:37.914Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416057622-5yu4m",
+    "timestamp": "2026-07-18T23:07:37.622Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416057007-n1rrt",
+    "timestamp": "2026-07-18T23:07:37.007Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416056340-elq5p",
+    "timestamp": "2026-07-18T23:07:36.340Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416056074-9isbz",
+    "timestamp": "2026-07-18T23:07:36.074Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416055377-04fhu",
+    "timestamp": "2026-07-18T23:07:35.377Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416054854-wyciv",
+    "timestamp": "2026-07-18T23:07:34.854Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416054577-1olul",
+    "timestamp": "2026-07-18T23:07:34.577Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416053645-dc4s0",
+    "timestamp": "2026-07-18T23:07:33.645Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416053118-oojya",
+    "timestamp": "2026-07-18T23:07:33.118Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416052574-33kkn",
+    "timestamp": "2026-07-18T23:07:32.574Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416051722-wwukn",
+    "timestamp": "2026-07-18T23:07:31.722Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416051382-4qcu5",
+    "timestamp": "2026-07-18T23:07:31.382Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416051042-dtwjw",
+    "timestamp": "2026-07-18T23:07:31.042Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416050123-zbjny",
+    "timestamp": "2026-07-18T23:07:30.123Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416049837-4e62l",
+    "timestamp": "2026-07-18T23:07:29.837Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416049566-f2u5l",
+    "timestamp": "2026-07-18T23:07:29.566Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416048647-ib8yw",
+    "timestamp": "2026-07-18T23:07:28.647Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416047917-dqi5r",
+    "timestamp": "2026-07-18T23:07:27.917Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416047629-vegwo",
+    "timestamp": "2026-07-18T23:07:27.629Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416047122-0sv1y",
+    "timestamp": "2026-07-18T23:07:27.122Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416046848-vpt6t",
+    "timestamp": "2026-07-18T23:07:26.848Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416046565-68dci",
+    "timestamp": "2026-07-18T23:07:26.565Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416045930-7j9tr",
+    "timestamp": "2026-07-18T23:07:25.930Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416045605-ului1",
+    "timestamp": "2026-07-18T23:07:25.605Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416045259-tlau3",
+    "timestamp": "2026-07-18T23:07:25.259Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416044120-81bqj",
+    "timestamp": "2026-07-18T23:07:24.120Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416043852-ajt89",
+    "timestamp": "2026-07-18T23:07:23.852Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416043566-bh5xu",
+    "timestamp": "2026-07-18T23:07:23.566Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416042840-eqr4l",
+    "timestamp": "2026-07-18T23:07:22.840Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416042263-pisc0",
+    "timestamp": "2026-07-18T23:07:22.263Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416041971-16kcc",
+    "timestamp": "2026-07-18T23:07:21.971Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416041305-94iwl",
+    "timestamp": "2026-07-18T23:07:21.305Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416041035-zms27",
+    "timestamp": "2026-07-18T23:07:21.035Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416040742-b61cb",
+    "timestamp": "2026-07-18T23:07:20.742Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416040510-5rfew",
+    "timestamp": "2026-07-18T23:07:20.510Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416040186-4u7os",
+    "timestamp": "2026-07-18T23:07:20.186Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416039914-hlex4",
+    "timestamp": "2026-07-18T23:07:19.914Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416038760-y86ui",
+    "timestamp": "2026-07-18T23:07:18.760Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416038235-sihxl",
+    "timestamp": "2026-07-18T23:07:18.235Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416037963-v49hc",
+    "timestamp": "2026-07-18T23:07:17.963Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416037405-jo2lh",
+    "timestamp": "2026-07-18T23:07:17.406Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416036944-98i0y",
+    "timestamp": "2026-07-18T23:07:16.944Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416036664-mpyys",
+    "timestamp": "2026-07-18T23:07:16.664Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416036446-aubwf",
+    "timestamp": "2026-07-18T23:07:16.446Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416036174-d62yk",
+    "timestamp": "2026-07-18T23:07:16.174Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416035884-gd4ve",
+    "timestamp": "2026-07-18T23:07:15.884Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416034637-u2tze",
+    "timestamp": "2026-07-18T23:07:14.637Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416034305-khzct",
+    "timestamp": "2026-07-18T23:07:14.305Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416034021-pqu8h",
+    "timestamp": "2026-07-18T23:07:14.021Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416032816-d8yzp",
+    "timestamp": "2026-07-18T23:07:12.816Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416032289-m6ygq",
+    "timestamp": "2026-07-18T23:07:12.289Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416031722-aqo67",
+    "timestamp": "2026-07-18T23:07:11.722Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416031433-qyihm",
+    "timestamp": "2026-07-18T23:07:11.433Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416031142-1bdto",
+    "timestamp": "2026-07-18T23:07:11.142Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416030605-pk3n3",
+    "timestamp": "2026-07-18T23:07:10.605Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416030034-o16eg",
+    "timestamp": "2026-07-18T23:07:10.034Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416029828-sc1bh",
+    "timestamp": "2026-07-18T23:07:09.828Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416029544-lw6dm",
+    "timestamp": "2026-07-18T23:07:09.544Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416028676-6s34r",
+    "timestamp": "2026-07-18T23:07:08.676Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416028337-738nj",
+    "timestamp": "2026-07-18T23:07:08.337Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416028131-tdtfi",
+    "timestamp": "2026-07-18T23:07:08.131Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416027158-1x6u0",
+    "timestamp": "2026-07-18T23:07:07.158Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416026884-4mcw6",
+    "timestamp": "2026-07-18T23:07:06.884Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416026668-fwvnc",
+    "timestamp": "2026-07-18T23:07:06.668Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416025535-axmvf",
+    "timestamp": "2026-07-18T23:07:05.535Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416025017-jdc6u",
+    "timestamp": "2026-07-18T23:07:05.017Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416024710-ynnwn",
+    "timestamp": "2026-07-18T23:07:04.710Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416024491-vj3ej",
+    "timestamp": "2026-07-18T23:07:04.491Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416024272-kg3qz",
+    "timestamp": "2026-07-18T23:07:04.272Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416023726-sei3z",
+    "timestamp": "2026-07-18T23:07:03.726Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416023246-bbz3k",
+    "timestamp": "2026-07-18T23:07:03.246Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416022713-9n8a4",
+    "timestamp": "2026-07-18T23:07:02.713Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416022443-4eubz",
+    "timestamp": "2026-07-18T23:07:02.443Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416021442-q562v",
+    "timestamp": "2026-07-18T23:07:01.442Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416021221-bwpyt",
+    "timestamp": "2026-07-18T23:07:01.221Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416020931-cr1uo",
+    "timestamp": "2026-07-18T23:07:00.931Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416020480-qwz67",
+    "timestamp": "2026-07-18T23:07:00.480Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416019931-isw0l",
+    "timestamp": "2026-07-18T23:06:59.931Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416019722-5lb3r",
+    "timestamp": "2026-07-18T23:06:59.722Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416019325-hgsv0",
+    "timestamp": "2026-07-18T23:06:59.325Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416019104-rirsa",
+    "timestamp": "2026-07-18T23:06:59.104Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416018532-w52sd",
+    "timestamp": "2026-07-18T23:06:58.532Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.17 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416017907-41maz",
+    "timestamp": "2026-07-18T23:06:57.907Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416017565-s8m56",
+    "timestamp": "2026-07-18T23:06:57.565Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416017293-gggk6",
+    "timestamp": "2026-07-18T23:06:57.293Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416015737-fyb4n",
+    "timestamp": "2026-07-18T23:06:55.737Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416015455-s5skq",
+    "timestamp": "2026-07-18T23:06:55.455Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416014921-d7wv6",
+    "timestamp": "2026-07-18T23:06:54.921Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416014294-oi040",
+    "timestamp": "2026-07-18T23:06:54.294Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416014003-d4ger",
+    "timestamp": "2026-07-18T23:06:54.003Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416013708-5cmae",
+    "timestamp": "2026-07-18T23:06:53.708Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416013401-qzd6p",
+    "timestamp": "2026-07-18T23:06:53.401Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416013186-odg8w",
+    "timestamp": "2026-07-18T23:06:53.186Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416012903-1ozg7",
+    "timestamp": "2026-07-18T23:06:52.903Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416012455-v7hj9",
+    "timestamp": "2026-07-18T23:06:52.455Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416012194-isdtk",
+    "timestamp": "2026-07-18T23:06:52.194Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416011983-hid4y",
+    "timestamp": "2026-07-18T23:06:51.983Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416010667-o8v01",
+    "timestamp": "2026-07-18T23:06:50.667Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416010124-gjqh9",
+    "timestamp": "2026-07-18T23:06:50.124Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416009913-edssj",
+    "timestamp": "2026-07-18T23:06:49.913Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416009266-b8gg6",
+    "timestamp": "2026-07-18T23:06:49.266Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416009057-fib67",
+    "timestamp": "2026-07-18T23:06:49.057Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416008521-r4tg5",
+    "timestamp": "2026-07-18T23:06:48.521Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416007534-5yoce",
+    "timestamp": "2026-07-18T23:06:47.534Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416006930-f9qm5",
+    "timestamp": "2026-07-18T23:06:46.930Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416006724-q6fcl",
+    "timestamp": "2026-07-18T23:06:46.724Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416005688-7jlp5",
+    "timestamp": "2026-07-18T23:06:45.688Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416005111-l8667",
+    "timestamp": "2026-07-18T23:06:45.111Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416004903-49gdb",
+    "timestamp": "2026-07-18T23:06:44.903Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416004458-gl3ad",
+    "timestamp": "2026-07-18T23:06:44.458Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416003903-fldbg",
+    "timestamp": "2026-07-18T23:06:43.903Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416003693-3m6n9",
+    "timestamp": "2026-07-18T23:06:43.693Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416002929-1g7g7",
+    "timestamp": "2026-07-18T23:06:42.929Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416002720-ulp3m",
+    "timestamp": "2026-07-18T23:06:42.720Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416002512-nzglh",
+    "timestamp": "2026-07-18T23:06:42.512Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416001731-aaez4",
+    "timestamp": "2026-07-18T23:06:41.731Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416001420-5kzam",
+    "timestamp": "2026-07-18T23:06:41.420Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784416001210-8ntgl",
+    "timestamp": "2026-07-18T23:06:41.210Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415999982-7pke1",
+    "timestamp": "2026-07-18T23:06:39.982Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415999763-ygusn",
+    "timestamp": "2026-07-18T23:06:39.763Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415999556-dn6kb",
+    "timestamp": "2026-07-18T23:06:39.556Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415998635-sc0kj",
+    "timestamp": "2026-07-18T23:06:38.635Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415998104-eyrne",
+    "timestamp": "2026-07-18T23:06:38.104Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415997558-3hh25",
+    "timestamp": "2026-07-18T23:06:37.558Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415997277-5uu8t",
+    "timestamp": "2026-07-18T23:06:37.277Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415997068-1inf3",
+    "timestamp": "2026-07-18T23:06:37.068Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415996507-3d1b8",
+    "timestamp": "2026-07-18T23:06:36.507Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415995582-3588o",
+    "timestamp": "2026-07-18T23:06:35.582Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415995309-kgu0k",
+    "timestamp": "2026-07-18T23:06:35.309Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415995089-bpw6g",
+    "timestamp": "2026-07-18T23:06:35.089Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415993625-f5sdv",
+    "timestamp": "2026-07-18T23:06:33.625Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415993085-x2cid",
+    "timestamp": "2026-07-18T23:06:33.085Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415992880-ypg8f",
+    "timestamp": "2026-07-18T23:06:32.880Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415991912-33qee",
+    "timestamp": "2026-07-18T23:06:31.912Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415991698-plmuo",
+    "timestamp": "2026-07-18T23:06:31.698Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415991493-rb8ns",
+    "timestamp": "2026-07-18T23:06:31.493Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415990692-zaaib",
+    "timestamp": "2026-07-18T23:06:30.692Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415990403-vje9x",
+    "timestamp": "2026-07-18T23:06:30.403Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415990190-e77pi",
+    "timestamp": "2026-07-18T23:06:30.190Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415989090-z2hpo",
+    "timestamp": "2026-07-18T23:06:29.090Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415988880-rmags",
+    "timestamp": "2026-07-18T23:06:28.880Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415988669-h4h3o",
+    "timestamp": "2026-07-18T23:06:28.669Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415988434-na5iw",
+    "timestamp": "2026-07-18T23:06:28.434Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415988231-24vzc",
+    "timestamp": "2026-07-18T23:06:28.231Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415987673-f4b12",
+    "timestamp": "2026-07-18T23:06:27.673Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415987060-uuzm0",
+    "timestamp": "2026-07-18T23:06:27.060Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415986858-ivdbr",
+    "timestamp": "2026-07-18T23:06:26.858Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415986648-dxfr0",
+    "timestamp": "2026-07-18T23:06:26.648Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415986325-fqd3i",
+    "timestamp": "2026-07-18T23:06:26.325Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415985804-7cqus",
+    "timestamp": "2026-07-18T23:06:25.804Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415985599-45clf",
+    "timestamp": "2026-07-18T23:06:25.599Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415984546-u7dcl",
+    "timestamp": "2026-07-18T23:06:24.546Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415984279-eq1o4",
+    "timestamp": "2026-07-18T23:06:24.279Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415984073-0ejtn",
+    "timestamp": "2026-07-18T23:06:24.073Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415983240-tkbn4",
+    "timestamp": "2026-07-18T23:06:23.240Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415983013-8ky5q",
+    "timestamp": "2026-07-18T23:06:23.013Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415982479-73r4f",
+    "timestamp": "2026-07-18T23:06:22.479Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415981521-kis3u",
+    "timestamp": "2026-07-18T23:06:21.521Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415981011-9j0lc",
+    "timestamp": "2026-07-18T23:06:21.011Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415980483-2dp9g",
+    "timestamp": "2026-07-18T23:06:20.483Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415979709-wg3zi",
+    "timestamp": "2026-07-18T23:06:19.709Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415979443-3yroa",
+    "timestamp": "2026-07-18T23:06:19.443Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415979150-ppbd1",
+    "timestamp": "2026-07-18T23:06:19.150Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415978116-qbcsq",
+    "timestamp": "2026-07-18T23:06:18.116Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415977883-eefwk",
+    "timestamp": "2026-07-18T23:06:17.883Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415977668-dsnme",
+    "timestamp": "2026-07-18T23:06:17.668Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.18 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415977324-slp9n",
+    "timestamp": "2026-07-18T23:06:17.324Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415976979-lliig",
+    "timestamp": "2026-07-18T23:06:16.979Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415976697-v74kl",
+    "timestamp": "2026-07-18T23:06:16.697Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415976209-zn0yg",
+    "timestamp": "2026-07-18T23:06:16.209Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415975923-9prc8",
+    "timestamp": "2026-07-18T23:06:15.923Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415975650-mrlee",
+    "timestamp": "2026-07-18T23:06:15.650Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415974919-33fue",
+    "timestamp": "2026-07-18T23:06:14.919Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415974708-e82w7",
+    "timestamp": "2026-07-18T23:06:14.708Z",
+    "message": "[REAL] Failed to cancel TP order: MEXC API Error: {\"msg\":\"Order cancelled.\",\"code\":-2011}. Proceeding with market sell.",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415974412-zgg9y",
+    "timestamp": "2026-07-18T23:06:14.412Z",
+    "message": "[REAL] Stop Loss hit! Market price 140.27 <= Stop Loss level 140.27. Executing market sell on MEXC...",
+    "type": "warning",
+    "symbol": "OIL(USOON)USDT"
+  },
+  {
+    "id": "1784415973140-rz6mz",
+    "timestamp": "2026-07-18T23:06:13.140Z",
+    "message": "[REAL] Stop Loss Market Sell order failed: MEXC API Error: {\"msg\":\" quantity scale is invalid\",\"code\":400}",
+    "type": "error",
+    "symbol": "OIL(USOON)USDT"
+  }
+]
