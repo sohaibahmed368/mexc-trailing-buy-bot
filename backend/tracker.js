@@ -161,6 +161,105 @@ class OrderTracker {
     return { avgPrice: fallbackPrice, executedQty: null };
   }
 
+  /**
+   * Wait for a LIMIT order to be filled. Polls MEXC every pollMs for up to maxWaitMs.
+   * If not filled within timeout, cancels the LIMIT order and falls back to a MARKET order.
+   * Returns { avgPrice, executedQty } just like getActualOrderFills.
+   */
+  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 8000, pollMs = 1500) {
+    const startTime = Date.now();
+    let attempts = 0;
+
+    while (Date.now() - startTime < maxWaitMs) {
+      attempts++;
+      await new Promise(r => setTimeout(r, pollMs));
+
+      try {
+        const orderInfo = await this.mexcClient.getOrder(symbol, orderId);
+        if (!orderInfo) continue;
+
+        if (orderInfo.status === 'FILLED') {
+          const executedQty = parseFloat(orderInfo.executedQty);
+          const cummulativeQuoteQty = parseFloat(orderInfo.cummulativeQuoteQty);
+          if (executedQty > 0 && cummulativeQuoteQty > 0) {
+            const avgPrice = cummulativeQuoteQty / executedQty;
+            this.log(`[LIMIT] Order ${orderId} FILLED after ${attempts} checks. Avg Price: ${avgPrice.toFixed(6)}`, 'success', symbol);
+            return { avgPrice, executedQty, filled: true };
+          }
+        }
+
+        if (orderInfo.status === 'PARTIALLY_FILLED') {
+          this.log(`[LIMIT] Order ${orderId} partially filled (${orderInfo.executedQty}/${quantity}). Waiting...`, 'info', symbol);
+          continue;
+        }
+
+        if (orderInfo.status === 'CANCELED' || orderInfo.status === 'EXPIRED' || orderInfo.status === 'REJECTED') {
+          this.log(`[LIMIT] Order ${orderId} status: ${orderInfo.status}. Breaking out.`, 'warning', symbol);
+          break;
+        }
+      } catch (err) {
+        this.log(`[LIMIT] Error checking order ${orderId}: ${err.message}`, 'warning', symbol);
+      }
+    }
+
+    // Timeout reached — cancel the unfilled limit order and fall back to MARKET
+    this.log(`[LIMIT] Order ${orderId} not filled within ${maxWaitMs / 1000}s. Cancelling and placing MARKET ${side} fallback...`, 'warning', symbol);
+
+    try {
+      await this.mexcClient.cancelOrder(symbol, orderId);
+      this.log(`[LIMIT] Cancelled unfilled order ${orderId}.`, 'info', symbol);
+    } catch (cancelErr) {
+      // Order may have filled between check and cancel, or already cancelled
+      this.log(`[LIMIT] Cancel attempt for ${orderId}: ${cancelErr.message}. Checking if it filled...`, 'warning', symbol);
+      try {
+        const recheckInfo = await this.mexcClient.getOrder(symbol, orderId);
+        if (recheckInfo && recheckInfo.status === 'FILLED') {
+          const executedQty = parseFloat(recheckInfo.executedQty);
+          const cummulativeQuoteQty = parseFloat(recheckInfo.cummulativeQuoteQty);
+          if (executedQty > 0 && cummulativeQuoteQty > 0) {
+            const avgPrice = cummulativeQuoteQty / executedQty;
+            this.log(`[LIMIT] Order ${orderId} actually FILLED (race condition). Price: ${avgPrice.toFixed(6)}`, 'success', symbol);
+            return { avgPrice, executedQty, filled: true };
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Wait for cancel to settle
+    await new Promise(r => setTimeout(r, 500));
+
+    // Place MARKET fallback
+    try {
+      const marketParams = { symbol, side, type: 'MARKET' };
+      if (side === 'BUY') {
+        if (quantity) marketParams.quantity = quantity;
+      } else {
+        // For SELL fallback, query actual free balance to be safe
+        const asset = symbol.replace('USDT', '').toUpperCase();
+        let sellQty = quantity;
+        try {
+          const balances = await this.mexcClient.getBalances();
+          const assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+          if (assetBal && assetBal.free > 0) {
+            sellQty = Math.floor(assetBal.free * 0.998 * 100000000) / 100000000;
+          }
+        } catch (e) {}
+        marketParams.quantity = sellQty;
+      }
+
+      const marketResult = await this.mexcClient.placeOrder(marketParams);
+      if (marketResult && marketResult.orderId) {
+        this.log(`[LIMIT→MARKET] Fallback MARKET ${side} placed. Order ID: ${marketResult.orderId}`, 'success', symbol);
+        const fills = await this.getActualOrderFills(symbol, marketResult.orderId, fallbackPrice);
+        return { ...fills, filled: true, fallbackUsed: true, fallbackOrderId: marketResult.orderId };
+      }
+    } catch (marketErr) {
+      this.log(`[LIMIT→MARKET] Fallback MARKET ${side} failed: ${marketErr.message}`, 'error', symbol);
+    }
+
+    return { avgPrice: fallbackPrice, executedQty: null, filled: false };
+  }
+
   async getFeeAdjustedBalance(symbol, grossQty) {
     const asset = symbol.replace('USDT', '').toUpperCase();
     try {
@@ -374,11 +473,12 @@ class OrderTracker {
         this.log(`[DRY RUN] Auto-Loop started: First trade bought immediately at market price ${initialPrice} USDT. Transitioning to TP/SL monitoring.`, 'success', symbol);
       } else {
         try {
-          this.log(`Auto-Loop started: Placing first Spot BUY order immediately at market price on MEXC...`, 'info', symbol);
+          this.log(`Auto-Loop started: Placing first Spot LIMIT BUY order at ${initialPrice} USDT on MEXC (0% Maker fee)...`, 'info', symbol);
           
           let result = null;
           let lastBuyErr = null;
           const decimalsToTry = [10000, 100, 1];
+          let buyQty = null;
 
           if (newOrder.quantity) {
             for (const mult of decimalsToTry) {
@@ -388,11 +488,12 @@ class OrderTracker {
                 const orderParams = {
                   symbol,
                   side: 'BUY',
-                  type: orderType || 'MARKET',
-                  quantity: qtyToTry
+                  type: 'LIMIT',
+                  quantity: qtyToTry,
+                  price: initialPrice
                 };
                 result = await this.mexcClient.placeOrder(orderParams);
-                if (result && result.orderId) break;
+                if (result && result.orderId) { buyQty = qtyToTry; break; }
               } catch (err) {
                 lastBuyErr = err;
                 const errMsg = err.message || '';
@@ -404,23 +505,41 @@ class OrderTracker {
               }
             }
           } else {
-            const orderParams = {
-              symbol,
-              side: 'BUY',
-              type: orderType || 'MARKET',
-              quoteOrderQty: newOrder.quoteOrderQty
-            };
-            result = await this.mexcClient.placeOrder(orderParams);
+            // quoteOrderQty is not supported for LIMIT orders on MEXC, calculate qty from price
+            const estimatedQty = newOrder.quoteOrderQty / initialPrice;
+            for (const mult of decimalsToTry) {
+              const qtyToTry = Math.floor(estimatedQty * mult) / mult;
+              if (qtyToTry <= 0) continue;
+              try {
+                const orderParams = {
+                  symbol,
+                  side: 'BUY',
+                  type: 'LIMIT',
+                  quantity: qtyToTry,
+                  price: initialPrice
+                };
+                result = await this.mexcClient.placeOrder(orderParams);
+                if (result && result.orderId) { buyQty = qtyToTry; break; }
+              } catch (err) {
+                lastBuyErr = err;
+                const errMsg = err.message || '';
+                if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
+                  continue;
+                }
+                throw err;
+              }
+            }
           }
 
           if (!result || !result.orderId) {
-            throw lastBuyErr || new Error('Failed to execute initial buy order.');
+            throw lastBuyErr || new Error('Failed to place initial LIMIT buy order.');
           }
 
           newOrder.mexcOrderId = result.orderId;
           
-          // Fetch actual fill price and quantity from MEXC to protect against slippage
-          const fills = await this.getActualOrderFills(symbol, result.orderId, initialPrice);
+          // Wait for LIMIT order to fill (with MARKET fallback on timeout)
+          const fills = await this.waitForLimitOrderFill(symbol, result.orderId, 'BUY', buyQty, initialPrice);
+          if (fills.fallbackOrderId) newOrder.mexcOrderId = fills.fallbackOrderId;
           newOrder.executionPrice = fills.avgPrice;
 
           if (parsedTakeProfit) {
@@ -765,7 +884,7 @@ class OrderTracker {
             this.handleOrderCycleComplete(order);
             continue;
           } else {
-            this.log(`[REAL] Stop Loss hit! Market price ${currentPrice} <= Stop Loss level ${targetSlPrice.toFixed(4)}. Executing market sell on MEXC...`, 'warning', order.symbol);
+            this.log(`[REAL] Stop Loss hit! Price ${currentPrice} <= SL level ${targetSlPrice.toFixed(4)}. Placing LIMIT SELL on MEXC (0% Maker fee)...`, 'warning', order.symbol);
             
             const mexcSellId = order.mexcSellOrderId;
             order.mexcSellOrderId = null; // Clear immediately to prevent duplicate cancellation calls
@@ -776,7 +895,7 @@ class OrderTracker {
                 this.log(`[REAL] Cancelled TP Limit Sell order ${mexcSellId} on MEXC. Waiting 1.0s for balance unlock...`, 'info', order.symbol);
                 await new Promise(r => setTimeout(r, 1000));
               } catch (e) {
-                this.log(`[REAL] Failed to cancel TP order ${mexcSellId}: ${e.message}. Proceeding with market sell.`, 'error', order.symbol);
+                this.log(`[REAL] Failed to cancel TP order ${mexcSellId}: ${e.message}. Proceeding with SL sell.`, 'error', order.symbol);
               }
             }
 
@@ -808,9 +927,11 @@ class OrderTracker {
                 this.log(`[REAL] Stop Loss balance query failed: ${balErr.message}. Falling back to estimated quantity.`, 'warning', order.symbol);
               }
 
+              // Place LIMIT SELL at current price for 0% Maker fee
               let sellResult = null;
               const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
               let lastErr = null;
+              const slSellPrice = currentPrice; // LIMIT SELL at current market price
 
               for (const mult of decimalsToTry) {
                 const qtyToTry = Math.floor(sellQty * mult) / mult;
@@ -819,19 +940,19 @@ class OrderTracker {
                   const sellParams = {
                     symbol: order.symbol,
                     side: 'SELL',
-                    type: 'MARKET',
-                    quantity: qtyToTry
+                    type: 'LIMIT',
+                    quantity: qtyToTry,
+                    price: slSellPrice
                   };
                   sellResult = await this.mexcClient.placeOrder(sellParams);
                   if (sellResult && sellResult.orderId) {
-                    this.log(`[REAL] Stop Loss Market Sell order executed successfully! Sell Qty: ${qtyToTry}, Order ID: ${sellResult.orderId}`, 'success', order.symbol);
+                    this.log(`[REAL] Stop Loss LIMIT Sell placed! Qty: ${qtyToTry}, Price: ${slSellPrice}, Order ID: ${sellResult.orderId}`, 'success', order.symbol);
                     break;
                   }
                 } catch (err) {
                   lastErr = err;
                   const errMsg = err.message || '';
                   if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                    // Silently retry with next broader/standard precision to avoid console log clutter
                     continue;
                   }
                   if (errMsg.includes('Oversold') || errMsg.includes('30005')) {
@@ -843,12 +964,15 @@ class OrderTracker {
                 }
               }
 
-              if (!sellResult) {
-                throw lastErr || new Error('Failed to execute market sell after precision retries.');
+              if (!sellResult || !sellResult.orderId) {
+                throw lastErr || new Error('Failed to place SL limit sell after precision retries.');
               }
 
+              // Wait for LIMIT SELL to fill (with MARKET fallback on timeout)
+              const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, currentPrice);
+
               order.status = 'TRIGGERED';
-              order.sellExecutionPrice = currentPrice;
+              order.sellExecutionPrice = slFills.avgPrice || currentPrice;
               order.sellTriggeredAt = new Date().toISOString();
               this.handleOrderCycleComplete(order);
             } catch (e) {
@@ -1030,14 +1154,15 @@ class OrderTracker {
             this.log(`[DRY RUN] Simulated Spot Buy order executed at ${currentPrice} USDT.`, 'success', order.symbol);
           }
         } else {
-          // PLACE REAL ORDER
+          // PLACE REAL ORDER — LIMIT BUY for 0% Maker fee
           try {
             order.status = 'PENDING_EXECUTION'; // intermediate state
-            this.log(`Placing Spot BUY order on MEXC for ${order.symbol}...`, 'info', order.symbol);
+            this.log(`Placing Spot LIMIT BUY order at ${currentPrice} USDT on MEXC for ${order.symbol} (0% Maker fee)...`, 'info', order.symbol);
             
             let result = null;
             let lastBuyErr = null;
             const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
+            let buyQty = null;
 
             if (order.quantity) {
               for (const mult of decimalsToTry) {
@@ -1047,11 +1172,12 @@ class OrderTracker {
                   const orderParams = {
                     symbol: order.symbol,
                     side: 'BUY',
-                    type: order.orderType,
-                    quantity: qtyToTry
+                    type: 'LIMIT',
+                    quantity: qtyToTry,
+                    price: currentPrice
                   };
                   result = await this.mexcClient.placeOrder(orderParams);
-                  if (result && result.orderId) break;
+                  if (result && result.orderId) { buyQty = qtyToTry; break; }
                 } catch (err) {
                   lastBuyErr = err;
                   const errMsg = err.message || '';
@@ -1063,23 +1189,41 @@ class OrderTracker {
                 }
               }
             } else {
-              const orderParams = {
-                symbol: order.symbol,
-                side: 'BUY',
-                type: order.orderType,
-                quoteOrderQty: order.quoteOrderQty
-              };
-              result = await this.mexcClient.placeOrder(orderParams);
+              // quoteOrderQty not supported for LIMIT on MEXC, calculate qty from price
+              const estimatedQty = order.quoteOrderQty / currentPrice;
+              for (const mult of decimalsToTry) {
+                const qtyToTry = Math.floor(estimatedQty * mult) / mult;
+                if (qtyToTry <= 0) continue;
+                try {
+                  const orderParams = {
+                    symbol: order.symbol,
+                    side: 'BUY',
+                    type: 'LIMIT',
+                    quantity: qtyToTry,
+                    price: currentPrice
+                  };
+                  result = await this.mexcClient.placeOrder(orderParams);
+                  if (result && result.orderId) { buyQty = qtyToTry; break; }
+                } catch (err) {
+                  lastBuyErr = err;
+                  const errMsg = err.message || '';
+                  if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
+                    continue;
+                  }
+                  throw err;
+                }
+              }
             }
 
             if (!result || !result.orderId) {
-              throw lastBuyErr || new Error('Failed to execute trailing buy order.');
+              throw lastBuyErr || new Error('Failed to place trailing LIMIT buy order.');
             }
             
             order.mexcOrderId = result.orderId;
             
-            // Fetch actual fill price and quantity from MEXC to protect against slippage
-            const fills = await this.getActualOrderFills(order.symbol, result.orderId, currentPrice);
+            // Wait for LIMIT order to fill (with MARKET fallback on timeout)
+            const fills = await this.waitForLimitOrderFill(order.symbol, result.orderId, 'BUY', buyQty, currentPrice);
+            if (fills.fallbackOrderId) order.mexcOrderId = fills.fallbackOrderId;
             order.executionPrice = fills.avgPrice;
 
             if (order.takeProfit || order.stopLoss) {
