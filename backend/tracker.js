@@ -162,11 +162,66 @@ class OrderTracker {
   }
 
   /**
-   * Wait for a LIMIT order to be filled. Polls MEXC every pollMs for up to maxWaitMs.
-   * If not filled within timeout, cancels the LIMIT order and falls back to a MARKET order.
-   * Returns { avgPrice, executedQty } just like getActualOrderFills.
+   * Calculate exact Maker-guaranteed Limit Price using orderbook depth.
+   * STRICT MAKER RULES:
+   * 1. BUY: targetBuyPrice MUST be < bestAsk. If >= bestAsk, force pegPrice = bestAsk - tick.
+   * 2. SELL: targetSellPrice MUST be > bestBid. If <= bestBid, force pegPrice = bestBid + tick.
    */
-  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 8000, pollMs = 1500) {
+  async calculateMakerPegPrice(symbol, side, fallbackPrice) {
+    try {
+      const depth = await this.mexcClient.getDepth(symbol, 10);
+      if (depth && Array.isArray(depth.bids) && depth.bids.length > 0 && Array.isArray(depth.asks) && depth.asks.length > 0) {
+        const bestBid = parseFloat(depth.bids[0][0]);
+        const secondBid = depth.bids.length > 1 ? parseFloat(depth.bids[1][0]) : bestBid;
+        const bestAsk = parseFloat(depth.asks[0][0]);
+        const secondAsk = depth.asks.length > 1 ? parseFloat(depth.asks[1][0]) : bestAsk;
+
+        let tick = 0.0001;
+        if (bestBid > 1000) tick = 0.01;
+        else if (bestBid > 10) tick = 0.001;
+        else if (bestBid < 0.1) tick = 0.000001;
+
+        const decimals = tick.toString().includes('.') ? tick.toString().split('.')[1].length : 2;
+
+        if (side.toUpperCase() === 'BUY') {
+          // Target top buyer: average of top 2 bids
+          let pegPrice = (bestBid + secondBid) / 2;
+          // STRICT RULE: BUY Price MUST be strictly LESS THAN Best Ask to guarantee MAKER 0% Fee
+          if (pegPrice >= bestAsk) {
+            pegPrice = Math.min(bestBid, bestAsk - tick);
+          }
+          pegPrice = parseFloat(pegPrice.toFixed(decimals));
+          if (pegPrice >= bestAsk) {
+            pegPrice = parseFloat((bestAsk - tick).toFixed(decimals));
+          }
+          this.log(`[MAKER PEG BUY] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Pegged BUY Price: ${pegPrice} (< Ask ${bestAsk} ✅)`, 'info', symbol);
+          return pegPrice;
+        } else {
+          // Target top seller: average of top 2 asks
+          let pegPrice = (bestAsk + secondAsk) / 2;
+          // STRICT RULE: SELL Price MUST be strictly GREATER THAN Best Bid to guarantee MAKER 0% Fee
+          if (pegPrice <= bestBid) {
+            pegPrice = Math.max(bestAsk, bestBid + tick);
+          }
+          pegPrice = parseFloat(pegPrice.toFixed(decimals));
+          if (pegPrice <= bestBid) {
+            pegPrice = parseFloat((bestBid + tick).toFixed(decimals));
+          }
+          this.log(`[MAKER PEG SELL] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Pegged SELL Price: ${pegPrice} (> Bid ${bestBid} ✅)`, 'info', symbol);
+          return pegPrice;
+        }
+      }
+    } catch (err) {
+      this.log(`[MAKER PEG] Failed to query depth for ${symbol}: ${err.message}. Using fallback price ${fallbackPrice}`, 'warning', symbol);
+    }
+    return fallbackPrice;
+  }
+
+  /**
+   * Wait for a LIMIT order to be filled. Polls MEXC every 1.5s (1500ms).
+   * If not filled within timeout (default 6s = 4 checks of 1.5s), cancels the LIMIT order and falls back to MARKET.
+   */
+  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 6000, pollMs = 1500) {
     const startTime = Date.now();
     let attempts = 0;
 
@@ -183,27 +238,27 @@ class OrderTracker {
           const cummulativeQuoteQty = parseFloat(orderInfo.cummulativeQuoteQty);
           if (executedQty > 0 && cummulativeQuoteQty > 0) {
             const avgPrice = cummulativeQuoteQty / executedQty;
-            this.log(`[LIMIT] Order ${orderId} FILLED after ${attempts} checks. Avg Price: ${avgPrice.toFixed(6)}`, 'success', symbol);
+            this.log(`[MAKER LIMIT] Order ${orderId} FILLED after ${attempts} checks (1.5s interval). Avg Price: ${avgPrice.toFixed(6)}`, 'success', symbol);
             return { avgPrice, executedQty, filled: true };
           }
         }
 
         if (orderInfo.status === 'PARTIALLY_FILLED') {
-          this.log(`[LIMIT] Order ${orderId} partially filled (${orderInfo.executedQty}/${quantity}). Waiting...`, 'info', symbol);
+          this.log(`[MAKER LIMIT] Order ${orderId} partially filled (${orderInfo.executedQty}/${quantity}). Re-checking in 1.5s...`, 'info', symbol);
           continue;
         }
 
         if (orderInfo.status === 'CANCELED' || orderInfo.status === 'EXPIRED' || orderInfo.status === 'REJECTED') {
-          this.log(`[LIMIT] Order ${orderId} status: ${orderInfo.status}. Breaking out.`, 'warning', symbol);
+          this.log(`[MAKER LIMIT] Order ${orderId} status: ${orderInfo.status}. Breaking out.`, 'warning', symbol);
           break;
         }
       } catch (err) {
-        this.log(`[LIMIT] Error checking order ${orderId}: ${err.message}`, 'warning', symbol);
+        this.log(`[MAKER LIMIT] Error checking order ${orderId}: ${err.message}`, 'warning', symbol);
       }
     }
 
     // Timeout reached — cancel the unfilled limit order and fall back to MARKET
-    this.log(`[LIMIT] Order ${orderId} not filled within ${maxWaitMs / 1000}s. Cancelling and placing MARKET ${side} fallback...`, 'warning', symbol);
+    this.log(`[MAKER LIMIT] Order ${orderId} not filled within ${maxWaitMs / 1000}s (1.5s repeg cycle). Cancelling and placing MARKET ${side} fallback...`, 'warning', symbol);
 
     try {
       await this.mexcClient.cancelOrder(symbol, orderId);
@@ -473,15 +528,8 @@ class OrderTracker {
         this.log(`[DRY RUN] Auto-Loop started: First trade bought immediately at market price ${initialPrice} USDT. Transitioning to TP/SL monitoring.`, 'success', symbol);
       } else {
         try {
-          // Fetch FRESH live market price from MEXC API right now
-          let freshBuyPrice = initialPrice;
-          try {
-            freshBuyPrice = await this.mexcClient.getTickerPrice(symbol);
-            this.log(`[FRESH PRICE] Fetched live market price for ${symbol}: ${freshBuyPrice} USDT`, 'info', symbol);
-          } catch (priceErr) {
-            this.log(`[FRESH PRICE] Failed to fetch live price, using initial: ${initialPrice}. Error: ${priceErr.message}`, 'warning', symbol);
-          }
-
+          // Calculate Maker Peg BUY price from depth (< Best Ask strictly)
+          const freshBuyPrice = await this.calculateMakerPegPrice(symbol, 'BUY', initialPrice);
           this.log(`Auto-Loop started: Placing first Spot LIMIT BUY order at ${freshBuyPrice} USDT on MEXC (0% Maker fee)...`, 'info', symbol);
           
           let result = null;
@@ -909,14 +957,8 @@ class OrderTracker {
             }
 
             try {
-              // Fetch FRESH live market price from MEXC API right now for SL sell
-              let freshSlPrice = currentPrice;
-              try {
-                freshSlPrice = await this.mexcClient.getTickerPrice(order.symbol);
-                this.log(`[FRESH PRICE] SL Sell: Fetched live market price for ${order.symbol}: ${freshSlPrice} USDT (polling was ${currentPrice})`, 'info', order.symbol);
-              } catch (priceErr) {
-                this.log(`[FRESH PRICE] SL Sell: Failed to fetch live price, using polling price: ${currentPrice}. Error: ${priceErr.message}`, 'warning', order.symbol);
-              }
+              // Calculate Maker Peg SELL price from depth (> Best Bid strictly)
+              const freshSlPrice = await this.calculateMakerPegPrice(order.symbol, 'SELL', currentPrice);
 
               const grossQty = order.quantity || (order.quoteOrderQty / order.executionPrice);
               let sellQty = Math.floor(grossQty * 0.998 * 100000000) / 100000000;
@@ -1176,15 +1218,8 @@ class OrderTracker {
           try {
             order.status = 'PENDING_EXECUTION'; // intermediate state
 
-            // Fetch FRESH live market price from MEXC API right now for buy
-            let freshBuyPrice = currentPrice;
-            try {
-              freshBuyPrice = await this.mexcClient.getTickerPrice(order.symbol);
-              this.log(`[FRESH PRICE] Buy: Fetched live market price for ${order.symbol}: ${freshBuyPrice} USDT (polling was ${currentPrice})`, 'info', order.symbol);
-            } catch (priceErr) {
-              this.log(`[FRESH PRICE] Buy: Failed to fetch live price, using polling price: ${currentPrice}. Error: ${priceErr.message}`, 'warning', order.symbol);
-            }
-
+            // Calculate Maker Peg BUY price from depth (< Best Ask strictly)
+            const freshBuyPrice = await this.calculateMakerPegPrice(order.symbol, 'BUY', currentPrice);
             this.log(`Placing Spot LIMIT BUY order at ${freshBuyPrice} USDT on MEXC for ${order.symbol} (0% Maker fee)...`, 'info', order.symbol);
             
             let result = null;
