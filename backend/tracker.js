@@ -473,7 +473,16 @@ class OrderTracker {
         this.log(`[DRY RUN] Auto-Loop started: First trade bought immediately at market price ${initialPrice} USDT. Transitioning to TP/SL monitoring.`, 'success', symbol);
       } else {
         try {
-          this.log(`Auto-Loop started: Placing first Spot LIMIT BUY order at ${initialPrice} USDT on MEXC (0% Maker fee)...`, 'info', symbol);
+          // Fetch FRESH live market price from MEXC API right now
+          let freshBuyPrice = initialPrice;
+          try {
+            freshBuyPrice = await this.mexcClient.getTickerPrice(symbol);
+            this.log(`[FRESH PRICE] Fetched live market price for ${symbol}: ${freshBuyPrice} USDT`, 'info', symbol);
+          } catch (priceErr) {
+            this.log(`[FRESH PRICE] Failed to fetch live price, using initial: ${initialPrice}. Error: ${priceErr.message}`, 'warning', symbol);
+          }
+
+          this.log(`Auto-Loop started: Placing first Spot LIMIT BUY order at ${freshBuyPrice} USDT on MEXC (0% Maker fee)...`, 'info', symbol);
           
           let result = null;
           let lastBuyErr = null;
@@ -490,7 +499,7 @@ class OrderTracker {
                   side: 'BUY',
                   type: 'LIMIT',
                   quantity: qtyToTry,
-                  price: initialPrice
+                  price: freshBuyPrice
                 };
                 result = await this.mexcClient.placeOrder(orderParams);
                 if (result && result.orderId) { buyQty = qtyToTry; break; }
@@ -506,7 +515,7 @@ class OrderTracker {
             }
           } else {
             // quoteOrderQty is not supported for LIMIT orders on MEXC, calculate qty from price
-            const estimatedQty = newOrder.quoteOrderQty / initialPrice;
+            const estimatedQty = newOrder.quoteOrderQty / freshBuyPrice;
             for (const mult of decimalsToTry) {
               const qtyToTry = Math.floor(estimatedQty * mult) / mult;
               if (qtyToTry <= 0) continue;
@@ -516,7 +525,7 @@ class OrderTracker {
                   side: 'BUY',
                   type: 'LIMIT',
                   quantity: qtyToTry,
-                  price: initialPrice
+                  price: freshBuyPrice
                 };
                 result = await this.mexcClient.placeOrder(orderParams);
                 if (result && result.orderId) { buyQty = qtyToTry; break; }
@@ -538,7 +547,7 @@ class OrderTracker {
           newOrder.mexcOrderId = result.orderId;
           
           // Wait for LIMIT order to fill (with MARKET fallback on timeout)
-          const fills = await this.waitForLimitOrderFill(symbol, result.orderId, 'BUY', buyQty, initialPrice);
+          const fills = await this.waitForLimitOrderFill(symbol, result.orderId, 'BUY', buyQty, freshBuyPrice);
           if (fills.fallbackOrderId) newOrder.mexcOrderId = fills.fallbackOrderId;
           newOrder.executionPrice = fills.avgPrice;
 
@@ -884,7 +893,7 @@ class OrderTracker {
             this.handleOrderCycleComplete(order);
             continue;
           } else {
-            this.log(`[REAL] Stop Loss hit! Price ${currentPrice} <= SL level ${targetSlPrice.toFixed(4)}. Placing LIMIT SELL on MEXC (0% Maker fee)...`, 'warning', order.symbol);
+            this.log(`[REAL] Stop Loss hit! Price ${currentPrice} <= SL level ${targetSlPrice.toFixed(4)}. Fetching fresh market price for LIMIT SELL...`, 'warning', order.symbol);
             
             const mexcSellId = order.mexcSellOrderId;
             order.mexcSellOrderId = null; // Clear immediately to prevent duplicate cancellation calls
@@ -900,6 +909,15 @@ class OrderTracker {
             }
 
             try {
+              // Fetch FRESH live market price from MEXC API right now for SL sell
+              let freshSlPrice = currentPrice;
+              try {
+                freshSlPrice = await this.mexcClient.getTickerPrice(order.symbol);
+                this.log(`[FRESH PRICE] SL Sell: Fetched live market price for ${order.symbol}: ${freshSlPrice} USDT (polling was ${currentPrice})`, 'info', order.symbol);
+              } catch (priceErr) {
+                this.log(`[FRESH PRICE] SL Sell: Failed to fetch live price, using polling price: ${currentPrice}. Error: ${priceErr.message}`, 'warning', order.symbol);
+              }
+
               const grossQty = order.quantity || (order.quoteOrderQty / order.executionPrice);
               let sellQty = Math.floor(grossQty * 0.998 * 100000000) / 100000000;
               
@@ -927,11 +945,11 @@ class OrderTracker {
                 this.log(`[REAL] Stop Loss balance query failed: ${balErr.message}. Falling back to estimated quantity.`, 'warning', order.symbol);
               }
 
-              // Place LIMIT SELL at current price for 0% Maker fee
+              // Place LIMIT SELL at FRESH live market price for 0% Maker fee
               let sellResult = null;
               const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
               let lastErr = null;
-              const slSellPrice = currentPrice; // LIMIT SELL at current market price
+              const slSellPrice = freshSlPrice; // LIMIT SELL at FRESH live market price
 
               for (const mult of decimalsToTry) {
                 const qtyToTry = Math.floor(sellQty * mult) / mult;
@@ -1157,7 +1175,17 @@ class OrderTracker {
           // PLACE REAL ORDER — LIMIT BUY for 0% Maker fee
           try {
             order.status = 'PENDING_EXECUTION'; // intermediate state
-            this.log(`Placing Spot LIMIT BUY order at ${currentPrice} USDT on MEXC for ${order.symbol} (0% Maker fee)...`, 'info', order.symbol);
+
+            // Fetch FRESH live market price from MEXC API right now for buy
+            let freshBuyPrice = currentPrice;
+            try {
+              freshBuyPrice = await this.mexcClient.getTickerPrice(order.symbol);
+              this.log(`[FRESH PRICE] Buy: Fetched live market price for ${order.symbol}: ${freshBuyPrice} USDT (polling was ${currentPrice})`, 'info', order.symbol);
+            } catch (priceErr) {
+              this.log(`[FRESH PRICE] Buy: Failed to fetch live price, using polling price: ${currentPrice}. Error: ${priceErr.message}`, 'warning', order.symbol);
+            }
+
+            this.log(`Placing Spot LIMIT BUY order at ${freshBuyPrice} USDT on MEXC for ${order.symbol} (0% Maker fee)...`, 'info', order.symbol);
             
             let result = null;
             let lastBuyErr = null;
@@ -1174,7 +1202,7 @@ class OrderTracker {
                     side: 'BUY',
                     type: 'LIMIT',
                     quantity: qtyToTry,
-                    price: currentPrice
+                    price: freshBuyPrice
                   };
                   result = await this.mexcClient.placeOrder(orderParams);
                   if (result && result.orderId) { buyQty = qtyToTry; break; }
@@ -1190,7 +1218,7 @@ class OrderTracker {
               }
             } else {
               // quoteOrderQty not supported for LIMIT on MEXC, calculate qty from price
-              const estimatedQty = order.quoteOrderQty / currentPrice;
+              const estimatedQty = order.quoteOrderQty / freshBuyPrice;
               for (const mult of decimalsToTry) {
                 const qtyToTry = Math.floor(estimatedQty * mult) / mult;
                 if (qtyToTry <= 0) continue;
@@ -1200,7 +1228,7 @@ class OrderTracker {
                     side: 'BUY',
                     type: 'LIMIT',
                     quantity: qtyToTry,
-                    price: currentPrice
+                    price: freshBuyPrice
                   };
                   result = await this.mexcClient.placeOrder(orderParams);
                   if (result && result.orderId) { buyQty = qtyToTry; break; }
@@ -1222,7 +1250,7 @@ class OrderTracker {
             order.mexcOrderId = result.orderId;
             
             // Wait for LIMIT order to fill (with MARKET fallback on timeout)
-            const fills = await this.waitForLimitOrderFill(order.symbol, result.orderId, 'BUY', buyQty, currentPrice);
+            const fills = await this.waitForLimitOrderFill(order.symbol, result.orderId, 'BUY', buyQty, freshBuyPrice);
             if (fills.fallbackOrderId) order.mexcOrderId = fills.fallbackOrderId;
             order.executionPrice = fills.avgPrice;
 
