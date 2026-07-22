@@ -29,20 +29,19 @@ class OrderTracker {
     }
 
     try {
-      // Collect all unique symbols ever tracked by this bot (from all orders - active + history)
+      // Collect all unique symbols ever tracked by this bot (non-dryRun orders only)
       const symbolsToCheck = new Set();
       (this.orders || []).forEach(o => {
         if (o.symbol && !o.dryRun) symbolsToCheck.add(o.symbol.toUpperCase());
       });
 
-      // If no bot symbols found, nothing to count
       if (symbolsToCheck.size === 0) {
         return this.cachedFeeSummary || { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
       }
 
       let totalUsdtFees = 0;
-      let totalMxFees = 0;
-      let feeCount = 0;
+      let totalMxFees   = 0;
+      let feeCount      = 0;
 
       // Fetch actual trade history from MEXC for every symbol this bot has ever traded
       for (const symbol of symbolsToCheck) {
@@ -50,13 +49,15 @@ class OrderTracker {
           const trades = await this.mexcClient.getMyTrades(symbol, 1000);
           if (Array.isArray(trades)) {
             trades.forEach(t => {
-              const fee = parseFloat(t.commission || 0);
-              const fa = (t.commissionAsset || '').toUpperCase();
+              const fee      = parseFloat(t.commission || 0);
+              // MEXC API uses 'commissionAsset' (not feeAsset)
+              const feeAsset = (t.commissionAsset || '').toUpperCase();
               if (fee > 0) {
                 feeCount++;
-                if (fa === 'USDT') totalUsdtFees += fee;
-                else if (fa === 'MX') totalMxFees += fee;
-                // Maker orders charged in quote/base coin — also captured above
+                if (feeAsset === 'USDT') totalUsdtFees += fee;
+                else if (feeAsset === 'MX') totalMxFees += fee;
+                // Note: BUY commissions on MEXC are charged in MX (with MX discount)
+                // or USDT — the isBuyer field identifies direction (not used for fees)
               }
             });
           }
@@ -65,24 +66,27 @@ class OrderTracker {
         }
       }
 
+      // Convert MX fees to USDT using live price
       let mxPrice = 1.65;
       try {
         const p = await this.mexcClient.getTickerPrice('MXUSDT');
         if (p) mxPrice = parseFloat(p);
       } catch(e) {}
 
-      const totalFeesInUsdt = totalUsdtFees + (totalMxFees * mxPrice);
+      const mxInUsdt       = totalMxFees * mxPrice;
+      const totalFeesInUsdt = totalUsdtFees + mxInUsdt;
 
       this.cachedFeeSummary = {
         usdtFees: parseFloat(totalUsdtFees.toFixed(4)),
-        mxFees: parseFloat(totalMxFees.toFixed(4)),
+        mxFees:   parseFloat(totalMxFees.toFixed(4)),
+        mxInUsdt: parseFloat(mxInUsdt.toFixed(4)),
         totalFeesInUsdt: parseFloat(totalFeesInUsdt.toFixed(4)),
         feeCount
       };
       this.lastFeeCheckTime = now;
       return this.cachedFeeSummary;
     } catch (err) {
-      return this.cachedFeeSummary || { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
+      return this.cachedFeeSummary || { usdtFees: 0, mxFees: 0, mxInUsdt: 0, totalFeesInUsdt: 0, feeCount: 0 };
     }
   }
 
@@ -227,11 +231,11 @@ class OrderTracker {
 
   /**
    * 100% MAKER RE-PEG ENGINE (NO MARKET FALLBACK EVER)
-   * Continuously polls and re-pegs LIMIT orders every 1.5s (1500ms order stay window) to top of orderbook
+   * Continuously polls and re-pegs LIMIT orders every 1.1s (1100ms order stay window) to top of orderbook
    * strictly maintaining BUY <= Best Bid and SELL >= Best Ask for 0% Maker fees.
    * Gives market takers sufficient time to hit passive limit orders while maintaining low API load.
    */
-  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 300000, pollMs = 1500) {
+  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 300000, pollMs = 1100) {
     const startTime = Date.now();
     let attempts = 0;
     let currentOrderId = orderId;
@@ -1432,8 +1436,8 @@ class OrderTracker {
       type = 'STOP_LOSS';
     }
 
-    // Account Specific Fee Rates (User Account: Taker = 0.0% promotion, Maker = 0.04% MX Token Discount)
-    let accountFees = { makerCommission: 0.0004, takerCommission: 0.0000 };
+    // Account Specific Fee Rates (0.0% Taker promotion & 0.0% Maker promotion on MEXC)
+    let accountFees = { makerCommission: 0.0000, takerCommission: 0.0000 };
     try {
       if (this.mexcClient && typeof this.mexcClient.getTradeFee === 'function') {
         const fetchedFees = await this.mexcClient.getTradeFee(order.symbol);
