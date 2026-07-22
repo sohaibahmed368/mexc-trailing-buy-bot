@@ -791,6 +791,13 @@ class StockOrderTracker {
 
                 if (sellResult && sellResult.orderId) {
                   const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, freshSlPrice);
+                  if (!slFills || !slFills.filled) {
+                    this.log(`[REAL] Stock Stop Loss LIMIT Sell order ${sellResult.orderId} not yet filled. Retaining active state for continuous depth re-pegging...`, 'warning', order.symbol);
+                    order.status = 'TP_SL_ACTIVE';
+                    this.saveOrders();
+                    changed = true;
+                    continue;
+                  }
                   order.status = 'TRIGGERED';
                   order.sellExecutionPrice = slFills.avgPrice || freshSlPrice;
                   this.log(`[REAL] Stock Stop Loss Limit Sell order executed! Order ID: ${sellResult.orderId}. Avg Fill Price: ${order.sellExecutionPrice}`, 'success', order.symbol);

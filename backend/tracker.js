@@ -1085,8 +1085,16 @@ class OrderTracker {
                 throw lastErr || new Error('Failed to place SL limit sell after precision retries.');
               }
 
-              // Wait for LIMIT SELL to fill (with MARKET fallback on timeout)
+              // Wait for LIMIT SELL to fill (with 100% Maker continuous re-pegging)
               const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, currentPrice);
+
+              if (!slFills || !slFills.filled) {
+                this.log(`[REAL] Stop Loss LIMIT Sell order ${sellResult.orderId} not yet filled on MEXC. Retaining TP_SL_ACTIVE state to continuously re-peg until filled 100% as MAKER (0% Fee).`, 'warning', order.symbol);
+                order.status = 'TP_SL_ACTIVE';
+                this.saveOrders();
+                changed = true;
+                continue;
+              }
 
               order.status = 'TRIGGERED';
               order.sellExecutionPrice = slFills.avgPrice || currentPrice;
