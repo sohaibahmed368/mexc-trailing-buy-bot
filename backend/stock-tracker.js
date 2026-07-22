@@ -417,7 +417,26 @@ class StockOrderTracker {
   // Robust Helper: Retry order placement with varying quantity precisions to overcome MEXC 400 "quantity scale is invalid" errors
   async placeOrderWithPrecisionRetry(orderParams, quoteOrderQty = null) {
     let lastErr = null;
-    const decimalsToTry = [10000, 1000, 100, 10, 1, 0.1];
+
+    // Prioritize quoteOrderQty for MARKET BUY orders to bypass MEXC quantity decimal scale limits
+    const targetQuoteQty = quoteOrderQty || orderParams.quoteOrderQty;
+    if (orderParams.type === 'MARKET' && orderParams.side === 'BUY' && targetQuoteQty) {
+      try {
+        const attemptParams = {
+          symbol: orderParams.symbol,
+          side: 'BUY',
+          type: 'MARKET',
+          quoteOrderQty: Math.floor(parseFloat(targetQuoteQty) * 100) / 100
+        };
+        const res = await this.mexcClient.placeOrder(attemptParams);
+        if (res && res.orderId) return res;
+      } catch (err) {
+        lastErr = err;
+        this.log(`[REAL] Market buy quoteOrderQty attempt failed (${err.message}). Retrying with quantity scale precision fallback...`, 'warning', orderParams.symbol);
+      }
+    }
+
+    const decimalsToTry = [100, 10, 1, 1000, 10000, 0.1];
 
     if (orderParams.quantity) {
       const rawQty = orderParams.quantity;
@@ -428,6 +447,7 @@ class StockOrderTracker {
 
         try {
           const attemptParams = { ...orderParams, quantity: qtyToTry };
+          delete attemptParams.quoteOrderQty;
           const res = await this.mexcClient.placeOrder(attemptParams);
           if (res && res.orderId) return res;
         } catch (err) {
@@ -442,23 +462,8 @@ class StockOrderTracker {
       }
     }
 
-    // Fallback for MARKET BUY: use quoteOrderQty if available
-    if (orderParams.type === 'MARKET' && orderParams.side === 'BUY' && quoteOrderQty) {
-      try {
-        const attemptParams = {
-          symbol: orderParams.symbol,
-          side: 'BUY',
-          type: 'MARKET',
-          quoteOrderQty
-        };
-        const res = await this.mexcClient.placeOrder(attemptParams);
-        if (res && res.orderId) return res;
-      } catch (err) {
-        lastErr = err;
-      }
-    }
-
-    throw lastErr || new Error('Failed to execute order after quantity scale precision retries.');
+    if (lastErr) throw lastErr;
+    throw new Error('Order placement failed with precision retry.');
   }
 
   stopTracking() {
@@ -699,9 +704,17 @@ class StockOrderTracker {
                 order.status = 'PENDING_EXECUTION';
                 this.log(`🚀 [IMMEDIATE MARKET BUY] Trailing dip trigger + Consensus indicators ALIGNED! Sending instant MARKET BUY order to MEXC server for ${order.symbol}...`, 'success', order.symbol);
 
-                const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quantity: buyQty };
+                const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET' };
+                if (order.quoteOrderQty) {
+                  orderParams.quoteOrderQty = Math.floor(parseFloat(order.quoteOrderQty) * 100) / 100;
+                } else if (order.quantity) {
+                  orderParams.quantity = order.quantity;
+                } else {
+                  orderParams.quantity = buyQty;
+                }
+
                 this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(orderParams)}`, 'info', order.symbol);
-                const placeRes = await this.mexcClient.placeOrder(orderParams);
+                const placeRes = await this.placeOrderWithPrecisionRetry(orderParams, order.quoteOrderQty);
                 this.log(`[MEXC API RESPONSE] Order Placed Success -> ${JSON.stringify(placeRes)}`, 'success', order.symbol);
 
                 if (!placeRes || !placeRes.orderId) {
