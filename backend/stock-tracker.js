@@ -166,7 +166,16 @@ class StockOrderTracker {
         }
 
         if (orderInfo && (orderInfo.status === 'NEW' || orderInfo.status === 'PARTIALLY_FILLED')) {
-          this.log(`[STOCK MAKER PEG LOG] Check #${attempts} (800ms elapsed): Stock Order ${currentOrderId} is UNFILLED at price ${currentPrice}. Re-pegging to fresh depth...`, 'warning', symbol);
+          // SMART DELTA CHECK: Query fresh depth target BEFORE cancelling!
+          const targetPegPrice = await this.calculateMakerPegPrice(symbol, side, currentPrice);
+
+          // If current order price is STILL optimal target peg price, DO NOT CANCEL! Preserve Queue Priority & Save API calls!
+          if (Math.abs(targetPegPrice - currentPrice) < 0.0000001 || targetPegPrice === currentPrice) {
+            this.log(`🛡️ [STOCK SMART LAZY PEG] Check #${attempts}: Stock order ${currentOrderId} at ${currentPrice} USDT is STILL optimal Top ${side}. Preserving Orderbook Queue Priority (Skipping Re-peg).`, 'info', symbol);
+            continue;
+          }
+
+          this.log(`[STOCK MAKER RE-PEG SHIFT] Check #${attempts}: Orderbook depth shifted (${currentPrice} → ${targetPegPrice}). Re-pegging stock order ${currentOrderId}...`, 'warning', symbol);
           
           try {
             await this.mexcClient.cancelOrder(symbol, currentOrderId);

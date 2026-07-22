@@ -240,7 +240,16 @@ class OrderTracker {
         }
 
         if (orderInfo && (orderInfo.status === 'NEW' || orderInfo.status === 'PARTIALLY_FILLED')) {
-          this.log(`[MAKER PEG LOG] Check #${attempts} (800ms elapsed): Order ${currentOrderId} is UNFILLED at price ${currentPrice}. Re-pegging to fresh depth...`, 'warning', symbol);
+          // SMART DELTA CHECK: Query fresh depth target BEFORE cancelling!
+          const targetPegPrice = await this.calculateMakerPegPrice(symbol, side, currentPrice);
+
+          // If current order price is STILL optimal target peg price, DO NOT CANCEL! Preserve Queue Priority & Save API calls!
+          if (Math.abs(targetPegPrice - currentPrice) < 0.0000001 || targetPegPrice === currentPrice) {
+            this.log(`🛡️ [SMART LAZY PEG] Check #${attempts}: Order ${currentOrderId} at ${currentPrice} USDT is STILL optimal Top ${side}. Preserving Orderbook Queue Priority (Skipping Re-peg).`, 'info', symbol);
+            continue;
+          }
+
+          this.log(`[MAKER RE-PEG SHIFT] Check #${attempts}: Orderbook depth shifted (${currentPrice} → ${targetPegPrice}). Re-pegging order ${currentOrderId}...`, 'warning', symbol);
           
           // Step 1: Cancel current unfilled LIMIT order
           try {
@@ -258,9 +267,7 @@ class OrderTracker {
             } catch (e) {}
           }
 
-          // Step 2: Calculate fresh Depth Peg price (< Best Ask for BUY, > Best Bid for SELL)
-          const newPegPrice = await this.calculateMakerPegPrice(symbol, side, currentPrice);
-          currentPrice = newPegPrice;
+          currentPrice = targetPegPrice;
 
           // Step 3: Place NEW LIMIT order at fresh peg price with precision retry
           const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
