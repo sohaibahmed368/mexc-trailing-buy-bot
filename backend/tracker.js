@@ -240,6 +240,50 @@ class OrderTracker {
   }
 
   /**
+   * Smart Momentum Pressure Detector:
+   * Evaluates 0.1ms real-time market pressure right before buy execution.
+   * If extreme buying surge detected (Volume >= 2.5x avg or OBI Bids >= 72%), switches to Instant Market Buy.
+   * If normal/moderate momentum, uses 100% Maker Limit Buy for 0% Fee.
+   */
+  async evaluateBuyingPressure(symbol, currentPrice) {
+    let isExtremePump = false;
+    let metricsLog = '';
+    try {
+      const [depth, klines] = await Promise.all([
+        this.mexcClient.getDepth(symbol, 20),
+        this.mexcClient.getKlines(symbol, '1m', 6)
+      ]);
+
+      let obiRatio = 0.5;
+      if (depth && Array.isArray(depth.bids) && Array.isArray(depth.asks)) {
+        let bidsVal = 0, asksVal = 0;
+        const lower = currentPrice * 0.985, upper = currentPrice * 1.015;
+        depth.bids.forEach(([p, q]) => { const pr = parseFloat(p); if (pr >= lower && pr <= upper) bidsVal += (pr * parseFloat(q)); });
+        depth.asks.forEach(([p, q]) => { const pr = parseFloat(p); if (pr >= lower && pr <= upper) asksVal += (pr * parseFloat(q)); });
+        const tot = bidsVal + asksVal;
+        if (tot > 0) obiRatio = bidsVal / tot;
+      }
+
+      let volRatio = 1.0;
+      if (klines && klines.length >= 6) {
+        const lastVol = parseFloat(klines[5][5]);
+        const prevVols = klines.slice(0, 5).map(k => parseFloat(k[5]));
+        const avgVol = prevVols.reduce((a, b) => a + b, 0) / (prevVols.length || 1);
+        if (avgVol > 0) volRatio = lastVol / avgVol;
+      }
+
+      metricsLog = `Vol: ${volRatio.toFixed(1)}x avg, OBI Bids: ${(obiRatio * 100).toFixed(1)}%`;
+
+      if (volRatio >= 2.5 || obiRatio >= 0.72) {
+        isExtremePump = true;
+      }
+    } catch (e) {
+      // Default to Limit Buy if query fails
+    }
+    return { isExtremePump, metricsLog };
+  }
+
+  /**
    * 100% MAKER RE-PEG ENGINE (NO MARKET FALLBACK EVER)
    * Continuously polls and re-pegs LIMIT orders every 1.5s (1500ms order stay window) to top of orderbook
    * strictly maintaining BUY <= Best Bid and SELL >= Best Ask for 0% Maker fees.
@@ -1253,66 +1297,86 @@ class OrderTracker {
             this.log(`[DRY RUN] Simulated Spot Buy order executed at ${currentPrice} USDT.`, 'success', order.symbol);
           }
         } else {
-          // PLACE REAL ORDER — LIMIT BUY for 0% Maker fee
           try {
             order.status = 'PENDING_EXECUTION'; // intermediate state
 
-            // Calculate Maker Peg BUY price from depth (< Best Ask strictly)
-            const freshBuyPrice = await this.calculateMakerPegPrice(order.symbol, 'BUY', currentPrice);
-            this.log(`Placing Spot LIMIT BUY order at ${freshBuyPrice} USDT on MEXC for ${order.symbol} (0% Maker fee)...`, 'info', order.symbol);
+            // Evaluate 0.1ms Real-time Buying Pressure
+            const pressure = await this.evaluateBuyingPressure(order.symbol, currentPrice);
             
             let result = null;
             let lastBuyErr = null;
             const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
             let buyQty = null;
 
-            if (order.quantity) {
-              for (const mult of decimalsToTry) {
-                const qtyToTry = Math.floor(order.quantity * mult) / mult;
-                if (qtyToTry <= 0) continue;
-                try {
-                  const orderParams = {
-                    symbol: order.symbol,
-                    side: 'BUY',
-                    type: 'LIMIT',
-                    quantity: qtyToTry,
-                    price: freshBuyPrice
-                  };
-                  result = await this.mexcClient.placeOrder(orderParams);
-                  if (result && result.orderId) { buyQty = qtyToTry; break; }
-                } catch (err) {
-                  lastBuyErr = err;
-                  const errMsg = err.message || '';
-                  if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                    // Silently retry with next precision
-                    continue;
+            if (pressure.isExtremePump) {
+              this.log(`🚀 [MOMENTUM SURGE DETECTED] Heavy Buying Pressure (${pressure.metricsLog}). Executing INSTANT MARKET BUY to catch rocket pump!`, 'warning', order.symbol);
+              
+              if (order.quantity) {
+                for (const mult of decimalsToTry) {
+                  const qtyToTry = Math.floor(order.quantity * mult) / mult;
+                  if (qtyToTry <= 0) continue;
+                  try {
+                    const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quantity: qtyToTry };
+                    result = await this.mexcClient.placeOrder(orderParams);
+                    if (result && result.orderId) { buyQty = qtyToTry; break; }
+                  } catch (err) {
+                    lastBuyErr = err;
+                    if ((err.message || '').includes('quantity scale')) continue;
+                    throw err;
                   }
-                  throw err;
                 }
+              } else if (order.quoteOrderQty) {
+                try {
+                  const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quoteOrderQty: order.quoteOrderQty };
+                  result = await this.mexcClient.placeOrder(orderParams);
+                } catch (err) { lastBuyErr = err; }
               }
             } else {
-              // quoteOrderQty not supported for LIMIT on MEXC, calculate qty from price
-              const estimatedQty = order.quoteOrderQty / freshBuyPrice;
-              for (const mult of decimalsToTry) {
-                const qtyToTry = Math.floor(estimatedQty * mult) / mult;
-                if (qtyToTry <= 0) continue;
-                try {
-                  const orderParams = {
-                    symbol: order.symbol,
-                    side: 'BUY',
-                    type: 'LIMIT',
-                    quantity: qtyToTry,
-                    price: freshBuyPrice
-                  };
-                  result = await this.mexcClient.placeOrder(orderParams);
-                  if (result && result.orderId) { buyQty = qtyToTry; break; }
-                } catch (err) {
-                  lastBuyErr = err;
-                  const errMsg = err.message || '';
-                  if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                    continue;
+              // Calculate Maker Peg BUY price from depth (< Best Ask strictly)
+              const freshBuyPrice = await this.calculateMakerPegPrice(order.symbol, 'BUY', currentPrice);
+              this.log(`🐢 [NORMAL MOMENTUM] Moderate pressure (${pressure.metricsLog}). Placing 100% MAKER LIMIT BUY at ${freshBuyPrice} USDT (0% Fee)...`, 'info', order.symbol);
+              
+              if (order.quantity) {
+                for (const mult of decimalsToTry) {
+                  const qtyToTry = Math.floor(order.quantity * mult) / mult;
+                  if (qtyToTry <= 0) continue;
+                  try {
+                    const orderParams = {
+                      symbol: order.symbol,
+                      side: 'BUY',
+                      type: 'LIMIT',
+                      quantity: qtyToTry,
+                      price: freshBuyPrice
+                    };
+                    result = await this.mexcClient.placeOrder(orderParams);
+                    if (result && result.orderId) { buyQty = qtyToTry; break; }
+                  } catch (err) {
+                    lastBuyErr = err;
+                    const errMsg = err.message || '';
+                    if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) continue;
+                    throw err;
                   }
-                  throw err;
+                }
+              } else {
+                const estimatedQty = order.quoteOrderQty / freshBuyPrice;
+                for (const mult of decimalsToTry) {
+                  const qtyToTry = Math.floor(estimatedQty * mult) / mult;
+                  if (qtyToTry <= 0) continue;
+                  try {
+                    const orderParams = {
+                      symbol: order.symbol,
+                      side: 'BUY',
+                      type: 'LIMIT',
+                      quantity: qtyToTry,
+                      price: freshBuyPrice
+                    };
+                    result = await this.mexcClient.placeOrder(orderParams);
+                    if (result && result.orderId) { buyQty = qtyToTry; break; }
+                  } catch (err) {
+                    lastBuyErr = err;
+                    if ((err.message || '').includes('quantity scale')) continue;
+                    throw err;
+                  }
                 }
               }
             }
