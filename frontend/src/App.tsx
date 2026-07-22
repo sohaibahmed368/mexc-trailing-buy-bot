@@ -299,7 +299,7 @@ export default function App() {
   };
 
   const activeOrdersCount = orders.filter(
-    (o) => o.status === 'RUNNING' || o.status === 'PENDING_EXECUTION'
+    (o) => o.status !== 'TRIGGERED' && o.status !== 'CANCELLED' && o.status !== 'FAILED'
   ).length;
 
   const [mainMode, setMainMode] = useState<'crypto' | 'stock'>('crypto');

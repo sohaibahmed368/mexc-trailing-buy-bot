@@ -59,7 +59,7 @@ export function fmtPrice(val: number | string | null | undefined): string {
 
 export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
   const activeOrders = orders.filter(
-    (o) => o.status === 'RUNNING' || o.status === 'PENDING_EXECUTION' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE'
+    (o) => o.status !== 'TRIGGERED' && o.status !== 'CANCELLED' && o.status !== 'FAILED'
   );
 
   if (activeOrders.length === 0) {
@@ -76,14 +76,14 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
     <div className="active-orders-grid">
       {activeOrders.map((order) => {
         // Calculate progress percentage from bottom price to trigger price
-        const priceDiff = order.currentPrice - (order.bottomPrice || 0);
-        const triggerDiff = order.trailValue;
+        const priceDiff = (order.currentPrice || 0) - (order.bottomPrice || 0);
+        const triggerDiff = order.trailValue || 1;
         const progressPercent = Math.max(
           0,
           Math.min(100, (priceDiff / triggerDiff) * 100)
         );
 
-        const currentSlOffset = order.isSlExtended ? (order.stopLoss! + (order.slBuffer || 0)) : order.stopLoss;
+        const currentSlOffset = order.isSlExtended ? ((order.stopLoss || 0) + (order.slBuffer || 0)) : (order.stopLoss || 0);
 
         const cumulativeProfit = (order.tradeHistory && order.tradeHistory.length > 0)
           ? order.tradeHistory.reduce((acc: number, t: any) => {
