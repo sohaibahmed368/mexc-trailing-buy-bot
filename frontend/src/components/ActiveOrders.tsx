@@ -205,15 +205,15 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                 )}
                 {order.stopLoss !== null && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>Stop Loss Target:</span>
+                    <span>{order.isSlExtended ? 'Extended Stop Loss Target:' : 'Stop Loss Target:'}</span>
                     <div style={{ textAlign: 'right' }}>
                       <strong style={{ color: order.isSlProfitLocked ? 'var(--color-green)' : 'var(--color-red)' }}>
                         {order.executionPrice 
                           ? `$${fmtPrice(
-                              order.isSlProfitLocked && order.lockedSlPrice
-                                ? (order.isSlExtended && order.slBuffer ? order.lockedSlPrice - ((order.slBuffer / 100) * order.executionPrice) : order.lockedSlPrice)
-                                : (order.executionPrice * (1 - order.stopLoss / 100))
-                            )} (-${order.stopLoss}%)` 
+                              (order.isSlProfitLocked && order.lockedSlPrice
+                                ? order.lockedSlPrice
+                                : (order.executionPrice * (1 - order.stopLoss / 100))) - (order.isSlExtended && order.slBuffer ? ((order.slBuffer / 100) * order.executionPrice) : 0)
+                            )} (-${(Number(order.stopLoss) + (order.isSlExtended && order.slBuffer ? Number(order.slBuffer) : 0)).toFixed(3)}%)` 
                           : `Buy Price - ${order.stopLoss}%`}
                       </strong>
                       {order.isSlProfitLocked && (
@@ -222,8 +222,10 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                         </div>
                       )}
                       {order.filterSmartSl && (
-                        <div style={{ fontSize: '0.7rem', color: 'var(--color-green)', fontWeight: 500 }}>
-                          🛡️ Smart Guard Active (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +{order.slBuffer || 0.15}% Buffer)
+                        <div style={{ fontSize: '0.7rem', color: order.isSlExtended ? '#00e676' : 'var(--color-green)', fontWeight: order.isSlExtended ? 600 : 500 }}>
+                          {order.isSlExtended 
+                            ? `🛡️ Smart SL Extended (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +${order.slBuffer || 0.15}% Buffer)` 
+                            : `🛡️ Smart Guard Active (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +${order.slBuffer || 0.15}% Buffer)`}
                         </div>
                       )}
                     </div>
@@ -241,8 +243,8 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                   </span>
                 )}
                 {order.filterSmartSl && (
-                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: 'rgba(0, 230, 118, 0.12)', color: 'var(--color-green)', border: '1px solid rgba(0, 230, 118, 0.3)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                    🛡️ Smart SL Guard Active (Buffer: +{order.slBuffer || 0.15}%)
+                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: order.isSlExtended ? 'rgba(0, 230, 118, 0.25)' : 'rgba(0, 230, 118, 0.12)', color: 'var(--color-green)', border: order.isSlExtended ? '1px solid #00e676' : '1px solid rgba(0, 230, 118, 0.3)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                    {order.isSlExtended ? `🛡️ Smart SL Extended (Buffer: +${order.slBuffer || 0.15}%)` : `🛡️ Smart SL Guard Active (Buffer: +${order.slBuffer || 0.15}%)`}
                   </span>
                 )}
                 {order.filterObi && (

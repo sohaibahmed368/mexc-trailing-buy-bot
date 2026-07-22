@@ -219,15 +219,15 @@ export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, on
                 )}
                 {order.stopLoss !== null && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>Stop Loss Target:</span>
+                    <span>{order.isSlExtended ? 'Extended Stop Loss Target:' : 'Stop Loss Target:'}</span>
                     <div style={{ textAlign: 'right' }}>
                       <strong style={{ color: order.isSlProfitLocked ? 'var(--color-green)' : 'var(--color-red)' }}>
                         {order.executionPrice 
                           ? `$${fmtPrice(
-                              order.isSlProfitLocked && order.lockedSlPrice
-                                ? (order.isSlExtended && order.slBuffer ? order.lockedSlPrice - ((order.slBuffer / 100) * order.executionPrice) : order.lockedSlPrice)
-                                : (order.executionPrice * (1 - order.stopLoss / 100))
-                            )} (-${order.stopLoss}%)` 
+                              (order.isSlProfitLocked && order.lockedSlPrice
+                                ? order.lockedSlPrice
+                                : (order.executionPrice * (1 - order.stopLoss / 100))) - (order.isSlExtended && order.slBuffer ? ((order.slBuffer / 100) * order.executionPrice) : 0)
+                            )} (-${(Number(order.stopLoss) + (order.isSlExtended && order.slBuffer ? Number(order.slBuffer) : 0)).toFixed(3)}%)` 
                           : `Buy Price - ${order.stopLoss}%`}
                       </strong>
                       {order.isSlProfitLocked && (
@@ -236,8 +236,10 @@ export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, on
                         </div>
                       )}
                       {order.filterSmartSl && (
-                        <div style={{ fontSize: '0.7rem', color: 'var(--color-green)', fontWeight: 500 }}>
-                          🛡️ Smart Guard Active (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +{order.slBuffer || 0.15}% Buffer)
+                        <div style={{ fontSize: '0.7rem', color: order.isSlExtended ? '#00e676' : 'var(--color-green)', fontWeight: order.isSlExtended ? 600 : 500 }}>
+                          {order.isSlExtended 
+                            ? `🛡️ Smart SL Extended (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +${order.slBuffer || 0.15}% Buffer)` 
+                            : `🛡️ Smart Guard Active (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +${order.slBuffer || 0.15}% Buffer)`}
                         </div>
                       )}
                     </div>
