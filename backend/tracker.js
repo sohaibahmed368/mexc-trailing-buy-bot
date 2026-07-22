@@ -24,61 +24,46 @@ class OrderTracker {
       return this.cachedFeeSummary;
     }
 
-    if (!this.mexcClient || !this.mexcClient.hasCredentials()) {
-      return { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
-    }
+    let totalUsdtFees = 0;
+    let totalMxFees = 0;
+    let feeCount = 0;
 
-    try {
-      const symbolsToCheck = new Set([
-        'ONDOUSDT', 'BTCUSDT', 'XRPUSDT', 'SOLUSDT', 'ETHUSDT', 'BNBUSDT', 'SUIUSDT', 'UNIUSDT', 'MXUSDT'
-      ]);
-
-      (this.orders || []).forEach(o => {
-        if (o.symbol) symbolsToCheck.add(o.symbol.toUpperCase());
-      });
-
-      let totalUsdtFees = 0;
-      let totalMxFees = 0;
-      let feeCount = 0;
-
-      for (const symbol of symbolsToCheck) {
-        try {
-          const trades = await this.mexcClient.getMyTrades(symbol, 1000);
-          if (Array.isArray(trades)) {
-            trades.forEach(t => {
-              const fee = parseFloat(t.commission || 0);
-              const fa = t.commissionAsset || '';
-              if (fee > 0) {
-                feeCount++;
-                if (fa === 'USDT') totalUsdtFees += fee;
-                else if (fa === 'MX') totalMxFees += fee;
-              }
-            });
+    // Calculate total fees strictly from bot's executed trade history
+    (this.orders || []).forEach(o => {
+      if (Array.isArray(o.tradeHistory)) {
+        o.tradeHistory.forEach(t => {
+          if (typeof t.totalMexcFeesUsdt === 'number' && t.totalMexcFeesUsdt > 0) {
+            totalUsdtFees += t.totalMexcFeesUsdt;
+            feeCount++;
+          } else if (typeof t.mexcBuyFeeUsdt === 'number' || typeof t.mexcSellFeeUsdt === 'number') {
+            const sum = (t.mexcBuyFeeUsdt || 0) + (t.mexcSellFeeUsdt || 0);
+            if (sum > 0) {
+              totalUsdtFees += sum;
+              feeCount++;
+            }
           }
-        } catch (e) {
-          // symbol not traded
-        }
+        });
       }
+    });
 
-      let mxPrice = 1.65;
-      try {
+    let mxPrice = 1.65;
+    try {
+      if (this.mexcClient && this.mexcClient.hasCredentials()) {
         const p = await this.mexcClient.getTickerPrice('MXUSDT');
         if (p) mxPrice = parseFloat(p);
-      } catch(e) {}
+      }
+    } catch(e) {}
 
-      const totalFeesInUsdt = totalUsdtFees + (totalMxFees * mxPrice);
+    const totalFeesInUsdt = totalUsdtFees + (totalMxFees * mxPrice);
 
-      this.cachedFeeSummary = {
-        usdtFees: parseFloat(totalUsdtFees.toFixed(4)),
-        mxFees: parseFloat(totalMxFees.toFixed(4)),
-        totalFeesInUsdt: parseFloat(totalFeesInUsdt.toFixed(4)),
-        feeCount
-      };
-      this.lastFeeCheckTime = now;
-      return this.cachedFeeSummary;
-    } catch (err) {
-      return this.cachedFeeSummary || { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
-    }
+    this.cachedFeeSummary = {
+      usdtFees: parseFloat(totalUsdtFees.toFixed(4)),
+      mxFees: parseFloat(totalMxFees.toFixed(4)),
+      totalFeesInUsdt: parseFloat(totalFeesInUsdt.toFixed(4)),
+      feeCount
+    };
+    this.lastFeeCheckTime = now;
+    return this.cachedFeeSummary;
   }
 
   // Ensure storage directories and files exist
