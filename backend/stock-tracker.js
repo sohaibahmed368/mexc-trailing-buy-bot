@@ -98,9 +98,7 @@ class StockOrderTracker {
       const depth = await this.mexcClient.getDepth(symbol, 10);
       if (depth && Array.isArray(depth.bids) && depth.bids.length > 0 && Array.isArray(depth.asks) && depth.asks.length > 0) {
         const bestBid = parseFloat(depth.bids[0][0]);
-        const secondBid = depth.bids.length > 1 ? parseFloat(depth.bids[1][0]) : bestBid;
         const bestAsk = parseFloat(depth.asks[0][0]);
-        const secondAsk = depth.asks.length > 1 ? parseFloat(depth.asks[1][0]) : bestAsk;
 
         let tick = 0.0001;
         if (bestBid > 1000) tick = 0.01;
@@ -110,28 +108,41 @@ class StockOrderTracker {
         const decimals = tick.toString().includes('.') ? tick.toString().split('.')[1].length : 2;
 
         if (side.toUpperCase() === 'BUY') {
-          // STRICT 100% MAKER BUY RULE: Join Buyer Queue 1 tick safely below bestAsk
+          // STRICT 100% MAKER BUY RULE: Join Buyer Queue at least 2 ticks safely below bestAsk
           let pegPrice = Math.min(bestBid, bestAsk - (tick * 2));
           if (pegPrice <= 0) pegPrice = Math.max(0.00000001, bestBid);
-          pegPrice = parseFloat(pegPrice.toFixed(decimals));
-          if (pegPrice >= bestAsk) {
-            pegPrice = parseFloat(Math.max(0.00000001, bestAsk - (tick * 2)).toFixed(decimals));
+          
+          // HARD GUARD: pegPrice MUST be strictly less than bestAsk by at least 2 ticks
+          const maxAllowedBuyPrice = parseFloat((bestAsk - (tick * 2)).toFixed(decimals));
+          if (pegPrice >= bestAsk || pegPrice > maxAllowedBuyPrice) {
+            pegPrice = maxAllowedBuyPrice;
           }
+
+          pegPrice = parseFloat(pegPrice.toFixed(decimals));
           this.log(`[STOCK MAKER PEG BUY] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Guaranteed MAKER BUY Price: ${pegPrice} (< Ask ${bestAsk} ✅)`, 'info', symbol);
           return pegPrice;
         } else {
-          // STRICT 100% MAKER SELL RULE: Join Seller Queue 1 tick safely above bestBid
+          // STRICT 100% MAKER SELL RULE: Join Seller Queue at least 2 ticks safely above bestBid
           let pegPrice = Math.max(bestAsk, bestBid + (tick * 2));
-          pegPrice = parseFloat(pegPrice.toFixed(decimals));
-          if (pegPrice <= bestBid) {
-            pegPrice = parseFloat((bestBid + (tick * 2)).toFixed(decimals));
+          const minAllowedSellPrice = parseFloat((bestBid + (tick * 2)).toFixed(decimals));
+          if (pegPrice <= bestBid || pegPrice < minAllowedSellPrice) {
+            pegPrice = minAllowedSellPrice;
           }
+
+          pegPrice = parseFloat(pegPrice.toFixed(decimals));
           this.log(`[STOCK MAKER PEG SELL] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Guaranteed MAKER SELL Price: ${pegPrice} (> Bid ${bestBid} ✅)`, 'info', symbol);
           return pegPrice;
         }
       }
     } catch (err) {
-      this.log(`[STOCK MAKER PEG] Failed to query depth for ${symbol}: ${err.message}. Using fallback price ${fallbackPrice}`, 'warning', symbol);
+      this.log(`[STOCK MAKER PEG] Failed to query depth for ${symbol}: ${err.message}. Applying safe sub-Ask fallback...`, 'warning', symbol);
+    }
+
+    // SAFE FALLBACK GUARD: If depth query fails, force price 0.1% below fallback for BUY so it CANNOT hit Asks as Taker
+    if (side.toUpperCase() === 'BUY' && fallbackPrice) {
+      const safeBuyFallback = parseFloat((fallbackPrice * 0.999).toFixed(4));
+      this.log(`[STOCK MAKER PEG FALLBACK] Safe Sub-Ask BUY Price: ${safeBuyFallback} (0.1% below market) to guarantee MAKER status.`, 'warning', symbol);
+      return safeBuyFallback;
     }
     return fallbackPrice;
   }
