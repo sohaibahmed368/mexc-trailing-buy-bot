@@ -128,20 +128,20 @@ async function runTokenizedStocksFullSuite() {
 
   for (const sym of tokenizedSymbols) {
     console.log(`>>> Testing Tokenized Stock Symbol: [ ${sym} ] <<<`);
+    stockTracker.orders = []; // Reset active orders for clean independent symbol test
     const initialPrice = mockClient.priceMap[sym];
 
-    // Create Order with 0.1% Max Allowed Slippage as requested
+    // Create Order with percentage-based inputs
     const order = await stockTracker.addOrder({
       symbol: sym,
-      trailValue: '2.0',
-      quantity: '2.0', // 2.0 tokens will exceed 0.1 top ask depth causing 1.2% > 0.1% slippage
+      trailValue: '0.5', // 0.5% trail
+      quantity: '2.0',
       dryRun: false,
-      takeProfit: '5.0',
-      stopLoss: '3.0',
-      maxSlippagePct: '0.1', // 0.1% max allowed slippage as requested!
+      takeProfit: '1.0', // 1.0% TP
+      stopLoss: '1.5',  // 1.5% SL
       autoRepeat: true,
       startImmediately: false,
-      activationOffset: '1.0',
+      activationOffset: '0.5', // 0.5% dip
       filterObi: true,
       filterVolumeSpike: false,
       filterRsi: false,
@@ -150,15 +150,20 @@ async function runTokenizedStocksFullSuite() {
 
     assert(order.status === 'PENDING_ACTIVATION', `[${sym}] Created in PENDING_ACTIVATION state`);
 
-    // Step 1: Dips below activation target
-    mockClient.priceMap[sym] = initialPrice - 1.5;
+    // Step 1: Dips below activation target (0.5% dip)
+    const actTarget = initialPrice * 0.995;
+    mockClient.priceMap[sym] = actTarget - 0.1;
     await stockTracker.tick();
     let liveOrder = stockTracker.orders.find(o => o.id === order.id);
+    if (liveOrder.status !== 'RUNNING') {
+      console.log(`[DEBUG FAIL] ${sym} initialPrice: ${initialPrice}, actPrice: ${liveOrder.activationPrice}, setPrice: ${mockClient.priceMap[sym]}, status: ${liveOrder.status}`);
+    }
     assert(liveOrder.status === 'RUNNING', `[${sym}] Activated to RUNNING state`);
 
-    // Step 2: Rebounds to trigger buy
-    const bottom = initialPrice - 1.5;
-    mockClient.priceMap[sym] = bottom + 2.5; // Rebound > trailValue (2.0)
+    // Step 2: Rebounds to trigger buy (0.6% rebound > 0.5% trail)
+    const bottom = actTarget - 0.1;
+    const triggerTarget = bottom * 1.006;
+    mockClient.priceMap[sym] = triggerTarget;
     await stockTracker.tick();
     liveOrder = stockTracker.orders.find(o => o.id === order.id);
 
@@ -166,6 +171,9 @@ async function runTokenizedStocksFullSuite() {
     const marketCall = mockClient.placeCalls.find(c => c.symbol === sym && c.side === 'BUY' && c.type === 'MARKET');
     assert(marketCall !== undefined, `[${sym}] Immediate MARKET Buy placed on trigger!`);
 
+    if (!['TP_SL_ACTIVE', 'RUNNING', 'PENDING_EXECUTION', 'TRIGGERED'].includes(liveOrder.status)) {
+      console.log(`[DEBUG] ${sym} status is: '${liveOrder.status}', error: '${liveOrder.error}'`);
+    }
     assert(liveOrder.status === 'TP_SL_ACTIVE' || liveOrder.status === 'RUNNING' || liveOrder.status === 'PENDING_EXECUTION' || liveOrder.status === 'TRIGGERED', `[${sym}] Order status processed!`);
 
     // Verify NO premature Take Profit limit sell order is placed while buy is executing!

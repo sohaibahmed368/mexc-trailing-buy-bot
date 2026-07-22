@@ -512,7 +512,8 @@ class OrderTracker {
     if (startInstantBuy) {
       status = 'TP_SL_ACTIVE';
     } else if (autoRepeat && activationOffset) {
-      parsedActivationPrice = initialPrice - parseFloat(activationOffset);
+      const offsetPct = parseFloat(activationOffset);
+      parsedActivationPrice = initialPrice * (1 - (offsetPct / 100));
       status = 'PENDING_ACTIVATION';
       activationDirection = 'DOWN';
     } else if (parsedActivationPrice !== null) {
@@ -521,7 +522,8 @@ class OrderTracker {
       activationDirection = initialPrice > parsedActivationPrice ? 'DOWN' : 'UP';
     } else {
       bottomPrice = initialPrice;
-      triggerPrice = initialPrice + trailValue;
+      const trailDollar = initialPrice * (trailValue / 100);
+      triggerPrice = initialPrice + trailDollar;
     }
 
     const newOrder = {
@@ -790,7 +792,7 @@ class OrderTracker {
         if (order.autoRepeat && order.activationOffset) {
           if (!order.peakPrice || currentPrice > order.peakPrice) {
             order.peakPrice = currentPrice;
-            order.activationPrice = order.peakPrice - order.activationOffset;
+            order.activationPrice = order.peakPrice * (1 - (order.activationOffset / 100));
             changed = true;
           }
         }
@@ -803,19 +805,20 @@ class OrderTracker {
 
         if (isDownDirection && currentPrice <= order.activationPrice) {
           shouldActivateDip = true;
-          activationReason = `price ${currentPrice} hit dip activation target ${order.activationPrice}`;
+          activationReason = `price ${currentPrice} hit dip activation target ${order.activationPrice.toFixed(4)}`;
         } else if (order.activationDirection === 'UP' && currentPrice >= order.activationPrice) {
           shouldActivateDip = true;
-          activationReason = `price ${currentPrice} hit target ${order.activationPrice}`;
+          activationReason = `price ${currentPrice} hit target ${order.activationPrice.toFixed(4)}`;
         }
 
         if (shouldActivateDip) {
           order.status = 'RUNNING';
           order.activatedAt = new Date().toISOString();
           order.bottomPrice = currentPrice;
-          order.triggerPrice = currentPrice + order.trailValue;
+          const trailDollar = currentPrice * (order.trailValue / 100);
+          order.triggerPrice = currentPrice + trailDollar;
           this.log(
-            `Trailing stop buy activated via Dip: ${activationReason}. (Trigger target: >= ${order.triggerPrice}).`,
+            `Trailing stop buy activated via Dip: ${activationReason}. (Trigger target: >= ${order.triggerPrice.toFixed(4)}).`,
             'success',
             order.symbol
           );
@@ -859,16 +862,18 @@ class OrderTracker {
         }
             // Profit Lock Guard: Check if price reached 50% progress to Take Profit
         if (order.takeProfit && order.trailValue && !order.isSlProfitLocked && order.executionPrice) {
-          const tpTargetProgress = order.takeProfit * 0.5;
+          const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+          const trailDollar = (order.trailValue / 100) * order.executionPrice;
+          const tpTargetProgress = tpDollar * 0.5;
+
           if (currentPrice >= (order.executionPrice + tpTargetProgress - 0.00000001)) {
             order.isSlProfitLocked = true;
             order.justProfitLocked = true;
-            // Requested Formula: executionPrice + (trailValue * 2)
-            order.lockedSlPrice = order.executionPrice + (order.trailValue * 2);
+            order.lockedSlPrice = order.executionPrice + (trailDollar * 2);
             const tpTriggerPrice = (order.executionPrice + tpTargetProgress).toFixed(4);
             const newSlTarget = order.lockedSlPrice.toFixed(4);
             this.log(
-              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to +$${(order.trailValue * 2).toFixed(2)} above Buy Price (${newSlTarget} USDT). Profit Locked!`,
+              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to +$${(trailDollar * 2).toFixed(2)} above Buy Price (${newSlTarget} USDT). Profit Locked!`,
               'success',
               order.symbol
             );
@@ -876,16 +881,19 @@ class OrderTracker {
           }
         }
 
-                if (order.dryRun) {
+        if (order.dryRun) {
           // Dry Run TP Check
-          if (order.takeProfit && currentPrice >= (order.executionPrice + order.takeProfit)) {
-            order.status = 'TRIGGERED';
-            order.sellExecutionPrice = order.executionPrice + order.takeProfit;
-            order.sellTriggeredAt = new Date().toISOString();
-            this.log(`[DRY RUN] Take Profit hit! Simulated Limit Sell executed at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
-            changed = true;
-            this.handleOrderCycleComplete(order);
-            continue;
+          if (order.takeProfit) {
+            const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+            if (currentPrice >= (order.executionPrice + tpDollar)) {
+              order.status = 'TRIGGERED';
+              order.sellExecutionPrice = order.executionPrice + tpDollar;
+              order.sellTriggeredAt = new Date().toISOString();
+              this.log(`[DRY RUN] Take Profit hit! Simulated Limit Sell executed at ${order.sellExecutionPrice.toFixed(4)} USDT.`, 'success', order.symbol);
+              changed = true;
+              this.handleOrderCycleComplete(order);
+              continue;
+            }
           }
         } else {
           // Real Order OCO Checks
@@ -896,8 +904,9 @@ class OrderTracker {
               try {
                 const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
                 if (queryRes && queryRes.status === 'FILLED') {
+                  const tpDollar = (order.takeProfit / 100) * order.executionPrice;
                   order.status = 'TRIGGERED';
-                  order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + order.takeProfit);
+                  order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + tpDollar);
                   order.sellTriggeredAt = new Date().toISOString();
                   this.log(`[REAL] Take Profit hit! Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
                   changed = true;
@@ -912,12 +921,14 @@ class OrderTracker {
         }
 
         // Common Stop Loss Target Price calculation (Dry Run & Real Mode)
+        const slDollar = (order.stopLoss / 100) * order.executionPrice;
         let targetSlPrice = order.isSlProfitLocked && order.lockedSlPrice
           ? order.lockedSlPrice
-          : (order.executionPrice - order.stopLoss);
+          : (order.executionPrice - slDollar);
         
         if (order.filterSmartSl && order.isSlExtended && order.slBuffer) {
-          targetSlPrice -= order.slBuffer;
+          const bufferDollar = (order.slBuffer / 100) * order.executionPrice;
+          targetSlPrice -= bufferDollar;
         }
 
         // Check if Stop Loss target is hit
@@ -1108,9 +1119,10 @@ class OrderTracker {
       if (currentPrice < order.bottomPrice) {
         const oldBottom = order.bottomPrice;
         order.bottomPrice = currentPrice;
-        order.triggerPrice = currentPrice + order.trailValue;
+        const trailDollar = currentPrice * (order.trailValue / 100);
+        order.triggerPrice = currentPrice + trailDollar;
         this.log(
-          `New bottom detected for ${order.symbol}: ${currentPrice} (was ${oldBottom}). Recalculated trigger to: ${order.triggerPrice}`,
+          `New bottom detected for ${order.symbol}: ${currentPrice} (was ${oldBottom}). Recalculated trigger to: ${order.triggerPrice.toFixed(4)}`,
           'info',
           order.symbol
         );
@@ -1339,7 +1351,8 @@ class OrderTracker {
               // If Take Profit is configured, place a real LIMIT SELL order on MEXC now!
               if (order.takeProfit) {
                 try {
-                  const tpPrice = execPrice + order.takeProfit;
+                  const tpDollar = (order.takeProfit / 100) * execPrice;
+                  const tpPrice = execPrice + tpDollar;
                   const grossQty = order.quantity || (order.quoteOrderQty / execPrice);
                   
                   // Adjust quantity using helper to avoid 30005 Oversold error
@@ -1480,7 +1493,8 @@ class OrderTracker {
     // Reset to pending activation for next cycle
     order.status = 'PENDING_ACTIVATION';
     order.peakPrice = sellPrice;
-    order.activationPrice = order.peakPrice - (order.activationOffset || 0);
+    const offsetPct = order.activationOffset || 1.0;
+    order.activationPrice = order.peakPrice * (1 - (offsetPct / 100));
     order.activationDirection = 'DOWN';
     order.localBottom = sellPrice;
     order.bottomPrice = null;

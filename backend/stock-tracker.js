@@ -326,10 +326,10 @@ class StockOrderTracker {
       if (!isStartImmediate) {
         initialStatus = 'PENDING_ACTIVATION';
         initialPeak = currentPrice;
-        const offset = config.activationOffset !== undefined && config.activationOffset !== null && config.activationOffset !== '' 
+        const offsetPct = config.activationOffset !== undefined && config.activationOffset !== null && config.activationOffset !== '' 
           ? parseFloat(config.activationOffset) 
           : parseFloat(config.trailValue);
-        initialActivationPrice = initialPeak - offset;
+        initialActivationPrice = initialPeak * (1 - (offsetPct / 100));
       }
     } else {
       if (config.activationPrice !== undefined && config.activationPrice !== null && config.activationPrice !== '') {
@@ -342,10 +342,11 @@ class StockOrderTracker {
       }
     }
 
+    const trailPct = parseFloat(config.trailValue);
     const newOrder = {
       id: Date.now().toString(),
       symbol: config.symbol,
-      trailValue: parseFloat(config.trailValue),
+      trailValue: trailPct,
       orderType: config.orderType || 'MARKET',
       quantity: config.quantity ? parseFloat(config.quantity) : null,
       quoteOrderQty: config.quoteOrderQty ? parseFloat(config.quoteOrderQty) : null,
@@ -364,7 +365,7 @@ class StockOrderTracker {
       peakPrice: initialPeak,
       activationPrice: initialActivationPrice,
       bottomPrice: isStartImmediate ? currentPrice : null,
-      triggerPrice: isStartImmediate ? (currentPrice + parseFloat(config.trailValue)) : null,
+      triggerPrice: isStartImmediate ? (currentPrice + (currentPrice * (trailPct / 100))) : null,
       executionPrice: null,
       sellExecutionPrice: null,
       mexcOrderId: null,
@@ -573,8 +574,9 @@ class StockOrderTracker {
           if (order.autoRepeat && order.activationOffset) {
             if (!order.peakPrice || currentPrice > order.peakPrice) {
               order.peakPrice = currentPrice;
-              order.activationPrice = currentPrice - order.activationOffset;
-              this.log(`Dynamic Peak shifted UP to ${currentPrice}. Updated activationPrice: ${order.activationPrice}`, 'info', order.symbol);
+              const offsetPct = parseFloat(order.activationOffset);
+              order.activationPrice = order.peakPrice * (1 - (offsetPct / 100));
+              this.log(`Dynamic Peak shifted UP to ${currentPrice}. Updated activationPrice: ${order.activationPrice.toFixed(4)}`, 'info', order.symbol);
               changed = true;
             }
           }
@@ -582,9 +584,10 @@ class StockOrderTracker {
           if (currentPrice <= order.activationPrice) {
             order.status = 'RUNNING';
             order.bottomPrice = currentPrice;
-            order.triggerPrice = currentPrice + order.trailValue;
+            const trailDollar = currentPrice * (order.trailValue / 100);
+            order.triggerPrice = currentPrice + trailDollar;
             order.activatedAt = new Date().toISOString();
-            this.log(`Activation price hit (${currentPrice} <= ${order.activationPrice}). Status set to RUNNING. Initial bottom: ${currentPrice}`, 'info', order.symbol);
+            this.log(`Activation price hit (${currentPrice} <= ${order.activationPrice.toFixed(4)}). Status set to RUNNING. Initial bottom: ${currentPrice}`, 'info', order.symbol);
             changed = true;
           }
         }
@@ -594,8 +597,9 @@ class StockOrderTracker {
           if (currentPrice < order.bottomPrice) {
             const oldBottom = order.bottomPrice;
             order.bottomPrice = currentPrice;
-            order.triggerPrice = currentPrice + order.trailValue;
-            this.log(`📉 [STOCK LOCAL BOTTOM SHIFT] New local bottom detected for ${order.symbol}: $${currentPrice} (was $${oldBottom}). Recalculated Buy Trigger: $${order.triggerPrice}`, 'info', order.symbol);
+            const trailDollar = currentPrice * (order.trailValue / 100);
+            order.triggerPrice = currentPrice + trailDollar;
+            this.log(`📉 [STOCK LOCAL BOTTOM SHIFT] New local bottom detected for ${order.symbol}: $${currentPrice} (was $${oldBottom}). Recalculated Buy Trigger: $${order.triggerPrice.toFixed(4)}`, 'info', order.symbol);
             changed = true;
           }
 
@@ -739,15 +743,17 @@ class StockOrderTracker {
         if (order.status === 'TP_SL_ACTIVE') {
           // 50% TP Progress Profit Lock Check
           if (order.takeProfit && !order.isSlProfitLocked && order.executionPrice) {
-            const tpTarget = order.executionPrice + order.takeProfit;
-            const progressPct = (currentPrice - order.executionPrice) / (tpTarget - order.executionPrice);
+            const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+            const trailDollar = (order.trailValue / 100) * order.executionPrice;
+            const tpTarget = order.executionPrice + tpDollar;
+            const progressPct = (currentPrice - order.executionPrice) / tpDollar;
 
             if (progressPct >= 0.50) {
               order.isSlProfitLocked = true;
-              order.lockedSlPrice = order.executionPrice + (order.trailValue * 2);
+              order.lockedSlPrice = order.executionPrice + (trailDollar * 2);
               order.justProfitLocked = true;
               this.log(
-                `🔒 [PROFIT LOCK GUARD] Stock reached 50% TP progress (${currentPrice} >= ${order.executionPrice + (order.takeProfit * 0.5)} USDT)! Stop Loss shifted UP to +$${(order.trailValue * 2)} above Buy Price (${order.lockedSlPrice} USDT). Profit Locked!`,
+                `🔒 [PROFIT LOCK GUARD] Stock reached 50% TP progress (${currentPrice} >= ${(order.executionPrice + (tpDollar * 0.5)).toFixed(4)} USDT)! Stop Loss shifted UP to +$${(trailDollar * 2).toFixed(2)} above Buy Price (${order.lockedSlPrice.toFixed(4)} USDT). Profit Locked!`,
                 'success',
                 order.symbol
               );
@@ -757,20 +763,21 @@ class StockOrderTracker {
 
           // Take Profit Check
           if (order.takeProfit) {
-            const tpPrice = order.executionPrice + order.takeProfit;
+            const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+            const tpPrice = order.executionPrice + tpDollar;
             if (currentPrice >= tpPrice) {
               if (order.dryRun) {
                 order.status = 'TRIGGERED';
                 order.sellExecutionPrice = tpPrice;
                 order.sellTriggeredAt = new Date().toISOString();
-                this.log(`[DRY RUN] Stock Take Profit Hit at ${tpPrice} USDT! Order cycle complete.`, 'success', order.symbol);
+                this.log(`[DRY RUN] Stock Take Profit Hit at ${tpPrice.toFixed(4)} USDT! Order cycle complete.`, 'success', order.symbol);
                 changed = true;
                 this.handleOrderCycleComplete(order);
                 continue;
               } else {
                 order.status = 'TRIGGERED';
                 order.sellExecutionPrice = tpPrice;
-                this.log(`[REAL] Stock Take Profit Order Hit at ${tpPrice} USDT!`, 'success', order.symbol);
+                this.log(`[REAL] Stock Take Profit Order Hit at ${tpPrice.toFixed(4)} USDT!`, 'success', order.symbol);
                 changed = true;
                 this.handleOrderCycleComplete(order);
                 continue;
@@ -779,12 +786,14 @@ class StockOrderTracker {
           }
 
           // Stop Loss Check
+          const slDollar = (order.stopLoss / 100) * order.executionPrice;
           let targetSlPrice = order.isSlProfitLocked && order.lockedSlPrice
             ? order.lockedSlPrice
-            : (order.executionPrice - order.stopLoss);
+            : (order.executionPrice - slDollar);
 
           if (order.filterSmartSl && order.isSlExtended && order.slBuffer) {
-            targetSlPrice -= order.slBuffer;
+            const bufferDollar = (order.slBuffer / 100) * order.executionPrice;
+            targetSlPrice -= bufferDollar;
           }
 
           if (order.justProfitLocked) {
@@ -969,8 +978,8 @@ class StockOrderTracker {
       // Reset state for Next Cycle
       order.status = 'PENDING_ACTIVATION';
       order.peakPrice = sellPrice;
-      const offset = order.activationOffset ? order.activationOffset : order.trailValue;
-      order.activationPrice = order.peakPrice - offset;
+      const offsetPct = order.activationOffset ? parseFloat(order.activationOffset) : parseFloat(order.trailValue);
+      order.activationPrice = order.peakPrice * (1 - (offsetPct / 100));
 
       order.bottomPrice = null;
       order.triggerPrice = null;

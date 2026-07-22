@@ -206,8 +206,8 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           {/* Trail Value */}
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
-              Trail Value (Absolute Price Offset)
-              <span title="If price bottoms at $50.00 and trail is $0.50, buy triggers if price goes up to $50.50" style={{ cursor: 'help', color: '#94a3b8' }}>
+              Trail Rebound Value (%)
+              <span title="If price bottoms at $100 and trail is 0.35%, buy triggers when price rebounds by 0.35%" style={{ cursor: 'help', color: '#94a3b8' }}>
                 <HelpCircle size={13} />
               </span>
             </label>
@@ -216,7 +216,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
               step="any"
               value={trailValue}
               onChange={e => setTrailValue(e.target.value)}
-              placeholder="e.g. 2.0"
+              placeholder="e.g. 0.35 (%)"
               style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff' }}
               required
             />
@@ -226,8 +226,8 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           {autoRepeat ? (
             <div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 'bold', marginBottom: '6px' }}>
-                Activation Dip Offset (- USDT)
-                <span title="The price drop required from the previous peak to activate the trailing stop buy." style={{ cursor: 'help', color: '#94a3b8' }}>
+                Activation Dip Offset (- %)
+                <span title="The percentage drop required from previous peak price to activate trailing buy." style={{ cursor: 'help', color: '#94a3b8' }}>
                   <HelpCircle size={13} />
                 </span>
               </label>
@@ -236,7 +236,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
                 step="any"
                 value={activationOffset}
                 onChange={e => setActivationOffset(e.target.value)}
-                placeholder="e.g. 2.0 (dip from peak)"
+                placeholder="e.g. 1.0 (% dip)"
                 style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#38bdf8', fontSize: '0.95rem', fontWeight: 'bold' }}
                 required
               />
@@ -244,7 +244,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           ) : (
             <div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
-                Activation Price (Trigger Boundary)
+                Activation Price Target
                 <span title="Bot starts trailing buy tracking only when price crosses this limit. Leave blank to activate immediately." style={{ cursor: 'help', color: '#94a3b8' }}>
                   <HelpCircle size={13} />
                 </span>
@@ -254,7 +254,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
                 step="any"
                 value={activationPrice}
                 onChange={e => setActivationPrice(e.target.value)}
-                placeholder="e.g. 120 (blank for immediate market)"
+                placeholder="e.g. 2400 (blank for immediate)"
                 style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff' }}
               />
             </div>
@@ -263,8 +263,8 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           {/* Take Profit */}
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
-              Take Profit Offset
-              <span title="The price offset added to the execution buy price for placing the Limit Sell order." style={{ cursor: 'help', color: '#94a3b8' }}>
+              Take Profit Target (%)
+              <span title="The percentage profit added to execution buy price for placing Limit Sell order. e.g. 0.60%" style={{ cursor: 'help', color: '#94a3b8' }}>
                 <HelpCircle size={13} />
               </span>
             </label>
@@ -273,7 +273,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
               step="any"
               value={takeProfit}
               onChange={e => setTakeProfit(e.target.value)}
-              placeholder="e.g. 10 (value to add)"
+              placeholder="e.g. 0.60 (%)"
               style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#22c55e' }}
             />
           </div>
@@ -281,8 +281,8 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           {/* Stop Loss */}
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#94a3b8', marginBottom: '6px' }}>
-              Stop Loss Offset
-              <span title="The price offset subtracted from the execution buy price for monitoring the Market Sell level." style={{ cursor: 'help', color: '#94a3b8' }}>
+              Stop Loss Level (%)
+              <span title="The percentage loss subtracted from execution buy price for monitoring Market Sell level. e.g. 1.8%" style={{ cursor: 'help', color: '#94a3b8' }}>
                 <HelpCircle size={13} />
               </span>
             </label>
@@ -291,7 +291,7 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
               step="any"
               value={stopLoss}
               onChange={e => setStopLoss(e.target.value)}
-              placeholder="e.g. 4 (value to subtract)"
+              placeholder="e.g. 1.8 (%)"
               style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#ef4444' }}
             />
           </div>

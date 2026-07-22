@@ -228,8 +228,8 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
         {autoRepeat ? (
             <div className="form-group">
               <label htmlFor="activationOffset" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                Activation Dip Offset (- USDT)
-                <span title="The price drop required from the previous peak to activate the trailing stop buy." style={{ cursor: 'help', color: 'var(--text-muted)' }}>
+                Activation Dip Offset (- %)
+                <span title="The percentage drop required from the previous peak price to activate the trailing stop buy." style={{ cursor: 'help', color: 'var(--text-muted)' }}>
                   <HelpCircle size={13} />
                 </span>
               </label>
@@ -238,7 +238,7 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
                   id="activationOffset"
                   type="number"
                   step="any"
-                  placeholder="e.g. 10 USDT dip"
+                  placeholder="e.g. 1.0 % dip"
                   value={activationOffset}
                   onChange={(e) => setActivationOffset(e.target.value)}
                   disabled={loading}
@@ -249,7 +249,7 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
         ) : (
           <div className="form-group">
             <label htmlFor="activationPrice" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              Activation Price (Trigger Boundary)
+              Activation Price Target
               <span title="Bot starts trailing buy tracking only when price crosses this target limit" style={{ cursor: 'help', color: 'var(--text-muted)' }}>
                 <HelpCircle size={13} />
               </span>
@@ -271,8 +271,8 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
         {/* Trail Value */}
         <div className="form-group">
           <label htmlFor="trailValue" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-            Trail Value (Absolute Price Offset)
-            <span title="If price bottoms at $50.00 and trail is $0.50, buy triggers if price goes up to $50.50" style={{ cursor: 'help', color: 'var(--text-muted)' }}>
+            Trail Rebound Value (%)
+            <span title="If price bottoms at $100 and trail is 0.35%, buy triggers when price rebounds by 0.35% (to $100.35)" style={{ cursor: 'help', color: 'var(--text-muted)' }}>
               <HelpCircle size={13} />
             </span>
           </label>
@@ -281,7 +281,7 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
               id="trailValue"
               type="number"
               step="any"
-              placeholder="e.g. 500 or 0.05"
+              placeholder="e.g. 0.35 (%)"
               value={trailValue}
               onChange={(e) => setTrailValue(e.target.value)}
               disabled={loading}
@@ -295,8 +295,8 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
           {/* Take Profit */}
           <div className="form-group">
             <label htmlFor="takeProfit" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              Take Profit Offset
-              <span title="The price offset added to the execution buy price for placing the Limit Sell order. Leave blank to disable." style={{ cursor: 'help', color: 'var(--text-muted)' }}>
+              Take Profit Target (%)
+              <span title="The percentage profit added to execution buy price for placing the Limit Sell order. e.g. 0.60%" style={{ cursor: 'help', color: 'var(--text-muted)' }}>
                 <HelpCircle size={13} />
               </span>
             </label>
@@ -305,7 +305,7 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
                 id="takeProfit"
                 type="number"
                 step="any"
-                placeholder="e.g. 10 (value to add)"
+                placeholder="e.g. 0.60 (%)"
                 value={takeProfit}
                 onChange={(e) => setTakeProfit(e.target.value)}
                 disabled={loading}
@@ -316,8 +316,24 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
           {/* Stop Loss */}
           <div className="form-group">
             <label htmlFor="stopLoss" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              Stop Loss Offset
-              <span title="The price offset subtracted from the execution buy price for monitoring the Market Sell level. Leave blank to disable." style={{ cursor: 'help', color: 'var(--text-muted)' }}>
+              Stop Loss Level (%)
+              <span title="The percentage loss subtracted from execution buy price for monitoring Market Sell. e.g. 1.8%" style={{ cursor: 'help', color: 'var(--text-muted)' }}>
+                <HelpCircle size={13} />
+              </span>
+            </label>
+            <div className="input-wrapper">
+              <input
+                id="stopLoss"
+                type="number"
+                step="any"
+                placeholder="e.g. 1.8 (%)"
+                value={stopLoss}
+                onChange={(e) => setStopLoss(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+          </div>
+        </div>
                 <HelpCircle size={13} />
               </span>
             </label>
