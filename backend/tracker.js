@@ -11,7 +11,7 @@ class OrderTracker {
     this.orders = [];
     this.logs = [];
     this.intervalId = null;
-    this.pollInterval = 1000; // default 1 second polling
+    this.pollInterval = 1100; // 1.1 seconds interval
     this.cachedFeeSummary = null;
     this.lastFeeCheckTime = 0;
     
@@ -1055,8 +1055,8 @@ class OrderTracker {
                 throw lastErr || new Error('Failed to place SL limit sell after precision retries.');
               }
 
-              // Wait for LIMIT SELL to fill (with 100% Maker continuous re-pegging)
-              const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, currentPrice);
+              // Wait for LIMIT SELL to fill (with 100% Maker continuous re-pegging every 1.1s)
+              const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, currentPrice, 300000, 1100);
 
               if (!slFills || !slFills.filled) {
                 this.log(`[REAL] Stop Loss LIMIT Sell order ${sellResult.orderId} not yet filled on MEXC. Retaining TP_SL_ACTIVE state to continuously re-peg until filled 100% as MAKER (0% Fee).`, 'warning', order.symbol);
