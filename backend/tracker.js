@@ -572,13 +572,11 @@ class OrderTracker {
         this.log(`[DRY RUN] Auto-Loop started: First trade bought immediately at market price ${initialPrice} USDT. Transitioning to TP/SL monitoring.`, 'success', symbol);
       } else {
         try {
-          // Calculate Maker Peg BUY price from depth (< Best Ask strictly)
-          const freshBuyPrice = await this.calculateMakerPegPrice(symbol, 'BUY', initialPrice);
-          this.log(`Auto-Loop started: Placing first Spot LIMIT BUY order at ${freshBuyPrice} USDT on MEXC (0% Maker fee)...`, 'info', symbol);
+          this.log(`🚀 [IMMEDIATE MARKET BUY] Auto-Loop started: Sending instant MARKET BUY order to MEXC server for ${symbol}...`, 'info', symbol);
           
           let result = null;
           let lastBuyErr = null;
-          const decimalsToTry = [10000, 100, 1];
+          const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000];
           let buyQty = null;
 
           if (newOrder.quantity) {
@@ -586,74 +584,51 @@ class OrderTracker {
               const qtyToTry = Math.floor(newOrder.quantity * mult) / mult;
               if (qtyToTry <= 0) continue;
               try {
-                const orderParams = {
-                  symbol,
-                  side: 'BUY',
-                  type: 'LIMIT',
-                  quantity: qtyToTry,
-                  price: freshBuyPrice
-                };
+                const orderParams = { symbol, side: 'BUY', type: 'MARKET', quantity: qtyToTry };
+                this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(orderParams)}`, 'info', symbol);
                 result = await this.mexcClient.placeOrder(orderParams);
+                this.log(`[MEXC API RESPONSE] Order Placed Success -> ${JSON.stringify(result)}`, 'success', symbol);
                 if (result && result.orderId) { buyQty = qtyToTry; break; }
               } catch (err) {
                 lastBuyErr = err;
-                const errMsg = err.message || '';
-                if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                  this.log(`[REAL] BUY Quantity scale invalid for ${qtyToTry}. Retrying with broader precision...`, 'warning', symbol);
-                  continue;
-                }
+                if ((err.message || '').includes('quantity scale')) continue;
                 throw err;
               }
             }
-          } else {
-            // quoteOrderQty is not supported for LIMIT orders on MEXC, calculate qty from price
-            const estimatedQty = newOrder.quoteOrderQty / freshBuyPrice;
-            for (const mult of decimalsToTry) {
-              const qtyToTry = Math.floor(estimatedQty * mult) / mult;
-              if (qtyToTry <= 0) continue;
-              try {
-                const orderParams = {
-                  symbol,
-                  side: 'BUY',
-                  type: 'LIMIT',
-                  quantity: qtyToTry,
-                  price: freshBuyPrice
-                };
-                result = await this.mexcClient.placeOrder(orderParams);
-                if (result && result.orderId) { buyQty = qtyToTry; break; }
-              } catch (err) {
-                lastBuyErr = err;
-                const errMsg = err.message || '';
-                if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                  continue;
-                }
-                throw err;
-              }
-            }
+          } else if (newOrder.quoteOrderQty) {
+            try {
+              const orderParams = { symbol, side: 'BUY', type: 'MARKET', quoteOrderQty: newOrder.quoteOrderQty };
+              this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(orderParams)}`, 'info', symbol);
+              result = await this.mexcClient.placeOrder(orderParams);
+              this.log(`[MEXC API RESPONSE] Order Placed Success -> ${JSON.stringify(result)}`, 'success', symbol);
+            } catch (err) { lastBuyErr = err; }
           }
 
           if (!result || !result.orderId) {
-            throw lastBuyErr || new Error('Failed to place initial LIMIT buy order.');
+            throw lastBuyErr || new Error('Failed to place initial MARKET buy order.');
           }
 
           newOrder.mexcOrderId = result.orderId;
           
-          // Wait for LIMIT order to fill (with MARKET fallback on timeout)
-          const fills = await this.waitForLimitOrderFill(symbol, result.orderId, 'BUY', buyQty, freshBuyPrice);
-          if (!fills || !fills.filled || !fills.executedQty) {
-            newOrder.status = 'FAILED';
-            newOrder.error = 'BUY order unfilled on MEXC after repeg shifts and fallback.';
-            this.log(`[REAL] BUY order failed to fill on MEXC. Aborting TP/SL placement to prevent Oversold error.`, 'error', symbol);
-            this.saveOrders();
-            return newOrder;
-          }
+          // Query executed fill price from MEXC
+          let execPrice = initialPrice;
+          try {
+            this.log(`[MEXC API REQUEST] GET /api/v3/order -> Symbol: ${symbol}, OrderID: ${result.orderId}`, 'info', symbol);
+            const fills = await this.mexcClient.getOrder(symbol, result.orderId);
+            this.log(`[MEXC API RESPONSE] Query Fills Success -> ${JSON.stringify(fills)}`, 'success', symbol);
+            if (fills && parseFloat(fills.executedQty) > 0) {
+              const cumQuote = parseFloat(fills.cummulativeQuoteQty || 0);
+              const execQty  = parseFloat(fills.executedQty || 1);
+              if (cumQuote > 0) execPrice = cumQuote / execQty;
+            }
+          } catch(e) {}
 
-          if (fills.fallbackOrderId) newOrder.mexcOrderId = fills.fallbackOrderId;
-          newOrder.executionPrice = fills.avgPrice;
-
+          newOrder.executionPrice = execPrice;
+          this.log(`✅ [MARKET BUY FILLED] Order ${result.orderId} executed at ${execPrice} USDT!`, 'success', symbol);
+          
           if (parsedTakeProfit) {
-            const tpPrice = fills.avgPrice + parsedTakeProfit;
-            const grossQty = fills.executedQty || newOrder.quantity || (newOrder.quoteOrderQty / fills.avgPrice);
+            const tpPrice = execPrice + parsedTakeProfit;
+            const grossQty = newOrder.quantity || (newOrder.quoteOrderQty / execPrice);
             
             // Adjust quantity using helper to avoid 30005 Oversold error
             this.log(`Querying asset balance to calculate fee-adjusted sell quantity...`, 'info', symbol);
@@ -1299,87 +1274,72 @@ class OrderTracker {
         } else {
           try {
             order.status = 'PENDING_EXECUTION'; // intermediate state
-
-            // Evaluate 0.1ms Real-time Buying Pressure
-            const pressure = await this.evaluateBuyingPressure(order.symbol, currentPrice);
+            this.log(`🚀 [IMMEDIATE MARKET BUY] Trailing dip trigger + Consensus indicators ALIGNED! Sending instant MARKET BUY order to MEXC server for ${order.symbol}...`, 'success', order.symbol);
             
             let result = null;
             let lastBuyErr = null;
-            const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
+            const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000];
             let buyQty = null;
 
-            if (pressure.isExtremePump) {
-              this.log(`🚀 [MOMENTUM SURGE DETECTED] Heavy Buying Pressure (${pressure.metricsLog}). Executing INSTANT MARKET BUY to catch rocket pump!`, 'warning', order.symbol);
-              
-              if (order.quantity) {
-                for (const mult of decimalsToTry) {
-                  const qtyToTry = Math.floor(order.quantity * mult) / mult;
-                  if (qtyToTry <= 0) continue;
-                  try {
-                    const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quantity: qtyToTry };
-                    result = await this.mexcClient.placeOrder(orderParams);
-                    if (result && result.orderId) { buyQty = qtyToTry; break; }
-                  } catch (err) {
-                    lastBuyErr = err;
-                    if ((err.message || '').includes('quantity scale')) continue;
-                    throw err;
-                  }
-                }
-              } else if (order.quoteOrderQty) {
+            if (order.quantity) {
+              for (const mult of decimalsToTry) {
+                const qtyToTry = Math.floor(order.quantity * mult) / mult;
+                if (qtyToTry <= 0) continue;
                 try {
-                  const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quoteOrderQty: order.quoteOrderQty };
+                  const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quantity: qtyToTry };
+                  this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(orderParams)}`, 'info', order.symbol);
                   result = await this.mexcClient.placeOrder(orderParams);
-                } catch (err) { lastBuyErr = err; }
-              }
-            } else {
-              // Calculate Maker Peg BUY price from depth (< Best Ask strictly)
-              const freshBuyPrice = await this.calculateMakerPegPrice(order.symbol, 'BUY', currentPrice);
-              this.log(`🐢 [NORMAL MOMENTUM] Moderate pressure (${pressure.metricsLog}). Placing 100% MAKER LIMIT BUY at ${freshBuyPrice} USDT (0% Fee)...`, 'info', order.symbol);
-              
-              if (order.quantity) {
-                for (const mult of decimalsToTry) {
-                  const qtyToTry = Math.floor(order.quantity * mult) / mult;
-                  if (qtyToTry <= 0) continue;
-                  try {
-                    const orderParams = {
-                      symbol: order.symbol,
-                      side: 'BUY',
-                      type: 'LIMIT',
-                      quantity: qtyToTry,
-                      price: freshBuyPrice
-                    };
-                    result = await this.mexcClient.placeOrder(orderParams);
-                    if (result && result.orderId) { buyQty = qtyToTry; break; }
-                  } catch (err) {
-                    lastBuyErr = err;
-                    const errMsg = err.message || '';
-                    if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) continue;
-                    throw err;
-                  }
-                }
-              } else {
-                const estimatedQty = order.quoteOrderQty / freshBuyPrice;
-                for (const mult of decimalsToTry) {
-                  const qtyToTry = Math.floor(estimatedQty * mult) / mult;
-                  if (qtyToTry <= 0) continue;
-                  try {
-                    const orderParams = {
-                      symbol: order.symbol,
-                      side: 'BUY',
-                      type: 'LIMIT',
-                      quantity: qtyToTry,
-                      price: freshBuyPrice
-                    };
-                    result = await this.mexcClient.placeOrder(orderParams);
-                    if (result && result.orderId) { buyQty = qtyToTry; break; }
-                  } catch (err) {
-                    lastBuyErr = err;
-                    if ((err.message || '').includes('quantity scale')) continue;
-                    throw err;
-                  }
+                  this.log(`[MEXC API RESPONSE] Order Placed Success -> ${JSON.stringify(result)}`, 'success', order.symbol);
+                  if (result && result.orderId) { buyQty = qtyToTry; break; }
+                } catch (err) {
+                  lastBuyErr = err;
+                  if ((err.message || '').includes('quantity scale')) continue;
+                  throw err;
                 }
               }
+            } else if (order.quoteOrderQty) {
+              try {
+                const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quoteOrderQty: order.quoteOrderQty };
+                this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(orderParams)}`, 'info', order.symbol);
+                result = await this.mexcClient.placeOrder(orderParams);
+                this.log(`[MEXC API RESPONSE] Order Placed Success -> ${JSON.stringify(result)}`, 'success', order.symbol);
+              } catch (err) { lastBuyErr = err; }
             }
+
+            if (!result || !result.orderId) {
+              throw lastBuyErr || new Error('Failed to place MARKET buy order on MEXC.');
+            }
+
+            order.mexcOrderId = result.orderId;
+            
+            // Query fill price
+            let execPrice = currentPrice;
+            try {
+              this.log(`[MEXC API REQUEST] GET /api/v3/order -> Symbol: ${order.symbol}, OrderID: ${result.orderId}`, 'info', order.symbol);
+              const fills = await this.mexcClient.getOrder(order.symbol, result.orderId);
+              this.log(`[MEXC API RESPONSE] Query Fills Success -> ${JSON.stringify(fills)}`, 'success', order.symbol);
+              if (fills && parseFloat(fills.executedQty) > 0) {
+                const cumQuote = parseFloat(fills.cummulativeQuoteQty || 0);
+                const execQty  = parseFloat(fills.executedQty || 1);
+                if (cumQuote > 0) execPrice = cumQuote / execQty;
+              }
+            } catch(e) {}
+
+            order.executionPrice = execPrice;
+            this.log(`✅ [MARKET BUY FILLED] Order ${result.orderId} executed at ${execPrice} USDT! Transitioning to TP/SL monitoring.`, 'success', order.symbol);
+
+            if (order.takeProfit || order.stopLoss) {
+              order.status = 'TP_SL_ACTIVE';
+            } else {
+              order.status = 'TRIGGERED';
+              this.handleOrderCycleComplete(order);
+            }
+          } catch (err) {
+            order.status = 'FAILED';
+            order.error = err.message;
+            this.log(`❌ [MEXC API ERROR] Immediate Market Buy order failed: ${err.message}`, 'error', order.symbol);
+          }
+        }
 
             if (!result || !result.orderId) {
               throw lastBuyErr || new Error('Failed to place trailing LIMIT buy order.');
@@ -1387,23 +1347,10 @@ class OrderTracker {
             
             order.mexcOrderId = result.orderId;
             
-            // Wait for LIMIT order to fill (with MARKET fallback on timeout)
-            const fills = await this.waitForLimitOrderFill(order.symbol, result.orderId, 'BUY', buyQty, freshBuyPrice);
-            if (!fills || !fills.filled || !fills.executedQty) {
-              order.status = 'PENDING_ACTIVATION';
-              order.error = 'BUY order unfilled on MEXC after repeg shifts and fallback.';
-              this.log(`[REAL] BUY order failed to fill on MEXC. Aborting TP/SL placement to prevent Oversold error.`, 'error', order.symbol);
-              this.saveOrders();
-              return;
-            }
-
-            if (fills.fallbackOrderId) order.mexcOrderId = fills.fallbackOrderId;
-            order.executionPrice = fills.avgPrice;
-
             if (order.takeProfit || order.stopLoss) {
               order.status = 'TP_SL_ACTIVE';
               this.log(
-                `[REAL] BUY Order placed successfully! Order ID: ${result.orderId}. Avg Fill Price: ${fills.avgPrice}. Transitioning to TP/SL monitoring.`,
+                `[REAL] BUY Order placed successfully! Order ID: ${result.orderId}. Exec Price: ${execPrice}. Transitioning to TP/SL monitoring.`,
                 'success',
                 order.symbol
               );
@@ -1411,8 +1358,8 @@ class OrderTracker {
               // If Take Profit is configured, place a real LIMIT SELL order on MEXC now!
               if (order.takeProfit) {
                 try {
-                  const tpPrice = fills.avgPrice + order.takeProfit;
-                  const grossQty = fills.executedQty || order.quantity || (order.quoteOrderQty / fills.avgPrice);
+                  const tpPrice = execPrice + order.takeProfit;
+                  const grossQty = order.quantity || (order.quoteOrderQty / execPrice);
                   
                   // Adjust quantity using helper to avoid 30005 Oversold error
                   this.log(`[REAL] Querying asset balance to calculate fee-adjusted sell quantity...`, 'info', order.symbol);
@@ -1434,7 +1381,9 @@ class OrderTracker {
                         quantity: qtyToTry,
                         price: tpPrice
                       };
+                      this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(tpParams)}`, 'info', order.symbol);
                       tpResult = await this.mexcClient.placeOrder(tpParams);
+                      this.log(`[MEXC API RESPONSE] TP Order Placed Success -> ${JSON.stringify(tpResult)}`, 'success', order.symbol);
                       if (tpResult && tpResult.orderId) {
                         order.mexcSellOrderId = tpResult.orderId;
                         this.log(`[REAL] Take Profit Limit Sell order placed on MEXC for ${qtyToTry} tokens. Order ID: ${tpResult.orderId}`, 'success', order.symbol);
@@ -1444,7 +1393,6 @@ class OrderTracker {
                       lastTpErr = err;
                       const errMsg = err.message || '';
                       if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
-                        // Silently retry with next precision
                         continue;
                       }
                       if (errMsg.includes('30002') || errMsg.includes('1USDT')) {
@@ -1460,16 +1408,12 @@ class OrderTracker {
               }
             } else {
               order.status = 'TRIGGERED';
-              this.log(
-                `[REAL] Order placed successfully! Order ID: ${result.orderId}. Status: ${result.status || 'Success'}`,
-                'success',
-                order.symbol
-              );
+              this.handleOrderCycleComplete(order);
             }
-          } catch (e) {
+          } catch (err) {
             order.status = 'FAILED';
-            order.error = e.message;
-            this.log(`[REAL] Failed to place order on MEXC: ${e.message}`, 'error', order.symbol);
+            order.error = err.message;
+            this.log(`❌ [MEXC API ERROR] Immediate Market Buy order failed: ${err.message}`, 'error', order.symbol);
           }
         }
       }

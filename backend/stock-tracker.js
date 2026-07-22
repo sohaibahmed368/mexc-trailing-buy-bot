@@ -693,49 +693,35 @@ class StockOrderTracker {
             } else {
               try {
                 order.status = 'PENDING_EXECUTION';
-                const pressure = await this.evaluateBuyingPressure(order.symbol, currentPrice);
+                this.log(`🚀 [IMMEDIATE MARKET BUY] Trailing dip trigger + Consensus indicators ALIGNED! Sending instant MARKET BUY order to MEXC server for ${order.symbol}...`, 'success', order.symbol);
 
-                let placeRes = null;
-                if (pressure.isExtremePump) {
-                  this.log(`🚀 [STOCK MOMENTUM SURGE] Heavy Buying Pressure (${pressure.metricsLog}). Executing INSTANT MARKET BUY!`, 'warning', order.symbol);
-                  try {
-                    const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quantity: buyQty };
-                    placeRes = await this.mexcClient.placeOrder(orderParams);
-                  } catch (e) {
-                    this.log(`Market Buy failed: ${e.message}. Falling back to Limit Buy...`, 'warning', order.symbol);
-                  }
-                }
+                const orderParams = { symbol: order.symbol, side: 'BUY', type: 'MARKET', quantity: buyQty };
+                this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(orderParams)}`, 'info', order.symbol);
+                const placeRes = await this.mexcClient.placeOrder(orderParams);
+                this.log(`[MEXC API RESPONSE] Order Placed Success -> ${JSON.stringify(placeRes)}`, 'success', order.symbol);
 
                 if (!placeRes || !placeRes.orderId) {
-                  const freshBuyPrice = await this.calculateMakerPegPrice(order.symbol, 'BUY', currentPrice);
-                  this.log(`🐢 [STOCK NORMAL MOMENTUM] Moderate pressure (${pressure.metricsLog}). Placing 100% MAKER LIMIT BUY at ${freshBuyPrice} USDT (0% Fee)...`, 'info', order.symbol);
-                  const orderParams = {
-                    symbol: order.symbol,
-                    side: 'BUY',
-                    type: 'LIMIT',
-                    quantity: buyQty,
-                    price: freshBuyPrice
-                  };
-                  placeRes = await this.placeOrderWithPrecisionRetry(orderParams, order.quoteOrderQty);
-                }
-
-                if (!placeRes || !placeRes.orderId) {
-                  throw new Error('Stock BUY order failed to place on MEXC.');
+                  throw new Error('Stock MARKET BUY order failed to place on MEXC.');
                 }
 
                 order.mexcOrderId = placeRes.orderId;
-                const fills = await this.waitForLimitOrderFill(order.symbol, placeRes.orderId, 'BUY', buyQty, currentPrice, 300000, 10000);
-                if (!fills || !fills.filled || !fills.executedQty) {
-                  order.status = 'PENDING_ACTIVATION';
-                  order.error = 'Stock BUY order unfilled on MEXC after repeg shifts and fallback.';
-                  this.log(`[REAL] Stock BUY order failed to fill on MEXC. Aborting TP/SL placement.`, 'error', order.symbol);
-                  this.saveOrders();
-                  changed = true;
-                  continue;
-                }
-                order.executionPrice = fills.avgPrice || currentPrice;
+                
+                // Query executed fill price from MEXC
+                let execPrice = currentPrice;
+                try {
+                  this.log(`[MEXC API REQUEST] GET /api/v3/order -> Symbol: ${order.symbol}, OrderID: ${placeRes.orderId}`, 'info', order.symbol);
+                  const fills = await this.mexcClient.getOrder(order.symbol, placeRes.orderId);
+                  this.log(`[MEXC API RESPONSE] Query Fills Success -> ${JSON.stringify(fills)}`, 'success', order.symbol);
+                  if (fills && parseFloat(fills.executedQty) > 0) {
+                    const cumQuote = parseFloat(fills.cummulativeQuoteQty || 0);
+                    const execQty  = parseFloat(fills.executedQty || 1);
+                    if (cumQuote > 0) execPrice = cumQuote / execQty;
+                  }
+                } catch(e) {}
+
+                order.executionPrice = execPrice;
                 order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
-                this.log(`[REAL] Stock Pegged Limit Buy order placed & processed! Order ID: ${placeRes.orderId}. Avg Fill Price: ${order.executionPrice}`, 'success', order.symbol);
+                this.log(`✅ [MARKET BUY FILLED] Order ${placeRes.orderId} executed at ${execPrice} USDT! Transitioning to TP/SL monitoring.`, 'success', order.symbol);
                 if (!order.takeProfit && !order.stopLoss) {
                   this.handleOrderCycleComplete(order);
                 }
@@ -743,7 +729,7 @@ class StockOrderTracker {
               } catch (err) {
                 order.status = 'FAILED';
                 order.error = err.message;
-                this.log(`[REAL] Stock Buy order failed: ${err.message}`, 'error', order.symbol);
+                this.log(`❌ [MEXC API ERROR] Immediate Market Buy order failed: ${err.message}`, 'error', order.symbol);
               }
             }
           }

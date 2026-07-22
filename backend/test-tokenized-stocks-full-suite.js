@@ -162,14 +162,9 @@ async function runTokenizedStocksFullSuite() {
     await stockTracker.tick();
     liveOrder = stockTracker.orders.find(o => o.id === order.id);
 
-    // Verify Pegged Limit Order was placed at Top Bids average (< Best Ask strictly)
-    const peggedCall = mockClient.placeCalls.find(c => c.symbol === sym && c.side === 'BUY' && c.type === 'LIMIT');
-    assert(peggedCall !== undefined, `[${sym}] 100% Maker Pegged LIMIT Buy placed!`);
-
-    if (peggedCall) {
-      const bestAsk = (bottom + 2.5) * 1.002;
-      assert(peggedCall.price < bestAsk, `[${sym}] Maker Pegged Limit Buy Price (${peggedCall.price}) is strictly LESS THAN Best Ask (${bestAsk.toFixed(2)}) ✅`);
-    }
+    // Verify Immediate Market Buy Order was placed on trigger
+    const marketCall = mockClient.placeCalls.find(c => c.symbol === sym && c.side === 'BUY' && c.type === 'MARKET');
+    assert(marketCall !== undefined, `[${sym}] Immediate MARKET Buy placed on trigger!`);
 
     assert(liveOrder.status === 'TP_SL_ACTIVE' || liveOrder.status === 'RUNNING' || liveOrder.status === 'PENDING_EXECUTION' || liveOrder.status === 'TRIGGERED', `[${sym}] Order status processed!`);
 
@@ -177,12 +172,9 @@ async function runTokenizedStocksFullSuite() {
     const prematureTpSellCall = mockClient.placeCalls.find(c => c.symbol === sym && c.side === 'SELL');
     assert(prematureTpSellCall === undefined, `[${sym}] Confirmed: NO Take Profit Sell placed while waiting for buy execution!`);
 
-    // Step 3: Limit Buy Order Fills on MEXC!
-    if (peggedCall) {
-      mockClient.fillStatusMap[peggedCall.id] = 'FILLED';
-      await stockTracker.tick(); // Process fill status update
-      liveOrder = stockTracker.orders.find(o => o.id === order.id);
-      assert(liveOrder.status === 'TP_SL_ACTIVE' || liveOrder.status === 'PENDING_ACTIVATION', `[${sym}] Limit Buy FILLED! Transitioned to TP_SL_ACTIVE state for TP/SL monitoring.`);
+    // Step 3: Market Buy Order Fills on MEXC!
+    if (marketCall) {
+      assert(liveOrder.status === 'TP_SL_ACTIVE' || liveOrder.status === 'PENDING_ACTIVATION', `[${sym}] Market Buy FILLED! Transitioned to TP_SL_ACTIVE state for TP/SL monitoring.`);
     }
     console.log(`------------------------------------------------------------------------\n`);
   }
