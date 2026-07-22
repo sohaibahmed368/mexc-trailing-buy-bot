@@ -50,14 +50,20 @@ class OrderTracker {
           if (Array.isArray(trades)) {
             trades.forEach(t => {
               const fee      = parseFloat(t.commission || 0);
-              // MEXC API uses 'commissionAsset' (not feeAsset)
               const feeAsset = (t.commissionAsset || '').toUpperCase();
+              const quoteQty = parseFloat(t.quoteQty || (parseFloat(t.price || 0) * parseFloat(t.qty || 0)));
+
               if (fee > 0) {
                 feeCount++;
-                if (feeAsset === 'USDT') totalUsdtFees += fee;
-                else if (feeAsset === 'MX') totalMxFees += fee;
-                // Note: BUY commissions on MEXC are charged in MX (with MX discount)
-                // or USDT — the isBuyer field identifies direction (not used for fees)
+                if (feeAsset === 'USDT') {
+                  totalUsdtFees += fee;
+                } else if (feeAsset === 'MX') {
+                  totalMxFees += fee;
+                  // Convert MX fee to USDT at trade execution time value (0.04% of trade quote value)
+                  // This LOCKS historical fee in USDT permanently so MX price changes NEVER alter past totals!
+                  const tradeMxUsdtFee = quoteQty > 0 ? (quoteQty * 0.0004) : (fee * 1.65);
+                  totalUsdtFees += tradeMxUsdtFee;
+                }
               }
             });
           }
@@ -66,21 +72,13 @@ class OrderTracker {
         }
       }
 
-      // Convert MX fees to USDT using fixed execution-time snapshot (stable historical fee tracking)
-      let mxPrice = 1.65;
-      try {
-        const p = await this.mexcClient.getTickerPrice('MXUSDT');
-        if (p) mxPrice = parseFloat(p);
-      } catch(e) {}
-
-      // Stable MX conversion: calculated once and locked per trade execution timestamp
-      const mxInUsdt = totalMxFees * mxPrice;
-      const totalFeesInUsdt = totalUsdtFees + mxInUsdt;
+      // Total Fees in USDT is 100% STABLE & IMMUTABLE (Zero dependency on live MX price fluctuations!)
+      const totalFeesInUsdt = totalUsdtFees;
 
       this.cachedFeeSummary = {
         usdtFees: parseFloat(totalUsdtFees.toFixed(4)),
         mxFees:   parseFloat(totalMxFees.toFixed(4)),
-        mxInUsdt: parseFloat(mxInUsdt.toFixed(4)),
+        mxInUsdt: parseFloat((totalFeesInUsdt - totalUsdtFees).toFixed(4)),
         totalFeesInUsdt: parseFloat(totalFeesInUsdt.toFixed(4)),
         feeCount
       };
