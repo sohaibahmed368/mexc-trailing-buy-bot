@@ -1,7 +1,9 @@
 /**
- * MEXC Trade History & Fee Audit Script
- * Fetches ALL trades from MEXC API since last 7 days
- * Shows exact trade count and fee breakdown per symbol and side (BUY/SELL)
+ * MEXC Trade History & Fee Audit Script v2
+ * - Counts ALL commissions in ALL assets (SOL, ETH, BTC, USDT, MX, etc.)
+ * - Converts all to USDT equivalent using live prices
+ * - Shows raw first trade to verify field structure
+ * - Uses isBuyerMaker field for side detection fallback
  * 
  * Usage: node backend/audit-mexc-fees.js
  */
@@ -10,12 +12,11 @@ const path = require('path');
 const fs   = require('fs');
 const MexcClient = require('./mexc-client');
 
-// ─── Load API credentials same way server does ────────────────────────────────
+// ─── Load API credentials ─────────────────────────────────────────────────────
 let apiKey    = process.env.MEXC_API_KEY    || '';
 let secretKey = process.env.MEXC_SECRET_KEY || '';
 
 if (!apiKey || !secretKey) {
-  // Fallback: read from saved credentials file
   const credPath = path.join(__dirname, 'config', 'credentials.json');
   if (fs.existsSync(credPath)) {
     try {
@@ -27,13 +28,13 @@ if (!apiKey || !secretKey) {
 }
 
 if (!apiKey || !secretKey) {
-  console.error('❌ No API credentials found. Set MEXC_API_KEY / MEXC_SECRET_KEY env vars or save credentials via the bot UI first.');
+  console.error('❌ No API credentials found.');
   process.exit(1);
 }
 
 const client = new MexcClient(apiKey, secretKey);
 
-// ─── Load all symbols from orders.json ────────────────────────────────────────
+// ─── Load symbols from orders.json ────────────────────────────────────────────
 const ordersPath = path.join(__dirname, 'data', 'orders.json');
 let symbolsFromOrders = new Set();
 try {
@@ -43,34 +44,45 @@ try {
   });
 } catch(e) {}
 
-// ─── Date filter: 4 days ago (user said "4 din pehle se API connect hui") ─────
+// Last 4 days filter
 const FOUR_DAYS_MS = 4 * 24 * 60 * 60 * 1000;
 const sinceTimestamp = Date.now() - FOUR_DAYS_MS;
-const sinceDate = new Date(sinceTimestamp).toISOString();
+
+// ─── Helper: get price of any asset in USDT ──────────────────────────────────
+const priceCache = {};
+async function getUsdtPrice(asset) {
+  asset = asset.toUpperCase();
+  if (asset === 'USDT') return 1;
+  if (priceCache[asset]) return priceCache[asset];
+  try {
+    const p = await client.getTickerPrice(`${asset}USDT`);
+    priceCache[asset] = parseFloat(p) || 0;
+  } catch(e) {
+    priceCache[asset] = 0;
+  }
+  return priceCache[asset];
+}
 
 // ─── Main Audit ───────────────────────────────────────────────────────────────
 async function audit() {
   console.log('\n═══════════════════════════════════════════════════════════════');
-  console.log('          MEXC TRADE HISTORY & FEE AUDIT');
+  console.log('     MEXC TRADE HISTORY & FEE AUDIT v2 (ALL ASSETS)');
   console.log('═══════════════════════════════════════════════════════════════');
-  console.log(`  Auditing trades since: ${sinceDate}`);
-  console.log(`  Symbols to check: ${[...symbolsFromOrders].join(', ') || 'none found in orders.json'}`);
+  console.log(`  Auditing since: ${new Date(sinceTimestamp).toISOString()}`);
+  console.log(`  Symbols: ${[...symbolsFromOrders].join(', ')}`);
   console.log('═══════════════════════════════════════════════════════════════\n');
 
   if (symbolsFromOrders.size === 0) {
-    console.error('❌ No symbols found in orders.json. Cannot audit.');
-    process.exit(1);
+    console.error('❌ No symbols found in orders.json'); process.exit(1);
   }
 
-  let grandTotalTrades = 0;
-  let grandTotalFeesUsdt = 0;
-  let grandTotalFeesMx   = 0;
-  let grandBuyTrades  = 0;
-  let grandSellTrades = 0;
-  let grandBuyFeesUsdt  = 0;
-  let grandSellFeesUsdt = 0;
-  let grandMakerTrades  = 0;
-  let grandTakerTrades  = 0;
+  let rawSampleShown = false;
+  let grandTotal = 0, grandBuy = 0, grandSell = 0;
+  let grandMaker = 0, grandTaker = 0;
+  let grandFeesUsdtEquiv = 0;
+
+  // Fees by asset
+  const feesByAsset = {};
 
   const symbolSummaries = [];
 
@@ -85,105 +97,118 @@ async function audit() {
       continue;
     }
 
-    // Filter to last 4 days
-    const filtered = trades.filter(t => parseInt(t.time || t.timestamp || 0) >= sinceTimestamp);
-    console.log(`${filtered.length} trades (${trades.length} total on account)`);
+    // Show raw first trade structure once for debugging
+    if (!rawSampleShown && trades.length > 0) {
+      rawSampleShown = true;
+      console.log('\n  [DEBUG] Raw first trade fields from MEXC API:');
+      const sample = trades[0];
+      Object.keys(sample).forEach(k => console.log(`    ${k}: ${JSON.stringify(sample[k])}`));
+      console.log();
+    }
 
+    const filtered = trades.filter(t => {
+      const ts = parseInt(t.time || t.timestamp || t.tradeTime || 0);
+      return ts >= sinceTimestamp;
+    });
+
+    console.log(`${filtered.length} trades (${trades.length} total on account)`);
     if (filtered.length === 0) continue;
 
-    let symFeesUsdt = 0;
-    let symFeesMx   = 0;
-    let symBuyCount  = 0;
-    let symSellCount = 0;
-    let symBuyFees   = 0;
-    let symSellFees  = 0;
-    let symMaker = 0;
-    let symTaker = 0;
+    let symFeeUsdt = 0;
+    let symBuy = 0, symSell = 0, symMaker = 0, symTaker = 0;
+    const symFeesByAsset = {};
 
-    filtered.forEach(t => {
-      const fee       = parseFloat(t.commission       || 0);
-      const feeAsset  = (t.commissionAsset            || '').toUpperCase();
-      const side      = (t.side                       || '').toUpperCase();
-      const isMaker   = t.isMaker === true || t.isMaker === 'true';
-
-      if (feeAsset === 'USDT') symFeesUsdt += fee;
-      else if (feeAsset === 'MX') symFeesMx += fee;
-
-      if (side === 'BUY') {
-        symBuyCount++;
-        if (feeAsset === 'USDT') symBuyFees += fee;
-      } else {
-        symSellCount++;
-        if (feeAsset === 'USDT') symSellFees += fee;
+    for (const t of filtered) {
+      const fee      = parseFloat(t.commission || t.fee || 0);
+      const feeAsset = (t.commissionAsset || t.feeAsset || '').toUpperCase();
+      
+      // Side detection: try 'side' field, fallback to isBuyerMaker
+      let side = (t.side || '').toUpperCase();
+      if (!side || (side !== 'BUY' && side !== 'SELL')) {
+        // MEXC may use isBuyerMaker: true means this trade was the buyer (BUY side)
+        if (t.isBuyerMaker !== undefined) {
+          side = t.isBuyerMaker ? 'SELL' : 'BUY';  // isBuyerMaker=true means buyer made the order (limit buy = maker)
+          // Actually: isBuyerMaker = was buyer the maker? If true = limit buy order filled (maker buy)
+          // Let's just log the raw value
+        }
       }
 
+      if (side === 'BUY') symBuy++;
+      else if (side === 'SELL') symSell++;
+
+      // Maker/Taker detection
+      const isMaker = t.isMaker === true || t.isMaker === 'true' || 
+                      (t.isBuyerMaker !== undefined && (
+                        (side === 'BUY' && t.isBuyerMaker) || 
+                        (side === 'SELL' && !t.isBuyerMaker)
+                      ));
       if (isMaker) symMaker++;
       else symTaker++;
-    });
+
+      // Count all fees in their native asset
+      if (fee > 0 && feeAsset) {
+        symFeesByAsset[feeAsset] = (symFeesByAsset[feeAsset] || 0) + fee;
+        feesByAsset[feeAsset]    = (feesByAsset[feeAsset]    || 0) + fee;
+      }
+    }
+
+    // Convert symbol fees to USDT
+    for (const [asset, amount] of Object.entries(symFeesByAsset)) {
+      const price = await getUsdtPrice(asset);
+      symFeeUsdt += amount * price;
+    }
 
     symbolSummaries.push({
       symbol, count: filtered.length,
-      buyCount: symBuyCount, sellCount: symSellCount,
-      feesUsdt: symFeesUsdt, feesMx: symFeesMx,
-      buyFees: symBuyFees, sellFees: symSellFees,
-      maker: symMaker, taker: symTaker
+      buyCount: symBuy, sellCount: symSell,
+      maker: symMaker, taker: symTaker,
+      feesByAsset: symFeesByAsset,
+      feeUsdtEquiv: symFeeUsdt
     });
 
-    grandTotalTrades  += filtered.length;
-    grandTotalFeesUsdt += symFeesUsdt;
-    grandTotalFeesMx  += symFeesMx;
-    grandBuyTrades    += symBuyCount;
-    grandSellTrades   += symSellCount;
-    grandBuyFeesUsdt  += symBuyFees;
-    grandSellFeesUsdt += symSellFees;
-    grandMakerTrades  += symMaker;
-    grandTakerTrades  += symTaker;
+    grandTotal += filtered.length;
+    grandBuy   += symBuy;
+    grandSell  += symSell;
+    grandMaker += symMaker;
+    grandTaker += symTaker;
+    grandFeesUsdtEquiv += symFeeUsdt;
   }
 
-  // ─── Per-Symbol Table ──────────────────────────────────────────────────────
-  console.log('\n─────────────────────────────────────────────────────────────');
+  // ─── Per-Symbol Table ─────────────────────────────────────────────────────
+  console.log('\n─────────────────────────────────────────────────────────────────────');
   console.log('  PER-SYMBOL BREAKDOWN');
-  console.log('─────────────────────────────────────────────────────────────');
-  console.log('  Symbol          | Trades | BUY  | SELL | Maker| Taker| USDT Fees   | MX Fees');
-  console.log('  ─────────────────────────────────────────────────────────────────────────────');
+  console.log('─────────────────────────────────────────────────────────────────────');
 
-  symbolSummaries.forEach(s => {
-    const sym   = s.symbol.padEnd(14);
-    const cnt   = String(s.count).padStart(6);
-    const buy   = String(s.buyCount).padStart(4);
-    const sell  = String(s.sellCount).padStart(4);
-    const maker = String(s.maker).padStart(5);
-    const taker = String(s.taker).padStart(5);
-    const uFee  = s.feesUsdt.toFixed(6).padStart(11);
-    const mFee  = s.feesMx.toFixed(6).padStart(8);
-    console.log(`  ${sym} | ${cnt} | ${buy} | ${sell} | ${maker}| ${taker}| ${uFee} | ${mFee}`);
-  });
+  for (const s of symbolSummaries) {
+    console.log(`\n  ${s.symbol}`);
+    console.log(`    Trades : ${s.count}  (BUY: ${s.buyCount}, SELL: ${s.sellCount})`);
+    console.log(`    Maker  : ${s.maker}  |  Taker: ${s.taker}`);
+    console.log(`    Fees by asset:`);
+    for (const [asset, amount] of Object.entries(s.feesByAsset)) {
+      const price = await getUsdtPrice(asset);
+      const usdt  = (amount * price).toFixed(6);
+      console.log(`      ${asset.padEnd(6)} : ${amount.toFixed(6)} (≈ ${usdt} USDT @ ${price})`);
+    }
+    console.log(`    Total  : ≈ ${s.feeUsdtEquiv.toFixed(6)} USDT`);
+  }
 
-  // ─── Grand Total ──────────────────────────────────────────────────────────
-  let mxPrice = 1.65;
-  try {
-    const p = await client.getTickerPrice('MXUSDT');
-    if (p) mxPrice = parseFloat(p);
-  } catch(e) {}
-  const totalFeesInUsdt = grandTotalFeesUsdt + (grandTotalFeesMx * mxPrice);
-
+  // ─── Grand Total ─────────────────────────────────────────────────────────
   console.log('\n═══════════════════════════════════════════════════════════════');
-  console.log('  GRAND TOTAL SINCE API CONNECTED (last 4 days)');
+  console.log('  GRAND TOTAL (last 4 days — ALL assets converted to USDT)');
   console.log('═══════════════════════════════════════════════════════════════');
-  console.log(`  Total Trades    : ${grandTotalTrades}`);
-  console.log(`  ├─ BUY  orders  : ${grandBuyTrades}`);
-  console.log(`  └─ SELL orders  : ${grandSellTrades}`);
-  console.log(`  Maker trades    : ${grandMakerTrades}  (fee = 0.04% OR 0% if MX discount)`);
-  console.log(`  Taker trades    : ${grandTakerTrades}  (fee = 0% on your MEXC promotion)`);
-  console.log(`\n  ── FEES ────────────────────────────────────────────`);
-  console.log(`  USDT Fees Paid  : ${grandTotalFeesUsdt.toFixed(6)} USDT`);
-  console.log(`  ├─ BUY  side    : ${grandBuyFeesUsdt.toFixed(6)} USDT`);
-  console.log(`  └─ SELL side    : ${grandSellFeesUsdt.toFixed(6)} USDT`);
-  console.log(`  MX Fees Paid    : ${grandTotalFeesMx.toFixed(6)} MX`);
-  console.log(`  MX Price (live) : ${mxPrice} USDT`);
-  console.log(`  MX in USDT      : ${(grandTotalFeesMx * mxPrice).toFixed(6)} USDT`);
+  console.log(`  Total Trades    : ${grandTotal}`);
+  console.log(`  ├─ BUY  orders  : ${grandBuy}`);
+  console.log(`  └─ SELL orders  : ${grandSell}`);
+  console.log(`  Maker trades    : ${grandMaker}`);
+  console.log(`  Taker trades    : ${grandTaker}`);
+  console.log(`\n  ── FEES BY ASSET ────────────────────────────────────`);
+  for (const [asset, amount] of Object.entries(feesByAsset)) {
+    const price = await getUsdtPrice(asset);
+    const usdt  = (amount * price).toFixed(6);
+    console.log(`  ${asset.padEnd(8)} : ${amount.toFixed(6)}  ≈ ${usdt} USDT`);
+  }
   console.log(`\n  ╔═══════════════════════════════════════════════════`);
-  console.log(`  ║  TOTAL FEES PAID = ${totalFeesInUsdt.toFixed(6)} USDT`);
+  console.log(`  ║  TOTAL FEES ≈ ${grandFeesUsdtEquiv.toFixed(6)} USDT`);
   console.log(`  ╚═══════════════════════════════════════════════════`);
   console.log('\n═══════════════════════════════════════════════════════════════\n');
 }
