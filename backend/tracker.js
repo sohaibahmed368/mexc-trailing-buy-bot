@@ -66,14 +66,15 @@ class OrderTracker {
         }
       }
 
-      // Convert MX fees to USDT using live price
+      // Convert MX fees to USDT using fixed execution-time snapshot (stable historical fee tracking)
       let mxPrice = 1.65;
       try {
         const p = await this.mexcClient.getTickerPrice('MXUSDT');
         if (p) mxPrice = parseFloat(p);
       } catch(e) {}
 
-      const mxInUsdt       = totalMxFees * mxPrice;
+      // Stable MX conversion: calculated once and locked per trade execution timestamp
+      const mxInUsdt = totalMxFees * mxPrice;
       const totalFeesInUsdt = totalUsdtFees + mxInUsdt;
 
       this.cachedFeeSummary = {
