@@ -334,22 +334,6 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
             </div>
           </div>
         </div>
-                <HelpCircle size={13} />
-              </span>
-            </label>
-            <div className="input-wrapper">
-              <input
-                id="stopLoss"
-                type="number"
-                step="any"
-                placeholder="e.g. 5 (value to subtract)"
-                value={stopLoss}
-                onChange={(e) => setStopLoss(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-          </div>
-        </div>
 
         {/* Smart Stop Loss Guard Toggle & Buffer */}
         <div className="form-group" style={{ 
@@ -382,13 +366,13 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
           {filterSmartSl && (
             <div style={{ paddingLeft: '1.5rem' }}>
               <label htmlFor="slBuffer" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.2rem' }}>
-                Smart SL Stretch Buffer (+ USDT)
+                Smart SL Stretch Buffer (+ %)
               </label>
               <input
                 id="slBuffer"
                 type="number"
                 step="any"
-                placeholder="e.g. 2.0 (buffer to stretch SL)"
+                placeholder="e.g. 0.15 (%)"
                 value={slBuffer}
                 onChange={(e) => setSlBuffer(e.target.value)}
                 disabled={loading}

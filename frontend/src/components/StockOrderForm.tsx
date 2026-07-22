@@ -324,14 +324,14 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           {filterSmartSl && (
             <div style={{ marginTop: '8px', paddingLeft: '24px' }}>
               <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '4px' }}>
-                Smart SL Stretch Buffer (+ USDT)
+                Smart SL Stretch Buffer (+ %)
               </label>
               <input
                 type="number"
                 step="any"
                 value={slBuffer}
                 onChange={e => setSlBuffer(e.target.value)}
-                placeholder="e.g. 2.0 (buffer to stretch SL)"
+                placeholder="e.g. 0.15 (%)"
                 style={{ width: '100%', padding: '8px', background: '#0f172a', border: '1px solid #475569', borderRadius: '6px', color: '#fff', fontSize: '0.85rem' }}
               />
             </div>
