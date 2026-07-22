@@ -221,8 +221,9 @@ class OrderTracker {
    * 100% MAKER RE-PEG ENGINE (NO MARKET FALLBACK EVER)
    * Continuously polls and re-pegs LIMIT orders every 800ms to top of orderbook
    * strictly maintaining BUY < Best Ask and SELL > Best Bid for 0% Maker fees.
+   * Chases price fluctuations continuously up to 5 minutes (300,000ms).
    */
-  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 15000, pollMs = 800) {
+  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 300000, pollMs = 800) {
     const startTime = Date.now();
     let attempts = 0;
     let currentOrderId = orderId;
