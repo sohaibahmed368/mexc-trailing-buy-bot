@@ -15,7 +15,6 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
   const [quantity, setQuantity] = useState('');
   const [takeProfit, setTakeProfit] = useState('10.0');
   const [stopLoss, setStopLoss] = useState('4.0');
-  const [maxSlippagePct, setMaxSlippagePct] = useState('0.5');
   
   const [activationPrice, setActivationPrice] = useState('');
   const [activationOffset, setActivationOffset] = useState('2.0');
@@ -72,7 +71,6 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
           quoteOrderQty: qtyMode === 'usdt' ? parseFloat(quoteOrderQty) : null,
           takeProfit: takeProfit ? parseFloat(takeProfit) : null,
           stopLoss: stopLoss ? parseFloat(stopLoss) : null,
-          maxSlippagePct: parseFloat(maxSlippagePct),
           activationPrice: autoRepeat ? '' : activationPrice,
           activationOffset: activationOffset ? parseFloat(activationOffset) : '',
           filterSmartSl,
@@ -203,26 +201,6 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
                 required
               />
             )}
-          </div>
-
-          {/* Single Stock Bot Extra Field: Max Allowed Slippage % */}
-          <div style={{ background: 'rgba(56, 189, 248, 0.1)', padding: '12px', borderRadius: '8px', border: '1px solid #0284c7' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: '#38bdf8', fontWeight: 'bold', marginBottom: '6px' }}>
-              🛡️ Max Allowed Slippage (%)
-              <span title="Blocks market buy/sell if order book depth slippage > maxAllowedSlippage. Converts to Pegged Limit Order (Top Bid + 0.02)." style={{ cursor: 'help', color: '#94a3b8' }}>
-                <HelpCircle size={13} />
-              </span>
-            </label>
-            <input
-              type="number"
-              step="0.1"
-              min="0.1"
-              max="5.0"
-              value={maxSlippagePct}
-              onChange={e => setMaxSlippagePct(e.target.value)}
-              style={{ width: '100%', padding: '10px', background: '#0f172a', border: '1px solid #0284c7', borderRadius: '6px', color: '#38bdf8', fontSize: '1.05rem', fontWeight: 'bold' }}
-              required
-            />
           </div>
 
           {/* Trail Value */}

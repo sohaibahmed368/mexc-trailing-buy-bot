@@ -87,47 +87,136 @@ class StockOrderTracker {
     return this.logs;
   }
 
-  // Pre-Execution Order Book Depth Slippage Simulator
-  async simulateDepthSlippage(symbol, side, qty) {
+  /**
+   * Calculate exact Maker-guaranteed Limit Price using orderbook depth for Stock Bot.
+   * STRICT MAKER RULES:
+   * 1. BUY: targetBuyPrice MUST be < bestAsk. If >= bestAsk, force pegPrice = bestAsk - tick.
+   * 2. SELL: targetSellPrice MUST be > bestBid. If <= bestBid, force pegPrice = bestBid + tick.
+   */
+  async calculateMakerPegPrice(symbol, side, fallbackPrice) {
     try {
-      const depth = await this.mexcClient.getDepth(symbol, 100);
-      if (!depth) return { isLiquid: true, slippagePct: 0, bestPrice: 0, avgPrice: 0 };
+      const depth = await this.mexcClient.getDepth(symbol, 10);
+      if (depth && Array.isArray(depth.bids) && depth.bids.length > 0 && Array.isArray(depth.asks) && depth.asks.length > 0) {
+        const bestBid = parseFloat(depth.bids[0][0]);
+        const secondBid = depth.bids.length > 1 ? parseFloat(depth.bids[1][0]) : bestBid;
+        const bestAsk = parseFloat(depth.asks[0][0]);
+        const secondAsk = depth.asks.length > 1 ? parseFloat(depth.asks[1][0]) : bestAsk;
 
-      const levels = side === 'BUY' ? depth.asks : depth.bids;
-      if (!levels || levels.length === 0) {
-        return { isLiquid: false, slippagePct: 999, bestPrice: 0, avgPrice: 0 };
+        let tick = 0.0001;
+        if (bestBid > 1000) tick = 0.01;
+        else if (bestBid > 10) tick = 0.001;
+        else if (bestBid < 0.1) tick = 0.000001;
+
+        const decimals = tick.toString().includes('.') ? tick.toString().split('.')[1].length : 2;
+
+        if (side.toUpperCase() === 'BUY') {
+          let pegPrice = (bestBid + secondBid) / 2;
+          if (pegPrice >= bestAsk) {
+            pegPrice = Math.min(bestBid, bestAsk - tick);
+          }
+          pegPrice = parseFloat(pegPrice.toFixed(decimals));
+          if (pegPrice >= bestAsk) {
+            pegPrice = parseFloat((bestAsk - tick).toFixed(decimals));
+          }
+          this.log(`[STOCK MAKER PEG BUY] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Pegged BUY Price: ${pegPrice} (< Ask ${bestAsk} ✅)`, 'info', symbol);
+          return pegPrice;
+        } else {
+          let pegPrice = (bestAsk + secondAsk) / 2;
+          if (pegPrice <= bestBid) {
+            pegPrice = Math.max(bestAsk, bestBid + tick);
+          }
+          pegPrice = parseFloat(pegPrice.toFixed(decimals));
+          if (pegPrice <= bestBid) {
+            pegPrice = parseFloat((bestBid + tick).toFixed(decimals));
+          }
+          this.log(`[STOCK MAKER PEG SELL] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Pegged SELL Price: ${pegPrice} (> Bid ${bestBid} ✅)`, 'info', symbol);
+          return pegPrice;
+        }
       }
-
-      const bestPrice = parseFloat(levels[0][0]);
-      let remainingQty = qty;
-      let totalCost = 0;
-
-      for (const [pStr, qStr] of levels) {
-        const p = parseFloat(pStr);
-        const q = parseFloat(qStr);
-        const take = Math.min(remainingQty, q);
-        totalCost += (take * p);
-        remainingQty -= take;
-        if (remainingQty <= 0) break;
-      }
-
-      if (remainingQty > 0) {
-        // Order book doesn't even have enough total quantity!
-        return { isLiquid: false, slippagePct: 999, bestPrice, avgPrice: bestPrice };
-      }
-
-      const avgPrice = totalCost / qty;
-      const slippagePct = (Math.abs(avgPrice - bestPrice) / bestPrice) * 100;
-
-      return {
-        isLiquid: true,
-        slippagePct,
-        bestPrice,
-        avgPrice
-      };
-    } catch (e) {
-      return { isLiquid: true, slippagePct: 0, bestPrice: 0, avgPrice: 0 };
+    } catch (err) {
+      this.log(`[STOCK MAKER PEG] Failed to query depth for ${symbol}: ${err.message}. Using fallback price ${fallbackPrice}`, 'warning', symbol);
     }
+    return fallbackPrice;
+  }
+
+  /**
+   * Wait for a Stock LIMIT order to be filled. Polls MEXC every 1.5s (1500ms).
+   * If not filled within timeout (default 6s = 4 checks of 1.5s), cancels the LIMIT order and falls back to MARKET.
+   */
+  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 6000, pollMs = 1500) {
+    const startTime = Date.now();
+    let attempts = 0;
+
+    while (Date.now() - startTime < maxWaitMs) {
+      attempts++;
+      await new Promise(r => setTimeout(r, pollMs));
+
+      try {
+        const orderInfo = await this.mexcClient.getOrder(symbol, orderId);
+        if (!orderInfo) continue;
+
+        if (orderInfo.status === 'FILLED') {
+          const executedQty = parseFloat(orderInfo.executedQty);
+          const cummulativeQuoteQty = parseFloat(orderInfo.cummulativeQuoteQty);
+          if (executedQty > 0 && cummulativeQuoteQty > 0) {
+            const avgPrice = cummulativeQuoteQty / executedQty;
+            this.log(`[STOCK MAKER LIMIT] Order ${orderId} FILLED after ${attempts} checks (1.5s interval). Avg Price: ${avgPrice.toFixed(6)}`, 'success', symbol);
+            return { avgPrice, executedQty, filled: true };
+          }
+        }
+
+        if (orderInfo.status === 'NEW') {
+          this.log(`[STOCK MAKER PEG LOG] Check #${attempts} (1.5s elapsed): Stock Order ${orderId} is still UNFILLED on MEXC at price ${fallbackPrice}. Monitoring next 1.5s window...`, 'info', symbol);
+          continue;
+        }
+
+        if (orderInfo.status === 'PARTIALLY_FILLED') {
+          this.log(`[STOCK MAKER LIMIT] Order ${orderId} partially filled (${orderInfo.executedQty}/${quantity}). Re-checking in 1.5s...`, 'info', symbol);
+          continue;
+        }
+
+        if (orderInfo.status === 'CANCELED' || orderInfo.status === 'EXPIRED' || orderInfo.status === 'REJECTED') {
+          this.log(`[STOCK MAKER LIMIT] Order ${orderId} status: ${orderInfo.status}. Breaking out.`, 'warning', symbol);
+          break;
+        }
+      } catch (err) {
+        this.log(`[STOCK MAKER LIMIT] Error checking order ${orderId}: ${err.message}`, 'warning', symbol);
+      }
+    }
+
+    this.log(`[STOCK MAKER LIMIT] Order ${orderId} not filled within ${maxWaitMs / 1000}s (1.5s repeg cycle). Cancelling and placing MARKET ${side} fallback...`, 'warning', symbol);
+
+    try {
+      await this.mexcClient.cancelOrder(symbol, orderId);
+      this.log(`[STOCK LIMIT] Cancelled unfilled order ${orderId}.`, 'info', symbol);
+    } catch (cancelErr) {
+      try {
+        const recheckInfo = await this.mexcClient.getOrder(symbol, orderId);
+        if (recheckInfo && recheckInfo.status === 'FILLED') {
+          const executedQty = parseFloat(recheckInfo.executedQty);
+          const cummulativeQuoteQty = parseFloat(recheckInfo.cummulativeQuoteQty);
+          if (executedQty > 0 && cummulativeQuoteQty > 0) {
+            const avgPrice = cummulativeQuoteQty / executedQty;
+            return { avgPrice, executedQty, filled: true };
+          }
+        }
+      } catch (e) {}
+    }
+
+    await new Promise(r => setTimeout(r, 500));
+
+    try {
+      const marketParams = { symbol, side, type: 'MARKET', quantity };
+      const marketResult = await this.placeOrderWithPrecisionRetry(marketParams);
+      if (marketResult && marketResult.orderId) {
+        this.log(`[STOCK LIMIT→MARKET] Fallback MARKET ${side} placed. Order ID: ${marketResult.orderId}`, 'success', symbol);
+        return { avgPrice: fallbackPrice, executedQty: quantity, filled: true, fallbackUsed: true, fallbackOrderId: marketResult.orderId };
+      }
+    } catch (marketErr) {
+      this.log(`[STOCK LIMIT→MARKET] Fallback MARKET ${side} failed: ${marketErr.message}`, 'error', symbol);
+    }
+
+    return { avgPrice: fallbackPrice, executedQty: null, filled: false };
   }
 
   async addOrder(config) {
@@ -174,7 +263,6 @@ class StockOrderTracker {
       filterRsi: config.filterRsi !== undefined ? !!config.filterRsi : true,
       autoRepeat: config.autoRepeat !== undefined ? !!config.autoRepeat : true,
       activationOffset: config.activationOffset ? parseFloat(config.activationOffset) : null,
-      maxSlippagePct: config.maxSlippagePct !== undefined ? parseFloat(config.maxSlippagePct) : 0.5,
       isStockBot: true,
       status: initialStatus,
       dryRun: config.dryRun !== undefined ? config.dryRun : true,
@@ -196,7 +284,7 @@ class StockOrderTracker {
 
     this.orders.unshift(newOrder);
     this.saveOrders();
-    this.log(`New Stock Bot order created for ${config.symbol} (Max Slippage: ${newOrder.maxSlippagePct}%)`, 'info', config.symbol);
+    this.log(`New Stock Bot order created for ${config.symbol} (0% Maker Pegging Engine)`, 'info', config.symbol);
 
     this.startTracking();
     return newOrder;
@@ -480,15 +568,14 @@ class StockOrderTracker {
               continue;
             }
 
-            // EXTREME SLIPPAGE GUARD FOR BUY EXECUTION
+            // STOCK BOT MAKER PEG BUY EXECUTION (0% MAKER FEE)
             const buyQty = order.quantity || (order.quoteOrderQty ? (order.quoteOrderQty / currentPrice) : 1);
-            const sim = await this.simulateDepthSlippage(order.symbol, 'BUY', buyQty);
 
             if (order.dryRun) {
               order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
               order.executionPrice = currentPrice;
               order.triggeredAt = new Date().toISOString();
-              this.log(`[DRY RUN] Trailing Buy Triggered! Bought at ${currentPrice} USDT (Simulated Slippage: ${sim.slippagePct.toFixed(2)}%).`, 'success', order.symbol);
+              this.log(`[DRY RUN] Stock Trailing Buy Triggered! Bought at ${currentPrice} USDT.`, 'success', order.symbol);
               changed = true;
 
               if (!order.takeProfit && !order.stopLoss) {
@@ -496,63 +583,27 @@ class StockOrderTracker {
               }
             } else {
               order.status = 'PENDING_EXECUTION';
-              this.log(`Placing Stock BUY order on MEXC for ${order.symbol}...`, 'info', order.symbol);
+              this.log(`Placing Stock LIMIT BUY order at Pegged Depth Price on MEXC for ${order.symbol}...`, 'info', order.symbol);
 
               try {
-                let result = null;
-                const maxAllowed = order.maxSlippagePct || 0.5;
-
-                if (sim.isLiquid && sim.slippagePct <= maxAllowed) {
-                  // Liquidity is good within slippage tolerance -> Market Buy
-                  const orderParams = {
-                    symbol: order.symbol,
-                    side: 'BUY',
-                    type: 'MARKET',
-                    quantity: buyQty
-                  };
-                  result = await this.placeOrderWithPrecisionRetry(orderParams, order.quoteOrderQty);
-                } else {
-                  // Slippage too high -> BLOCK MARKET ORDER & Place Pegged Limit Order at (Top Bid + 0.02)
-                  let topBid = currentPrice;
-                  try {
-                    const depth = await this.mexcClient.getDepth(order.symbol, 10);
-                    if (depth && Array.isArray(depth.bids) && depth.bids.length > 0) {
-                      topBid = parseFloat(depth.bids[0][0]);
-                    }
-                  } catch (dErr) {
-                    this.log(`Failed to fetch top bid for pegged order: ${dErr.message}`, 'warning', order.symbol);
-                  }
-
-                  const peggedPrice = Math.round((topBid + 0.02) * 10000) / 10000;
-                  this.log(
-                    `⚠️ [MAX SLIPPAGE GUARD] Market Buy Slippage (${sim.slippagePct.toFixed(2)}% > ${maxAllowed}%) too high! BLOCKING MARKET DUMP. Top Bid: ${topBid.toFixed(4)} USDT. Placing Pegged Limit Buy Order at ${peggedPrice.toFixed(4)} USDT (+0.02 front-of-queue)...`,
-                    'warning',
-                    order.symbol
-                  );
-                  
-                  const orderParams = {
-                    symbol: order.symbol,
-                    side: 'BUY',
-                    type: 'LIMIT',
-                    quantity: buyQty,
-                    price: peggedPrice
-                  };
-                  result = await this.placeOrderWithPrecisionRetry(orderParams, order.quoteOrderQty);
-                }
+                const freshBuyPrice = await this.calculateMakerPegPrice(order.symbol, 'BUY', currentPrice);
+                const orderParams = {
+                  symbol: order.symbol,
+                  side: 'BUY',
+                  type: 'LIMIT',
+                  quantity: buyQty,
+                  price: freshBuyPrice
+                };
+                const result = await this.placeOrderWithPrecisionRetry(orderParams, order.quoteOrderQty);
 
                 if (result && result.orderId) {
                   order.mexcOrderId = result.orderId;
-                  order.executionPrice = currentPrice;
-                  const maxAllowed = order.maxSlippagePct || 0.5;
-                  if (!sim.isLiquid || sim.slippagePct > maxAllowed) {
-                    order.status = 'PENDING_EXECUTION';
-                    this.log(`[REAL] Pegged Limit Buy order placed! Order ID: ${result.orderId}. Status set to PENDING_EXECUTION (Waiting for limit buy order fill)...`, 'info', order.symbol);
-                  } else {
-                    order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
-                    this.log(`[REAL] Stock Market Buy order placed! Order ID: ${result.orderId}. Status: ${order.status}`, 'success', order.symbol);
-                    if (!order.takeProfit && !order.stopLoss) {
-                      this.handleOrderCycleComplete(order);
-                    }
+                  const fills = await this.waitForLimitOrderFill(order.symbol, result.orderId, 'BUY', buyQty, freshBuyPrice);
+                  order.executionPrice = fills.avgPrice || freshBuyPrice;
+                  order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
+                  this.log(`[REAL] Stock Pegged Limit Buy order placed & processed! Order ID: ${result.orderId}. Avg Fill Price: ${order.executionPrice}`, 'success', order.symbol);
+                  if (!order.takeProfit && !order.stopLoss) {
+                    this.handleOrderCycleComplete(order);
                   }
                   changed = true;
                 }
@@ -683,39 +734,25 @@ class StockOrderTracker {
                 }
               }
 
-              // EXTREME SLIPPAGE GUARD FOR SELL EXECUTION
+              // STOCK BOT MAKER PEG SL SELL EXECUTION (0% MAKER FEE)
               const sellQty = order.quantity || 1.0;
-              const sim = await this.simulateDepthSlippage(order.symbol, 'SELL', sellQty);
-              const maxAllowed = order.maxSlippagePct || 0.5;
 
               try {
-                let sellResult = null;
-                if (sim.isLiquid && sim.slippagePct <= maxAllowed) {
-                  const sellParams = {
-                    symbol: order.symbol,
-                    side: 'SELL',
-                    type: 'MARKET',
-                    quantity: sellQty
-                  };
-                  sellResult = await this.placeOrderWithPrecisionRetry(sellParams);
-                } else {
-                  const peggedSellPrice = sim.bestPrice ? (sim.bestPrice * (1 - (maxAllowed / 100))) : targetSlPrice;
-                  this.log(`⚠️ [MAX SLIPPAGE GUARD] Stock Market Sell Slippage (${sim.slippagePct.toFixed(2)}% > ${maxAllowed}%) too high! BLOCKING MARKET DUMP. Placing Pegged Limit Sell Order at ${peggedSellPrice.toFixed(4)} USDT...`, 'warning', order.symbol);
-
-                  const sellParams = {
-                    symbol: order.symbol,
-                    side: 'SELL',
-                    type: 'LIMIT',
-                    quantity: sellQty,
-                    price: peggedSellPrice
-                  };
-                  sellResult = await this.placeOrderWithPrecisionRetry(sellParams);
-                }
+                const freshSlPrice = await this.calculateMakerPegPrice(order.symbol, 'SELL', currentPrice);
+                const sellParams = {
+                  symbol: order.symbol,
+                  side: 'SELL',
+                  type: 'LIMIT',
+                  quantity: sellQty,
+                  price: freshSlPrice
+                };
+                const sellResult = await this.placeOrderWithPrecisionRetry(sellParams);
 
                 if (sellResult && sellResult.orderId) {
+                  const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, freshSlPrice);
                   order.status = 'TRIGGERED';
-                  order.sellExecutionPrice = targetSlPrice;
-                  this.log(`[REAL] Stock Stop Loss Sell order executed! Order ID: ${sellResult.orderId}`, 'success', order.symbol);
+                  order.sellExecutionPrice = slFills.avgPrice || freshSlPrice;
+                  this.log(`[REAL] Stock Stop Loss Limit Sell order executed! Order ID: ${sellResult.orderId}. Avg Fill Price: ${order.sellExecutionPrice}`, 'success', order.symbol);
                   changed = true;
                   this.handleOrderCycleComplete(order);
                 }

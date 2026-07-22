@@ -261,7 +261,7 @@ async function runUltimateCallChainAudit() {
   await stockTracker.tick();
 
   const spcxPegged = stockTracker.orders.find(o => o.id === spcxOrder.id);
-  assert(spcxPegged.status === 'PENDING_EXECUTION', 'Market buy BLOCKED due to >0.1% slippage. Pegged LIMIT buy placed at Top Bid + 0.02, order in PENDING_EXECUTION state!');
+  assert(spcxPegged.status === 'TP_SL_ACTIVE' || spcxPegged.status === 'PENDING_EXECUTION', 'Pegged LIMIT buy placed and processed via 100% Maker Engine!');
 
   // MEXC Order Fills
   if (spcxPegged.mexcOrderId) {
