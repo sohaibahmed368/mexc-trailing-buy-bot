@@ -636,6 +636,14 @@ class StockOrderTracker {
                 if (result && result.orderId) {
                   order.mexcOrderId = result.orderId;
                   const fills = await this.waitForLimitOrderFill(order.symbol, result.orderId, 'BUY', buyQty, freshBuyPrice);
+                  if (!fills || !fills.filled || !fills.executedQty) {
+                    order.status = 'PENDING_ACTIVATION';
+                    order.error = 'Stock BUY order unfilled on MEXC after repeg shifts and fallback.';
+                    this.log(`[REAL] Stock BUY order failed to fill on MEXC. Aborting TP/SL placement.`, 'error', order.symbol);
+                    this.saveOrders();
+                    changed = true;
+                    continue;
+                  }
                   order.executionPrice = fills.avgPrice || freshBuyPrice;
                   order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
                   this.log(`[REAL] Stock Pegged Limit Buy order placed & processed! Order ID: ${result.orderId}. Avg Fill Price: ${order.executionPrice}`, 'success', order.symbol);

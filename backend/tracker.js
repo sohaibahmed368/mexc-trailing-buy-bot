@@ -871,6 +871,35 @@ class OrderTracker {
 
       // 1.5 Check TP/SL OCO checks if already bought and holding
       if (order.status === 'TP_SL_ACTIVE') {
+        // Automatic Ghost Order Self-Healing: Verify real MEXC balance for real trades
+        if (!order.dryRun) {
+          const now = Date.now();
+          if (!order.lastGhostCheckTime || (now - order.lastGhostCheckTime > 10000)) {
+            order.lastGhostCheckTime = now;
+            const asset = order.symbol.replace('USDT', '').toUpperCase();
+            try {
+              const balances = await this.mexcClient.getBalances();
+              const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+              const totalBal = assetBal ? ((parseFloat(assetBal.free) || 0) + (parseFloat(assetBal.locked) || 0)) : 0;
+              const expectedQty = order.quantity || (order.quoteOrderQty && order.executionPrice ? (order.quoteOrderQty / order.executionPrice) : 0);
+
+              if (expectedQty > 0 && totalBal < (expectedQty * 0.01)) {
+                this.log(`🚨 [GHOST ORDER DETECTED] ${order.symbol} status is TP_SL_ACTIVE but MEXC spot balance for ${asset} is ${totalBal.toFixed(4)}. Resetting order from TP_SL_ACTIVE to PENDING_ACTIVATION...`, 'warning', order.symbol);
+                order.status = 'PENDING_ACTIVATION';
+                order.executionPrice = null;
+                order.mexcOrderId = null;
+                order.mexcSellOrderId = null;
+                order.bottomPrice = null;
+                order.triggerPrice = null;
+                order.isSlExtended = false;
+                order.isSlProfitLocked = false;
+                order.lockedSlPrice = null;
+                this.saveOrders();
+                continue;
+              }
+            } catch (ghostErr) {}
+          }
+        }
             // Profit Lock Guard: Check if price reached 50% progress to Take Profit
         if (order.takeProfit && order.trailValue && !order.isSlProfitLocked && order.executionPrice) {
           const tpTargetProgress = order.takeProfit * 0.5;
