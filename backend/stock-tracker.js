@@ -110,28 +110,23 @@ class StockOrderTracker {
         const decimals = tick.toString().includes('.') ? tick.toString().split('.')[1].length : 2;
 
         if (side.toUpperCase() === 'BUY') {
-          // STRICT 100% MAKER BUY RULE: Join Buyer Queue at bestBid (< bestAsk strictly)
-          let pegPrice = bestBid;
-          if (pegPrice >= bestAsk) {
-            pegPrice = Math.max(0.00000001, bestAsk - tick);
-          }
+          // STRICT 100% MAKER BUY RULE: Join Buyer Queue 1 tick safely below bestAsk
+          let pegPrice = Math.min(bestBid, bestAsk - (tick * 2));
+          if (pegPrice <= 0) pegPrice = Math.max(0.00000001, bestBid);
           pegPrice = parseFloat(pegPrice.toFixed(decimals));
           if (pegPrice >= bestAsk) {
-            pegPrice = parseFloat(Math.max(0.00000001, bestAsk - tick).toFixed(decimals));
+            pegPrice = parseFloat(Math.max(0.00000001, bestAsk - (tick * 2)).toFixed(decimals));
           }
-          this.log(`[STOCK MAKER PEG BUY] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Guaranteed MAKER BUY Price: ${pegPrice} (<= Bid ${bestBid}, < Ask ${bestAsk} ✅)`, 'info', symbol);
+          this.log(`[STOCK MAKER PEG BUY] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Guaranteed MAKER BUY Price: ${pegPrice} (< Ask ${bestAsk} ✅)`, 'info', symbol);
           return pegPrice;
         } else {
-          // STRICT 100% MAKER SELL RULE: Join Seller Queue at bestAsk (> bestBid strictly)
-          let pegPrice = bestAsk;
-          if (pegPrice <= bestBid) {
-            pegPrice = bestBid + tick;
-          }
+          // STRICT 100% MAKER SELL RULE: Join Seller Queue 1 tick safely above bestBid
+          let pegPrice = Math.max(bestAsk, bestBid + (tick * 2));
           pegPrice = parseFloat(pegPrice.toFixed(decimals));
           if (pegPrice <= bestBid) {
-            pegPrice = parseFloat((bestBid + tick).toFixed(decimals));
+            pegPrice = parseFloat((bestBid + (tick * 2)).toFixed(decimals));
           }
-          this.log(`[STOCK MAKER PEG SELL] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Guaranteed MAKER SELL Price: ${pegPrice} (>= Ask ${bestAsk}, > Bid ${bestBid} ✅)`, 'info', symbol);
+          this.log(`[STOCK MAKER PEG SELL] Depth Best Bid: ${bestBid}, Best Ask: ${bestAsk} → Guaranteed MAKER SELL Price: ${pegPrice} (> Bid ${bestBid} ✅)`, 'info', symbol);
           return pegPrice;
         }
       }
