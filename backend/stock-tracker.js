@@ -137,12 +137,12 @@ class StockOrderTracker {
   }
 
   /**
-   * 100% MAKER RE-PEG ENGINE (NO MARKET FALLBACK EVER)
-   * Continuously polls and re-pegs Stock LIMIT orders every 1.5s (1500ms order stay window) to top of orderbook
-   * strictly maintaining BUY <= Best Bid and SELL >= Best Ask for 0% Maker fees.
-   * Gives market takers sufficient time to hit passive limit orders while maintaining low API load.
+   * 100% MAKER RE-PEG ENGINE FOR LOW-LIQUIDITY ASSETS (NO MARKET FALLBACK EVER)
+   * Continuously polls and re-pegs Stock LIMIT orders every 10s (10000ms order stay window) to top of orderbook
+   * strictly maintaining BUY <= Best Bid and SELL >= Best Ask for 0% Maker fees (Top Buyer / Top Seller Green Badge).
+   * Gives low-liquidity market takers sufficient time (10s) to hit passive limit orders while preserving queue priority.
    */
-  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 300000, pollMs = 1500) {
+  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 300000, pollMs = 10000) {
     const startTime = Date.now();
     let attempts = 0;
     let currentOrderId = orderId;
@@ -638,7 +638,7 @@ class StockOrderTracker {
 
                 if (result && result.orderId) {
                   order.mexcOrderId = result.orderId;
-                  const fills = await this.waitForLimitOrderFill(order.symbol, result.orderId, 'BUY', buyQty, freshBuyPrice);
+                  const fills = await this.waitForLimitOrderFill(order.symbol, result.orderId, 'BUY', buyQty, freshBuyPrice, 300000, 10000);
                   if (!fills || !fills.filled || !fills.executedQty) {
                     order.status = 'PENDING_ACTIVATION';
                     order.error = 'Stock BUY order unfilled on MEXC after repeg shifts and fallback.';
@@ -797,7 +797,7 @@ class StockOrderTracker {
                 const sellResult = await this.placeOrderWithPrecisionRetry(sellParams);
 
                 if (sellResult && sellResult.orderId) {
-                  const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, freshSlPrice);
+                  const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, freshSlPrice, 300000, 10000);
                   if (!slFills || !slFills.filled) {
                     this.log(`[REAL] Stock Stop Loss LIMIT Sell order ${sellResult.orderId} not yet filled. Retaining active state for continuous depth re-pegging...`, 'warning', order.symbol);
                     order.status = 'TP_SL_ACTIVE';
