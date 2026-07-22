@@ -29,15 +29,17 @@ class TokenizedStocksMockMexcClient {
   }
 
   async getOrder(symbol, orderId) {
-    const status = this.fillStatusMap[orderId] || 'NEW';
+    // Fill order on first status query
+    this.fillStatusMap[orderId] = 'FILLED';
+    const status = 'FILLED';
     const price = await this.getTickerPrice(symbol);
     return {
       symbol,
       orderId,
       price: price.toString(),
       origQty: "1.0",
-      executedQty: status === 'FILLED' ? "1.0" : "0.0",
-      cummulativeQuoteQty: status === 'FILLED' ? price.toString() : "0.0",
+      executedQty: "1.0",
+      cummulativeQuoteQty: price.toString(),
       status
     };
   }
