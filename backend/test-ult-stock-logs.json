@@ -1,57 +1,183 @@
 [
   {
-    "id": "1784669427035415",
-    "timestamp": "2026-07-21T21:30:27.035Z",
+    "id": "1784680892769453",
+    "timestamp": "2026-07-22T00:41:32.769Z",
     "message": "Activation price hit (125.5 <= 128.52). Status set to RUNNING. Initial bottom: 125.5",
     "type": "info",
     "symbol": "SPCXONUSDT"
   },
   {
-    "id": "1784669426094674",
-    "timestamp": "2026-07-21T21:30:26.094Z",
-    "message": "Stock Bot Cycle #1 completed (TAKE_PROFIT). Resetting order to pending activation. New peak: 130.52, Activation price: 128.52",
+    "id": "1784680892297347",
+    "timestamp": "2026-07-22T00:41:32.297Z",
+    "message": "Stock Bot Cycle #1 completed (STOP_LOSS). Resetting order to pending activation. New peak: 130.52, Activation price: 128.52",
     "type": "success",
     "symbol": "SPCXONUSDT"
   },
   {
-    "id": "1784669426064366",
-    "timestamp": "2026-07-21T21:30:26.064Z",
-    "message": "🎉 [REAL] Pegged Limit Buy order ult_ord_1 FILLED at 125.52 USDT! Transitioning to TP_SL_ACTIVE state.",
+    "id": "1784680892293457",
+    "timestamp": "2026-07-22T00:41:32.293Z",
+    "message": "[REAL] Stock Pegged Limit Buy order placed & processed! Order ID: ult_ord_1. Avg Fill Price: 125.121",
     "type": "success",
     "symbol": "SPCXONUSDT"
   },
   {
-    "id": "1784669426039239",
-    "timestamp": "2026-07-21T21:30:26.039Z",
-    "message": "[REAL] Pegged Limit Buy order placed! Order ID: ult_ord_1. Status set to PENDING_EXECUTION (Waiting for limit buy order fill)...",
+    "id": "1784680892292414",
+    "timestamp": "2026-07-22T00:41:32.292Z",
+    "message": "[STOCK LIMIT→MARKET] Fallback MARKET BUY placed. Order ID: ult_ord_6",
+    "type": "success",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680891972783",
+    "timestamp": "2026-07-22T00:41:31.972Z",
+    "message": "[STOCK LIMIT] Cancelled unfilled order ult_ord_5.",
     "type": "info",
     "symbol": "SPCXONUSDT"
   },
   {
-    "id": "1784669426037853",
-    "timestamp": "2026-07-21T21:30:26.037Z",
-    "message": "⚠️ [MAX SLIPPAGE GUARD] Market Buy Slippage (999.00% > 0.1%) too high! BLOCKING MARKET DUMP. Top Bid: 125.3700 USDT. Placing Pegged Limit Buy Order at 125.3900 USDT (+0.02 front-of-queue)...",
+    "id": "1784680891971723",
+    "timestamp": "2026-07-22T00:41:31.971Z",
+    "message": "[STOCK MAKER LIMIT] Order ult_ord_5 not filled after 6s. Cancelling and placing MARKET BUY fallback with precision retry...",
     "type": "warning",
     "symbol": "SPCXONUSDT"
   },
   {
-    "id": "1784669426036505",
-    "timestamp": "2026-07-21T21:30:26.036Z",
-    "message": "Placing Stock BUY order on MEXC for SPCXONUSDT...",
+    "id": "1784680891969575",
+    "timestamp": "2026-07-22T00:41:31.969Z",
+    "message": "[STOCK MAKER RE-PEG] Placed NEW BUY LIMIT order ult_ord_5 at updated price 125.121 USDT",
     "type": "info",
     "symbol": "SPCXONUSDT"
   },
   {
-    "id": "1784669426032014",
-    "timestamp": "2026-07-21T21:30:26.032Z",
+    "id": "1784680891947630",
+    "timestamp": "2026-07-22T00:41:31.947Z",
+    "message": "[STOCK MAKER PEG BUY] Depth Best Bid: 125.37, Best Ask: 125.63 → Pegged BUY Price: 125.121 (< Ask 125.63 ✅)",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680891946855",
+    "timestamp": "2026-07-22T00:41:31.946Z",
+    "message": "[STOCK MAKER RE-PEG] Cancelled unfilled order ult_ord_4 to shift peg.",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680891945191",
+    "timestamp": "2026-07-22T00:41:31.945Z",
+    "message": "[STOCK MAKER PEG LOG] Check #4 (1.5s elapsed): Stock Order ult_ord_4 is UNFILLED at price 125.121. Re-pegging to fresh depth...",
+    "type": "warning",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680890421786",
+    "timestamp": "2026-07-22T00:41:30.421Z",
+    "message": "[STOCK MAKER RE-PEG] Placed NEW BUY LIMIT order ult_ord_4 at updated price 125.121 USDT",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680890396878",
+    "timestamp": "2026-07-22T00:41:30.396Z",
+    "message": "[STOCK MAKER PEG BUY] Depth Best Bid: 125.37, Best Ask: 125.63 → Pegged BUY Price: 125.121 (< Ask 125.63 ✅)",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680890395297",
+    "timestamp": "2026-07-22T00:41:30.395Z",
+    "message": "[STOCK MAKER RE-PEG] Cancelled unfilled order ult_ord_3 to shift peg.",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680890394116",
+    "timestamp": "2026-07-22T00:41:30.394Z",
+    "message": "[STOCK MAKER PEG LOG] Check #3 (1.5s elapsed): Stock Order ult_ord_3 is UNFILLED at price 125.121. Re-pegging to fresh depth...",
+    "type": "warning",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680888873457",
+    "timestamp": "2026-07-22T00:41:28.873Z",
+    "message": "[STOCK MAKER RE-PEG] Placed NEW BUY LIMIT order ult_ord_3 at updated price 125.121 USDT",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680888850950",
+    "timestamp": "2026-07-22T00:41:28.850Z",
+    "message": "[STOCK MAKER PEG BUY] Depth Best Bid: 125.37, Best Ask: 125.63 → Pegged BUY Price: 125.121 (< Ask 125.63 ✅)",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680888848505",
+    "timestamp": "2026-07-22T00:41:28.848Z",
+    "message": "[STOCK MAKER RE-PEG] Cancelled unfilled order ult_ord_2 to shift peg.",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680888846616",
+    "timestamp": "2026-07-22T00:41:28.847Z",
+    "message": "[STOCK MAKER PEG LOG] Check #2 (1.5s elapsed): Stock Order ult_ord_2 is UNFILLED at price 125.121. Re-pegging to fresh depth...",
+    "type": "warning",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680887321779",
+    "timestamp": "2026-07-22T00:41:27.321Z",
+    "message": "[STOCK MAKER RE-PEG] Placed NEW BUY LIMIT order ult_ord_2 at updated price 125.121 USDT",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680887298618",
+    "timestamp": "2026-07-22T00:41:27.298Z",
+    "message": "[STOCK MAKER PEG BUY] Depth Best Bid: 125.37, Best Ask: 125.63 → Pegged BUY Price: 125.121 (< Ask 125.63 ✅)",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680887297103",
+    "timestamp": "2026-07-22T00:41:27.297Z",
+    "message": "[STOCK MAKER RE-PEG] Cancelled unfilled order ult_ord_1 to shift peg.",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680887296159",
+    "timestamp": "2026-07-22T00:41:27.296Z",
+    "message": "[STOCK MAKER PEG LOG] Check #1 (1.5s elapsed): Stock Order ult_ord_1 is UNFILLED at price 125.121. Re-pegging to fresh depth...",
+    "type": "warning",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680885789366",
+    "timestamp": "2026-07-22T00:41:25.789Z",
+    "message": "[STOCK MAKER PEG BUY] Depth Best Bid: 125.37, Best Ask: 125.63 → Pegged BUY Price: 125.121 (< Ask 125.63 ✅)",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680885765222",
+    "timestamp": "2026-07-22T00:41:25.765Z",
+    "message": "Placing Stock LIMIT BUY order at Pegged Depth Price on MEXC for SPCXONUSDT...",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1784680885760575",
+    "timestamp": "2026-07-22T00:41:25.760Z",
     "message": "Stock Bot Order tracking loop started.",
     "type": "info",
     "symbol": null
   },
   {
-    "id": "1784669426030908",
-    "timestamp": "2026-07-21T21:30:26.030Z",
-    "message": "New Stock Bot order created for SPCXONUSDT (Max Slippage: 0.1%)",
+    "id": "1784680885757483",
+    "timestamp": "2026-07-22T00:41:25.757Z",
+    "message": "New Stock Bot order created for SPCXONUSDT (0% Maker Pegging Engine)",
     "type": "info",
     "symbol": "SPCXONUSDT"
   }

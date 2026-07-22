@@ -1,6 +1,6 @@
 [
   {
-    "id": "1784669426028",
+    "id": "1784680885754",
     "symbol": "SPCXONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -15,7 +15,6 @@
     "filterRsi": false,
     "autoRepeat": true,
     "activationOffset": null,
-    "maxSlippagePct": 0.1,
     "isStockBot": true,
     "status": "RUNNING",
     "dryRun": false,
@@ -27,21 +26,21 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "ult_ord_1",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-21T21:30:26.028Z",
-    "totalNetProfit": 9.895584000000014,
+    "createdAt": "2026-07-22T00:41:25.754Z",
+    "totalNetProfit": 10.79800000000003,
     "tradeHistory": [
       {
         "cycle": 1,
-        "buyPrice": 125.52,
+        "buyPrice": 125.121,
         "sellPrice": 130.52,
-        "grossProfitUsdt": 10.000000000000028,
+        "grossProfitUsdt": 10.79800000000003,
         "mexcBuyFeeUsdt": 0,
-        "mexcSellFeeUsdt": 0.10441600000000001,
-        "totalMexcFeesUsdt": 0.10441600000000001,
-        "profit": 4.947792000000007,
-        "profitUsdt": 9.895584000000014,
-        "type": "TAKE_PROFIT",
-        "timestamp": "2026-07-21T21:30:26.094Z"
+        "mexcSellFeeUsdt": 0,
+        "totalMexcFeesUsdt": 0,
+        "profit": 5.399000000000015,
+        "profitUsdt": 10.79800000000003,
+        "type": "STOP_LOSS",
+        "timestamp": "2026-07-22T00:41:32.297Z"
       }
     ],
     "isSlExtended": false,
@@ -50,6 +49,6 @@
     "currentPrice": 125.5,
     "sellTriggeredAt": null,
     "triggeredAt": null,
-    "activatedAt": "2026-07-21T21:30:27.035Z"
+    "activatedAt": "2026-07-22T00:41:32.769Z"
   }
 ]

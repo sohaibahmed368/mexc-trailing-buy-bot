@@ -102,7 +102,7 @@ async function runMasterAudit() {
   // State mutations check
   assert(tpOrder.status === 'PENDING_ACTIVATION', 'Status mutated to PENDING_ACTIVATION');
   assert(tpOrder.peakPrice === 170, 'peakPrice updated to sell price 170');
-  assert(tpOrder.activationPrice === 165, 'activationPrice recalculated (170 - 5 = 165)');
+  assert(Math.abs(tpOrder.activationPrice - 161.5) < 0.01, 'activationPrice recalculated (5% dip from 170 = 161.5)');
   assert(tpOrder.executionPrice === null, 'executionPrice reset to null');
   assert(tpOrder.mexcOrderId === null, 'mexcOrderId reset to null');
 

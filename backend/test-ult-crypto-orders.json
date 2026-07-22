@@ -1,6 +1,6 @@
 [
   {
-    "id": "ord_1784669425843_rbfyj",
+    "id": "ord_1784678058283_hhuex",
     "symbol": "ETHUSDT",
     "trailValue": 10,
     "quantity": null,
@@ -10,7 +10,7 @@
     "status": "RUNNING",
     "activationPrice": 1930,
     "activationDirection": null,
-    "activatedAt": "2026-07-21T21:30:26.661Z",
+    "activatedAt": "2026-07-21T23:54:19.153Z",
     "takeProfit": 100,
     "stopLoss": 50,
     "filterSmartSl": true,
@@ -41,14 +41,14 @@
         "profit": -70,
         "profitUsdt": -35,
         "type": "STOP_LOSS",
-        "timestamp": "2026-07-21T21:30:25.992Z"
+        "timestamp": "2026-07-21T23:54:18.392Z"
       }
     ],
     "initialPrice": 2000,
     "bottomPrice": 1920,
     "triggerPrice": 1930,
     "currentPrice": 1920,
-    "createdAt": "2026-07-21T21:30:25.843Z",
+    "createdAt": "2026-07-21T23:54:18.283Z",
     "triggeredAt": null,
     "mexcOrderId": null,
     "executionPrice": null,
@@ -56,7 +56,7 @@
     "localBottom": 1930
   },
   {
-    "id": "ord_1784669425632_his3p",
+    "id": "ord_1784678058129_v7q8u",
     "symbol": "SOLUSDT",
     "trailValue": 2,
     "quantity": null,
@@ -66,7 +66,7 @@
     "status": "TP_SL_ACTIVE",
     "activationPrice": 172,
     "activationDirection": "DOWN",
-    "activatedAt": "2026-07-21T21:30:25.666Z",
+    "activatedAt": "2026-07-21T23:54:18.157Z",
     "takeProfit": 10,
     "stopLoss": 5,
     "filterSmartSl": false,
@@ -90,11 +90,11 @@
     "bottomPrice": 135,
     "triggerPrice": 137,
     "currentPrice": 146,
-    "createdAt": "2026-07-21T21:30:25.632Z",
-    "triggeredAt": "2026-07-21T21:30:25.721Z",
+    "createdAt": "2026-07-21T23:54:18.129Z",
+    "triggeredAt": "2026-07-21T23:54:18.199Z",
     "mexcOrderId": null,
     "executionPrice": 140.5,
     "error": null,
-    "lastFilterFailLogTime": 1784669425697
+    "lastFilterFailLogTime": 1784678058178
   }
 ]

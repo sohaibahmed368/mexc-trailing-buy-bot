@@ -170,6 +170,11 @@ export default function App() {
       });
     });
 
+    // Live fee update: emitted by backend after every real TP/SL cycle completes
+    socket.on('fees_update', (updatedFees: FeeSummary) => {
+      setTotalMexcFeesPaid(updatedFees);
+    });
+
     // Check configuration and fetch initial balances
     fetchConfig().then((hasCreds) => {
       if (hasCreds) {

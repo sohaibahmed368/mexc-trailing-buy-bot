@@ -832,7 +832,10 @@ class StockOrderTracker {
               if (isSellerExhausted) {
                 order.isSlExtended = true;
                 order.status = 'TP_SL_ACTIVE'; // Revert back to active for extended trailing
-                this.log(`🛡️ [SMART SL GUARD] Stock Bids Support ${bidsRatioPct}% >= 45%. Extending SL by +$${order.slBuffer}. Sell DEFERRED!`, 'success', order.symbol);
+                const bufferDollar = (order.slBuffer / 100) * order.executionPrice;
+                const oldSlTarget = targetSlPrice.toFixed(4);
+                const newSlTarget = (targetSlPrice - bufferDollar).toFixed(4);
+                this.log(`🛡️ [SMART SL GUARD] Stock Bids Support ${bidsRatioPct}% >= 45%. Extending SL by +${order.slBuffer}% buffer (+$${bufferDollar.toFixed(4)} USDT). (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Sell DEFERRED!`, 'success', order.symbol);
                 changed = true;
                 continue;
               }

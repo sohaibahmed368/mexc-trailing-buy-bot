@@ -981,10 +981,11 @@ class OrderTracker {
             if (isSellerExhausted) {
               order.isSlExtended = true;
               order.status = 'TP_SL_ACTIVE'; // Revert back to active state for extended tracking!
+              const bufferDollar = (order.slBuffer / 100) * order.executionPrice;
               const oldSlTarget = targetSlPrice.toFixed(4);
-              const newSlTarget = (targetSlPrice - order.slBuffer).toFixed(4);
+              const newSlTarget = (targetSlPrice - bufferDollar).toFixed(4);
               this.log(
-                `🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support ${bidsRatioPct}% >= 45% (Buyers absorbing dip). Extending Stop Loss by +$${order.slBuffer} buffer. (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Market sell DEFERRED, waiting for bounce!`,
+                `🛡️ [SMART SL GUARD] Seller exhaustion confirmed! Bids Support ${bidsRatioPct}% >= 45% (Buyers absorbing dip). Extending Stop Loss by +${order.slBuffer}% buffer (+$${bufferDollar.toFixed(4)} USDT). (Old SL: ${oldSlTarget}, Extended SL: ${newSlTarget}). Market sell DEFERRED, waiting for bounce!`,
                 'success',
                 order.symbol
               );

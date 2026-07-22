@@ -148,7 +148,7 @@ async function runDualModelAudit() {
   assert(stockOrder.totalNetProfit === 20, 'Stock totalNetProfit mutated correctly');
   assert(stockOrder.status === 'PENDING_ACTIVATION', 'Stock status reset to PENDING_ACTIVATION');
   assert(stockOrder.peakPrice === 27.0, 'Stock peakPrice updated to 27.0');
-  assert(stockOrder.activationPrice === 26.5, 'Stock activationPrice updated to 26.5');
+  assert(Math.abs(stockOrder.activationPrice - 26.46) < 0.01, 'Stock activationPrice updated to 26.46 (2% dip offset from 27.0)');
   assert(stockOrder.executionPrice === null, 'Stock executionPrice reset to null');
   assert(stockOrder.mexcOrderId === null, 'Stock mexcOrderId reset to null');
   assert(stockOrder.mexcSellOrderId === null, 'Stock mexcSellOrderId reset to null');
