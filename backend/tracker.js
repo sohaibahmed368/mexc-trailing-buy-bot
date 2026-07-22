@@ -24,52 +24,76 @@ class OrderTracker {
       return this.cachedFeeSummary;
     }
 
-    let totalUsdtFees = 0;
-    let totalMxFees = 0;
-    let feeCount = 0;
+    if (!this.mexcClient || !this.mexcClient.hasCredentials()) {
+      return this.cachedFeeSummary || { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
+    }
 
-    // Calculate total fees strictly from bot's own executed trade history (all order types)
-    (this.orders || []).forEach(o => {
-      if (!Array.isArray(o.tradeHistory) || o.tradeHistory.length === 0) return;
-      // Only count REAL (non-dryRun) orders
-      if (o.dryRun) return;
-
-      o.tradeHistory.forEach(t => {
-        // New-style records with explicit fee fields
-        if (typeof t.totalMexcFeesUsdt === 'number') {
-          if (t.totalMexcFeesUsdt > 0) {
-            totalUsdtFees += t.totalMexcFeesUsdt;
-            feeCount++;
-          }
-        } else if (typeof t.mexcBuyFeeUsdt === 'number' || typeof t.mexcSellFeeUsdt === 'number') {
-          const sum = (t.mexcBuyFeeUsdt || 0) + (t.mexcSellFeeUsdt || 0);
-          if (sum > 0) {
-            totalUsdtFees += sum;
-            feeCount++;
-          }
-        }
-        // Old-style records without fee fields: skip (no reliable fee data)
-      });
-    });
-
-    let mxPrice = 1.65;
     try {
-      if (this.mexcClient && this.mexcClient.hasCredentials()) {
+      // Collect all unique symbols ever tracked by this bot (from all orders - active + history)
+      const symbolsToCheck = new Set();
+      (this.orders || []).forEach(o => {
+        if (o.symbol && !o.dryRun) symbolsToCheck.add(o.symbol.toUpperCase());
+      });
+
+      // If no bot symbols found, nothing to count
+      if (symbolsToCheck.size === 0) {
+        return this.cachedFeeSummary || { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
+      }
+
+      let totalUsdtFees = 0;
+      let totalMxFees = 0;
+      let feeCount = 0;
+
+      // Fetch actual trade history from MEXC for every symbol this bot has ever traded
+      for (const symbol of symbolsToCheck) {
+        try {
+          const trades = await this.mexcClient.getMyTrades(symbol, 1000);
+          if (Array.isArray(trades)) {
+            trades.forEach(t => {
+              const fee = parseFloat(t.commission || 0);
+              const fa = (t.commissionAsset || '').toUpperCase();
+              if (fee > 0) {
+                feeCount++;
+                if (fa === 'USDT') totalUsdtFees += fee;
+                else if (fa === 'MX') totalMxFees += fee;
+                // Maker orders charged in quote/base coin — also captured above
+              }
+            });
+          }
+        } catch (e) {
+          // Symbol not traded yet or API error — skip silently
+        }
+      }
+
+      let mxPrice = 1.65;
+      try {
         const p = await this.mexcClient.getTickerPrice('MXUSDT');
         if (p) mxPrice = parseFloat(p);
-      }
-    } catch(e) {}
+      } catch(e) {}
 
-    const totalFeesInUsdt = totalUsdtFees + (totalMxFees * mxPrice);
+      const totalFeesInUsdt = totalUsdtFees + (totalMxFees * mxPrice);
 
-    this.cachedFeeSummary = {
-      usdtFees: parseFloat(totalUsdtFees.toFixed(4)),
-      mxFees: parseFloat(totalMxFees.toFixed(4)),
-      totalFeesInUsdt: parseFloat(totalFeesInUsdt.toFixed(4)),
-      feeCount
-    };
-    this.lastFeeCheckTime = now;
-    return this.cachedFeeSummary;
+      this.cachedFeeSummary = {
+        usdtFees: parseFloat(totalUsdtFees.toFixed(4)),
+        mxFees: parseFloat(totalMxFees.toFixed(4)),
+        totalFeesInUsdt: parseFloat(totalFeesInUsdt.toFixed(4)),
+        feeCount
+      };
+      this.lastFeeCheckTime = now;
+      return this.cachedFeeSummary;
+    } catch (err) {
+      return this.cachedFeeSummary || { usdtFees: 0, mxFees: 0, totalFeesInUsdt: 0, feeCount: 0 };
+    }
+  }
+
+  // Emit live fee update to all connected frontend clients after a cycle completes
+  async emitFeesUpdate() {
+    try {
+      const fees = await this.getTotalMexcFeesPaid(true);
+      this.io.emit('fees_update', fees);
+    } catch (e) {
+      // Non-critical — frontend will get fees on next balance refresh
+    }
   }
 
   // Ensure storage directories and files exist
@@ -1482,6 +1506,11 @@ class OrderTracker {
       order.symbol
     );
     this.saveOrders();
+
+    // Push live fee update to frontend in background (non-blocking)
+    if (!order.dryRun) {
+      this.emitFeesUpdate();
+    }
   }
 
   // Update polling interval dynamically if needed
