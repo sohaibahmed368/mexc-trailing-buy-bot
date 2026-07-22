@@ -73,8 +73,6 @@ export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, on
           Math.min(100, (priceDiff / triggerDiff) * 100)
         );
 
-        const currentSlOffset = order.isSlExtended ? (order.stopLoss! + (order.slBuffer || 0)) : order.stopLoss;
-
         const cumulativeProfit = (order.tradeHistory && order.tradeHistory.length > 0)
           ? order.tradeHistory.reduce((acc: number, t: any) => {
               if (typeof t.profitUsdt === 'number') return acc + t.profitUsdt;
@@ -110,9 +108,26 @@ export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, on
                 <span className={`order-mode ${order.dryRun ? 'dry' : 'real'}`}>
                   {order.dryRun ? 'Simulation' : 'Live Trade'}
                 </span>
-                <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--color-cyan)', fontWeight: 600, border: '1px solid rgba(0, 242, 254, 0.3)' }}>
-                  Slippage &le; {order.maxSlippagePct || 0.5}%
-                </span>
+                {order.filterObi && (
+                  <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--color-cyan)', fontWeight: 600, border: '1px solid rgba(0, 242, 254, 0.3)' }}>
+                    OBI 📊
+                  </span>
+                )}
+                {order.filterVolumeSpike && (
+                  <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(255, 179, 0, 0.15)', color: 'var(--color-gold)', fontWeight: 600, border: '1px solid rgba(255, 179, 0, 0.3)' }}>
+                    VOL 📈
+                  </span>
+                )}
+                {order.filterRsi && (
+                  <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(155, 93, 229, 0.15)', color: '#b388ff', fontWeight: 600, border: '1px solid rgba(155, 93, 229, 0.3)' }}>
+                    RSI 📉
+                  </span>
+                )}
+                {order.filterSmartSl && (
+                  <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'rgba(0, 230, 118, 0.15)', color: 'var(--color-green)', fontWeight: 600, border: '1px solid rgba(0, 230, 118, 0.3)' }}>
+                    Smart SL 🛡️
+                  </span>
+                )}
               </div>
               <span className={`status-badge ${order.status === 'PENDING_ACTIVATION' ? 'cancelled' : 'running'}`} style={
                 order.status === 'PENDING_ACTIVATION' 
@@ -197,8 +212,8 @@ export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, on
                     <span>Take Profit Target:</span>
                     <strong style={{ color: 'var(--color-green)' }}>
                       {order.executionPrice 
-                        ? `$${fmtPrice(order.executionPrice + order.takeProfit)}` 
-                        : `Buy Price + ${fmtPrice(order.takeProfit)}`}
+                        ? `$${fmtPrice(order.executionPrice * (1 + order.takeProfit / 100))} (+${order.takeProfit}%)` 
+                        : `Buy Price + ${order.takeProfit}%`}
                     </strong>
                   </div>
                 )}
@@ -210,19 +225,19 @@ export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, on
                         {order.executionPrice 
                           ? `$${fmtPrice(
                               order.isSlProfitLocked && order.lockedSlPrice
-                                ? (order.isSlExtended && order.slBuffer ? order.lockedSlPrice - order.slBuffer : order.lockedSlPrice)
-                                : (order.executionPrice - currentSlOffset!)
-                            )}` 
-                          : `Buy Price - ${fmtPrice(currentSlOffset!)}`}
+                                ? (order.isSlExtended && order.slBuffer ? order.lockedSlPrice - ((order.slBuffer / 100) * order.executionPrice) : order.lockedSlPrice)
+                                : (order.executionPrice * (1 - order.stopLoss / 100))
+                            )} (-${order.stopLoss}%)` 
+                          : `Buy Price - ${order.stopLoss}%`}
                       </strong>
                       {order.isSlProfitLocked && (
                         <div style={{ fontSize: '0.7rem', color: 'var(--color-cyan)', fontWeight: 600 }}>
-                          🔒 Profit Lock Active (+${fmtPrice(order.trailValue * 2)} USDT)
+                          🔒 Profit Lock Active (+${fmtPrice((order.trailValue * 2 / 100) * (order.executionPrice || 100))} | +{(order.trailValue * 2).toFixed(2)}%)
                         </div>
                       )}
                       {order.filterSmartSl && (
                         <div style={{ fontSize: '0.7rem', color: 'var(--color-green)', fontWeight: 500 }}>
-                          🛡️ Smart Guard Active (+${fmtPrice(order.slBuffer || 2)} Buffer)
+                          🛡️ Smart Guard Active (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +{order.slBuffer || 0.15}% Buffer)
                         </div>
                       )}
                     </div>

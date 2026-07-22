@@ -83,8 +83,6 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
           Math.min(100, (priceDiff / triggerDiff) * 100)
         );
 
-        const currentSlOffset = order.isSlExtended ? ((order.stopLoss || 0) + (order.slBuffer || 0)) : (order.stopLoss || 0);
-
         const cumulativeProfit = (order.tradeHistory && order.tradeHistory.length > 0)
           ? order.tradeHistory.reduce((acc: number, t: any) => {
               if (typeof t.profitUsdt === 'number') return acc + t.profitUsdt;
@@ -200,8 +198,8 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                     <span>Take Profit Target:</span>
                     <strong style={{ color: 'var(--color-green)' }}>
                       {order.executionPrice 
-                        ? `$${fmtPrice(order.executionPrice + order.takeProfit)}` 
-                        : `Buy Price + ${fmtPrice(order.takeProfit)}`}
+                        ? `$${fmtPrice(order.executionPrice * (1 + order.takeProfit / 100))} (+${order.takeProfit}%)` 
+                        : `Buy Price + ${order.takeProfit}%`}
                     </strong>
                   </div>
                 )}
@@ -213,19 +211,19 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                         {order.executionPrice 
                           ? `$${fmtPrice(
                               order.isSlProfitLocked && order.lockedSlPrice
-                                ? (order.isSlExtended && order.slBuffer ? order.lockedSlPrice - order.slBuffer : order.lockedSlPrice)
-                                : (order.executionPrice - currentSlOffset!)
-                            )}` 
-                          : `Buy Price - ${fmtPrice(currentSlOffset!)}`}
+                                ? (order.isSlExtended && order.slBuffer ? order.lockedSlPrice - ((order.slBuffer / 100) * order.executionPrice) : order.lockedSlPrice)
+                                : (order.executionPrice * (1 - order.stopLoss / 100))
+                            )} (-${order.stopLoss}%)` 
+                          : `Buy Price - ${order.stopLoss}%`}
                       </strong>
                       {order.isSlProfitLocked && (
                         <div style={{ fontSize: '0.7rem', color: 'var(--color-cyan)', fontWeight: 600 }}>
-                          🔒 Profit Lock Active (+${fmtPrice(order.trailValue * 2)} USDT)
+                          🔒 Profit Lock Active (+${fmtPrice((order.trailValue * 2 / 100) * (order.executionPrice || 100))} | +{(order.trailValue * 2).toFixed(2)}%)
                         </div>
                       )}
                       {order.filterSmartSl && (
                         <div style={{ fontSize: '0.7rem', color: 'var(--color-green)', fontWeight: 500 }}>
-                          🛡️ Smart Guard Active (+${fmtPrice(order.slBuffer || 2)} Buffer)
+                          🛡️ Smart Guard Active (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +{order.slBuffer || 0.15}% Buffer)
                         </div>
                       )}
                     </div>
@@ -244,7 +242,7 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                 )}
                 {order.filterSmartSl && (
                   <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: 'rgba(0, 230, 118, 0.12)', color: 'var(--color-green)', border: '1px solid rgba(0, 230, 118, 0.3)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                    🛡️ Smart SL Guard Active (Buffer: +${fmtPrice(order.slBuffer || 2)} USDT)
+                    🛡️ Smart SL Guard Active (Buffer: +{order.slBuffer || 0.15}%)
                   </span>
                 )}
                 {order.filterObi && (
@@ -287,7 +285,7 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
               </div>
               <div className="price-card trail">
                 <span className="price-label">Trail Value</span>
-                <span className="price-value">+${fmtPrice(order.trailValue)}</span>
+                <span className="price-value">+{order.trailValue}%</span>
               </div>
             </div>
 
