@@ -831,18 +831,21 @@ class StockOrderTracker {
 
   // Handle cycle completion, trade recording, and auto-repeat re-activation with exact MEXC Fee Deduction
   async handleOrderCycleComplete(order) {
-    if (order.status === 'TRIGGERED' && order.autoRepeat) {
-      const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
-      const buyPrice = order.executionPrice;
-      const sellPrice = order.sellExecutionPrice || order.currentPrice;
-      const qty = order.quantity || (order.quoteOrderQty && buyPrice > 0 ? (order.quoteOrderQty / buyPrice) : 1);
+    if (!order.autoRepeat) {
+      return;
+    }
 
-      let type = 'MANUAL_SELL';
-      if (order.takeProfit && Math.abs(sellPrice - (buyPrice + order.takeProfit)) < 0.0001) {
-        type = 'TAKE_PROFIT';
-      } else if (order.stopLoss) {
-        type = 'STOP_LOSS';
-      }
+    const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
+    const buyPrice = order.executionPrice || 0;
+    const sellPrice = order.sellExecutionPrice || order.currentPrice || 0;
+    const qty = order.quantity || (order.quoteOrderQty && buyPrice > 0 ? (order.quoteOrderQty / buyPrice) : 1);
+
+    let type = 'MANUAL_SELL';
+    if (order.takeProfit && sellPrice >= (buyPrice + order.takeProfit - 0.0001)) {
+      type = 'TAKE_PROFIT';
+    } else if (order.isSlProfitLocked || (order.stopLoss && sellPrice <= (buyPrice - order.stopLoss + 0.0001))) {
+      type = 'STOP_LOSS';
+    }
 
       // Account Specific Fee Rates (User Account: Taker = 0.0% promotion, Maker = 0.04% MX Token Discount)
       let accountFees = { makerCommission: 0.0004, takerCommission: 0.0000 };
@@ -900,6 +903,7 @@ class StockOrderTracker {
 
       order.bottomPrice = null;
       order.triggerPrice = null;
+      order.mexcOrderId = null;
       order.executionPrice = null;
       order.mexcSellOrderId = null;
       order.sellExecutionPrice = null;
@@ -917,7 +921,6 @@ class StockOrderTracker {
         order.symbol
       );
       this.saveOrders();
-    }
   }
 }
 
