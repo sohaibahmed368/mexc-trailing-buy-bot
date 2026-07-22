@@ -11,7 +11,7 @@ class OrderTracker {
     this.orders = [];
     this.logs = [];
     this.intervalId = null;
-    this.pollInterval = 1500; // 1.5 seconds polling interval
+    this.pollInterval = 1800; // 1.8 seconds interval (within 1.5s - 2.0s user range)
     this.cachedFeeSummary = null;
     this.lastFeeCheckTime = 0;
     
@@ -1014,11 +1014,10 @@ class OrderTracker {
                 this.log(`[REAL] Stop Loss balance query failed: ${balErr.message}. Falling back to estimated quantity.`, 'warning', order.symbol);
               }
 
-              // Place LIMIT SELL at FRESH live market price for 0% Maker fee
+              // IMMEDIATE MARKET SELL FOR STOP LOSS (Protects capital instantly during market crash / SL extension hit)
               let sellResult = null;
               const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
               let lastErr = null;
-              const slSellPrice = freshSlPrice; // LIMIT SELL at FRESH live market price
 
               for (const mult of decimalsToTry) {
                 const qtyToTry = Math.floor(sellQty * mult) / mult;
@@ -1027,13 +1026,12 @@ class OrderTracker {
                   const sellParams = {
                     symbol: order.symbol,
                     side: 'SELL',
-                    type: 'LIMIT',
-                    quantity: qtyToTry,
-                    price: slSellPrice
+                    type: 'MARKET',
+                    quantity: qtyToTry
                   };
                   sellResult = await this.mexcClient.placeOrder(sellParams);
                   if (sellResult && sellResult.orderId) {
-                    this.log(`[REAL] Stop Loss LIMIT Sell placed! Qty: ${qtyToTry}, Price: ${slSellPrice}, Order ID: ${sellResult.orderId}`, 'success', order.symbol);
+                    this.log(`🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for ${qtyToTry} ${order.symbol} to instantly protect capital (Order ID: ${sellResult.orderId})`, 'warning', order.symbol);
                     break;
                   }
                 } catch (err) {
@@ -1052,26 +1050,22 @@ class OrderTracker {
               }
 
               if (!sellResult || !sellResult.orderId) {
-                throw lastErr || new Error('Failed to place SL limit sell after precision retries.');
+                throw lastErr || new Error('Failed to place SL Market Sell after precision retries.');
               }
 
-              // Wait for LIMIT SELL to fill (with 100% Maker continuous re-pegging every 1.5s)
-              const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, currentPrice, 300000, 1500);
-
-              if (!slFills || !slFills.filled) {
-                this.log(`[REAL] Stop Loss LIMIT Sell order ${sellResult.orderId} not yet filled on MEXC. Retaining TP_SL_ACTIVE state to continuously re-peg until filled 100% as MAKER (0% Fee).`, 'warning', order.symbol);
-                order.status = 'TP_SL_ACTIVE';
-                this.saveOrders();
-                changed = true;
-                continue;
-              }
+              // Fetch actual fill price or use current price
+              let slAvgPrice = currentPrice;
+              try {
+                const fills = await this.getActualOrderFills(order.symbol, sellResult.orderId, currentPrice);
+                if (fills && fills.avgPrice) slAvgPrice = fills.avgPrice;
+              } catch (fErr) {}
 
               order.status = 'TRIGGERED';
-              order.sellExecutionPrice = slFills.avgPrice || currentPrice;
+              order.sellExecutionPrice = slAvgPrice;
               order.sellTriggeredAt = new Date().toISOString();
               this.handleOrderCycleComplete(order);
             } catch (e) {
-              order.status = 'TP_SL_ACTIVE'; // Revert state
+              order.status = 'TP_SL_ACTIVE'; // Revert state for retry
               this.log(`[REAL] Stop Loss Market Sell order failed: ${e.message}`, 'error', order.symbol);
             }
             changed = true;
