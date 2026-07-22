@@ -537,9 +537,10 @@ class StockOrderTracker {
         // 2. RUNNING (Trailing Dip Trailing)
         if (order.status === 'RUNNING') {
           if (currentPrice < order.bottomPrice) {
+            const oldBottom = order.bottomPrice;
             order.bottomPrice = currentPrice;
             order.triggerPrice = currentPrice + order.trailValue;
-            this.log(`New bottom price found: ${currentPrice}. Updated triggerPrice: ${order.triggerPrice}`, 'info', order.symbol);
+            this.log(`📉 [STOCK LOCAL BOTTOM SHIFT] New local bottom detected for ${order.symbol}: $${currentPrice} (was $${oldBottom}). Recalculated Buy Trigger: $${order.triggerPrice}`, 'info', order.symbol);
             changed = true;
           }
 
@@ -547,6 +548,7 @@ class StockOrderTracker {
             // Check 4-Filter Consensus Alignment
             let filterPassed = true;
             let filterReasons = [];
+            let filterSuccessLogs = [];
 
             if (order.filterObi || order.filterVolumeSpike || order.filterRsi || order.filterSmartSl) {
               try {
@@ -572,9 +574,12 @@ class StockOrderTracker {
                   }
                   const totalValue = bidsValue + asksValue;
                   const obiRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
+                  const obiPct = (obiRatio * 100).toFixed(1);
                   if (obiRatio < 0.55) {
                     filterPassed = false;
-                    filterReasons.push(`OBI (${(obiRatio * 100).toFixed(1)}% < 55%)`);
+                    filterReasons.push(`OBI (${obiPct}% < 55%)`);
+                  } else {
+                    filterSuccessLogs.push(`OBI (${obiPct}% >= 55% ✅)`);
                   }
                 }
 
@@ -582,9 +587,12 @@ class StockOrderTracker {
                   const lastVol = parseFloat(klines[klines.length - 1][5]);
                   const prevVols = klines.slice(-6, -1).map(k => parseFloat(k[5]));
                   const avgVol = prevVols.reduce((a, b) => a + b, 0) / (prevVols.length || 1);
+                  const volMult = avgVol > 0 ? (lastVol / avgVol).toFixed(2) : '1.0';
                   if (avgVol > 0 && lastVol < (avgVol * 1.5)) {
                     filterPassed = false;
-                    filterReasons.push(`Volume (${lastVol.toFixed(1)} < 1.5x avg ${avgVol.toFixed(1)})`);
+                    filterReasons.push(`Volume (${volMult}x < 1.5x avg)`);
+                  } else {
+                    filterSuccessLogs.push(`Volume (${volMult}x >= 1.5x avg ✅)`);
                   }
                 }
 
@@ -593,6 +601,8 @@ class StockOrderTracker {
                   if (rsiVal > 35) {
                     filterPassed = false;
                     filterReasons.push(`RSI (${rsiVal.toFixed(1)} > 35)`);
+                  } else {
+                    filterSuccessLogs.push(`RSI (${rsiVal.toFixed(1)} <= 35 ✅)`);
                   }
                 }
               } catch (e) {
@@ -601,11 +611,15 @@ class StockOrderTracker {
             }
 
             if (!filterPassed) {
-              this.log(`Buy Trigger reached (${currentPrice} >= ${order.triggerPrice}), but Consensus Filters FAILED: [${filterReasons.join(', ')}]. Deferring buy order.`, 'warning', order.symbol);
+              this.log(`⚠️ [STOCK BUY DEFERRED] Buy Trigger reached ($${currentPrice} >= $${order.triggerPrice}), but Consensus Filters FAILED: [${filterReasons.join(', ')}]. Deferring buy order & updating local bottom to $${currentPrice}.`, 'warning', order.symbol);
               order.bottomPrice = currentPrice;
               order.triggerPrice = currentPrice + order.trailValue;
               changed = true;
               continue;
+            }
+
+            if (filterSuccessLogs.length > 0) {
+              this.log(`📊 [STOCK CONSENSUS CONFIRMED] Indicator Alignment PASSED: [${filterSuccessLogs.join(', ')}]`, 'success', order.symbol);
             }
 
             // STOCK BOT MAKER PEG BUY EXECUTION (0% MAKER FEE)
