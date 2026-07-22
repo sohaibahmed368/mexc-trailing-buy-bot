@@ -140,11 +140,11 @@ class StockOrderTracker {
   }
 
   /**
-   * Wait for a Stock LIMIT order to be filled. Polls MEXC every 1.5s (1500ms).
-   * Active 1.5s Re-Peg: If unfilled after 1.5s, cancels order, calculates fresh depth peg price, and re-places LIMIT order.
-   * If not filled within timeout (default 6s = 4 checks of 1.5s), cancels order and places MARKET fallback with precision retry.
+   * 100% MAKER RE-PEG ENGINE (NO MARKET FALLBACK EVER)
+   * Continuously polls and re-pegs Stock LIMIT orders every 800ms to top of orderbook
+   * strictly maintaining BUY < Best Ask and SELL > Best Bid for 0% Maker fees.
    */
-  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 6000, pollMs = 1500) {
+  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 15000, pollMs = 800) {
     const startTime = Date.now();
     let attempts = 0;
     let currentOrderId = orderId;
@@ -162,17 +162,16 @@ class StockOrderTracker {
           const cummulativeQuoteQty = parseFloat(orderInfo.cummulativeQuoteQty);
           if (executedQty > 0 && cummulativeQuoteQty > 0) {
             const avgPrice = cummulativeQuoteQty / executedQty;
-            this.log(`[STOCK MAKER LIMIT] Order ${currentOrderId} FILLED after ${attempts} checks (1.5s interval). Avg Price: ${avgPrice.toFixed(6)}`, 'success', symbol);
+            this.log(`🎉 [STOCK 100% MAKER SUCCESS] Order ${currentOrderId} FILLED as MAKER (0% Fee) after ${attempts} re-peg checks! Avg Price: ${avgPrice.toFixed(6)}`, 'success', symbol);
             return { avgPrice, executedQty, filled: true, maker: true };
           }
         }
 
-        if (orderInfo && orderInfo.status === 'NEW') {
-          this.log(`[STOCK MAKER PEG LOG] Check #${attempts} (1.5s elapsed): Stock Order ${currentOrderId} is UNFILLED at price ${currentPrice}. Re-pegging to fresh depth...`, 'warning', symbol);
+        if (orderInfo && (orderInfo.status === 'NEW' || orderInfo.status === 'PARTIALLY_FILLED')) {
+          this.log(`[STOCK MAKER PEG LOG] Check #${attempts} (800ms elapsed): Stock Order ${currentOrderId} is UNFILLED at price ${currentPrice}. Re-pegging to fresh depth...`, 'warning', symbol);
           
           try {
             await this.mexcClient.cancelOrder(symbol, currentOrderId);
-            this.log(`[STOCK MAKER RE-PEG] Cancelled unfilled order ${currentOrderId} to shift peg.`, 'info', symbol);
           } catch (cErr) {
             try {
               const rc = await this.mexcClient.getOrder(symbol, currentOrderId);
@@ -205,7 +204,7 @@ class StockOrderTracker {
               if (newPlaceResult && newPlaceResult.orderId) {
                 currentOrderId = newPlaceResult.orderId;
                 currentQty = qtyToTry;
-                this.log(`[STOCK MAKER RE-PEG] Placed NEW ${side} LIMIT order ${currentOrderId} at updated price ${currentPrice} USDT`, 'info', symbol);
+                this.log(`[STOCK MAKER RE-PEG] Placed NEW 100% MAKER ${side} LIMIT order ${currentOrderId} at updated price ${currentPrice} USDT (0% Fee)`, 'info', symbol);
                 break;
               }
             } catch (err) {
@@ -219,41 +218,38 @@ class StockOrderTracker {
           continue;
         }
 
-        if (orderInfo && orderInfo.status === 'PARTIALLY_FILLED') {
-          this.log(`[STOCK MAKER LIMIT] Order ${currentOrderId} partially filled (${orderInfo.executedQty}/${currentQty}). Re-checking in 1.5s...`, 'info', symbol);
-          continue;
-        }
-
         if (orderInfo && (orderInfo.status === 'CANCELED' || orderInfo.status === 'EXPIRED' || orderInfo.status === 'REJECTED')) {
-          this.log(`[STOCK MAKER LIMIT] Order ${currentOrderId} status: ${orderInfo.status}. Breaking out.`, 'warning', symbol);
-          break;
+          this.log(`[STOCK MAKER LIMIT] Order ${currentOrderId} status: ${orderInfo.status}. Re-pegging new order...`, 'warning', symbol);
+          const newPegPrice = await this.calculateMakerPegPrice(symbol, side, currentPrice);
+          currentPrice = newPegPrice;
+          const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
+          for (const mult of decimalsToTry) {
+            const qtyToTry = Math.floor(currentQty * mult) / mult;
+            if (qtyToTry <= 0) continue;
+            try {
+              const orderParams = { symbol, side, type: 'LIMIT', quantity: qtyToTry, price: currentPrice };
+              const res = await this.mexcClient.placeOrder(orderParams);
+              if (res && res.orderId) {
+                currentOrderId = res.orderId;
+                currentQty = qtyToTry;
+                break;
+              }
+            } catch (e) {}
+          }
+          continue;
         }
       } catch (err) {
         this.log(`[STOCK MAKER LIMIT] Error checking order ${currentOrderId}: ${err.message}`, 'warning', symbol);
       }
     }
 
-    this.log(`[STOCK MAKER LIMIT] Order ${currentOrderId} not filled after ${maxWaitMs / 1000}s. Cancelling and placing MARKET ${side} fallback with precision retry...`, 'warning', symbol);
+    this.log(`[STOCK 100% MAKER GUARANTEE] Stock Order ${currentOrderId} not filled after ${maxWaitMs / 1000}s of continuous Limit re-pegging. Aborting without Market fallback to guarantee 0% Fee.`, 'warning', symbol);
 
     try {
       await this.mexcClient.cancelOrder(symbol, currentOrderId);
-      this.log(`[STOCK LIMIT] Cancelled unfilled order ${currentOrderId}.`, 'info', symbol);
     } catch (cancelErr) {}
 
-    await new Promise(r => setTimeout(r, 300));
-
-    try {
-      const marketParams = { symbol, side, type: 'MARKET', quantity: currentQty };
-      const marketResult = await this.placeOrderWithPrecisionRetry(marketParams);
-      if (marketResult && marketResult.orderId) {
-        this.log(`[STOCK LIMIT→MARKET] Fallback MARKET ${side} placed. Order ID: ${marketResult.orderId}`, 'success', symbol);
-        return { avgPrice: currentPrice, executedQty: currentQty, filled: true, fallbackUsed: true, fallbackOrderId: marketResult.orderId };
-      }
-    } catch (marketErr) {
-      this.log(`[STOCK LIMIT→MARKET] Fallback MARKET ${side} failed: ${marketErr.message}`, 'error', symbol);
-    }
-
-    return { avgPrice: currentPrice, executedQty: null, filled: false };
+    return { avgPrice: currentPrice, executedQty: null, filled: false, maker: true };
   }
 
   async addOrder(config) {
