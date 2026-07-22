@@ -865,8 +865,31 @@ class StockOrderTracker {
                 }
               }
 
-              // STOCK BOT MAKER PEG SL SELL EXECUTION (0% MAKER FEE)
+              // STOCK BOT SLIPPAGE GUARD & MAKER PEG SL SELL EXECUTION (0% MAKER FEE)
               const sellQty = order.quantity || 1.0;
+              const slippageMarginPct = order.slippageMargin !== undefined ? parseFloat(order.slippageMargin) : 0.1;
+              const maxAllowedSlippageDollar = (slippageMarginPct / 100) * targetSlPrice;
+              const actualPriceDrop = targetSlPrice - currentPrice;
+
+              if (actualPriceDrop <= maxAllowedSlippageDollar) {
+                this.log(`⚡ [STOCK SLIPPAGE PROTECTION] Market price ${currentPrice.toFixed(4)} is within ${slippageMarginPct}% slippage margin of SL target (${targetSlPrice.toFixed(4)} USDT). Executing fast Market Sell!`, 'info', order.symbol);
+                try {
+                  const mktParams = { symbol: order.symbol, side: 'SELL', type: 'MARKET', quantity: sellQty };
+                  const mktRes = await this.mexcClient.placeOrder(mktParams);
+                  if (mktRes && mktRes.orderId) {
+                    order.status = 'TRIGGERED';
+                    order.sellExecutionPrice = currentPrice;
+                    this.log(`[REAL] Stock Stop Loss Market Sell filled cleanly at ${currentPrice.toFixed(4)} USDT!`, 'success', order.symbol);
+                    changed = true;
+                    this.handleOrderCycleComplete(order);
+                    continue;
+                  }
+                } catch (mktErr) {
+                  this.log(`Market sell attempt encountered error: ${mktErr.message}. Falling back to 10s 0% Maker Top Seller Pegging...`, 'warning', order.symbol);
+                }
+              }
+
+              this.log(`🛡️ [STOCK MAKER TOP SELLER] Price drop exceeds ${slippageMarginPct}% slippage margin. Pegging order as 0% Maker Top Seller every 10s until filled...`, 'warning', order.symbol);
 
               try {
                 const freshSlPrice = await this.calculateMakerPegPrice(order.symbol, 'SELL', currentPrice);
