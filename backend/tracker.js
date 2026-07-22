@@ -1330,25 +1330,6 @@ class OrderTracker {
 
             if (order.takeProfit || order.stopLoss) {
               order.status = 'TP_SL_ACTIVE';
-            } else {
-              order.status = 'TRIGGERED';
-              this.handleOrderCycleComplete(order);
-            }
-          } catch (err) {
-            order.status = 'FAILED';
-            order.error = err.message;
-            this.log(`❌ [MEXC API ERROR] Immediate Market Buy order failed: ${err.message}`, 'error', order.symbol);
-          }
-        }
-
-            if (!result || !result.orderId) {
-              throw lastBuyErr || new Error('Failed to place trailing LIMIT buy order.');
-            }
-            
-            order.mexcOrderId = result.orderId;
-            
-            if (order.takeProfit || order.stopLoss) {
-              order.status = 'TP_SL_ACTIVE';
               this.log(
                 `[REAL] BUY Order placed successfully! Order ID: ${result.orderId}. Exec Price: ${execPrice}. Transitioning to TP/SL monitoring.`,
                 'success',
