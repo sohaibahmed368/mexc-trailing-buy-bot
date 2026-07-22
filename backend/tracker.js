@@ -28,22 +28,28 @@ class OrderTracker {
     let totalMxFees = 0;
     let feeCount = 0;
 
-    // Calculate total fees strictly from bot's executed trade history
+    // Calculate total fees strictly from bot's own executed trade history (all order types)
     (this.orders || []).forEach(o => {
-      if (Array.isArray(o.tradeHistory)) {
-        o.tradeHistory.forEach(t => {
-          if (typeof t.totalMexcFeesUsdt === 'number' && t.totalMexcFeesUsdt > 0) {
+      if (!Array.isArray(o.tradeHistory) || o.tradeHistory.length === 0) return;
+      // Only count REAL (non-dryRun) orders
+      if (o.dryRun) return;
+
+      o.tradeHistory.forEach(t => {
+        // New-style records with explicit fee fields
+        if (typeof t.totalMexcFeesUsdt === 'number') {
+          if (t.totalMexcFeesUsdt > 0) {
             totalUsdtFees += t.totalMexcFeesUsdt;
             feeCount++;
-          } else if (typeof t.mexcBuyFeeUsdt === 'number' || typeof t.mexcSellFeeUsdt === 'number') {
-            const sum = (t.mexcBuyFeeUsdt || 0) + (t.mexcSellFeeUsdt || 0);
-            if (sum > 0) {
-              totalUsdtFees += sum;
-              feeCount++;
-            }
           }
-        });
-      }
+        } else if (typeof t.mexcBuyFeeUsdt === 'number' || typeof t.mexcSellFeeUsdt === 'number') {
+          const sum = (t.mexcBuyFeeUsdt || 0) + (t.mexcSellFeeUsdt || 0);
+          if (sum > 0) {
+            totalUsdtFees += sum;
+            feeCount++;
+          }
+        }
+        // Old-style records without fee fields: skip (no reliable fee data)
+      });
     });
 
     let mxPrice = 1.65;
@@ -358,56 +364,6 @@ class OrderTracker {
     return truncatedEst;
   }
 
-  handleOrderCycleComplete(order) {
-    if (!order.autoRepeat) {
-      return;
-    }
-
-    const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
-    const buyPrice = order.executionPrice;
-    const sellPrice = order.sellExecutionPrice || order.currentPrice;
-    const profit = sellPrice - buyPrice; // per unit profit
-
-    // Determine if Take Profit or Stop Loss hit
-    let type = 'MANUAL_SELL';
-    if (order.takeProfit && sellPrice >= (buyPrice + order.takeProfit - 0.0001)) {
-      type = 'TAKE_PROFIT';
-    } else if (order.stopLoss && sellPrice <= (buyPrice - order.stopLoss + 0.0001)) {
-      type = 'STOP_LOSS';
-    }
-
-    if (!order.tradeHistory) order.tradeHistory = [];
-    order.tradeHistory.push({
-      cycle: cycleNum,
-      buyPrice,
-      sellPrice,
-      type,
-      profit,
-      timestamp: new Date().toISOString()
-    });
-
-    // Reset to pending activation for next cycle
-    order.status = 'PENDING_ACTIVATION';
-    order.peakPrice = sellPrice;
-    order.activationPrice = order.peakPrice - (order.activationOffset || 0);
-    order.activationDirection = 'DOWN';
-    order.isSlExtended = false;
-    order.bottomPrice = null;
-    order.triggerPrice = null;
-    order.mexcOrderId = null;
-    order.executionPrice = null;
-    order.mexcSellOrderId = null;
-    order.sellExecutionPrice = null;
-    order.sellTriggeredAt = null;
-    order.triggeredAt = null;
-    order.activatedAt = null;
-
-    this.log(
-      `Cycle #${cycleNum} completed (${type}). Resetting order to pending activation. New peak: ${order.peakPrice}, Activation price: ${order.activationPrice}`,
-      'success',
-      order.symbol
-    );
-  }
 
   // Add a new trailing buy order
   async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, startImmediately }) {
@@ -1434,94 +1390,98 @@ class OrderTracker {
 
   // Handle cycle completion, trade recording, and auto-repeat re-activation with exact MEXC Fee Deduction
   async handleOrderCycleComplete(order) {
-    if (order.status === 'TRIGGERED' && order.autoRepeat) {
-      const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
-      const buyPrice = order.executionPrice;
-      const sellPrice = order.sellExecutionPrice || order.currentPrice;
-      const qty = order.quantity || (order.quoteOrderQty && buyPrice > 0 ? (order.quoteOrderQty / buyPrice) : 1);
-
-      // Determine trade type (Take Profit vs Stop Loss vs Manual)
-      let type = 'MANUAL_SELL';
-      if (order.takeProfit && sellPrice >= (buyPrice + order.takeProfit - 0.0001)) {
-        type = 'TAKE_PROFIT';
-      } else if (order.isSlProfitLocked || (order.stopLoss && sellPrice <= (buyPrice - order.stopLoss + 0.0001))) {
-        type = 'STOP_LOSS';
-      }
-
-      // Account Specific Fee Rates (User Account: Taker = 0.0% promotion, Maker = 0.04% MX Token Discount)
-      let accountFees = { makerCommission: 0.0004, takerCommission: 0.0000 };
-      try {
-        if (this.mexcClient && typeof this.mexcClient.getTradeFee === 'function') {
-          const fetchedFees = await this.mexcClient.getTradeFee(order.symbol);
-          if (fetchedFees) accountFees = fetchedFees;
-        }
-      } catch (fErr) {
-        // Fallback default for user's account
-      }
-
-      const isBuyMaker = order.buyOrderType === 'LIMIT' || order.isBuyPegged;
-      const isSellMaker = (type === 'TAKE_PROFIT');
-
-      const buyFeeRate = isBuyMaker ? accountFees.makerCommission : accountFees.takerCommission;
-      const sellFeeRate = isSellMaker ? accountFees.makerCommission : accountFees.takerCommission;
-
-      const grossBuyValue = buyPrice * qty;
-      const buyFeeUsdt = grossBuyValue * buyFeeRate;
-      const totalBuyCost = grossBuyValue + buyFeeUsdt;
-
-      const grossSellValue = sellPrice * qty;
-      const sellFeeUsdt = grossSellValue * sellFeeRate;
-      const netSellProceeds = grossSellValue - sellFeeUsdt;
-
-      // Net USDT Profit after MEXC Trading Fees
-      const cycleUsdtProfit = netSellProceeds - totalBuyCost;
-      const netUnitProfit = cycleUsdtProfit / (qty || 1);
-
-      order.totalNetProfit = (order.totalNetProfit || 0) + cycleUsdtProfit;
-
-      const tradeRecord = {
-        cycle: cycleNum,
-        buyPrice,
-        sellPrice,
-        grossProfitUsdt: grossSellValue - grossBuyValue,
-        mexcBuyFeeUsdt: buyFeeUsdt,
-        mexcSellFeeUsdt: sellFeeUsdt,
-        totalMexcFeesUsdt: buyFeeUsdt + sellFeeUsdt,
-        profit: netUnitProfit,
-        profitUsdt: cycleUsdtProfit,
-        type,
-        timestamp: new Date().toISOString()
-      };
-
-      if (!order.tradeHistory) order.tradeHistory = [];
-      order.tradeHistory.push(tradeRecord);
-
-      // Reset to pending activation for next cycle
-      order.status = 'PENDING_ACTIVATION';
-      order.peakPrice = sellPrice;
-      order.activationPrice = order.peakPrice - (order.activationOffset || 0);
-      order.localBottom = sellPrice;
-      order.bottomPrice = null;
-      order.triggerPrice = null;
-      order.mexcOrderId = null;
-      order.executionPrice = null;
-      order.mexcSellOrderId = null;
-      order.sellExecutionPrice = null;
-      order.sellTriggeredAt = null;
-      order.triggeredAt = null;
-      order.activatedAt = null;
-      order.isSlExtended = false;
-      order.isSlProfitLocked = false;
-      order.lockedSlPrice = null;
-      delete order.justProfitLocked;
-
-      this.log(
-        `Cycle #${cycleNum} completed (${type}). Resetting order to pending activation. New peak: ${order.peakPrice}, Activation price: ${order.activationPrice}`,
-        'success',
-        order.symbol
-      );
-      this.saveOrders();
+    // Guard: only run if this order is set for auto-repeat
+    if (!order.autoRepeat) {
+      return;
     }
+
+    const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
+    const buyPrice = order.executionPrice || 0;
+    const sellPrice = order.sellExecutionPrice || order.currentPrice || 0;
+    const qty = order.quantity || (order.quoteOrderQty && buyPrice > 0 ? (order.quoteOrderQty / buyPrice) : 1);
+
+    // Determine trade type (Take Profit vs Stop Loss vs Manual)
+    let type = 'MANUAL_SELL';
+    if (order.takeProfit && sellPrice >= (buyPrice + order.takeProfit - 0.0001)) {
+      type = 'TAKE_PROFIT';
+    } else if (order.isSlProfitLocked || (order.stopLoss && sellPrice <= (buyPrice - order.stopLoss + 0.0001))) {
+      type = 'STOP_LOSS';
+    }
+
+    // Account Specific Fee Rates (User Account: Taker = 0.0% promotion, Maker = 0.04% MX Token Discount)
+    let accountFees = { makerCommission: 0.0004, takerCommission: 0.0000 };
+    try {
+      if (this.mexcClient && typeof this.mexcClient.getTradeFee === 'function') {
+        const fetchedFees = await this.mexcClient.getTradeFee(order.symbol);
+        if (fetchedFees) accountFees = fetchedFees;
+      }
+    } catch (fErr) {
+      // Fallback default for user's account
+    }
+
+    const isBuyMaker = true; // Bot always places LIMIT (Maker) buys → 0% fee on user's MEXC account
+    const isSellMaker = (type === 'TAKE_PROFIT'); // TP is LIMIT sell (Maker), SL is Taker (0% on MEXC)
+
+    const buyFeeRate = isBuyMaker ? accountFees.makerCommission : accountFees.takerCommission;
+    const sellFeeRate = isSellMaker ? accountFees.makerCommission : accountFees.takerCommission;
+
+    const grossBuyValue = buyPrice * qty;
+    const buyFeeUsdt = grossBuyValue * buyFeeRate;
+    const totalBuyCost = grossBuyValue + buyFeeUsdt;
+
+    const grossSellValue = sellPrice * qty;
+    const sellFeeUsdt = grossSellValue * sellFeeRate;
+    const netSellProceeds = grossSellValue - sellFeeUsdt;
+
+    // Net USDT Profit after MEXC Trading Fees
+    const cycleUsdtProfit = netSellProceeds - totalBuyCost;
+    const netUnitProfit = cycleUsdtProfit / (qty || 1);
+
+    order.totalNetProfit = (order.totalNetProfit || 0) + cycleUsdtProfit;
+
+    const tradeRecord = {
+      cycle: cycleNum,
+      buyPrice,
+      sellPrice,
+      grossProfitUsdt: parseFloat((grossSellValue - grossBuyValue).toFixed(6)),
+      mexcBuyFeeUsdt: parseFloat(buyFeeUsdt.toFixed(6)),
+      mexcSellFeeUsdt: parseFloat(sellFeeUsdt.toFixed(6)),
+      totalMexcFeesUsdt: parseFloat((buyFeeUsdt + sellFeeUsdt).toFixed(6)),
+      profit: parseFloat(netUnitProfit.toFixed(8)),
+      profitUsdt: parseFloat(cycleUsdtProfit.toFixed(6)),
+      type,
+      timestamp: new Date().toISOString()
+    };
+
+    if (!order.tradeHistory) order.tradeHistory = [];
+    order.tradeHistory.push(tradeRecord);
+
+    // Reset to pending activation for next cycle
+    order.status = 'PENDING_ACTIVATION';
+    order.peakPrice = sellPrice;
+    order.activationPrice = order.peakPrice - (order.activationOffset || 0);
+    order.activationDirection = 'DOWN';
+    order.localBottom = sellPrice;
+    order.bottomPrice = null;
+    order.triggerPrice = null;
+    order.mexcOrderId = null;
+    order.executionPrice = null;
+    order.mexcSellOrderId = null;
+    order.sellExecutionPrice = null;
+    order.sellTriggeredAt = null;
+    order.triggeredAt = null;
+    order.activatedAt = null;
+    order.isSlExtended = false;
+    order.isSlProfitLocked = false;
+    order.lockedSlPrice = null;
+    delete order.justProfitLocked;
+
+    this.log(
+      `Cycle #${cycleNum} completed (${type}). Profit: ${cycleUsdtProfit.toFixed(4)} USDT. Fees: ${(buyFeeUsdt + sellFeeUsdt).toFixed(4)} USDT. Resetting to PENDING_ACTIVATION. New peak: ${order.peakPrice}`,
+      'success',
+      order.symbol
+    );
+    this.saveOrders();
   }
 
   // Update polling interval dynamically if needed
