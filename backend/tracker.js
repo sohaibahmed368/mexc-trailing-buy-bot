@@ -11,7 +11,7 @@ class OrderTracker {
     this.orders = [];
     this.logs = [];
     this.intervalId = null;
-    this.pollInterval = 1100; // 1.1 seconds interval
+    this.pollInterval = 1500; // 1.5 seconds polling interval
     this.cachedFeeSummary = null;
     this.lastFeeCheckTime = 0;
     
@@ -231,11 +231,11 @@ class OrderTracker {
 
   /**
    * 100% MAKER RE-PEG ENGINE (NO MARKET FALLBACK EVER)
-   * Continuously polls and re-pegs LIMIT orders every 1.1s (1100ms order stay window) to top of orderbook
+   * Continuously polls and re-pegs LIMIT orders every 1.5s (1500ms order stay window) to top of orderbook
    * strictly maintaining BUY <= Best Bid and SELL >= Best Ask for 0% Maker fees.
    * Gives market takers sufficient time to hit passive limit orders while maintaining low API load.
    */
-  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 300000, pollMs = 1100) {
+  async waitForLimitOrderFill(symbol, orderId, side, quantity, fallbackPrice, maxWaitMs = 300000, pollMs = 1500) {
     const startTime = Date.now();
     let attempts = 0;
     let currentOrderId = orderId;
@@ -1055,8 +1055,8 @@ class OrderTracker {
                 throw lastErr || new Error('Failed to place SL limit sell after precision retries.');
               }
 
-              // Wait for LIMIT SELL to fill (with 100% Maker continuous re-pegging every 1.1s)
-              const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, currentPrice, 300000, 1100);
+              // Wait for LIMIT SELL to fill (with 100% Maker continuous re-pegging every 1.5s)
+              const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, currentPrice, 300000, 1500);
 
               if (!slFills || !slFills.filled) {
                 this.log(`[REAL] Stop Loss LIMIT Sell order ${sellResult.orderId} not yet filled on MEXC. Retaining TP_SL_ACTIVE state to continuously re-peg until filled 100% as MAKER (0% Fee).`, 'warning', order.symbol);
