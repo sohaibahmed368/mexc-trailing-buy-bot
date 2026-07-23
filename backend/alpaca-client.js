@@ -81,10 +81,21 @@ class AlpacaClient {
 
     // Simulated fallback price for common stocks if market is closed or unauthenticated
     const fallbackPrices = {
-      'NVDA': 122.50, 'AAPL': 224.30, 'TSLA': 248.80, 'MSFT': 445.20,
-      'SPY': 552.10, 'AMZN': 185.60, 'QQQ': 480.50, 'AMD': 155.40
+      'USO': 76.50,   // United States Oil Fund (WTI Crude Oil ETF)
+      'BNO': 81.20,   // United States Brent Oil Fund (Brent Crude Oil ETF)
+      'GLD': 222.40,  // SPDR Gold Shares ETF
+      'IAU': 45.20,   // iShares Gold Trust ETF
+      'XLE': 88.30,   // Energy Sector ETF
+      'NVDA': 122.50,
+      'AAPL': 224.30,
+      'TSLA': 248.80,
+      'MSFT': 445.20,
+      'SPY': 552.10,
+      'AMZN': 185.60,
+      'QQQ': 480.50,
+      'AMD': 155.40
     };
-    return fallbackPrices[cleanSym] || 150.00;
+    return fallbackPrices[cleanSym] || 76.50;
   }
 
   // Place Order on Alpaca (Market, Limit, Fractional)
