@@ -606,20 +606,21 @@ app.post('/api/alpaca/config', (req, res) => {
   }
 
   const paperMode = isPaper !== false;
+  const shouldSave = saveToDisk !== false; // Default to true for persistent connection across reloads & server restarts
   alpacaClient.setCredentials(apiKey, secretKey, paperMode);
 
-  savedAlpacaConfig = { apiKey, secretKey, isPaper: paperMode, saveToDisk };
+  savedAlpacaConfig = { apiKey, secretKey, isPaper: paperMode, saveToDisk: shouldSave };
 
-  if (saveToDisk) {
+  if (shouldSave) {
     try {
       fs.writeFileSync(alpacaCredentialsPath, JSON.stringify(savedAlpacaConfig, null, 2));
-      alpacaStockTracker.log('Alpaca credentials saved to disk.', 'success');
+      alpacaStockTracker.log('Alpaca credentials saved to disk permanently.', 'success');
     } catch (e) {
       alpacaStockTracker.log(`Failed to save Alpaca credentials to disk: ${e.message}`, 'error');
     }
   }
 
-  res.json({ success: true, message: 'Alpaca credentials updated successfully.' });
+  res.json({ success: true, message: 'Alpaca credentials updated & saved to disk successfully.' });
 });
 
 // Get Alpaca Account & Buying Power
