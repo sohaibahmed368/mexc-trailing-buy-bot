@@ -10,7 +10,7 @@ interface StockBotTabProps {
   availableSymbols?: string[];
 }
 
-export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableSymbols = [] }) => {
+export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl }) => {
   const [orders, setOrders] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
   const consoleRef = useRef<HTMLDivElement>(null);
@@ -83,7 +83,7 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
       <StockOrderForm 
         onOrderCreated={fetchStockOrders} 
         apiBaseUrl={apiBaseUrl} 
-        availableSymbols={['NVDA', 'AAPL', 'TSLA', 'MSFT', 'SPY', 'AMZN', 'QQQ', 'AMD', ...availableSymbols]} 
+        availableSymbols={['USO', 'BNO', 'XLE', 'NVDA', 'AAPL', 'TSLA', 'MSFT', 'SPY', 'AMZN', 'QQQ', 'AMD', 'GOOGL', 'META', 'NFLX']} 
         submitEndpoint={`${apiBaseUrl}/api/alpaca/stock-orders`}
       />
       

@@ -35,6 +35,8 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const defaultPresets = [
+    'USO',
+    'BNO',
     'NVDA',
     'AAPL',
     'TSLA',
@@ -42,11 +44,23 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
     'SPY',
     'AMZN',
     'QQQ',
-    'AMD'
+    'AMD',
+    'XLE',
+    'GOOGL',
+    'META',
+    'NFLX',
+    'BTCUSD',
+    'ETHUSD'
   ];
 
   const allSymbolsList = useMemo(() => {
-    const set = new Set<string>([...defaultPresets, ...availableSymbols]);
+    // Filter out old crypto suffixes like ONUSDT or SOONUSDT for clean Alpaca Stock & Oil tickers
+    const cleanAvailable = (availableSymbols || []).map(s => {
+      if (s.endsWith('ONUSDT')) return s.replace('ONUSDT', '');
+      if (s.endsWith('USDT')) return s.replace('USDT', '');
+      return s;
+    });
+    const set = new Set<string>([...defaultPresets, ...cleanAvailable]);
     return Array.from(set);
   }, [availableSymbols]);
 
