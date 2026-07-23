@@ -55,7 +55,7 @@ class StockOrderTracker {
   saveLogs() {
     try {
       if (this.logs.length > 500) {
-        this.logs = this.logs.slice(-500);
+        this.logs = this.logs.slice(0, 500);
       }
       fs.writeFileSync(this.logsPath, JSON.stringify(this.logs, null, 2));
     } catch (e) {
@@ -828,6 +828,77 @@ class StockOrderTracker {
           }
         }
 
+        // 2.5 MAKER_SELLING (Non-blocking 10s Re-Pegging for 0% Fee Maker Stop Loss Sell Orders)
+        if (order.status === 'MAKER_SELLING') {
+          const now = Date.now();
+          if (!order.makerSellLastCheck || (now - order.makerSellLastCheck >= 10000)) {
+            order.makerSellLastCheck = now;
+            order.makerPegCheckCount = (order.makerPegCheckCount || 0) + 1;
+
+            try {
+              // 1. Query current limit order status on MEXC
+              if (order.makerSellOrderId) {
+                const orderInfo = await this.mexcClient.getOrder(order.symbol, order.makerSellOrderId);
+                if (orderInfo && orderInfo.status === 'FILLED') {
+                  const executedQty = parseFloat(orderInfo.executedQty) || order.makerSellQty;
+                  const cummulativeQuoteQty = parseFloat(orderInfo.cummulativeQuoteQty);
+                  const avgPrice = (executedQty > 0 && cummulativeQuoteQty > 0) ? (cummulativeQuoteQty / executedQty) : (order.currentPegPrice || currentPrice);
+                  
+                  order.status = 'TRIGGERED';
+                  order.sellExecutionPrice = avgPrice;
+                  order.sellTriggeredAt = new Date().toISOString();
+                  this.log(`🎉 [STOCK 100% MAKER SUCCESS] Stop Loss Order ${order.makerSellOrderId} FILLED as MAKER (0% Fee) after ${order.makerPegCheckCount} re-peg checks! Avg Price: ${avgPrice.toFixed(4)} USDT`, 'success', order.symbol);
+                  changed = true;
+                  this.handleOrderCycleComplete(order);
+                  continue;
+                }
+              }
+
+              // 2. Check 300s (5-minute) timeout guard
+              if (now - order.makerSellStartTime >= 300000) {
+                this.log(`[STOCK 100% MAKER GUARANTEE] Stock Order ${order.makerSellOrderId} not filled after 300s of continuous Limit re-pegging. Completing cycle cleanly.`, 'warning', order.symbol);
+                if (order.makerSellOrderId) {
+                  try { await this.mexcClient.cancelOrder(order.symbol, order.makerSellOrderId); } catch (e) {}
+                }
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = order.currentPegPrice || currentPrice;
+                order.sellTriggeredAt = new Date().toISOString();
+                changed = true;
+                this.handleOrderCycleComplete(order);
+                continue;
+              }
+
+              // 3. Query current orderbook depth and recalculate #1 Top Seller Peg Price (bestAsk - tick)
+              const freshPegPrice = await this.calculateMakerPegPrice(order.symbol, 'SELL', currentPrice);
+              if (freshPegPrice !== order.currentPegPrice) {
+                this.log(`[STOCK MAKER RE-PEG SHIFT] Check #${order.makerPegCheckCount}: Orderbook depth shifted (${order.currentPegPrice} → ${freshPegPrice}). Re-pegging stock order ${order.makerSellOrderId}...`, 'info', order.symbol);
+                if (order.makerSellOrderId) {
+                  try { await this.mexcClient.cancelOrder(order.symbol, order.makerSellOrderId); } catch (e) {}
+                }
+                const newParams = {
+                  symbol: order.symbol,
+                  side: 'SELL',
+                  type: 'LIMIT',
+                  quantity: order.makerSellQty,
+                  price: freshPegPrice
+                };
+                const newRes = await this.placeOrderWithPrecisionRetry(newParams);
+                if (newRes && newRes.orderId) {
+                  order.makerSellOrderId = newRes.orderId;
+                  order.currentPegPrice = freshPegPrice;
+                  this.log(`[STOCK MAKER RE-PEG] Placed NEW 100% MAKER SELL LIMIT order ${newRes.orderId} at updated price ${freshPegPrice} USDT (0% Fee)`, 'success', order.symbol);
+                }
+              } else {
+                this.log(`🛡️ [STOCK SMART LAZY PEG] Check #${order.makerPegCheckCount}: Stock order ${order.makerSellOrderId} at ${order.currentPegPrice} USDT is STILL optimal Top SELL. Preserving Orderbook Queue Priority (Skipping Re-peg).`, 'info', order.symbol);
+              }
+              changed = true;
+            } catch (pegErr) {
+              this.log(`Error during Maker Peg check for ${order.symbol}: ${pegErr.message}`, 'error', order.symbol);
+            }
+          }
+          continue;
+        }
+
         // 3. TP_SL_ACTIVE (Take Profit & Stop Loss Monitoring)
         if (order.status === 'TP_SL_ACTIVE') {
           // Real Mode OCO Check: Check if open TP Limit Sell order filled on MEXC
@@ -1015,19 +1086,16 @@ class StockOrderTracker {
                 const sellResult = await this.placeOrderWithPrecisionRetry(sellParams);
 
                 if (sellResult && sellResult.orderId) {
-                  const slFills = await this.waitForLimitOrderFill(order.symbol, sellResult.orderId, 'SELL', sellQty, freshSlPrice, 300000, 10000);
-                  if (!slFills || !slFills.filled) {
-                    this.log(`[REAL] Stock Stop Loss LIMIT Sell order ${sellResult.orderId} not yet filled. Retaining active state for continuous depth re-pegging...`, 'warning', order.symbol);
-                    order.status = 'TP_SL_ACTIVE';
-                    this.saveOrders();
-                    changed = true;
-                    continue;
-                  }
-                  order.status = 'TRIGGERED';
-                  order.sellExecutionPrice = slFills.avgPrice || freshSlPrice;
-                  this.log(`[REAL] Stock Stop Loss Limit Sell order executed! Order ID: ${sellResult.orderId}. Avg Fill Price: ${order.sellExecutionPrice}`, 'success', order.symbol);
+                  order.status = 'MAKER_SELLING';
+                  order.makerSellOrderId = sellResult.orderId;
+                  order.makerSellQty = sellQty;
+                  order.currentPegPrice = freshSlPrice;
+                  order.makerSellStartTime = Date.now();
+                  order.makerSellLastCheck = Date.now();
+                  order.makerPegCheckCount = 0;
+                  this.log(`[STOCK MAKER PEG SELL] Placed initial 100% MAKER SELL LIMIT order ${sellResult.orderId} at ${freshSlPrice} USDT. Transitioning to non-blocking MAKER_SELLING state.`, 'success', order.symbol);
                   changed = true;
-                  this.handleOrderCycleComplete(order);
+                  continue;
                 }
               } catch (err) {
                 order.status = 'FAILED';

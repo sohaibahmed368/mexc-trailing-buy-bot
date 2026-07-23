@@ -50,7 +50,7 @@ export function fmtPrice(val: number | string | null | undefined): string {
 
 export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, onCancelOrder }) => {
   const activeOrders = orders.filter(
-    (o) => o.status === 'RUNNING' || o.status === 'PENDING_EXECUTION' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE'
+    (o) => o.status === 'RUNNING' || o.status === 'PENDING_EXECUTION' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE' || o.status === 'MAKER_SELLING'
   );
 
   if (activeOrders.length === 0) {
@@ -134,9 +134,11 @@ export const StockActiveOrders: React.FC<StockActiveOrdersProps> = ({ orders, on
                   ? { backgroundColor: 'rgba(69, 104, 220, 0.15)', color: '#a5b4fc', border: '1px solid rgba(69, 104, 220, 0.3)' }
                   : order.status === 'TP_SL_ACTIVE'
                     ? { backgroundColor: 'rgba(155, 93, 229, 0.15)', color: '#b388ff', border: '1px solid rgba(155, 93, 229, 0.3)' }
-                    : undefined
+                    : order.status === 'MAKER_SELLING'
+                      ? { backgroundColor: 'rgba(255, 171, 0, 0.15)', color: '#ffab00', border: '1px solid rgba(255, 171, 0, 0.3)' }
+                      : undefined
               }>
-                {order.status === 'PENDING_ACTIVATION' ? 'Waiting' : order.status === 'PENDING_EXECUTION' ? 'Executing' : order.status === 'TP_SL_ACTIVE' ? 'Holding (TP/SL)' : 'Trailing'}
+                {order.status === 'PENDING_ACTIVATION' ? 'Waiting' : order.status === 'PENDING_EXECUTION' ? 'Executing' : order.status === 'TP_SL_ACTIVE' ? 'Holding (TP/SL)' : order.status === 'MAKER_SELLING' ? 'Pegging (0% Fee)' : 'Trailing'}
               </span>
             </div>
 
