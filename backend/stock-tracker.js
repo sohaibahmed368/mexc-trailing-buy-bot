@@ -519,7 +519,7 @@ class StockOrderTracker {
   }
 
   checkTrackingLoop() {
-    const hasActive = this.orders.some(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
+    const hasActive = this.orders.some(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE' || o.status === 'MAKER_SELLING' || o.status === 'PENDING_EXECUTION');
     if (!hasActive && this.isTracking) {
       this.stopTracking();
     } else if (hasActive && !this.isTracking) {
@@ -565,7 +565,7 @@ class StockOrderTracker {
     if (this.isTicking) return;
     this.isTicking = true;
     try {
-      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION');
+      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION' || o.status === 'MAKER_SELLING');
       if (activeOrders.length === 0) {
         this.checkTrackingLoop();
         return;

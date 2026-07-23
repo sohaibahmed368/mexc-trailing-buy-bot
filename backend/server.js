@@ -64,6 +64,7 @@ if (process.env.MEXC_API_KEY && process.env.MEXC_SECRET_KEY) {
 
 // Start tracking immediately if there are running orders from storage
 tracker.startTracking();
+stockTracker.startTracking();
 
 // Cache trading symbols from MEXC on startup
 let symbolsCache = [];
