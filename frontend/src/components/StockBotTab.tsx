@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Terminal, Ban } from 'lucide-react';
+import { AlpacaCredentialForm } from './AlpacaCredentialForm';
 import { StockOrderForm } from './StockOrderForm';
 import { StockActiveOrders } from './StockActiveOrders';
 import { StockOrderHistory } from './StockOrderHistory';
@@ -16,7 +17,7 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
 
   const fetchStockOrders = async () => {
     try {
-      const res = await fetch(`${apiBaseUrl}/api/stock-orders`);
+      const res = await fetch(`${apiBaseUrl}/api/alpaca/stock-orders`);
       const data = await res.json();
       if (Array.isArray(data)) setOrders(data);
     } catch (e) {
@@ -26,7 +27,7 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
 
   const fetchStockLogs = async () => {
     try {
-      const res = await fetch(`${apiBaseUrl}/api/stock-logs`);
+      const res = await fetch(`${apiBaseUrl}/api/alpaca/stock-logs`);
       const data = await res.json();
       if (Array.isArray(data)) setLogs(data);
     } catch (e) {
@@ -36,7 +37,7 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
 
   const handleCancelOrder = async (id: string) => {
     try {
-      await fetch(`${apiBaseUrl}/api/stock-orders/${id}`, { method: 'DELETE' });
+      await fetch(`${apiBaseUrl}/api/alpaca/stock-orders/${id}`, { method: 'DELETE' });
       fetchStockOrders();
     } catch (e) {
       // ignore
@@ -76,30 +77,38 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <StockOrderForm onOrderCreated={fetchStockOrders} apiBaseUrl={apiBaseUrl} availableSymbols={availableSymbols} />
+      {/* Decoupled Alpaca Credentials Config Form */}
+      <AlpacaCredentialForm onSaveSuccess={() => { fetchStockOrders(); fetchStockLogs(); }} />
+
+      <StockOrderForm 
+        onOrderCreated={fetchStockOrders} 
+        apiBaseUrl={apiBaseUrl} 
+        availableSymbols={['NVDA', 'AAPL', 'TSLA', 'MSFT', 'SPY', 'AMZN', 'QQQ', 'AMD', ...availableSymbols]} 
+        submitEndpoint={`${apiBaseUrl}/api/alpaca/stock-orders`}
+      />
       
       <div>
-        <h3 style={{ color: '#38bdf8', marginBottom: '12px' }}>⚡ Active Stock Bot Orders</h3>
+        <h3 style={{ color: '#38bdf8', marginBottom: '12px' }}>⚡ Active Stock Bot Orders (Alpaca Engine)</h3>
         <StockActiveOrders orders={orders} onCancelOrder={handleCancelOrder} />
       </div>
 
       <StockOrderHistory orders={orders} />
 
-      {/* Stock Bot Terminal Console Logs (Identical to Crypto LogsConsole) */}
+      {/* Stock Bot Terminal Console Logs (Alpaca Engine) */}
       <div className="card">
         <div className="card-title">
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Terminal size={18} /> Stock Bot Live Terminal Operations Logs
+            <Terminal size={18} /> Alpaca Stock Bot Live Terminal Operations Logs
           </span>
           <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--color-cyan)', fontWeight: 600 }}>
-            Live Stream
+            Alpaca Live Stream
           </span>
         </div>
 
         {logs.length === 0 ? (
           <div className="console-logs" style={{ justifyContent: 'center', alignItems: 'center', color: 'var(--text-muted)' }}>
             <Ban size={24} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
-            No stock logs recorded yet. Start a stock trailing order to begin operations.
+            No Alpaca stock logs recorded yet. Configure your Alpaca API Keys and start a stock trailing order.
           </div>
         ) : (
           <div className="console-logs" ref={consoleRef} onScroll={handleScroll} style={{ maxHeight: '280px', overflowY: 'auto' }}>

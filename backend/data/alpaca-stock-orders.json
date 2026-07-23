@@ -1,0 +1,49 @@
+[
+  {
+    "id": "alpaca_1784843490623_s06q5",
+    "symbol": "NVDA",
+    "trailValue": 0.4,
+    "quantity": null,
+    "quoteOrderQty": 100,
+    "orderType": "MARKET",
+    "dryRun": true,
+    "status": "CANCELLED",
+    "activationPrice": 124.19803228500001,
+    "activationDirection": "DOWN",
+    "activatedAt": null,
+    "takeProfit": 1,
+    "stopLoss": 0.8,
+    "filterSmartSl": false,
+    "slBuffer": 0.2,
+    "isSlExtended": false,
+    "isSlProfitLocked": false,
+    "lockedSlPrice": null,
+    "alpacaSellOrderId": null,
+    "sellExecutionPrice": null,
+    "sellTriggeredAt": null,
+    "autoRepeat": true,
+    "startImmediately": false,
+    "activationOffset": 0.5,
+    "peakPrice": 124.82214300000001,
+    "totalNetProfit": 0,
+    "tradeHistory": [
+      {
+        "cycle": 1,
+        "buyPrice": 122.37465,
+        "sellPrice": 124.82214300000001,
+        "type": "TAKE_PROFIT",
+        "profit": 2.000000000000007,
+        "timestamp": "2026-07-23T21:51:30.695Z"
+      }
+    ],
+    "initialPrice": 122.5,
+    "bottomPrice": 121.78750000000001,
+    "triggerPrice": 122.27465000000001,
+    "currentPrice": 124.82214300000001,
+    "createdAt": "2026-07-23T21:51:30.623Z",
+    "triggeredAt": null,
+    "alpacaOrderId": null,
+    "executionPrice": null,
+    "error": null
+  }
+]

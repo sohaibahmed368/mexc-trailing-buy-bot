@@ -5,23 +5,24 @@ interface StockOrderFormProps {
   onOrderCreated: () => void;
   apiBaseUrl: string;
   availableSymbols?: string[];
+  submitEndpoint?: string;
 }
 
-export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, apiBaseUrl, availableSymbols = [] }) => {
-  const [symbol, setSymbol] = useState('GOLD(XAUT)USDT');
-  const [trailValue, setTrailValue] = useState('2.0');
+export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, apiBaseUrl, availableSymbols = [], submitEndpoint }) => {
+  const [symbol, setSymbol] = useState('NVDA');
+  const [trailValue, setTrailValue] = useState('0.4');
   const [qtyMode, setQtyMode] = useState<'usdt' | 'coin'>('usdt');
   const [quoteOrderQty, setQuoteOrderQty] = useState('100');
   const [quantity, setQuantity] = useState('');
-  const [takeProfit, setTakeProfit] = useState('10.0');
-  const [stopLoss, setStopLoss] = useState('4.0');
+  const [takeProfit, setTakeProfit] = useState('1.0');
+  const [stopLoss, setStopLoss] = useState('0.8');
   
   const [activationPrice, setActivationPrice] = useState('');
-  const [activationOffset, setActivationOffset] = useState('2.0');
+  const [activationOffset, setActivationOffset] = useState('0.5');
 
   // Checkboxes
   const [filterSmartSl, setFilterSmartSl] = useState(false);
-  const [slBuffer, setSlBuffer] = useState('2.0');
+  const [slBuffer, setSlBuffer] = useState('0.2');
   const [filterObi, setFilterObi] = useState(false);
   const [filterVolumeSpike, setFilterVolumeSpike] = useState(false);
   const [filterRsi, setFilterRsi] = useState(false);
@@ -34,14 +35,14 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const defaultPresets = [
-    'GOLD(XAUT)USDT',
-    'GOLD(PAXG)USDT',
-    'NVDAONUSDT',
-    'USOONUSDT',
-    'INTKONUSDT',
-    'ETHUSDT',
-    'BTCUSDT',
-    'SOLUSDT'
+    'NVDA',
+    'AAPL',
+    'TSLA',
+    'MSFT',
+    'SPY',
+    'AMZN',
+    'QQQ',
+    'AMD'
   ];
 
   const allSymbolsList = useMemo(() => {
@@ -60,8 +61,10 @@ export const StockOrderForm: React.FC<StockOrderFormProps> = ({ onOrderCreated, 
     setLoading(true);
     setError(null);
 
+    const targetUrl = submitEndpoint || `${apiBaseUrl}/api/alpaca/stock-orders`;
+
     try {
-      const response = await fetch(`${apiBaseUrl}/api/stock-orders`, {
+      const response = await fetch(targetUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

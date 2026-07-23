@@ -7,6 +7,8 @@ const path = require('path');
 const MexcClient = require('./mexc-client');
 const OrderTracker = require('./tracker');
 const StockOrderTracker = require('./stock-tracker');
+const AlpacaClient = require('./alpaca-client');
+const AlpacaStockOrderTracker = require('./alpaca-stock-tracker');
 
 const app = express();
 const server = http.createServer(app);
@@ -22,10 +24,12 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
-// Initialize MEXC client and Trackers
+// Initialize MEXC client, Alpaca client, and Trackers
 const mexcClient = new MexcClient();
 const tracker = new OrderTracker(mexcClient, io);
 const stockTracker = new StockOrderTracker(mexcClient, io);
+const alpacaClient = new AlpacaClient();
+const alpacaStockTracker = new AlpacaStockOrderTracker(alpacaClient, io);
 
 // Port configuration
 const PORT = process.env.PORT || 3001;
@@ -62,9 +66,36 @@ if (process.env.MEXC_API_KEY && process.env.MEXC_SECRET_KEY) {
   }
 }
 
+const alpacaCredentialsPath = path.join(configDir, 'alpaca-credentials.json');
+
+// Load saved Alpaca credentials on startup
+let savedAlpacaConfig = { apiKey: '', secretKey: '', isPaper: true, saveToDisk: false };
+
+if (process.env.ALPACA_API_KEY_ID && process.env.ALPACA_SECRET_KEY) {
+  savedAlpacaConfig = {
+    apiKey: process.env.ALPACA_API_KEY_ID,
+    secretKey: process.env.ALPACA_SECRET_KEY,
+    isPaper: process.env.ALPACA_IS_PAPER !== 'false',
+    saveToDisk: false
+  };
+  alpacaClient.setCredentials(process.env.ALPACA_API_KEY_ID, process.env.ALPACA_SECRET_KEY, savedAlpacaConfig.isPaper);
+  alpacaStockTracker.log('Alpaca API keys configured via Environment Variables.', 'success');
+} else if (fs.existsSync(alpacaCredentialsPath)) {
+  try {
+    savedAlpacaConfig = JSON.parse(fs.readFileSync(alpacaCredentialsPath, 'utf8'));
+    if (savedAlpacaConfig.apiKey && savedAlpacaConfig.secretKey) {
+      alpacaClient.setCredentials(savedAlpacaConfig.apiKey, savedAlpacaConfig.secretKey, savedAlpacaConfig.isPaper !== false);
+      alpacaStockTracker.log('Loaded Alpaca API keys from local credentials file.', 'success');
+    }
+  } catch (e) {
+    alpacaStockTracker.log(`Failed to load Alpaca credentials file: ${e.message}`, 'error');
+  }
+}
+
 // Start tracking immediately if there are running orders from storage
 tracker.startTracking();
 stockTracker.startTracking();
+alpacaStockTracker.startTracking();
 
 // Cache trading symbols from MEXC on startup
 let symbolsCache = [];
@@ -548,6 +579,87 @@ app.post('/api/analysis/orderflow', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+// ==========================================
+// ALPACA STOCK BOT INDEPENDENT REST ENDPOINTS
+// ==========================================
+
+// Get Alpaca config
+app.get('/api/alpaca/config', (req, res) => {
+  const isEnv = !!(process.env.ALPACA_API_KEY_ID && process.env.ALPACA_SECRET_KEY);
+  res.json({
+    hasCredentials: alpacaClient.hasCredentials(),
+    apiKey: isEnv 
+      ? '[Environment Variable]' 
+      : (savedAlpacaConfig.apiKey ? `${savedAlpacaConfig.apiKey.substring(0, 6)}...${savedAlpacaConfig.apiKey.substring(savedAlpacaConfig.apiKey.length - 4)}` : ''),
+    isPaper: savedAlpacaConfig.isPaper !== false,
+    saveToDisk: savedAlpacaConfig.saveToDisk
+  });
+});
+
+// Update Alpaca credentials
+app.post('/api/alpaca/config', (req, res) => {
+  const { apiKey, secretKey, isPaper, saveToDisk } = req.body;
+  if (!apiKey || !secretKey) {
+    return res.status(400).json({ error: 'Alpaca API Key ID and Secret Key are required.' });
+  }
+
+  const paperMode = isPaper !== false;
+  alpacaClient.setCredentials(apiKey, secretKey, paperMode);
+
+  savedAlpacaConfig = { apiKey, secretKey, isPaper: paperMode, saveToDisk };
+
+  if (saveToDisk) {
+    try {
+      fs.writeFileSync(alpacaCredentialsPath, JSON.stringify(savedAlpacaConfig, null, 2));
+      alpacaStockTracker.log('Alpaca credentials saved to disk.', 'success');
+    } catch (e) {
+      alpacaStockTracker.log(`Failed to save Alpaca credentials to disk: ${e.message}`, 'error');
+    }
+  }
+
+  res.json({ success: true, message: 'Alpaca credentials updated successfully.' });
+});
+
+// Get Alpaca Account & Buying Power
+app.get('/api/alpaca/account', async (req, res) => {
+  try {
+    const account = await alpacaClient.getAccount();
+    res.json(account);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Get Alpaca Stock Orders
+app.get('/api/alpaca/stock-orders', (req, res) => {
+  res.json(alpacaStockTracker.getOrders());
+});
+
+// Create Alpaca Stock Order
+app.post('/api/alpaca/stock-orders', async (req, res) => {
+  try {
+    const order = await alpacaStockTracker.createStockOrder(req.body);
+    res.json({ success: true, order });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Cancel Alpaca Stock Order
+app.delete('/api/alpaca/stock-orders/:id', async (req, res) => {
+  try {
+    await alpacaStockTracker.cancelOrder(req.params.id);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Get Alpaca Stock Logs
+app.get('/api/alpaca/stock-logs', (req, res) => {
+  res.json(alpacaStockTracker.getLogs());
 });
 
 // Serve frontend build in production (prioritize committed backend/public, fallback to frontend/dist)

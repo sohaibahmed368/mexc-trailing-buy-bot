@@ -1,6 +1,6 @@
 [
   {
-    "id": "1784727797061",
+    "id": "1784726590921",
     "symbol": "MSFTONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -26,17 +26,17 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_9",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:17.061Z",
+    "createdAt": "2026-07-22T13:23:10.921Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 441.2,
-    "activatedAt": "2026-07-22T13:43:17.072Z"
+    "activatedAt": "2026-07-22T13:23:10.952Z"
   },
   {
-    "id": "1784727796990",
+    "id": "1784726580830",
     "symbol": "AAPLONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -62,17 +62,17 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_8",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:16.990Z",
+    "createdAt": "2026-07-22T13:23:00.830Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 226.5,
-    "activatedAt": "2026-07-22T13:43:17.002Z"
+    "activatedAt": "2026-07-22T13:23:00.850Z"
   },
   {
-    "id": "1784727796924",
+    "id": "1784726570763",
     "symbol": "TSLAONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -98,17 +98,17 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_7",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:16.925Z",
+    "createdAt": "2026-07-22T13:22:50.763Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 246.8,
-    "activatedAt": "2026-07-22T13:43:16.936Z"
+    "activatedAt": "2026-07-22T13:22:50.787Z"
   },
   {
-    "id": "1784727796743",
+    "id": "1784726560706",
     "symbol": "PAXGUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -134,17 +134,17 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_6",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:16.743Z",
+    "createdAt": "2026-07-22T13:22:40.706Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 2396,
-    "activatedAt": "2026-07-22T13:43:16.771Z"
+    "activatedAt": "2026-07-22T13:22:40.720Z"
   },
   {
-    "id": "1784727796538",
+    "id": "1784726550616",
     "symbol": "GOLD(XAUT)USDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -170,17 +170,17 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_5",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:16.538Z",
+    "createdAt": "2026-07-22T13:22:30.616Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 2401,
-    "activatedAt": "2026-07-22T13:43:16.556Z"
+    "activatedAt": "2026-07-22T13:22:30.634Z"
   },
   {
-    "id": "1784727796384",
+    "id": "1784726540520",
     "symbol": "INTKONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -206,17 +206,17 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_4",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:16.385Z",
+    "createdAt": "2026-07-22T13:22:20.520Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 33.1,
-    "activatedAt": "2026-07-22T13:43:16.402Z"
+    "activatedAt": "2026-07-22T13:22:20.552Z"
   },
   {
-    "id": "1784727796266",
+    "id": "1784726530432",
     "symbol": "USOONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -242,17 +242,17 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_3",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:16.266Z",
+    "createdAt": "2026-07-22T13:22:10.432Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 75.5,
-    "activatedAt": "2026-07-22T13:43:16.285Z"
+    "activatedAt": "2026-07-22T13:22:10.453Z"
   },
   {
-    "id": "1784727796136",
+    "id": "1784726520304",
     "symbol": "NVDAONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -278,17 +278,17 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_2",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:16.136Z",
+    "createdAt": "2026-07-22T13:22:00.304Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 208.14,
-    "activatedAt": "2026-07-22T13:43:16.155Z"
+    "activatedAt": "2026-07-22T13:22:00.322Z"
   },
   {
-    "id": "1784727796009",
+    "id": "1784726510156",
     "symbol": "SPCXONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -314,13 +314,13 @@
     "sellExecutionPrice": null,
     "mexcOrderId": "stock_tok_1",
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-22T13:43:16.009Z",
+    "createdAt": "2026-07-22T13:21:50.156Z",
     "totalNetProfit": 0,
     "tradeHistory": [],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 124.43,
-    "activatedAt": "2026-07-22T13:43:16.040Z"
+    "activatedAt": "2026-07-22T13:21:50.196Z"
   }
 ]

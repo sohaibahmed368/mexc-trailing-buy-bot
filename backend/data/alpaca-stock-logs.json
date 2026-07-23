@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1784843490741094",
+    "timestamp": "2026-07-23T21:51:30.741Z",
+    "message": "Alpaca Stock Bot Tracking Loop Stopped.",
+    "type": "info",
+    "symbol": null
+  },
+  {
+    "id": "1784843490720521",
+    "timestamp": "2026-07-23T21:51:30.720Z",
+    "message": "Alpaca Stock Order for NVDA cancelled by user.",
+    "type": "warning",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1784843490695090",
+    "timestamp": "2026-07-23T21:51:30.695Z",
+    "message": "🔄 [ALPACA AUTO-REPEAT RESET] NVDA reset for next cycle. Peak set to $124.82214300000001.",
+    "type": "info",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1784843490693534",
+    "timestamp": "2026-07-23T21:51:30.693Z",
+    "message": "🎉 [ALPACA TAKE PROFIT HIT] NVDA hit TP target at $124.82214300000001 (+2.00%)!",
+    "type": "success",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1784843490675922",
+    "timestamp": "2026-07-23T21:51:30.675Z",
+    "message": "🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on NVDA! Locked SL at $122.50.",
+    "type": "success",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1784843490654969",
+    "timestamp": "2026-07-23T21:51:30.654Z",
+    "message": "[DRY RUN] Alpaca Stock Trailing Buy Triggered! Bought at $122.37465.",
+    "type": "success",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1784843490635702",
+    "timestamp": "2026-07-23T21:51:30.635Z",
+    "message": "📉 [ALPACA ACTIVATION DIP HIT] NVDA dipped to $121.78750000000001! Trailing buy initialized.",
+    "type": "info",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1784843490632245",
+    "timestamp": "2026-07-23T21:51:30.632Z",
+    "message": "Alpaca Stock Bot Tracking Loop Started.",
+    "type": "info",
+    "symbol": null
+  }
+]
