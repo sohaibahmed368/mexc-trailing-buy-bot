@@ -193,6 +193,32 @@ export default function App() {
     };
   }, []);
 
+  // Polling fallback every 2000ms for Crypto Bot orders and logs
+  useEffect(() => {
+    const fetchOrdersAndLogs = async () => {
+      try {
+        const [ordRes, logRes] = await Promise.all([
+          fetch(`${BACKEND_URL}/api/orders`),
+          fetch(`${BACKEND_URL}/api/logs`)
+        ]);
+        if (ordRes.ok) {
+          const ordData = await ordRes.json();
+          setOrders(ordData);
+        }
+        if (logRes.ok) {
+          const logData = await logRes.json();
+          setLogs(logData);
+        }
+      } catch (e) {
+        // ignore polling errors
+      }
+    };
+
+    fetchOrdersAndLogs();
+    const interval = setInterval(fetchOrdersAndLogs, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Update credentials
   const handleSaveCredentials = async (apiKey: string, secretKey: string, saveToDisk: boolean) => {
     const res = await fetch(`${BACKEND_URL}/api/config`, {
