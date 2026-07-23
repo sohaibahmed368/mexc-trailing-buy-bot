@@ -835,24 +835,20 @@ class StockOrderTracker {
         if (order.status === 'TP_SL_ACTIVE') {
           // Real Mode OCO Check: Check if open TP Limit Sell order filled on MEXC
           if (!order.dryRun && order.mexcSellOrderId) {
-            const now = Date.now();
-            if (!order.lastStatusCheckTime || (now - order.lastStatusCheckTime > 5000)) {
-              order.lastStatusCheckTime = now;
-              try {
-                const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
-                if (queryRes && queryRes.status === 'FILLED') {
-                  const tpDollar = (order.takeProfit / 100) * order.executionPrice;
-                  order.status = 'TRIGGERED';
-                  order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + tpDollar);
-                  order.sellTriggeredAt = new Date().toISOString();
-                  this.log(`🎉 [REAL] Stock Take Profit Hit! 0% Maker Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
-                  changed = true;
-                  this.handleOrderCycleComplete(order);
-                  continue;
-                }
-              } catch (e) {
-                this.log(`Error querying Stock TP order status from MEXC: ${e.message}`, 'error', order.symbol);
+            try {
+              const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
+              if (queryRes && queryRes.status === 'FILLED') {
+                const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + tpDollar);
+                order.sellTriggeredAt = new Date().toISOString();
+                this.log(`🎉 [REAL] Stock Take Profit Hit! 0% Maker Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
+                changed = true;
+                this.handleOrderCycleComplete(order);
+                continue;
               }
+            } catch (e) {
+              this.log(`Error querying Stock TP order status from MEXC: ${e.message}`, 'error', order.symbol);
             }
           }
 
@@ -1146,6 +1142,37 @@ class StockOrderTracker {
         order.symbol
       );
       this.saveOrders();
+  }
+
+  // Calculate Relative Strength Index (Wilder's smoothing)
+  calculateRSI(klines, period = 14) {
+    if (!Array.isArray(klines) || klines.length <= period) return 30;
+    const closes = klines.map(k => parseFloat(k[4]));
+    
+    let gains = 0;
+    let losses = 0;
+    
+    for (let i = 1; i <= period; i++) {
+      const diff = closes[i] - closes[i - 1];
+      if (diff > 0) gains += diff;
+      else losses -= diff;
+    }
+    
+    let avgGain = gains / period;
+    let avgLoss = losses / period;
+    
+    for (let i = period + 1; i < closes.length; i++) {
+      const diff = closes[i] - closes[i - 1];
+      const currentGain = diff > 0 ? diff : 0;
+      const currentLoss = diff < 0 ? -diff : 0;
+      
+      avgGain = (avgGain * (period - 1) + currentGain) / period;
+      avgLoss = (avgLoss * (period - 1) + currentLoss) / period;
+    }
+    
+    if (avgLoss === 0) return 100;
+    const rs = avgGain / avgLoss;
+    return 100 - (100 / (1 + rs));
   }
 }
 
