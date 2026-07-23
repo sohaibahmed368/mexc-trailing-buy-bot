@@ -161,6 +161,81 @@ class AlpacaClient {
     }
   }
 
+  // Get All Tradeable Assets from Alpaca API (/v2/assets)
+  async getAssets(status = 'active') {
+    if (this.hasCredentials()) {
+      try {
+        const res = await axios.get(`${this.baseUrl}/v2/assets`, {
+          params: { status },
+          headers: this.getHeaders(),
+          timeout: 10000
+        });
+        if (Array.isArray(res.data)) {
+          return res.data
+            .filter(a => a.tradable)
+            .map(a => ({ symbol: a.symbol, name: a.name, class: a.class }));
+        }
+      } catch (err) {}
+    }
+    return this.getFallbackAssets();
+  }
+
+  getFallbackAssets() {
+    return [
+      // Major Stocks
+      { symbol: 'NVDA', name: 'NVIDIA Corporation', class: 'us_equity' },
+      { symbol: 'AAPL', name: 'Apple Inc.', class: 'us_equity' },
+      { symbol: 'TSLA', name: 'Tesla Inc.', class: 'us_equity' },
+      { symbol: 'MSFT', name: 'Microsoft Corporation', class: 'us_equity' },
+      { symbol: 'AMZN', name: 'Amazon.com Inc.', class: 'us_equity' },
+      { symbol: 'GOOGL', name: 'Alphabet Inc.', class: 'us_equity' },
+      { symbol: 'META', name: 'Meta Platforms Inc.', class: 'us_equity' },
+      { symbol: 'NFLX', name: 'Netflix Inc.', class: 'us_equity' },
+      { symbol: 'AMD', name: 'Advanced Micro Devices Inc.', class: 'us_equity' },
+      { symbol: 'PLTR', name: 'Palantir Technologies Inc.', class: 'us_equity' },
+      { symbol: 'COIN', name: 'Coinbase Global Inc.', class: 'us_equity' },
+      { symbol: 'BAC', name: 'Bank of America Corp.', class: 'us_equity' },
+      { symbol: 'JPM', name: 'JPMorgan Chase & Co.', class: 'us_equity' },
+      { symbol: 'INTC', name: 'Intel Corporation', class: 'us_equity' },
+      { symbol: 'ORCL', name: 'Oracle Corporation', class: 'us_equity' },
+      { symbol: 'DIS', name: 'The Walt Disney Company', class: 'us_equity' },
+      { symbol: 'BA', name: 'The Boeing Company', class: 'us_equity' },
+      { symbol: 'XOM', name: 'Exxon Mobil Corporation', class: 'us_equity' },
+      { symbol: 'CVX', name: 'Chevron Corporation', class: 'us_equity' },
+      { symbol: 'PEP', name: 'PepsiCo Inc.', class: 'us_equity' },
+      { symbol: 'KO', name: 'The Coca-Cola Company', class: 'us_equity' },
+      { symbol: 'MSTR', name: 'MicroStrategy Inc.', class: 'us_equity' },
+      { symbol: 'SMCI', name: 'Super Micro Computer Inc.', class: 'us_equity' },
+      
+      // Oil & Commodities ETFs
+      { symbol: 'USO', name: 'United States Oil Fund (WTI Oil)', class: 'us_equity' },
+      { symbol: 'BNO', name: 'United States Brent Oil Fund', class: 'us_equity' },
+      { symbol: 'XLE', name: 'Energy Select Sector SPDR Fund', class: 'us_equity' },
+      { symbol: 'XOP', name: 'SPDR S&P Oil & Gas Exploration ETF', class: 'us_equity' },
+      { symbol: 'OIH', name: 'VanEck Oil Services ETF', class: 'us_equity' },
+      
+      // Gold & Metals ETFs
+      { symbol: 'GLD', name: 'SPDR Gold Shares', class: 'us_equity' },
+      { symbol: 'IAU', name: 'iShares Gold Trust', class: 'us_equity' },
+      { symbol: 'GLDM', name: 'SPDR Gold MiniShares Trust', class: 'us_equity' },
+      { symbol: 'SLV', name: 'iShares Silver Trust', class: 'us_equity' },
+      { symbol: 'GDX', name: 'VanEck Gold Miners ETF', class: 'us_equity' },
+
+      // Index ETFs
+      { symbol: 'SPY', name: 'SPDR S&P 500 ETF Trust', class: 'us_equity' },
+      { symbol: 'QQQ', name: 'Invesco QQQ Trust (Nasdaq 100)', class: 'us_equity' },
+      { symbol: 'IWM', name: 'iShares Russell 2000 ETF', class: 'us_equity' },
+
+      // Crypto Spot Pairs
+      { symbol: 'BTCUSD', name: 'Bitcoin / USD', class: 'crypto' },
+      { symbol: 'ETHUSD', name: 'Ethereum / USD', class: 'crypto' },
+      { symbol: 'SOLUSD', name: 'Solana / USD', class: 'crypto' },
+      { symbol: 'DOGEUSD', name: 'Dogecoin / USD', class: 'crypto' },
+      { symbol: 'AVAXUSD', name: 'Avalanche / USD', class: 'crypto' },
+      { symbol: 'LINKUSD', name: 'Chainlink / USD', class: 'crypto' }
+    ];
+  }
+
   // Get Current Open Positions
   async getPositions() {
     if (!this.hasCredentials()) return [];

@@ -662,6 +662,16 @@ app.get('/api/alpaca/stock-logs', (req, res) => {
   res.json(alpacaStockTracker.getLogs());
 });
 
+// Get Tradeable Assets List from Alpaca
+app.get('/api/alpaca/assets', async (req, res) => {
+  try {
+    const assets = await alpacaClient.getAssets();
+    res.json(assets);
+  } catch (e) {
+    res.json(alpacaClient.getFallbackAssets());
+  }
+});
+
 // Serve frontend build in production (prioritize committed backend/public, fallback to frontend/dist)
 const backendPublicPath = path.join(__dirname, 'public');
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');

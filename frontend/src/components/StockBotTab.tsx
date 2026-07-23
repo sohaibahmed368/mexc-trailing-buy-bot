@@ -13,7 +13,19 @@ interface StockBotTabProps {
 export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl }) => {
   const [orders, setOrders] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
+  const [alpacaAssets, setAlpacaAssets] = useState<string[]>([]);
   const consoleRef = useRef<HTMLDivElement>(null);
+
+  const fetchAlpacaAssets = async () => {
+    try {
+      const res = await fetch(`${apiBaseUrl}/api/alpaca/assets`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        const symbols = data.map((a: any) => typeof a === 'string' ? a : a.symbol);
+        setAlpacaAssets(symbols);
+      }
+    } catch (e) {}
+  };
 
   const fetchStockOrders = async () => {
     try {
@@ -45,6 +57,7 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl }) => {
   };
 
   useEffect(() => {
+    fetchAlpacaAssets();
     fetchStockOrders();
     fetchStockLogs();
 
@@ -83,7 +96,7 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl }) => {
       <StockOrderForm 
         onOrderCreated={fetchStockOrders} 
         apiBaseUrl={apiBaseUrl} 
-        availableSymbols={['USO', 'BNO', 'XLE', 'NVDA', 'AAPL', 'TSLA', 'MSFT', 'SPY', 'AMZN', 'QQQ', 'AMD', 'GOOGL', 'META', 'NFLX']} 
+        availableSymbols={['USO', 'BNO', 'GLD', 'IAU', 'XLE', 'NVDA', 'AAPL', 'TSLA', 'MSFT', 'SPY', 'AMZN', 'QQQ', 'AMD', 'GOOGL', 'META', 'NFLX', ...alpacaAssets]} 
         submitEndpoint={`${apiBaseUrl}/api/alpaca/stock-orders`}
       />
       
