@@ -55,12 +55,22 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
     return () => clearInterval(interval);
   }, []);
 
-  // Auto scroll to bottom when new logs arrive
+  // Ref to track if user is currently at the bottom of the log stream
+  const isAtBottomRef = useRef<boolean>(true);
+
+  // Auto scroll to bottom when new logs arrive (ONLY if user is at bottom)
   useEffect(() => {
-    if (consoleRef.current) {
+    if (consoleRef.current && isAtBottomRef.current) {
       consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
     }
   }, [logs]);
+
+  const handleScroll = () => {
+    if (!consoleRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = consoleRef.current;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    isAtBottomRef.current = distanceFromBottom <= 35;
+  };
 
   const chronologicalLogs = [...logs].reverse();
 
@@ -92,7 +102,7 @@ export const StockBotTab: React.FC<StockBotTabProps> = ({ apiBaseUrl, availableS
             No stock logs recorded yet. Start a stock trailing order to begin operations.
           </div>
         ) : (
-          <div className="console-logs" ref={consoleRef} style={{ maxHeight: '280px', overflowY: 'auto' }}>
+          <div className="console-logs" ref={consoleRef} onScroll={handleScroll} style={{ maxHeight: '280px', overflowY: 'auto' }}>
             {chronologicalLogs.map((log) => {
               const timeStr = new Date(log.timestamp).toLocaleTimeString();
               return (
