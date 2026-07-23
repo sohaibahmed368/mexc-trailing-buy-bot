@@ -787,31 +787,28 @@ class StockOrderTracker {
                   order.status = 'TP_SL_ACTIVE';
                   this.log(`✅ [MARKET BUY FILLED] Order ${placeRes.orderId} executed at ${execPrice} USDT! (${executedQty} tokens). Transitioning to TP/SL monitoring.`, 'success', order.symbol);
 
-                  // If Take Profit is configured in Real Mode, place 0% Maker Limit Sell Take Profit order on MEXC now!
+                  // If Take Profit is configured in Real Mode, place Limit Sell Take Profit order on MEXC at EXACT target price (execPrice + TP%)!
                   if (!order.dryRun && order.takeProfit) {
                     try {
                       const tpDollar = (order.takeProfit / 100) * execPrice;
-                      const tpPrice = execPrice + tpDollar;
+                      const tpPrice = parseFloat((execPrice + tpDollar).toFixed(4));
                       
                       this.log(`[REAL] Querying asset balance to calculate fee-adjusted sell quantity for Stock TP...`, 'info', order.symbol);
                       const safeSellQty = await this.getFeeAdjustedBalance(order.symbol, executedQty);
-                      
-                      const freshTpPegPrice = await this.calculateMakerPegPrice(order.symbol, 'SELL', tpPrice);
-                      const targetTpPrice = Math.max(tpPrice, freshTpPegPrice);
 
                       const tpParams = {
                         symbol: order.symbol,
                         side: 'SELL',
                         type: 'LIMIT',
                         quantity: safeSellQty,
-                        price: targetTpPrice
+                        price: tpPrice
                       };
                       this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(tpParams)}`, 'info', order.symbol);
                       const tpRes = await this.placeOrderWithPrecisionRetry(tpParams);
                       this.log(`[MEXC API RESPONSE] Stock TP Order Placed Success -> ${JSON.stringify(tpRes)}`, 'success', order.symbol);
                       if (tpRes && tpRes.orderId) {
                         order.mexcSellOrderId = tpRes.orderId;
-                        this.log(`🎯 [REAL] Stock Take Profit 0% Maker Limit Sell order placed on MEXC for ${safeSellQty} tokens at ${targetTpPrice.toFixed(4)} USDT (+${order.takeProfit}%). Order ID: ${tpRes.orderId}`, 'success', order.symbol);
+                        this.log(`🎯 [REAL] Stock Take Profit Limit Sell order placed on MEXC for ${safeSellQty} tokens at EXACT TP Target ${tpPrice.toFixed(4)} USDT (+${order.takeProfit}%). Order ID: ${tpRes.orderId}`, 'success', order.symbol);
                       }
                     } catch (tpErr) {
                       this.log(`[REAL] Failed to place Stock TP Limit Sell order on MEXC: ${tpErr.message}. Bot will continue monitoring TP/SL in real time.`, 'error', order.symbol);
