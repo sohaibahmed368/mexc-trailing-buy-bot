@@ -414,6 +414,31 @@ class StockOrderTracker {
     this.log('Stock Bot Order tracking loop started.', 'info');
   }
 
+  // Query actual free spot balance from MEXC to prevent 30005 Oversold errors
+  async getFeeAdjustedBalance(symbol, targetQty) {
+    try {
+      const asset = symbol.replace('USDT', '').toUpperCase();
+      let balances = await this.mexcClient.getBalances();
+      let assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+
+      if (!assetBal || parseFloat(assetBal.free || 0) < ((targetQty || 1) * 0.1)) {
+        await new Promise(r => setTimeout(r, 1000));
+        balances = await this.mexcClient.getBalances();
+        assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+      }
+
+      if (assetBal && parseFloat(assetBal.free || 0) > 0) {
+        const freeVal = parseFloat(assetBal.free);
+        const safeFree = freeVal * 0.998;
+        this.log(`[STOCK BALANCE CHECK] Free spot balance for ${asset}: ${freeVal}. Using safe sell quantity: ${safeFree.toFixed(6)}`, 'info', symbol);
+        return safeFree;
+      }
+    } catch (e) {
+      this.log(`[STOCK BALANCE CHECK] Query failed: ${e.message}. Using target quantity fallback.`, 'warning', symbol);
+    }
+    return (targetQty || 1.0) * 0.998;
+  }
+
   // Robust Helper: Retry order placement with varying quantity precisions to overcome MEXC 400 "quantity scale is invalid" errors
   async placeOrderWithPrecisionRetry(orderParams, quoteOrderQty = null) {
     let lastErr = null;
@@ -439,7 +464,7 @@ class StockOrderTracker {
     const decimalsToTry = [100, 10, 1, 1000, 10000, 0.1];
 
     if (orderParams.quantity) {
-      const rawQty = orderParams.quantity;
+      let rawQty = orderParams.quantity;
       for (const mult of decimalsToTry) {
         let qtyToTry = Math.floor(rawQty * mult) / mult;
         if (qtyToTry <= 0) qtyToTry = Math.round(rawQty);
@@ -455,6 +480,23 @@ class StockOrderTracker {
           const msg = err.message || '';
           if (msg.includes('quantity scale') || msg.includes('400') || msg.includes('code":400')) {
             this.log(`[REAL] Quantity scale retry for ${orderParams.symbol} at multiplier ${mult} (Qty: ${qtyToTry})...`, 'warning', orderParams.symbol);
+            continue;
+          }
+          if (msg.includes('Oversold') || msg.includes('30005')) {
+            this.log(`[REAL] Oversold (30005) detected for ${orderParams.symbol}. Querying free spot balance...`, 'warning', orderParams.symbol);
+            try {
+              const freeQty = await this.getFeeAdjustedBalance(orderParams.symbol, rawQty);
+              if (freeQty > 0 && freeQty < rawQty) {
+                rawQty = freeQty;
+                const safeTry = Math.floor(rawQty * mult) / mult;
+                if (safeTry > 0) {
+                  const retryParams = { ...orderParams, quantity: safeTry };
+                  delete retryParams.quoteOrderQty;
+                  const res = await this.mexcClient.placeOrder(retryParams);
+                  if (res && res.orderId) return res;
+                }
+              }
+            } catch (balErr) {}
             continue;
           }
           throw err;
@@ -723,23 +765,60 @@ class StockOrderTracker {
 
                 order.mexcOrderId = placeRes.orderId;
                 
-                // Query executed fill price from MEXC
+                // Query executed fill price and executed quantity from MEXC
                 let execPrice = currentPrice;
+                let executedQty = order.quantity || (order.quoteOrderQty ? (order.quoteOrderQty / currentPrice) : 1);
                 try {
                   this.log(`[MEXC API REQUEST] GET /api/v3/order -> Symbol: ${order.symbol}, OrderID: ${placeRes.orderId}`, 'info', order.symbol);
                   const fills = await this.mexcClient.getOrder(order.symbol, placeRes.orderId);
                   this.log(`[MEXC API RESPONSE] Query Fills Success -> ${JSON.stringify(fills)}`, 'success', order.symbol);
                   if (fills && parseFloat(fills.executedQty) > 0) {
+                    executedQty = parseFloat(fills.executedQty);
                     const cumQuote = parseFloat(fills.cummulativeQuoteQty || 0);
-                    const execQty  = parseFloat(fills.executedQty || 1);
-                    if (cumQuote > 0) execPrice = cumQuote / execQty;
+                    if (cumQuote > 0) execPrice = cumQuote / executedQty;
                   }
                 } catch(e) {}
 
                 order.executionPrice = execPrice;
-                order.status = (order.takeProfit || order.stopLoss) ? 'TP_SL_ACTIVE' : 'TRIGGERED';
-                this.log(`✅ [MARKET BUY FILLED] Order ${placeRes.orderId} executed at ${execPrice} USDT! Transitioning to TP/SL monitoring.`, 'success', order.symbol);
-                if (!order.takeProfit && !order.stopLoss) {
+                order.executedQty = executedQty;
+                order.quantity = executedQty; // Sync memory order quantity with exact executed tokens!
+
+                if (order.takeProfit || order.stopLoss) {
+                  order.status = 'TP_SL_ACTIVE';
+                  this.log(`✅ [MARKET BUY FILLED] Order ${placeRes.orderId} executed at ${execPrice} USDT! (${executedQty} tokens). Transitioning to TP/SL monitoring.`, 'success', order.symbol);
+
+                  // If Take Profit is configured in Real Mode, place 0% Maker Limit Sell Take Profit order on MEXC now!
+                  if (!order.dryRun && order.takeProfit) {
+                    try {
+                      const tpDollar = (order.takeProfit / 100) * execPrice;
+                      const tpPrice = execPrice + tpDollar;
+                      
+                      this.log(`[REAL] Querying asset balance to calculate fee-adjusted sell quantity for Stock TP...`, 'info', order.symbol);
+                      const safeSellQty = await this.getFeeAdjustedBalance(order.symbol, executedQty);
+                      
+                      const freshTpPegPrice = await this.calculateMakerPegPrice(order.symbol, 'SELL', tpPrice);
+                      const targetTpPrice = Math.max(tpPrice, freshTpPegPrice);
+
+                      const tpParams = {
+                        symbol: order.symbol,
+                        side: 'SELL',
+                        type: 'LIMIT',
+                        quantity: safeSellQty,
+                        price: targetTpPrice
+                      };
+                      this.log(`[MEXC API REQUEST] POST /api/v3/order -> ${JSON.stringify(tpParams)}`, 'info', order.symbol);
+                      const tpRes = await this.placeOrderWithPrecisionRetry(tpParams);
+                      this.log(`[MEXC API RESPONSE] Stock TP Order Placed Success -> ${JSON.stringify(tpRes)}`, 'success', order.symbol);
+                      if (tpRes && tpRes.orderId) {
+                        order.mexcSellOrderId = tpRes.orderId;
+                        this.log(`🎯 [REAL] Stock Take Profit 0% Maker Limit Sell order placed on MEXC for ${safeSellQty} tokens at ${targetTpPrice.toFixed(4)} USDT (+${order.takeProfit}%). Order ID: ${tpRes.orderId}`, 'success', order.symbol);
+                      }
+                    } catch (tpErr) {
+                      this.log(`[REAL] Failed to place Stock TP Limit Sell order on MEXC: ${tpErr.message}. Bot will continue monitoring TP/SL in real time.`, 'error', order.symbol);
+                    }
+                  }
+                } else {
+                  order.status = 'TRIGGERED';
                   this.handleOrderCycleComplete(order);
                 }
                 changed = true;
@@ -754,6 +833,29 @@ class StockOrderTracker {
 
         // 3. TP_SL_ACTIVE (Take Profit & Stop Loss Monitoring)
         if (order.status === 'TP_SL_ACTIVE') {
+          // Real Mode OCO Check: Check if open TP Limit Sell order filled on MEXC
+          if (!order.dryRun && order.mexcSellOrderId) {
+            const now = Date.now();
+            if (!order.lastStatusCheckTime || (now - order.lastStatusCheckTime > 5000)) {
+              order.lastStatusCheckTime = now;
+              try {
+                const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
+                if (queryRes && queryRes.status === 'FILLED') {
+                  const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+                  order.status = 'TRIGGERED';
+                  order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + tpDollar);
+                  order.sellTriggeredAt = new Date().toISOString();
+                  this.log(`🎉 [REAL] Stock Take Profit Hit! 0% Maker Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
+                  changed = true;
+                  this.handleOrderCycleComplete(order);
+                  continue;
+                }
+              } catch (e) {
+                this.log(`Error querying Stock TP order status from MEXC: ${e.message}`, 'error', order.symbol);
+              }
+            }
+          }
+
           // 50% TP Progress Profit Lock Check
           if (order.takeProfit && !order.isSlProfitLocked && order.executionPrice) {
             const tpDollar = (order.takeProfit / 100) * order.executionPrice;
@@ -871,24 +973,28 @@ class StockOrderTracker {
               if (mexcSellId) {
                 try {
                   await this.mexcClient.cancelOrder(order.symbol, mexcSellId);
-                  this.log(`[REAL] Cancelled TP Limit Sell order ${mexcSellId} on MEXC.`, 'info', order.symbol);
+                  this.log(`[REAL] Cancelled open TP Limit Sell order ${mexcSellId} on MEXC. Waiting 1.0s for balance unlock...`, 'info', order.symbol);
                   await new Promise(r => setTimeout(r, 1000));
                 } catch (e) {
-                  // ignore
+                  this.log(`[REAL] Cancel TP order attempt for ${mexcSellId}: ${e.message}. Proceeding to balance check...`, 'warning', order.symbol);
                 }
               }
 
               // STOCK BOT SLIPPAGE GUARD & MAKER PEG SL SELL EXECUTION (0% MAKER FEE)
-              const sellQty = order.quantity || 1.0;
+              let sellQty = order.executedQty || order.quantity || 1.0;
+              try {
+                sellQty = await this.getFeeAdjustedBalance(order.symbol, sellQty);
+              } catch (bErr) {}
+
               const slippageMarginPct = order.slippageMargin !== undefined ? parseFloat(order.slippageMargin) : 0.1;
               const maxAllowedSlippageDollar = (slippageMarginPct / 100) * targetSlPrice;
               const actualPriceDrop = targetSlPrice - currentPrice;
 
               if (actualPriceDrop <= maxAllowedSlippageDollar) {
-                this.log(`⚡ [STOCK SLIPPAGE PROTECTION] Market price ${currentPrice.toFixed(4)} is within ${slippageMarginPct}% slippage margin of SL target (${targetSlPrice.toFixed(4)} USDT). Executing fast Market Sell!`, 'info', order.symbol);
+                this.log(`⚡ [STOCK SLIPPAGE PROTECTION] Market price ${currentPrice.toFixed(4)} is within ${slippageMarginPct}% slippage margin of SL target (${targetSlPrice.toFixed(4)} USDT). Executing fast Market Sell for ${sellQty} tokens!`, 'info', order.symbol);
                 try {
                   const mktParams = { symbol: order.symbol, side: 'SELL', type: 'MARKET', quantity: sellQty };
-                  const mktRes = await this.mexcClient.placeOrder(mktParams);
+                  const mktRes = await this.placeOrderWithPrecisionRetry(mktParams);
                   if (mktRes && mktRes.orderId) {
                     order.status = 'TRIGGERED';
                     order.sellExecutionPrice = currentPrice;
