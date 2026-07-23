@@ -148,8 +148,8 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
               </div>
             </div>
 
-            {/* Activation status details */}
-            {order.activationPrice !== null && (
+            {/* Trailing Buy activation status details (rendered ONLY when tracking dip to buy) */}
+            {(order.status === 'PENDING_ACTIVATION' || order.status === 'RUNNING') && order.activationPrice !== null && (
               <div style={{ 
                 fontSize: '0.85rem', 
                 color: 'var(--text-secondary)', 
@@ -176,6 +176,37 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                     </span>
                   </>
                 )}
+              </div>
+            )}
+
+            {/* Position Holding summary (rendered ONLY when bought & holding TP/SL) */}
+            {order.status === 'TP_SL_ACTIVE' && order.executionPrice && (
+              <div style={{ 
+                fontSize: '0.85rem', 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '0.25rem',
+                padding: '0.3rem 0.5rem',
+                background: 'rgba(0, 230, 118, 0.06)',
+                borderRadius: '6px',
+                border: '1px solid rgba(0, 230, 118, 0.15)'
+              }}>
+                <span>Bought At: <strong style={{ color: 'var(--color-green)' }}>${fmtPrice(order.executionPrice)}</strong></span>
+                <span>
+                  Current: <strong style={{ color: 'var(--text-primary)' }}>${fmtPrice(order.currentPrice || order.executionPrice)}</strong>
+                  {order.currentPrice && (
+                    <span style={{ 
+                      marginLeft: '0.35rem', 
+                      fontSize: '0.75rem', 
+                      fontWeight: 700,
+                      color: order.currentPrice >= order.executionPrice ? 'var(--color-green)' : 'var(--color-red)'
+                    }}>
+                      ({((order.currentPrice - order.executionPrice) / order.executionPrice * 100) >= 0 ? '+' : ''}
+                      {((order.currentPrice - order.executionPrice) / order.executionPrice * 100).toFixed(2)}%)
+                    </span>
+                  )}
+                </span>
               </div>
             )}
 
