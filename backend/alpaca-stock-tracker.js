@@ -384,13 +384,18 @@ class AlpacaStockOrderTracker {
 
           // Check SL Hit
           if (currentPrice <= slTarget) {
-            if (order.filterSmartSl && !order.isSlExtended) {
+            // ONLY evaluate Smart SL extension if Profit Lock was NOT activated!
+            if (order.filterSmartSl && !order.isSlExtended && !order.isSlProfitLocked) {
               // Smart SL Buffer Guard
               order.isSlExtended = true;
               slTarget = slTarget * (1 - (order.slBuffer / 100));
               this.log(`🛡️ [SMART SL BUFFER EXTENDED] Extended SL for ${order.symbol} by +${order.slBuffer}% buffer to $${slTarget.toFixed(2)}. Waiting for bounce!`, 'warning', order.symbol);
               changed = true;
               continue;
+            }
+
+            if (order.isSlProfitLocked) {
+              this.log(`🔒 [PROFIT LOCK EXECUTED] Price dropped back after >50% TP progress! Executing IMMEDIATE MARKET SELL at $${currentPrice.toFixed(2)} to lock profit (Smart SL Extension skipped).`, 'success', order.symbol);
             }
 
             const sellPrice = currentPrice;

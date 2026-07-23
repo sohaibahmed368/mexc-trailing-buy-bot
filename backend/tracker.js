@@ -937,8 +937,14 @@ class OrderTracker {
         } else if (order.stopLoss && currentPrice <= targetSlPrice) {
           order.status = 'PENDING_EXECUTION'; // Transition immediately to block duplicate execution!
 
-          // Smart SL Guard seller exhaustion evaluation (common to both Dry Run and Real Mode)
-          if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
+          // Smart SL Guard seller exhaustion evaluation (ONLY evaluated if Profit Lock was NOT activated!)
+          if (order.isSlProfitLocked) {
+            this.log(
+              `🔒 [PROFIT LOCK EXECUTED] Price dropped back to $${targetSlPrice.toFixed(4)} USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).`,
+              'success',
+              order.symbol
+            );
+          } else if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
             let isSellerExhausted = false;
             let bidsRatioPct = '0';
             let asksRatioPct = '0';
