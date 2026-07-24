@@ -87,6 +87,16 @@ class AlpacaStockOrderTracker {
     return this.orders;
   }
 
+  clearTradeHistory() {
+    this.orders.forEach(o => {
+      o.tradeHistory = [];
+      o.totalNetProfit = 0;
+    });
+    this.saveOrders();
+    this.log('🧹 Alpaca Stock Trade History cleared & Win Ratio reset by user.', 'warning');
+    return this.orders;
+  }
+
   getLogs() {
     return this.logs;
   }

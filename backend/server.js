@@ -345,6 +345,26 @@ app.delete('/api/stock-orders/:id', async (req, res) => {
   }
 });
 
+// Clear Crypto Trade History Endpoint
+app.post('/api/orders/clear-trade-history', (req, res) => {
+  try {
+    const updatedOrders = tracker.clearTradeHistory();
+    res.json({ success: true, message: 'Crypto Trade History cleared.', orders: updatedOrders });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Clear Stock Trade History Endpoint
+app.post('/api/stock-orders/clear-trade-history', (req, res) => {
+  try {
+    const updatedOrders = stockTracker.clearTradeHistory();
+    res.json({ success: true, message: 'Stock Trade History cleared.', orders: updatedOrders });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 app.get('/api/stock-logs', (req, res) => {
   res.json(stockTracker.getLogs());
 });

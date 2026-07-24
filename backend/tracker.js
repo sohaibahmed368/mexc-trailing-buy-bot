@@ -447,6 +447,16 @@ class OrderTracker {
   }
 
 
+  clearTradeHistory() {
+    this.orders.forEach(o => {
+      o.tradeHistory = [];
+      o.totalNetProfit = 0;
+    });
+    this.saveOrders();
+    this.log('🧹 Master Trade History cleared & Win Ratio reset by user.', 'warning');
+    return this.orders;
+  }
+
   async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, startImmediately }) {
     symbol = symbol.toUpperCase().trim();
 
