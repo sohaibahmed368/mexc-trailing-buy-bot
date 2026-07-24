@@ -29,6 +29,14 @@ class AlpacaStockOrderTracker {
     if (fs.existsSync(this.ordersPath)) {
       try {
         this.orders = JSON.parse(fs.readFileSync(this.ordersPath, 'utf8'));
+        if (Array.isArray(this.orders)) {
+          this.orders.forEach(o => {
+            if (Array.isArray(o.tradeHistory) && o.tradeHistory.length > 20) {
+              o.tradeHistory = [];
+              o.totalNetProfit = 0;
+            }
+          });
+        }
       } catch (e) {
         this.orders = [];
       }
