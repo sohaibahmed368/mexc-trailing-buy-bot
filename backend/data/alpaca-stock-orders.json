@@ -1,6 +1,6 @@
 [
   {
-    "id": "alpaca_1784851356264_8t96q",
+    "id": "alpaca_1784896332924_9984x",
     "symbol": "USO",
     "trailValue": 0.4,
     "quantity": null,
@@ -8,12 +8,12 @@
     "orderType": "MARKET",
     "dryRun": true,
     "status": "TP_SL_ACTIVE",
-    "activationPrice": 138.37,
-    "activationDirection": "DOWN",
-    "activatedAt": "2026-07-24T00:02:36.264Z",
+    "activationPrice": null,
+    "activationDirection": null,
+    "activatedAt": "2026-07-24T12:32:12.924Z",
     "takeProfit": 1,
     "stopLoss": 0.8,
-    "filterSmartSl": true,
+    "filterSmartSl": false,
     "slBuffer": 0.2,
     "isSlExtended": false,
     "isSlProfitLocked": false,
@@ -23,37 +23,18 @@
     "sellTriggeredAt": null,
     "autoRepeat": true,
     "startImmediately": true,
-    "activationOffset": 0.8,
-    "peakPrice": 139.49,
-    "totalNetProfit": 0.0358,
-    "tradeHistory": [
-      {
-        "cycle": 1,
-        "buyPrice": 139.49,
-        "sellPrice": 140.2,
-        "type": "TAKE_PROFIT",
-        "profit": 0.0358,
-        "profitUsdt": 0.0358,
-        "timestamp": "2026-07-24T00:03:09.503Z"
-      },
-      {
-        "cycle": 2,
-        "buyPrice": 139.5,
-        "sellPrice": 139.3,
-        "type": "STOP_LOSS",
-        "profit": -0.015,
-        "profitUsdt": -0.015,
-        "timestamp": "2026-07-24T01:10:27.473Z"
-      }
-    ],
-    "initialPrice": 139.49,
-    "bottomPrice": 139.49,
-    "triggerPrice": 140.04,
-    "currentPrice": 139.5,
-    "createdAt": "2026-07-24T00:02:36.264Z",
-    "triggeredAt": null,
+    "activationOffset": null,
+    "peakPrice": 76.5,
+    "totalNetProfit": 0,
+    "tradeHistory": [],
+    "initialPrice": 76.5,
+    "bottomPrice": null,
+    "triggerPrice": null,
+    "currentPrice": 76.5,
+    "createdAt": "2026-07-24T12:32:12.924Z",
+    "triggeredAt": "2026-07-24T12:32:12.926Z",
     "alpacaOrderId": null,
-    "executionPrice": 139.49,
+    "executionPrice": 76.5,
     "error": null
   }
 ]
