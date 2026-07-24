@@ -447,9 +447,12 @@ class OrderTracker {
   }
 
 
-  // Add a new trailing buy order
   async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, startImmediately }) {
     symbol = symbol.toUpperCase().trim();
+
+    // Symbol Deduplication Guard: Remove any pre-existing tracking order for the same symbol to prevent duplicates
+    this.orders = this.orders.filter(o => o.symbol !== symbol);
+
     trailValue = parseFloat(trailValue);
     
     if (isNaN(trailValue) || trailValue <= 0) {

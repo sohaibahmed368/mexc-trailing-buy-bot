@@ -110,6 +110,10 @@ class AlpacaStockOrderTracker {
     } = orderData;
 
     const cleanSymbol = symbol.toUpperCase().replace('USDT', '');
+
+    // Symbol Deduplication Guard: Remove any existing tracking orders for the same symbol
+    this.orders = this.orders.filter(o => o.symbol !== cleanSymbol && o.symbol !== cleanSymbol + 'USDT');
+
     const parsedTrail = parseFloat(trailValue);
     const parsedTakeProfit = takeProfit ? parseFloat(takeProfit) : null;
     const parsedStopLoss = stopLoss ? parseFloat(stopLoss) : null;
