@@ -1,5 +1,68 @@
 [
   {
+    "id": "1784851389504506",
+    "timestamp": "2026-07-24T00:03:09.504Z",
+    "message": "🔄 [ALPACA AUTO-REPEAT RESET] USO reset for next cycle. Peak set to $139.5.",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784851389485958",
+    "timestamp": "2026-07-24T00:03:09.485Z",
+    "message": "🔻 [ALPACA STOP LOSS EXECUTED] USO executed SL at $139.5 (0.01%).",
+    "type": "error",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784851389465572",
+    "timestamp": "2026-07-24T00:03:09.465Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back after >50% TP progress! Executing IMMEDIATE MARKET SELL at $139.50 to lock profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784851389443970",
+    "timestamp": "2026-07-24T00:03:09.443Z",
+    "message": "🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on USO! Locked SL at $139.63.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784851389422322",
+    "timestamp": "2026-07-24T00:03:09.422Z",
+    "message": "[DRY RUN] Alpaca Stock Trailing Buy Triggered! Bought at $140.2.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784851389404371",
+    "timestamp": "2026-07-24T00:03:09.404Z",
+    "message": "Alpaca Stock Bot Tracking Loop Started.",
+    "type": "info",
+    "symbol": null
+  },
+  {
+    "id": "1784851389399318",
+    "timestamp": "2026-07-24T00:03:09.399Z",
+    "message": "[DRY RUN] Alpaca Stock Buy Executed at 139.49 USD.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784851389397653",
+    "timestamp": "2026-07-24T00:03:09.397Z",
+    "message": "🚀 [INSTANT START] Order created for USO. Executing initial Alpaca Market Buy immediately...",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784851356266515",
+    "timestamp": "2026-07-24T00:02:36.266Z",
+    "message": "Alpaca Stock Bot Tracking Loop Started.",
+    "type": "info",
+    "symbol": null
+  },
+  {
     "id": "1784843490741094",
     "timestamp": "2026-07-23T21:51:30.741Z",
     "message": "Alpaca Stock Bot Tracking Loop Stopped.",
