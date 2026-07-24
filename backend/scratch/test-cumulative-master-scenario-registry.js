@@ -33,8 +33,8 @@ async function runCumulativeMasterRegistry() {
       getTickerPrice: async () => currentPrice,
       placeOrder: async () => ({ orderId: 'buy_sc1' }),
       getDepth: async () => ({
-        bids: [['99.5', '60.0']], // 60% bids support >= 55%
-        asks: [['100.5', '40.0']]
+        bids: [['99.5', '65.0']], // 65% bids support >= 60%
+        asks: [['100.5', '35.0']]
       }),
       hasCredentials: () => true
     };

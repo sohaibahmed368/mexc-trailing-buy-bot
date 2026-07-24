@@ -1184,11 +1184,11 @@ class OrderTracker {
             const totalValue = bidsValue + asksValue;
             const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
             const pctStr = (bidsRatio * 100).toFixed(1);
-            if (bidsRatio < 0.55) {
+            if (bidsRatio < 0.60) {
               passedFilters = false;
-              failedReasons.push(`OBI Support ${pctStr}% < 55%`);
+              failedReasons.push(`OBI Support ${pctStr}% < 60%`);
             } else {
-              confirmedReasons.push(`OBI Support ${pctStr}% >= 55%`);
+              confirmedReasons.push(`OBI Support ${pctStr}% >= 60%`);
             }
           } catch (e) {
             this.log(`OBI Filter query failed: ${e.message}`, 'warning', order.symbol);
@@ -1271,11 +1271,11 @@ class OrderTracker {
             const totalValue = bidsValue + asksValue;
             const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
             const pctStr = (bidsRatio * 100).toFixed(1);
-            if (bidsRatio < 0.55) {
+            if (bidsRatio < 0.60) {
               passedFilters = false;
-              failedReasons.push(`Smart SL Entry Guard ${pctStr}% bids < 55%`);
+              failedReasons.push(`Smart SL Entry Guard ${pctStr}% bids < 60%`);
             } else {
-              confirmedReasons.push(`Smart SL Entry Guard ${pctStr}% bids >= 55%`);
+              confirmedReasons.push(`Smart SL Entry Guard ${pctStr}% bids >= 60%`);
             }
           } catch (e) {
             this.log(`Smart SL Entry Guard Filter query failed: ${e.message}`, 'warning', order.symbol);
