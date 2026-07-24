@@ -104,11 +104,17 @@ class AlpacaClient {
       throw new Error('Alpaca API credentials not configured.');
     }
     try {
+      // Alpaca API Rule: Fractional and Notional USD orders MUST use time_in_force: 'day'
+      let tif = params.time_in_force || 'day';
+      if (params.quoteOrderQty || params.notional || (params.quantity && String(params.quantity).includes('.'))) {
+        tif = 'day';
+      }
+
       const body = {
         symbol: params.symbol.toUpperCase().replace('USDT', ''),
         side: params.side.toLowerCase(),
         type: params.type.toLowerCase(), // 'market' or 'limit'
-        time_in_force: params.time_in_force || 'gtc'
+        time_in_force: tif
       };
 
       if (params.quantity || params.qty) {
