@@ -1,5 +1,103 @@
 [
   {
+    "id": "1784894637717584",
+    "timestamp": "2026-07-24T12:03:57.717Z",
+    "message": "🔄 [ALPACA AUTO-REPEAT RESET] USO reset for next cycle. Peak set to $139.5.",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894637697455",
+    "timestamp": "2026-07-24T12:03:57.697Z",
+    "message": "🔻 [ALPACA STOP LOSS EXECUTED] USO executed SL at $139.5 (0.01%).",
+    "type": "error",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894637677812",
+    "timestamp": "2026-07-24T12:03:57.677Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back after >50% TP progress! Executing IMMEDIATE MARKET SELL at $139.50 to lock profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894637657943",
+    "timestamp": "2026-07-24T12:03:57.657Z",
+    "message": "🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on USO! Locked SL at $139.63.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894637637576",
+    "timestamp": "2026-07-24T12:03:57.637Z",
+    "message": "Alpaca Stock Bot Tracking Loop Started.",
+    "type": "info",
+    "symbol": null
+  },
+  {
+    "id": "1784894637634123",
+    "timestamp": "2026-07-24T12:03:57.634Z",
+    "message": "[DRY RUN] Alpaca Stock Buy Executed at 139.49 USD.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894637633445",
+    "timestamp": "2026-07-24T12:03:57.633Z",
+    "message": "🚀 [INSTANT START] Order created for USO. Executing initial Alpaca Market Buy immediately...",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894607090107",
+    "timestamp": "2026-07-24T12:03:27.090Z",
+    "message": "🔄 [ALPACA AUTO-REPEAT RESET] USO reset for next cycle. Peak set to $139.5.",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894607086850",
+    "timestamp": "2026-07-24T12:03:27.086Z",
+    "message": "🔻 [ALPACA STOP LOSS EXECUTED] USO executed SL at $139.5 (0.01%).",
+    "type": "error",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894607062568",
+    "timestamp": "2026-07-24T12:03:27.062Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back after >50% TP progress! Executing IMMEDIATE MARKET SELL at $139.50 to lock profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894607042455",
+    "timestamp": "2026-07-24T12:03:27.042Z",
+    "message": "🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on USO! Locked SL at $139.63.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894607013478",
+    "timestamp": "2026-07-24T12:03:27.013Z",
+    "message": "Alpaca Stock Bot Tracking Loop Started.",
+    "type": "info",
+    "symbol": null
+  },
+  {
+    "id": "1784894607010061",
+    "timestamp": "2026-07-24T12:03:27.010Z",
+    "message": "[DRY RUN] Alpaca Stock Buy Executed at 139.49 USD.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784894607007327",
+    "timestamp": "2026-07-24T12:03:27.007Z",
+    "message": "🚀 [INSTANT START] Order created for USO. Executing initial Alpaca Market Buy immediately...",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
     "id": "1784893260432898",
     "timestamp": "2026-07-24T11:41:00.432Z",
     "message": "🔄 [ALPACA AUTO-REPEAT RESET] USO reset for next cycle. Peak set to $139.5.",
