@@ -1,5 +1,54 @@
 [
   {
+    "id": "1784896677164970",
+    "timestamp": "2026-07-24T12:37:57.164Z",
+    "message": "🧹 Alpaca Stock Trade History cleared & Win Ratio reset by user.",
+    "type": "warning",
+    "symbol": null
+  },
+  {
+    "id": "1784896677148409",
+    "timestamp": "2026-07-24T12:37:57.148Z",
+    "message": "🔄 [ALPACA AUTO-REPEAT RESET] USO reset for next cycle. Peak set to $77.03819999999999.",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784896677146461",
+    "timestamp": "2026-07-24T12:37:57.146Z",
+    "message": "🎉 [ALPACA TAKE PROFIT HIT] USO hit TP target at $77.03819999999999 (+1.10%)!",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784896677132931",
+    "timestamp": "2026-07-24T12:37:57.132Z",
+    "message": "🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on USO! Locked SL at $76.28.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784896677113986",
+    "timestamp": "2026-07-24T12:37:57.113Z",
+    "message": "[DRY RUN] Alpaca Stock Trailing Buy Triggered! Bought at $76.2.",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784896677097902",
+    "timestamp": "2026-07-24T12:37:57.097Z",
+    "message": "📉 [ALPACA ACTIVATION DIP HIT] USO dipped to $75.85! Trailing buy initialized.",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1784896677072822",
+    "timestamp": "2026-07-24T12:37:57.072Z",
+    "message": "Alpaca Stock Bot Tracking Loop Started.",
+    "type": "info",
+    "symbol": null
+  },
+  {
     "id": "1784896332926159",
     "timestamp": "2026-07-24T12:32:12.926Z",
     "message": "[DRY RUN] Alpaca Stock Buy Executed at 76.5 USD.",
