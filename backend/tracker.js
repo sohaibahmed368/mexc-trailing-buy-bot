@@ -834,8 +834,26 @@ class OrderTracker {
         // Automatic Ghost Order Self-Healing: Verify real MEXC balance for real trades
         if (!order.dryRun) {
           const now = Date.now();
-          if (!order.lastGhostCheckTime || (now - order.lastGhostCheckTime > 10000)) {
+          if (!order.lastGhostCheckTime || (now - order.lastGhostCheckTime > 5000)) {
             order.lastGhostCheckTime = now;
+
+            // FIRST: Check if the placed TP Limit Sell order was filled on MEXC!
+            if (order.mexcSellOrderId) {
+              try {
+                const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
+                if (queryRes && queryRes.status === 'FILLED') {
+                  const tpDollar = (order.takeProfit / 100) * (order.executionPrice || order.initialPrice);
+                  order.status = 'TRIGGERED';
+                  order.sellExecutionPrice = parseFloat(queryRes.price) || ((order.executionPrice || order.initialPrice) + tpDollar);
+                  order.sellTriggeredAt = new Date().toISOString();
+                  this.log(`🎉 [REAL] Take Profit hit! Limit Sell order ${order.mexcSellOrderId} filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
+                  changed = true;
+                  this.handleOrderCycleComplete(order);
+                  continue;
+                }
+              } catch (e) {}
+            }
+
             const asset = order.symbol.replace('USDT', '').toUpperCase();
             try {
               const balances = await this.mexcClient.getBalances();
