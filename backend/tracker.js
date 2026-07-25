@@ -1481,11 +1481,14 @@ class OrderTracker {
     const sellPrice = order.sellExecutionPrice || order.currentPrice || 0;
     const qty = order.quantity || (order.quoteOrderQty && buyPrice > 0 ? (order.quoteOrderQty / buyPrice) : 1);
 
-    // Determine trade type (Take Profit vs Stop Loss vs Manual)
+    // Determine trade type (Take Profit vs Profit Lock vs Stop Loss)
     let type = 'MANUAL_SELL';
-    if (order.takeProfit && sellPrice >= (buyPrice + order.takeProfit - 0.0001)) {
+    const profitPct = buyPrice > 0 ? ((sellPrice - buyPrice) / buyPrice * 100) : 0;
+    if (order.takeProfit && profitPct >= (order.takeProfit - 0.05)) {
       type = 'TAKE_PROFIT';
-    } else if (order.isSlProfitLocked || (order.stopLoss && sellPrice <= (buyPrice - order.stopLoss + 0.0001))) {
+    } else if (order.isSlProfitLocked) {
+      type = 'PROFIT_LOCK_SELL';
+    } else if (sellPrice < buyPrice) {
       type = 'STOP_LOSS';
     }
 
