@@ -9,6 +9,7 @@ const OrderTracker = require('./tracker');
 const StockOrderTracker = require('./stock-tracker');
 const AlpacaClient = require('./alpaca-client');
 const AlpacaStockOrderTracker = require('./alpaca-stock-tracker');
+const MultiExchangeSignalRadar = require('./multi-exchange-radar');
 
 const app = express();
 const server = http.createServer(app);
@@ -24,12 +25,13 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
-// Initialize MEXC client, Alpaca client, and Trackers
+// Initialize MEXC client, Alpaca client, Trackers, and Standalone Signal Radar
 const mexcClient = new MexcClient();
 const tracker = new OrderTracker(mexcClient, io);
 const stockTracker = new StockOrderTracker(mexcClient, io);
 const alpacaClient = new AlpacaClient();
 const alpacaStockTracker = new AlpacaStockOrderTracker(alpacaClient, io);
+const signalRadar = new MultiExchangeSignalRadar();
 
 // Port configuration
 const PORT = process.env.PORT || 3001;
@@ -196,6 +198,17 @@ app.post('/api/config/test', async (req, res) => {
     res.json({ success: true, balances });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+// 📡 Multi-Exchange Standalone Signal Radar API Route
+app.get('/api/radar/metrics', async (req, res) => {
+  try {
+    const symbol = req.query.symbol || 'SOLUSDT';
+    const metrics = await signalRadar.getMultiExchangeMetrics(symbol);
+    res.json(metrics);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch multi-exchange radar metrics: ' + error.message });
   }
 });
 
