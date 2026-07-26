@@ -1,6 +1,6 @@
 [
   {
-    "id": "alpaca_1785101659146_rsdod",
+    "id": "alpaca_1785104558412_2d0oc",
     "symbol": "USO",
     "trailValue": 0.4,
     "quantity": null,
@@ -31,7 +31,7 @@
     "bottomPrice": 75.85,
     "triggerPrice": 76.15339999999999,
     "currentPrice": 77.03819999999999,
-    "createdAt": "2026-07-26T21:34:19.146Z",
+    "createdAt": "2026-07-26T22:22:38.412Z",
     "triggeredAt": null,
     "alpacaOrderId": null,
     "executionPrice": null,

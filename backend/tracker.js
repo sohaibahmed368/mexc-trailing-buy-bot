@@ -903,17 +903,18 @@ class OrderTracker {
             // Profit Lock Guard: Check if price reached 50% progress to Take Profit
         if (order.takeProfit && order.trailValue && !order.isSlProfitLocked && order.executionPrice) {
           const tpDollar = (order.takeProfit / 100) * order.executionPrice;
-          const trailDollar = (order.trailValue / 100) * order.executionPrice;
           const tpTargetProgress = tpDollar * 0.5;
 
           if (currentPrice >= (order.executionPrice + tpTargetProgress - 0.00000001)) {
             order.isSlProfitLocked = true;
             order.justProfitLocked = true;
-            order.lockedSlPrice = order.executionPrice + (trailDollar * 2);
+            // Set Profit Lock floor at Risk-Free Break-Even (+0.10% fee margin) so price has full breathing room to hit 100% TP
+            const breakEvenMargin = order.executionPrice * 0.0010;
+            order.lockedSlPrice = order.executionPrice + breakEvenMargin;
             const tpTriggerPrice = (order.executionPrice + tpTargetProgress).toFixed(4);
             const newSlTarget = order.lockedSlPrice.toFixed(4);
             this.log(
-              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to +$${(trailDollar * 2).toFixed(2)} above Buy Price (${newSlTarget} USDT). Profit Locked!`,
+              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to Risk-Free Break-Even (+0.10% fee margin at ${newSlTarget} USDT). Gains locked!`,
               'success',
               order.symbol
             );
