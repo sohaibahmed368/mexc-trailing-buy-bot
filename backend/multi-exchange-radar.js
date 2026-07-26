@@ -43,10 +43,10 @@ class MultiExchangeSignalRadar {
     });
   }
 
-  // 1. Binance Metrics
+  // 1. Binance Metrics (500-Depth & 20s Taker Flow)
   async fetchBinanceMetrics(symbol) {
     const depthUrl = `https://api.binance.com/api/v3/depth?symbol=${symbol}&limit=500`;
-    const tradesUrl = `https://api.binance.com/api/v3/trades?symbol=${symbol}&limit=100`;
+    const tradesUrl = `https://api.binance.com/api/v3/trades?symbol=${symbol}&limit=200`;
     const [depth, trades] = await Promise.all([this.fetchJson(depthUrl), this.fetchJson(tradesUrl)]);
 
     let obiPct = 50.0, takerBuyPct = 50.0;
@@ -68,10 +68,10 @@ class MultiExchangeSignalRadar {
     return { obiPct: parseFloat(obiPct.toFixed(1)), takerBuyPct: parseFloat(takerBuyPct.toFixed(1)), status: 'online' };
   }
 
-  // 2. Bybit Metrics
+  // 2. Bybit Metrics (500-Depth & 20s Taker Flow)
   async fetchBybitMetrics(symbol) {
     const depthUrl = `https://api.bybit.com/v5/market/orderbook?category=spot&symbol=${symbol}&limit=200`;
-    const tradesUrl = `https://api.bybit.com/v5/market/recent-trade?category=spot&symbol=${symbol}&limit=100`;
+    const tradesUrl = `https://api.bybit.com/v5/market/recent-trade?category=spot&symbol=${symbol}&limit=200`;
     const [depth, trades] = await Promise.all([this.fetchJson(depthUrl), this.fetchJson(tradesUrl)]);
 
     let obiPct = 50.0, takerBuyPct = 50.0;
@@ -93,10 +93,10 @@ class MultiExchangeSignalRadar {
     return { obiPct: parseFloat(obiPct.toFixed(1)), takerBuyPct: parseFloat(takerBuyPct.toFixed(1)), status: 'online' };
   }
 
-  // 3. MEXC Metrics
+  // 3. MEXC Metrics (500-Depth & 20s Taker Flow)
   async fetchMexcMetrics(symbol) {
     const depthUrl = `https://api.mexc.com/api/v3/depth?symbol=${symbol}&limit=500`;
-    const tradesUrl = `https://api.mexc.com/api/v3/trades?symbol=${symbol}&limit=100`;
+    const tradesUrl = `https://api.mexc.com/api/v3/trades?symbol=${symbol}&limit=200`;
     const [depth, trades] = await Promise.all([this.fetchJson(depthUrl), this.fetchJson(tradesUrl)]);
 
     let obiPct = 50.0, takerBuyPct = 50.0;
