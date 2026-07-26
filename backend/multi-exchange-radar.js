@@ -45,8 +45,8 @@ class MultiExchangeSignalRadar {
 
   // 1. Binance Metrics
   async fetchBinanceMetrics(symbol) {
-    const depthUrl = `https://api.binance.com/api/v3/depth?symbol=${symbol}&limit=100`;
-    const tradesUrl = `https://api.binance.com/api/v3/trades?symbol=${symbol}&limit=50`;
+    const depthUrl = `https://api.binance.com/api/v3/depth?symbol=${symbol}&limit=500`;
+    const tradesUrl = `https://api.binance.com/api/v3/trades?symbol=${symbol}&limit=100`;
     const [depth, trades] = await Promise.all([this.fetchJson(depthUrl), this.fetchJson(tradesUrl)]);
 
     let obiPct = 50.0, takerBuyPct = 50.0;
@@ -70,8 +70,8 @@ class MultiExchangeSignalRadar {
 
   // 2. Bybit Metrics
   async fetchBybitMetrics(symbol) {
-    const depthUrl = `https://api.bybit.com/v5/market/orderbook?category=spot&symbol=${symbol}&limit=50`;
-    const tradesUrl = `https://api.bybit.com/v5/market/recent-trade?category=spot&symbol=${symbol}&limit=50`;
+    const depthUrl = `https://api.bybit.com/v5/market/orderbook?category=spot&symbol=${symbol}&limit=200`;
+    const tradesUrl = `https://api.bybit.com/v5/market/recent-trade?category=spot&symbol=${symbol}&limit=100`;
     const [depth, trades] = await Promise.all([this.fetchJson(depthUrl), this.fetchJson(tradesUrl)]);
 
     let obiPct = 50.0, takerBuyPct = 50.0;
@@ -95,8 +95,8 @@ class MultiExchangeSignalRadar {
 
   // 3. MEXC Metrics
   async fetchMexcMetrics(symbol) {
-    const depthUrl = `https://api.mexc.com/api/v3/depth?symbol=${symbol}&limit=100`;
-    const tradesUrl = `https://api.mexc.com/api/v3/trades?symbol=${symbol}&limit=50`;
+    const depthUrl = `https://api.mexc.com/api/v3/depth?symbol=${symbol}&limit=500`;
+    const tradesUrl = `https://api.mexc.com/api/v3/trades?symbol=${symbol}&limit=100`;
     const [depth, trades] = await Promise.all([this.fetchJson(depthUrl), this.fetchJson(tradesUrl)]);
 
     let obiPct = 50.0, takerBuyPct = 50.0;
@@ -121,8 +121,8 @@ class MultiExchangeSignalRadar {
   // 4. Gate.io Metrics
   async fetchGateMetrics(symbol) {
     const gateSym = symbol.replace('USDT', '_USDT');
-    const depthUrl = `https://api.gateio.ws/api/v4/spot/order_book?currency_pair=${gateSym}&limit=100`;
-    const tradesUrl = `https://api.gateio.ws/api/v4/spot/trades?currency_pair=${gateSym}&limit=50`;
+    const depthUrl = `https://api.gateio.ws/api/v4/spot/order_book?currency_pair=${gateSym}&limit=500`;
+    const tradesUrl = `https://api.gateio.ws/api/v4/spot/trades?currency_pair=${gateSym}&limit=100`;
     const [depth, trades] = await Promise.all([this.fetchJson(depthUrl), this.fetchJson(tradesUrl)]);
 
     let obiPct = 50.0, takerBuyPct = 50.0;
