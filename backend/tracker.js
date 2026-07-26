@@ -900,21 +900,25 @@ class OrderTracker {
             } catch (ghostErr) {}
           }
         }
-            // Profit Lock Guard: Check if price reached 50% progress to Take Profit
-        if (order.takeProfit && order.trailValue && !order.isSlProfitLocked && order.executionPrice) {
+        // Profit Lock Guard: Check if price reached 50% progress to Take Profit
+        if (order.takeProfit && !order.isSlProfitLocked && order.executionPrice) {
           const tpDollar = (order.takeProfit / 100) * order.executionPrice;
           const tpTargetProgress = tpDollar * 0.5;
 
           if (currentPrice >= (order.executionPrice + tpTargetProgress - 0.00000001)) {
             order.isSlProfitLocked = true;
             order.justProfitLocked = true;
-            // Set Profit Lock floor at Risk-Free Break-Even (+0.10% fee margin) so price has full breathing room to hit 100% TP
-            const breakEvenMargin = order.executionPrice * 0.0010;
-            order.lockedSlPrice = order.executionPrice + breakEvenMargin;
+            
+            // Dynamic Locked SL % = (50% TP Offset %) - 0.05%
+            const halfTpPct = order.takeProfit * 0.5;
+            const lockedSlPct = Math.max(0.05, halfTpPct - 0.05); // e.g. 0.6% TP -> 0.3% - 0.05% = 0.25%
+            const lockedSlDollar = (lockedSlPct / 100) * order.executionPrice;
+            
+            order.lockedSlPrice = order.executionPrice + lockedSlDollar;
             const tpTriggerPrice = (order.executionPrice + tpTargetProgress).toFixed(4);
             const newSlTarget = order.lockedSlPrice.toFixed(4);
             this.log(
-              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to Risk-Free Break-Even (+0.10% fee margin at ${newSlTarget} USDT). Gains locked!`,
+              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to Buy Price +${lockedSlPct.toFixed(2)}% (${newSlTarget} USDT, 50% TP minus 0.05% margin). Profit Locked!`,
               'success',
               order.symbol
             );

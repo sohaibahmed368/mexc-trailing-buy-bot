@@ -374,13 +374,15 @@ class AlpacaStockOrderTracker {
           const tpTarget = buyPrice * (1 + (order.takeProfit / 100));
           let slTarget = order.lockedSlPrice || (buyPrice * (1 - (order.stopLoss / 100)));
 
-          // 50% TP Progress Profit Locking
+          // 50% TP Progress Profit Locking (Dynamic formula: 50% TP minus 0.05%)
           const tpDistance = tpTarget - buyPrice;
           const currentProfit = currentPrice - buyPrice;
           if (tpDistance > 0 && (currentProfit / tpDistance) >= 0.5 && !order.isSlProfitLocked) {
             order.isSlProfitLocked = true;
-            order.lockedSlPrice = buyPrice * 1.001; // Lock 0.1% profit
-            this.log(`🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on ${order.symbol}! Locked SL at $${order.lockedSlPrice.toFixed(2)}.`, 'success', order.symbol);
+            const halfTpPct = order.takeProfit * 0.5;
+            const lockedSlPct = Math.max(0.05, halfTpPct - 0.05); // e.g. 0.6% TP -> 0.25%
+            order.lockedSlPrice = buyPrice * (1 + (lockedSlPct / 100));
+            this.log(`🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on ${order.symbol}! Locked SL at +${lockedSlPct.toFixed(2)}% ($${order.lockedSlPrice.toFixed(2)}).`, 'success', order.symbol);
             changed = true;
           }
 
