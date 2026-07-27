@@ -519,7 +519,7 @@ class MultiExchangeSignalRadar {
   async getMultiExchangeMetrics(symbol = 'SOLUSDT') {
     symbol = symbol.toUpperCase().trim();
     const cacheKey = `radar_${symbol}`;
-    if (this.cache[cacheKey] && (Date.now() - this.cache[cacheKey].updatedAt < 7000)) {
+    if (this.cache[cacheKey] && (Date.now() - this.cache[cacheKey].updatedAt < 1000)) {
       return this.cache[cacheKey].data;
     }
 
