@@ -1629,7 +1629,7 @@ class OrderTracker {
 
     // Reset to pending activation for next cycle
     order.status = 'PENDING_ACTIVATION';
-    order.peakPrice = sellPrice;
+    order.peakPrice = order.currentPrice || sellPrice;
     const offsetPct = order.activationOffset || 1.0;
     order.activationPrice = order.peakPrice * (1 - (offsetPct / 100));
     order.activationDirection = 'DOWN';
