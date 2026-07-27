@@ -189,6 +189,46 @@ class OrderTracker {
   }
 
   /**
+   * Calculate 20s-30s Taker Volume Delta (Market Buy % vs Market Sell %)
+   */
+  async calculateTakerVolumeDelta(symbol, timeWindowMs = 25000) {
+    try {
+      const trades = await this.mexcClient.getRecentTrades(symbol, 100);
+      if (!Array.isArray(trades) || trades.length === 0) return { takerBuyPct: 50.0, takerSellPct: 50.0, totalVolume: 0 };
+
+      const now = Date.now();
+      let buyVol = 0;
+      let sellVol = 0;
+
+      trades.forEach(t => {
+        const tradeTime = parseInt(t.time || t.timestamp || now);
+        if ((now - tradeTime) <= timeWindowMs || trades.length <= 15) {
+          const qty = parseFloat(t.qty || t.quantity || 0);
+          const price = parseFloat(t.price || 0);
+          const val = qty * price;
+          if (t.isBuyerMaker) {
+            sellVol += val;
+          } else {
+            buyVol += val;
+          }
+        }
+      });
+
+      const total = buyVol + sellVol;
+      const takerBuyPct = total > 0 ? (buyVol / total) * 100 : 50.0;
+      const takerSellPct = total > 0 ? (sellVol / total) * 100 : 50.0;
+
+      return {
+        takerBuyPct: parseFloat(takerBuyPct.toFixed(1)),
+        takerSellPct: parseFloat(takerSellPct.toFixed(1)),
+        totalVolume: parseFloat(total.toFixed(2))
+      };
+    } catch (e) {
+      return { takerBuyPct: 50.0, takerSellPct: 50.0, totalVolume: 0 };
+    }
+  }
+
+  /**
    * Calculate exact Maker-guaranteed Limit Price using orderbook depth.
    * STRICT MAKER RULES:
    * 1. BUY: targetBuyPrice MUST be < bestAsk. If >= bestAsk, force pegPrice = bestAsk - tick.
@@ -466,7 +506,7 @@ class OrderTracker {
     return this.orders;
   }
 
-  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, autoRepeat, activationOffset, startImmediately }) {
+  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately }) {
     symbol = symbol.toUpperCase().trim();
 
     // Symbol Deduplication Guard: Remove any pre-existing tracking order for the same symbol to prevent duplicates
@@ -573,6 +613,7 @@ class OrderTracker {
       filterObi: !!filterObi,
       filterVolume: !!filterVolume,
       filterRsi: !!filterRsi,
+      filter40sVolume: !!filter40sVolume,
       autoRepeat: !!autoRepeat,
       startImmediately: !!startImmediately,
       activationOffset: activationOffset ? parseFloat(activationOffset) : null,
@@ -923,6 +964,30 @@ class OrderTracker {
               order.symbol
             );
             changed = true;
+          }
+        }
+
+        // Post-Entry Emergency Fast-Cut Guard: If bought recently and heavy Taker Selling spike occurs while in drawdown
+        if (order.executionPrice && currentPrice < order.executionPrice && !order.isSlProfitLocked) {
+          const now = Date.now();
+          if (!order.lastFastCutCheckTime || (now - order.lastFastCutCheckTime > 4000)) {
+            order.lastFastCutCheckTime = now;
+            try {
+              const delta = await this.calculateTakerVolumeDelta(order.symbol, 20000);
+              if (delta.takerSellPct >= 70.0) {
+                this.log(
+                  `🚨 [EMERGENCY FAST-CUT TRIGGERED] Heavy post-entry Taker Sell Spike (${delta.takerSellPct}% >= 70%) detected on ${order.symbol}! Executing immediate micro-cut exit at ${currentPrice.toFixed(4)} USDT (Buy Price: ${order.executionPrice.toFixed(4)}) to save capital before cascade dump!`,
+                  'warning',
+                  order.symbol
+                );
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = currentPrice;
+                order.sellTriggeredAt = new Date().toISOString();
+                changed = true;
+                this.handleOrderCycleComplete(order);
+                continue;
+              }
+            } catch (fcErr) {}
           }
         }
 
@@ -1308,6 +1373,23 @@ class OrderTracker {
             this.log(`Smart SL Entry Guard Filter query failed: ${e.message}`, 'warning', order.symbol);
             passedFilters = false;
             failedReasons.push(`Smart SL Entry Guard Error`);
+          }
+        }
+
+        // 40s Buyer Volume Check (Taker Buy Volume >= 60%)
+        if (order.filter40sVolume) {
+          try {
+            const delta = await this.calculateTakerVolumeDelta(order.symbol, 40000);
+            const valStr = delta.takerBuyPct.toFixed(1);
+            if (delta.takerBuyPct < 60.0) {
+              passedFilters = false;
+              failedReasons.push(`40s Buyer Volume ${valStr}% < 60%`);
+            } else {
+              confirmedReasons.push(`40s Buyer Volume ${valStr}% >= 60%`);
+            }
+          } catch (vErr) {
+            passedFilters = false;
+            failedReasons.push(`40s Buyer Volume Error`);
           }
         }
 

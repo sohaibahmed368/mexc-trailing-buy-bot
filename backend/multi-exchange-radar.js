@@ -7,8 +7,14 @@ const http = require('http');
  * ZERO interactions with OrderTracker or live order execution loops.
  */
 class MultiExchangeSignalRadar {
-  constructor() {
+  constructor(mexcClient = null) {
+    this.mexcClient = mexcClient;
     this.cache = {};
+    this.autoTradeEthEnabled = true;
+    this.autoTradeUsdtAmount = 50.0;
+    this.lastAutoTradeTime = 0;
+    this.autoTradeLogs = [];
+
     this.supportedExchanges = [
       { id: 'binance', name: 'Binance', icon: '🟡', rank: 1 },
       { id: 'bybit', name: 'Bybit', icon: '🖤', rank: 2 },
@@ -21,6 +27,10 @@ class MultiExchangeSignalRadar {
       { id: 'kucoin', name: 'KuCoin', icon: '🟢', rank: 9 },
       { id: 'bingx', name: 'BingX', icon: '🌐', rank: 10 }
     ];
+  }
+
+  setMexcClient(client) {
+    this.mexcClient = client;
   }
 
   // Helper HTTP GET JSON fetcher with timeout
@@ -305,6 +315,67 @@ class MultiExchangeSignalRadar {
     return { obiPct: parseFloat(obiPct.toFixed(1)), takerBuyPct: parseFloat(takerBuyPct.toFixed(1)), status: 'online' };
   }
 
+  // Standalone Auto-Buy Trigger for ETH ($50 USDT) when 7+ Exchanges are GREEN
+  async checkAndTriggerEthAutoBuy(greenCount, triggerSymbol) {
+    const now = Date.now();
+    // Cooldown guard: Minimum 3 minutes between auto-buys
+    if (now - this.lastAutoTradeTime < 180000) {
+      return;
+    }
+    this.lastAutoTradeTime = now;
+
+    const logMsg = `🤖 [RADAR 7+ GREEN AUTO-BUY TRIGGERED] ${greenCount}/10 Exchanges are GREEN for ${triggerSymbol}! Executing $${this.autoTradeUsdtAmount} USDT Market Buy for ETH...`;
+    console.log(logMsg);
+
+    try {
+      if (this.mexcClient && this.mexcClient.hasCredentials()) {
+        const orderRes = await this.mexcClient.createOrder({
+          symbol: 'ETHUSDT',
+          side: 'BUY',
+          type: 'MARKET',
+          quoteOrderQty: this.autoTradeUsdtAmount
+        });
+        const successMsg = `✅ [RADAR AUTO-BUY SUCCESS] Executed $${this.autoTradeUsdtAmount} USDT Spot Market Buy for ETH! (MEXC Order ID: ${orderRes.orderId})`;
+        console.log(successMsg);
+        this.autoTradeLogs.unshift({
+          timestamp: new Date().toISOString(),
+          greenCount,
+          triggerSymbol,
+          amountUsdt: this.autoTradeUsdtAmount,
+          orderId: orderRes.orderId,
+          status: 'SUCCESS',
+          msg: successMsg
+        });
+      } else {
+        const simMsg = `[RADAR AUTO-BUY SIMULATION] ${greenCount}/10 Green Exchanges! Simulated $${this.autoTradeUsdtAmount} USDT Market Buy for ETH.`;
+        console.log(simMsg);
+        this.autoTradeLogs.unshift({
+          timestamp: new Date().toISOString(),
+          greenCount,
+          triggerSymbol,
+          amountUsdt: this.autoTradeUsdtAmount,
+          status: 'SIMULATED',
+          msg: simMsg
+        });
+      }
+    } catch (err) {
+      const errLog = `❌ [RADAR AUTO-BUY FAILED] Could not execute $${this.autoTradeUsdtAmount} ETH buy: ${err.message}`;
+      console.log(errLog);
+      this.autoTradeLogs.unshift({
+        timestamp: new Date().toISOString(),
+        greenCount,
+        triggerSymbol,
+        amountUsdt: this.autoTradeUsdtAmount,
+        status: 'FAILED',
+        msg: errLog
+      });
+    }
+
+    if (this.autoTradeLogs.length > 20) {
+      this.autoTradeLogs = this.autoTradeLogs.slice(0, 20);
+    }
+  }
+
   // Master Symbol Fetcher across all Top 10 Exchanges
   async getMultiExchangeMetrics(symbol = 'SOLUSDT') {
     symbol = symbol.toUpperCase().trim();
@@ -343,6 +414,10 @@ class MultiExchangeSignalRadar {
       ]
     };
 
+    // Calculate GREEN Exchanges Count (OBI >= 60.0% AND 20s Taker Buy >= 50.0%)
+    const greenExchanges = metricsData.exchanges.filter(e => e.obiPct >= 60.0 && e.takerBuyPct >= 50.0);
+    metricsData.greenCount = greenExchanges.length;
+
     // Calculate Consensus Summary across all Top 10
     const onlineEx = metricsData.exchanges.filter(e => e.status === 'online');
     const avgObi = onlineEx.reduce((sum, e) => sum + e.obiPct, 0) / (onlineEx.length || 1);
@@ -351,8 +426,19 @@ class MultiExchangeSignalRadar {
     metricsData.consensus = {
       avgObiPct: parseFloat(avgObi.toFixed(1)),
       avgTakerBuyPct: parseFloat(avgTaker.toFixed(1)),
-      isBullishConsensus: avgObi >= 60.0 && avgTaker >= 55.0
+      isBullishConsensus: greenExchanges.length >= 7
     };
+
+    metricsData.autoTrade = {
+      enabled: this.autoTradeEthEnabled,
+      amountUsdt: this.autoTradeUsdtAmount,
+      logs: this.autoTradeLogs
+    };
+
+    // Trigger 7+ Green Exchanges Auto-Buy ETH if enabled
+    if (this.autoTradeEthEnabled && greenExchanges.length >= 7) {
+      this.checkAndTriggerEthAutoBuy(greenExchanges.length, symbol);
+    }
 
     this.cache[cacheKey] = { updatedAt: Date.now(), data: metricsData };
     return metricsData;

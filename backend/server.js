@@ -31,7 +31,7 @@ const tracker = new OrderTracker(mexcClient, io);
 const stockTracker = new StockOrderTracker(mexcClient, io);
 const alpacaClient = new AlpacaClient();
 const alpacaStockTracker = new AlpacaStockOrderTracker(alpacaClient, io);
-const signalRadar = new MultiExchangeSignalRadar();
+const signalRadar = new MultiExchangeSignalRadar(mexcClient);
 
 // Port configuration
 const PORT = process.env.PORT || 3001;
