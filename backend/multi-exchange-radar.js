@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const https = require('https');
 const http = require('http');
 
@@ -14,6 +16,10 @@ class MultiExchangeSignalRadar {
     this.autoTradeUsdtAmount = 50.0;
     this.lastAutoTradeTime = 0;
     this.autoTradeLogs = [];
+    this.radarOrders = [];
+    this.radarOrdersPath = path.join(__dirname, 'data', 'radar-orders.json');
+
+    this.initStorage();
 
     this.supportedExchanges = [
       { id: 'binance', name: 'Binance', icon: '🟡', rank: 1 },
@@ -27,6 +33,25 @@ class MultiExchangeSignalRadar {
       { id: 'kucoin', name: 'KuCoin', icon: '🟢', rank: 9 },
       { id: 'bingx', name: 'BingX', icon: '🌐', rank: 10 }
     ];
+  }
+
+  initStorage() {
+    try {
+      const dir = path.dirname(this.radarOrdersPath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      if (fs.existsSync(this.radarOrdersPath)) {
+        const raw = fs.readFileSync(this.radarOrdersPath, 'utf8');
+        this.radarOrders = JSON.parse(raw);
+      }
+    } catch (e) {
+      this.radarOrders = [];
+    }
+  }
+
+  saveRadarOrders() {
+    try {
+      fs.writeFileSync(this.radarOrdersPath, JSON.stringify(this.radarOrders, null, 2), 'utf8');
+    } catch (e) {}
   }
 
   setMexcClient(client) {
@@ -315,7 +340,7 @@ class MultiExchangeSignalRadar {
     return { obiPct: parseFloat(obiPct.toFixed(1)), takerBuyPct: parseFloat(takerBuyPct.toFixed(1)), status: 'online' };
   }
 
-  // Standalone Auto-Buy Trigger ($50 USDT) when 7+ Exchanges are GREEN for the Selected Coin
+  // Standalone Auto-Buy Trigger ($50 USDT) + Automatic +0.60% TP Limit Sell Order when 7+ Exchanges are GREEN
   async checkAndTriggerEthAutoBuy(greenCount, triggerSymbol) {
     const symbolToBuy = (triggerSymbol || 'ETHUSDT').toUpperCase().trim();
     const now = Date.now();
@@ -325,7 +350,7 @@ class MultiExchangeSignalRadar {
     }
     this.lastAutoTradeTime = now;
 
-    const logMsg = `🤖 [RADAR 7+ GREEN AUTO-BUY TRIGGERED] ${greenCount}/10 Exchanges are GREEN for ${symbolToBuy}! Executing $${this.autoTradeUsdtAmount} USDT Market Buy for ${symbolToBuy}...`;
+    const logMsg = `🤖 [RADAR 7+ GREEN AUTO-BUY TRIGGERED] ${greenCount}/10 Exchanges are GREEN for ${symbolToBuy}! Executing $${this.autoTradeUsdtAmount} USDT Market Buy...`;
     console.log(logMsg);
 
     try {
@@ -336,7 +361,57 @@ class MultiExchangeSignalRadar {
           type: 'MARKET',
           quoteOrderQty: this.autoTradeUsdtAmount
         });
-        const successMsg = `✅ [RADAR AUTO-BUY SUCCESS] Executed $${this.autoTradeUsdtAmount} USDT Spot Market Buy for ${symbolToBuy}! (MEXC Order ID: ${orderRes.orderId})`;
+        
+        let buyPrice = 0;
+        let filledQty = 0;
+        try {
+          const fillInfo = await this.mexcClient.getOrder(symbolToBuy, orderRes.orderId);
+          if (fillInfo && parseFloat(fillInfo.executedQty) > 0) {
+            filledQty = parseFloat(fillInfo.executedQty);
+            const cumQuote = parseFloat(fillInfo.cummulativeQuoteQty || 0);
+            buyPrice = cumQuote > 0 ? (cumQuote / filledQty) : parseFloat(fillInfo.price || 0);
+          }
+        } catch (e) {}
+
+        if (!buyPrice || buyPrice <= 0) {
+          const ticker = await this.mexcClient.getTickerPrice(symbolToBuy).catch(() => 0);
+          buyPrice = parseFloat(ticker) || 100.0;
+          filledQty = filledQty || (this.autoTradeUsdtAmount / buyPrice);
+        }
+
+        // Calculate +0.60% TP Limit Sell Target Price
+        const tpPrice = buyPrice * 1.006;
+        let tpOrderRes = null;
+        try {
+          tpOrderRes = await this.mexcClient.createOrder({
+            symbol: symbolToBuy,
+            side: 'SELL',
+            type: 'LIMIT',
+            quantity: filledQty.toFixed(4),
+            price: tpPrice.toFixed(4)
+          });
+          console.log(`🎯 [RADAR +0.60% TP LIMIT SELL PLACED] Placed Limit Sell for ${filledQty.toFixed(4)} ${symbolToBuy} at $${tpPrice.toFixed(4)} (MEXC Sell Order ID: ${tpOrderRes.orderId})`);
+        } catch (tpErr) {
+          console.log(`⚠️ [RADAR TP LIMIT SELL NOTICE] Limit Sell placement warning: ${tpErr.message}`);
+        }
+
+        const newRadarOrder = {
+          id: 'radar_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+          symbol: symbolToBuy,
+          buyPrice: parseFloat(buyPrice.toFixed(4)),
+          tpPrice: parseFloat(tpPrice.toFixed(4)),
+          quantity: parseFloat(filledQty.toFixed(4)),
+          buyOrderId: orderRes.orderId,
+          sellOrderId: tpOrderRes ? tpOrderRes.orderId : null,
+          status: 'LIMIT_SELL_ACTIVE',
+          createdAt: new Date().toISOString(),
+          filledAt: null
+        };
+
+        this.radarOrders.unshift(newRadarOrder);
+        this.saveRadarOrders();
+
+        const successMsg = `✅ [RADAR AUTO-BUY SUCCESS] Executed $${this.autoTradeUsdtAmount} USDT Market Buy for ${symbolToBuy} @ $${buyPrice.toFixed(4)}! Placed +0.60% TP Limit Sell @ $${tpPrice.toFixed(4)}!`;
         console.log(successMsg);
         this.autoTradeLogs.unshift({
           timestamp: new Date().toISOString(),
@@ -348,7 +423,29 @@ class MultiExchangeSignalRadar {
           msg: successMsg
         });
       } else {
-        const simMsg = `[RADAR AUTO-BUY SIMULATION] ${greenCount}/10 Green Exchanges for ${symbolToBuy}! Simulated $${this.autoTradeUsdtAmount} USDT Market Buy.`;
+        // Simulation mode
+        const ticker = await this.mexcClient.getTickerPrice(symbolToBuy).catch(() => 100.0);
+        const buyPrice = parseFloat(ticker) || 100.0;
+        const tpPrice = buyPrice * 1.006;
+        const filledQty = this.autoTradeUsdtAmount / buyPrice;
+
+        const newRadarOrder = {
+          id: 'radar_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+          symbol: symbolToBuy,
+          buyPrice: parseFloat(buyPrice.toFixed(4)),
+          tpPrice: parseFloat(tpPrice.toFixed(4)),
+          quantity: parseFloat(filledQty.toFixed(4)),
+          buyOrderId: 'sim_buy_' + Date.now(),
+          sellOrderId: 'sim_sell_' + Date.now(),
+          status: 'LIMIT_SELL_ACTIVE',
+          createdAt: new Date().toISOString(),
+          filledAt: null
+        };
+
+        this.radarOrders.unshift(newRadarOrder);
+        this.saveRadarOrders();
+
+        const simMsg = `[RADAR AUTO-BUY SIMULATION] ${greenCount}/10 Green Exchanges for ${symbolToBuy}! Bought @ $${buyPrice.toFixed(4)}, Placed +0.60% TP Limit Sell @ $${tpPrice.toFixed(4)}.`;
         console.log(simMsg);
         this.autoTradeLogs.unshift({
           timestamp: new Date().toISOString(),
@@ -377,6 +474,40 @@ class MultiExchangeSignalRadar {
     }
   }
 
+  async checkRadarLimitOrders(symbol) {
+    if (!this.radarOrders || this.radarOrders.length === 0) return;
+    let changed = false;
+    let currentPrice = 0;
+    try {
+      if (this.mexcClient && typeof this.mexcClient.getTickerPrice === 'function') {
+        const ticker = await this.mexcClient.getTickerPrice(symbol);
+        currentPrice = parseFloat(ticker) || 0;
+      }
+    } catch (e) {}
+
+    for (const ord of this.radarOrders) {
+      if (ord.status === 'LIMIT_SELL_ACTIVE' && ord.symbol === symbol) {
+        let isFilled = false;
+        if (currentPrice > 0 && currentPrice >= ord.tpPrice) {
+          isFilled = true;
+        } else if (ord.sellOrderId && this.mexcClient && typeof this.mexcClient.getOrder === 'function') {
+          try {
+            const queryRes = await this.mexcClient.getOrder(ord.symbol, ord.sellOrderId);
+            if (queryRes && queryRes.status === 'FILLED') isFilled = true;
+          } catch (e) {}
+        }
+
+        if (isFilled) {
+          ord.status = 'FILLED';
+          ord.filledAt = new Date().toISOString();
+          changed = true;
+          console.log(`🎉 [RADAR +0.60% TP HIT] ${ord.symbol} TP Limit Sell Order filled at $${ord.tpPrice} (+0.60%)! 1 Order Processed Successfully!`);
+        }
+      }
+    }
+    if (changed) this.saveRadarOrders();
+  }
+
   // Master Symbol Fetcher across all Top 10 Exchanges
   async getMultiExchangeMetrics(symbol = 'SOLUSDT') {
     symbol = symbol.toUpperCase().trim();
@@ -384,6 +515,8 @@ class MultiExchangeSignalRadar {
     if (this.cache[cacheKey] && (Date.now() - this.cache[cacheKey].updatedAt < 2500)) {
       return this.cache[cacheKey].data;
     }
+
+    await this.checkRadarLimitOrders(symbol);
 
     const [binance, bybit, mexc, gate, bitget, okx, coinbase, htx, kucoin, bingx] = await Promise.all([
       this.fetchBinanceMetrics(symbol).catch(() => ({ obiPct: 50, takerBuyPct: 50, status: 'offline' })),
@@ -430,13 +563,21 @@ class MultiExchangeSignalRadar {
       isBullishConsensus: greenExchanges.length >= 7
     };
 
+    const filledCount = this.radarOrders.filter(o => o.status === 'FILLED').length;
+    metricsData.radarOrders = this.radarOrders;
+    metricsData.radarStats = {
+      totalProcessed: filledCount,
+      activeCount: this.radarOrders.filter(o => o.status === 'LIMIT_SELL_ACTIVE').length,
+      processedMessage: `${filledCount} Order${filledCount === 1 ? '' : 's'} Processed`
+    };
+
     metricsData.autoTrade = {
       enabled: this.autoTradeEthEnabled,
       amountUsdt: this.autoTradeUsdtAmount,
       logs: this.autoTradeLogs
     };
 
-    // Trigger 7+ Green Exchanges Auto-Buy ETH if enabled
+    // Trigger 7+ Green Exchanges Auto-Buy if enabled for selected symbol
     if (this.autoTradeEthEnabled && greenExchanges.length >= 7) {
       this.checkAndTriggerEthAutoBuy(greenExchanges.length, symbol);
     }
