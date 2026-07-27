@@ -342,6 +342,13 @@ class MultiExchangeSignalRadar {
 
   // Standalone Auto-Buy Trigger ($50 USDT) + Automatic +0.60% TP Limit Sell Order when 7+ Exchanges are GREEN
   async checkAndTriggerEthAutoBuy(greenCount, triggerSymbol) {
+    // 🔒 SINGLE ACTIVE TRADE LOCK GUARD: Block any new auto-buy if an order is currently active/processing!
+    const pendingOrder = (this.radarOrders || []).find(o => o.status === 'LIMIT_SELL_ACTIVE');
+    if (pendingOrder) {
+      console.log(`🔒 [RADAR BUY LOCKED] Active order pending TP for ${pendingOrder.symbol} (Buy: $${pendingOrder.buyPrice}, TP Target: $${pendingOrder.tpPrice}). New buys strictly blocked until active order fills!`);
+      return;
+    }
+
     const symbolToBuy = (triggerSymbol || 'ETHUSDT').toUpperCase().trim();
     const now = Date.now();
     // Cooldown guard: Minimum 3 minutes between auto-buys per symbol
@@ -557,17 +564,22 @@ class MultiExchangeSignalRadar {
     const avgObi = onlineEx.reduce((sum, e) => sum + e.obiPct, 0) / (onlineEx.length || 1);
     const avgTaker = onlineEx.reduce((sum, e) => sum + e.takerBuyPct, 0) / (onlineEx.length || 1);
 
+    const activeOrder = (this.radarOrders || []).find(o => o.status === 'LIMIT_SELL_ACTIVE');
+
     metricsData.consensus = {
       avgObiPct: parseFloat(avgObi.toFixed(1)),
       avgTakerBuyPct: parseFloat(avgTaker.toFixed(1)),
-      isBullishConsensus: greenExchanges.length >= 7
+      isBullishConsensus: greenExchanges.length >= 7,
+      isAutoBuyLocked: !!activeOrder,
+      activeSymbol: activeOrder ? activeOrder.symbol : null
     };
 
     const filledCount = this.radarOrders.filter(o => o.status === 'FILLED').length;
     metricsData.radarOrders = this.radarOrders;
     metricsData.radarStats = {
       totalProcessed: filledCount,
-      activeCount: this.radarOrders.filter(o => o.status === 'LIMIT_SELL_ACTIVE').length,
+      activeCount: activeOrder ? 1 : 0,
+      isAutoBuyLocked: !!activeOrder,
       processedMessage: `${filledCount} Order${filledCount === 1 ? '' : 's'} Processed`
     };
 
