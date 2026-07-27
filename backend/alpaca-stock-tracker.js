@@ -380,7 +380,7 @@ class AlpacaStockOrderTracker {
           if (tpDistance > 0 && (currentProfit / tpDistance) >= 0.5 && !order.isSlProfitLocked) {
             order.isSlProfitLocked = true;
             const halfTpPct = order.takeProfit * 0.5;
-            const lockedSlPct = Math.max(0.05, halfTpPct - 0.05); // e.g. 0.6% TP -> 0.25%
+            const lockedSlPct = halfTpPct; // Exact 50% TP level (e.g. 0.6% TP -> 0.3% Locked SL)
             order.lockedSlPrice = buyPrice * (1 + (lockedSlPct / 100));
             this.log(`🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on ${order.symbol}! Locked SL at +${lockedSlPct.toFixed(2)}% ($${order.lockedSlPrice.toFixed(2)}).`, 'success', order.symbol);
             changed = true;

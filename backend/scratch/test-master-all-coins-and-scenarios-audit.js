@@ -157,14 +157,14 @@ async function runMasterAllCoinsAudit() {
     console.log(`  1.3 Trailing Buy Executed: Executed at $${orderActive.executionPrice.toFixed(4)} -> State=${orderActive.status}`);
     if (orderActive.status !== 'TP_SL_ACTIVE') throw new Error(`${sym} State mismatch on trailing buy execution`);
 
-    // 4. 50% Profit Lock Guard Trigger (Dynamic formula: 50% TP minus 0.05%)
-    // 0.6% TP -> 50% progress = +0.30%. Target SL floor = +0.25% above Buy Price ($140.15)
+    // 4. 50% Profit Lock Guard Trigger (Exact 50% TP level)
+    // 0.6% TP -> 50% progress = +0.30%. Target SL floor = +0.30% above Buy Price
     const halfTpPrice = orderActive.executionPrice * (1 + (0.32 / 100));
     mexcMock.prices[sym] = halfTpPrice;
     await cryptoTracker.tick();
 
     const orderProfitLocked = cryptoTracker.orders.find(o => o.id === order.id);
-    const expectedLockedSl = orderActive.executionPrice * (1 + (0.25 / 100));
+    const expectedLockedSl = orderActive.executionPrice * (1 + (0.30 / 100));
     const lockedSlStr = (orderProfitLocked && orderProfitLocked.lockedSlPrice) ? orderProfitLocked.lockedSlPrice.toFixed(4) : '-';
     console.log(`  1.4 Profit Lock Triggered: Price hit +0.32% -> isSlProfitLocked=${orderProfitLocked ? orderProfitLocked.isSlProfitLocked : false}, Locked SL Floor=$${lockedSlStr} (Expected: $${expectedLockedSl.toFixed(4)})`);
     if (!orderProfitLocked || !orderProfitLocked.isSlProfitLocked) throw new Error(`${sym} Profit Lock failed to trigger`);

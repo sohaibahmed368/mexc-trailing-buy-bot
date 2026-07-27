@@ -950,16 +950,16 @@ class OrderTracker {
             order.isSlProfitLocked = true;
             order.justProfitLocked = true;
             
-            // Dynamic Locked SL % = (50% TP Offset %) - 0.05%
+            // Dynamic Locked SL % = Exact 50% TP Offset % (e.g. 0.6% TP -> 0.3% Locked SL)
             const halfTpPct = order.takeProfit * 0.5;
-            const lockedSlPct = Math.max(0.05, halfTpPct - 0.05); // e.g. 0.6% TP -> 0.3% - 0.05% = 0.25%
+            const lockedSlPct = halfTpPct;
             const lockedSlDollar = (lockedSlPct / 100) * order.executionPrice;
             
             order.lockedSlPrice = order.executionPrice + lockedSlDollar;
             const tpTriggerPrice = (order.executionPrice + tpTargetProgress).toFixed(4);
             const newSlTarget = order.lockedSlPrice.toFixed(4);
             this.log(
-              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to Buy Price +${lockedSlPct.toFixed(2)}% (${newSlTarget} USDT, 50% TP minus 0.05% margin). Profit Locked!`,
+              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to Buy Price +${lockedSlPct.toFixed(2)}% (${newSlTarget} USDT, Exact 50% TP Level). Profit Locked!`,
               'success',
               order.symbol
             );
