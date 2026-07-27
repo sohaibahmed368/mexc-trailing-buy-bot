@@ -967,29 +967,7 @@ class OrderTracker {
           }
         }
 
-        // Post-Entry Emergency Fast-Cut Guard: If bought recently and heavy Taker Selling spike occurs while in drawdown
-        if (order.executionPrice && currentPrice < order.executionPrice && !order.isSlProfitLocked) {
-          const now = Date.now();
-          if (!order.lastFastCutCheckTime || (now - order.lastFastCutCheckTime > 4000)) {
-            order.lastFastCutCheckTime = now;
-            try {
-              const delta = await this.calculateTakerVolumeDelta(order.symbol, 20000);
-              if (delta.takerSellPct >= 70.0) {
-                this.log(
-                  `🚨 [EMERGENCY FAST-CUT TRIGGERED] Heavy post-entry Taker Sell Spike (${delta.takerSellPct}% >= 70%) detected on ${order.symbol}! Executing immediate micro-cut exit at ${currentPrice.toFixed(4)} USDT (Buy Price: ${order.executionPrice.toFixed(4)}) to save capital before cascade dump!`,
-                  'warning',
-                  order.symbol
-                );
-                order.status = 'TRIGGERED';
-                order.sellExecutionPrice = currentPrice;
-                order.sellTriggeredAt = new Date().toISOString();
-                changed = true;
-                this.handleOrderCycleComplete(order);
-                continue;
-              }
-            } catch (fcErr) {}
-          }
-        }
+
 
         if (order.dryRun) {
           // Dry Run TP Check
@@ -1514,7 +1492,7 @@ class OrderTracker {
                       this.log(`[MEXC API RESPONSE] TP Order Placed Success -> ${JSON.stringify(tpResult)}`, 'success', order.symbol);
                       if (tpResult && tpResult.orderId) {
                         order.mexcSellOrderId = tpResult.orderId;
-                        this.log(`[REAL] Take Profit Limit Sell order placed on MEXC for ${qtyToTry} tokens. Order ID: ${tpResult.orderId}`, 'success', order.symbol);
+                        this.log(`🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for ${qtyToTry} ${order.symbol} @ $${tpPrice.toFixed(4)} USDT (+${order.takeProfit}% TP Target)! (MEXC Order ID: ${tpResult.orderId})`, 'success', order.symbol);
                         break;
                       }
                     } catch (err) {
