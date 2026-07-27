@@ -315,56 +315,57 @@ class MultiExchangeSignalRadar {
     return { obiPct: parseFloat(obiPct.toFixed(1)), takerBuyPct: parseFloat(takerBuyPct.toFixed(1)), status: 'online' };
   }
 
-  // Standalone Auto-Buy Trigger for ETH ($50 USDT) when 7+ Exchanges are GREEN
+  // Standalone Auto-Buy Trigger ($50 USDT) when 7+ Exchanges are GREEN for the Selected Coin
   async checkAndTriggerEthAutoBuy(greenCount, triggerSymbol) {
+    const symbolToBuy = (triggerSymbol || 'ETHUSDT').toUpperCase().trim();
     const now = Date.now();
-    // Cooldown guard: Minimum 3 minutes between auto-buys
+    // Cooldown guard: Minimum 3 minutes between auto-buys per symbol
     if (now - this.lastAutoTradeTime < 180000) {
       return;
     }
     this.lastAutoTradeTime = now;
 
-    const logMsg = `🤖 [RADAR 7+ GREEN AUTO-BUY TRIGGERED] ${greenCount}/10 Exchanges are GREEN for ${triggerSymbol}! Executing $${this.autoTradeUsdtAmount} USDT Market Buy for ETH...`;
+    const logMsg = `🤖 [RADAR 7+ GREEN AUTO-BUY TRIGGERED] ${greenCount}/10 Exchanges are GREEN for ${symbolToBuy}! Executing $${this.autoTradeUsdtAmount} USDT Market Buy for ${symbolToBuy}...`;
     console.log(logMsg);
 
     try {
       if (this.mexcClient && this.mexcClient.hasCredentials()) {
         const orderRes = await this.mexcClient.createOrder({
-          symbol: 'ETHUSDT',
+          symbol: symbolToBuy,
           side: 'BUY',
           type: 'MARKET',
           quoteOrderQty: this.autoTradeUsdtAmount
         });
-        const successMsg = `✅ [RADAR AUTO-BUY SUCCESS] Executed $${this.autoTradeUsdtAmount} USDT Spot Market Buy for ETH! (MEXC Order ID: ${orderRes.orderId})`;
+        const successMsg = `✅ [RADAR AUTO-BUY SUCCESS] Executed $${this.autoTradeUsdtAmount} USDT Spot Market Buy for ${symbolToBuy}! (MEXC Order ID: ${orderRes.orderId})`;
         console.log(successMsg);
         this.autoTradeLogs.unshift({
           timestamp: new Date().toISOString(),
           greenCount,
-          triggerSymbol,
+          triggerSymbol: symbolToBuy,
           amountUsdt: this.autoTradeUsdtAmount,
           orderId: orderRes.orderId,
           status: 'SUCCESS',
           msg: successMsg
         });
       } else {
-        const simMsg = `[RADAR AUTO-BUY SIMULATION] ${greenCount}/10 Green Exchanges! Simulated $${this.autoTradeUsdtAmount} USDT Market Buy for ETH.`;
+        const simMsg = `[RADAR AUTO-BUY SIMULATION] ${greenCount}/10 Green Exchanges for ${symbolToBuy}! Simulated $${this.autoTradeUsdtAmount} USDT Market Buy.`;
         console.log(simMsg);
         this.autoTradeLogs.unshift({
           timestamp: new Date().toISOString(),
           greenCount,
-          triggerSymbol,
+          triggerSymbol: symbolToBuy,
           amountUsdt: this.autoTradeUsdtAmount,
           status: 'SIMULATED',
           msg: simMsg
         });
       }
     } catch (err) {
-      const errLog = `❌ [RADAR AUTO-BUY FAILED] Could not execute $${this.autoTradeUsdtAmount} ETH buy: ${err.message}`;
+      const errLog = `❌ [RADAR AUTO-BUY FAILED] Could not execute $${this.autoTradeUsdtAmount} ${symbolToBuy} buy: ${err.message}`;
       console.log(errLog);
       this.autoTradeLogs.unshift({
         timestamp: new Date().toISOString(),
         greenCount,
-        triggerSymbol,
+        triggerSymbol: symbolToBuy,
         amountUsdt: this.autoTradeUsdtAmount,
         status: 'FAILED',
         msg: errLog
