@@ -816,31 +816,36 @@ class OrderTracker {
     }, this.pollInterval);
   }
 
-  // Automatically scan MEXC Spot Wallet on server boot and restore Active Tracking Cards for any crypto assets in wallet
+  // Automatically scan MEXC Spot Wallet on server boot and restore Active Tracking Cards for whitelist crypto assets in wallet
   async syncLiveWalletOrders() {
     if (!this.mexcClient || !this.mexcClient.hasCredentials()) return;
     try {
       const balances = await this.mexcClient.getBalances();
       if (!Array.isArray(balances)) return;
 
+      const allowedCryptoWhitelist = new Set(['BTC', 'ETH', 'SOL', 'ONDO', 'SUI', 'UNI', 'XRP', 'DOGE', 'ADA', 'AVAX', 'LINK', 'DOT', 'SHIB', 'PEPE', 'NEAR', 'FET', 'RNDR', 'TAO', 'WIF', 'BONK', 'FLOKI', 'BNB', 'MATIC']);
+
       for (const bal of balances) {
         const asset = (bal.asset || '').toUpperCase();
-        if (asset === 'USDT' || asset === 'MX' || asset === 'USDC') continue;
+        // IGNORE fiat/stablecoins and IGNORE any stock tokens/equity derivatives (like NVDAX, USO, AAPL, etc.)
+        if (!allowedCryptoWhitelist.has(asset)) continue;
+
         const totalQty = parseFloat(bal.free || 0) + parseFloat(bal.locked || 0);
         if (totalQty <= 0) continue;
 
         const symbol = asset + 'USDT';
-        let currentPrice = 0;
-        try { currentPrice = await this.mexcClient.getTickerPrice(symbol); } catch (e) { continue; }
-        if (!currentPrice || currentPrice <= 0) continue;
-
-        const notionalUsdt = totalQty * currentPrice;
-        if (notionalUsdt < 5.0) continue; // Skip small dust under $5
-
-        // Check if an order already exists for this symbol
+        
+        // DO NOT RESTORE if order exists or if user explicitly cancelled it
         let existingOrder = this.orders.find(o => o.symbol === symbol);
 
         if (!existingOrder) {
+          let currentPrice = 0;
+          try { currentPrice = await this.mexcClient.getTickerPrice(symbol); } catch (e) { continue; }
+          if (!currentPrice || currentPrice <= 0) continue;
+
+          const notionalUsdt = totalQty * currentPrice;
+          if (notionalUsdt < 5.0) continue; // Skip small dust under $5
+
           // Find last buy price from trade history or use current ticker price
           let execPrice = currentPrice;
           try {
@@ -896,9 +901,9 @@ class OrderTracker {
           };
 
           this.orders.push(newOrder);
-          this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Automatically restored Active Tracking Card on UI!`, 'success', symbol);
+          this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Restored Active Tracking Card!`, 'success', symbol);
           this.saveOrders();
-        } else if (existingOrder.status !== 'TP_SL_ACTIVE' && existingOrder.status !== 'PENDING_EXECUTION') {
+        } else if (existingOrder.status !== 'TP_SL_ACTIVE' && existingOrder.status !== 'PENDING_EXECUTION' && existingOrder.status !== 'CANCELLED') {
           // If asset is physically in wallet but order was PENDING_ACTIVATION or RUNNING, sync it to TP_SL_ACTIVE!
           existingOrder.status = 'TP_SL_ACTIVE';
           existingOrder.executionPrice = currentPrice;
