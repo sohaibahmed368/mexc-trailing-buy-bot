@@ -575,9 +575,9 @@ class OrderTracker {
     let triggerPrice = null;
 
     let startInstantBuy = autoRepeat && startImmediately;
-    const existingActivePos = this.orders.find(o => o.symbol === symbol && (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
-    if (startInstantBuy && existingActivePos) {
-      this.log(`🔒 [POSITION GUARD LOCKED] Active position already open for ${symbol} (${existingActivePos.id}). Instant buy skipped to prevent over-buying!`, 'warning', symbol);
+    const globalActivePos = this.orders.find(o => (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
+    if (startInstantBuy && globalActivePos) {
+      this.log(`🔒 [GLOBAL SINGLE TRADE LOCK] Active trade already in progress for ${globalActivePos.symbol} (${globalActivePos.id}). Instant buy skipped for ${symbol}!`, 'warning', symbol);
       startInstantBuy = false;
     }
 
@@ -1516,13 +1516,13 @@ class OrderTracker {
           continue;
         }
 
-        // 🔒 STRICT SINGLE ACTIVE POSITION GUARD: Block any buy if an active trade/position already exists for this symbol!
-        const existingPosition = this.orders.find(o => o.symbol === order.symbol && o.id !== order.id && (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
-        if (existingPosition) {
+        // 🔒 GLOBAL ACCOUNT-WIDE SINGLE TRADE LOCK: Block any new buy across ALL coins if ANY active trade/position is currently in progress!
+        const globalActiveTrade = this.orders.find(o => o.id !== order.id && (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
+        if (globalActiveTrade) {
           const now = Date.now();
           if (!order.lastPosGuardLogTime || (now - order.lastPosGuardLogTime > 10000)) {
             order.lastPosGuardLogTime = now;
-            this.log(`🔒 [POSITION GUARD LOCKED] Active position already open for ${order.symbol} (${existingPosition.id}). New buy blocked until active trade completes TP/SL!`, 'warning', order.symbol);
+            this.log(`🔒 [GLOBAL SINGLE TRADE LOCK] An active trade is already processing for ${globalActiveTrade.symbol} (${globalActiveTrade.id}). All new buys across ALL coins strictly locked until ${globalActiveTrade.symbol} order completes TP/SL!`, 'warning', order.symbol);
           }
           continue;
         }
