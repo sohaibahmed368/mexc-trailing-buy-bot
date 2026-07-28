@@ -1287,29 +1287,38 @@ class OrderTracker {
 
               const grossQty = order.quantity || (order.quoteOrderQty / order.executionPrice);
               let sellQty = Math.floor(grossQty * 0.998 * 100000000) / 100000000;
+              const targetMinQty = grossQty * 0.70; // Minimum expected balance after cancellation unlock
               
-              // Query exact free balance and truncate to prevent quantity scale/oversold errors
+              // Query exact free balance with retry loop to wait for MEXC balance unlock
               try {
-                let balances = await this.mexcClient.getBalances();
                 const asset = order.symbol.replace('USDT', '').toUpperCase();
-                let assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+                let assetBal = null;
 
-                if (!assetBal || assetBal.free < (grossQty * 0.5)) {
-                  await new Promise(r => setTimeout(r, 1000));
-                  balances = await this.mexcClient.getBalances();
+                for (let attempt = 1; attempt <= 4; attempt++) {
+                  const balances = await this.mexcClient.getBalances();
                   assetBal = balances.find(b => b.asset.toUpperCase() === asset);
-                }
 
-                if (assetBal && assetBal.free > 0) {
-                  const safeFree = assetBal.free * 0.998;
-                  const truncated = Math.floor(safeFree * 100000000) / 100000000;
-                  if (truncated > 0) {
-                    sellQty = truncated;
-                    this.log(`[REAL] Stop Loss balance match: using free balance ${sellQty} (unlocked free: ${assetBal.free})`, 'info', order.symbol);
+                  if (assetBal) {
+                    const freeQty = parseFloat(assetBal.free || 0);
+                    // Only use free balance if it has ACTUALLY unlocked (>= 70% of grossQty position size)
+                    if (freeQty >= targetMinQty) {
+                      const safeFree = freeQty * 0.998;
+                      const truncated = Math.floor(safeFree * 100000000) / 100000000;
+                      if (truncated > 0) {
+                        sellQty = truncated;
+                        this.log(`[REAL] Stop Loss balance match: free balance ${sellQty} ${asset} unlocked successfully (Attempt ${attempt}/4).`, 'info', order.symbol);
+                        break;
+                      }
+                    }
+                  }
+
+                  if (attempt < 4) {
+                    this.log(`[REAL] Waiting 1.0s for MEXC balance unlock after TP cancellation (Attempt ${attempt}/4)...`, 'info', order.symbol);
+                    await new Promise(r => setTimeout(r, 1000));
                   }
                 }
               } catch (balErr) {
-                this.log(`[REAL] Stop Loss balance query failed: ${balErr.message}. Falling back to estimated quantity.`, 'warning', order.symbol);
+                this.log(`[REAL] Stop Loss balance query failed: ${balErr.message}. Falling back to estimated gross quantity ${sellQty}.`, 'warning', order.symbol);
               }
 
               // IMMEDIATE MARKET SELL FOR STOP LOSS (Protects capital instantly during market crash / SL extension hit)
@@ -1361,13 +1370,15 @@ class OrderTracker {
                 throw lastErr || new Error('Failed to place SL Market Sell after precision retries.');
               }
 
-              if (order.status !== 'PENDING_ACTIVATION') {
-                // Fetch actual fill price or use current price
+              if (order.status !== 'TRIGGERED' && order.status !== 'PENDING_ACTIVATION') {
+                // Fetch actual fill price or use current price (skip for synthetic dust_skipped order IDs)
                 let slAvgPrice = currentPrice;
-                try {
-                  const fills = await this.getActualOrderFills(order.symbol, sellResult.orderId, currentPrice);
-                  if (fills && fills.avgPrice) slAvgPrice = fills.avgPrice;
-                } catch (fErr) {}
+                if (sellResult.orderId && !sellResult.orderId.startsWith('dust_skipped_')) {
+                  try {
+                    const fills = await this.getActualOrderFills(order.symbol, sellResult.orderId, currentPrice);
+                    if (fills && fills.avgPrice) slAvgPrice = fills.avgPrice;
+                  } catch (fErr) {}
+                }
 
                 order.status = 'TRIGGERED';
                 order.sellExecutionPrice = slAvgPrice;

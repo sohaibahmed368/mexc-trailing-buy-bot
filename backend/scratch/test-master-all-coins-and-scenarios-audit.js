@@ -110,6 +110,8 @@ async function runMasterAllCoinsAudit() {
   console.log('------------------------------------------------------------------------');
   console.log('🪙 PART A: CRYPTO BOT (tracker.js) MULTI-COIN EXHAUSTIVE SCENARIOS');
   console.log('------------------------------------------------------------------------');
+  
+  cryptoTracker.orders = [];
 
   for (const sym of coinsToTest) {
     console.log(`\n  >>> TESTING COIN: ${sym} <<<`);
