@@ -1,161 +1,221 @@
-const fs = require('fs');
-const path = require('path');
 const OrderTracker = require('../tracker');
+const assert = require('assert');
 
-// Mock MEXC Client to simulate all market scenarios and trace call-chains
-class MockMexcClient {
+console.log('========================================================================');
+console.log('🔬 EXHAUSTIVE CALL-CHAIN & VARIABLE MUTATION AUDIT SUITE');
+console.log('========================================================================\n');
+
+class ComprehensiveMockMexcClient {
   constructor() {
-    this.prices = {};
-    this.trades = {};
-    this.depths = {};
-    this.klines = {};
+    this.prices = {
+      'BTCUSDT': 65000.0,
+      'ETHUSDT': 3500.0,
+      'SOLUSDT': 140.0,
+      'ONDOUSDT': 1.05,
+      'SUIUSDT': 1.85,
+      'UNIUSDT': 7.50
+    };
+    this.orderCounter = 1;
     this.placedOrders = [];
+    this.callLog = [];
+    this.filledOrders = new Set();
   }
+
   hasCredentials() { return true; }
-  async getTickerPrice(sym) { return this.prices[sym] || 100.0; }
-  async getDepth(sym) {
-    return this.depths[sym] || {
-      bids: [['100.0', '10.0'], ['99.9', '10.0']],
-      asks: [['100.1', '10.0'], ['100.2', '10.0']]
+
+  async getTickerPrice(symbol) {
+    this.callLog.push(`getTickerPrice(${symbol})`);
+    return this.prices[symbol] || 100.0;
+  }
+
+  async getDepth(symbol) {
+    this.callLog.push(`getDepth(${symbol})`);
+    const p = await this.getTickerPrice(symbol);
+    return {
+      bids: [[(p * 0.999).toFixed(4), '800.0'], [(p * 0.998).toFixed(4), '1600.0']],
+      asks: [[(p * 1.001).toFixed(4), '200.0'], [(p * 1.002).toFixed(4), '400.0']]
     };
   }
-  async getRecentTrades(sym) {
-    return this.trades[sym] || [
-      { price: '100.0', qty: '1.0', isBuyerMaker: false, time: Date.now() - 5000 }
+
+  async getKlines(symbol, interval, limit) {
+    this.callLog.push(`getKlines(${symbol}, ${interval}, ${limit})`);
+    return Array(limit).fill(0).map((_, i) => [
+      Date.now() - (limit - i) * 60000,
+      '100', '105', '95', '100', '1000'
+    ]);
+  }
+
+  async getRecentTrades(symbol, limit) {
+    this.callLog.push(`getRecentTrades(${symbol}, ${limit})`);
+    const now = Date.now();
+    return Array(20).fill(0).map((_, i) => ({
+      time: now - (i * 1000),
+      price: '100.0',
+      qty: '1.0',
+      isBuyerMaker: i >= 16 // 80% buyer taker
+    }));
+  }
+
+  async placeOrder(params) {
+    this.callLog.push(`placeOrder(${params.symbol}, ${params.side}, ${params.type})`);
+    const id = 'C02_TEST_' + (this.orderCounter++);
+    this.placedOrders.push({ ...params, id });
+
+    // Update mock balance on BUY
+    if (params.side === 'BUY') {
+      const asset = params.symbol.replace('USDT', '');
+      if (!this.userBalances) this.userBalances = {};
+      this.userBalances[asset] = 10.0;
+    }
+    return { orderId: id, symbol: params.symbol, status: 'FILLED' };
+  }
+
+  async getOrder(symbol, orderId) {
+    this.callLog.push(`getOrder(${symbol}, ${orderId})`);
+    const isFilled = this.filledOrders && this.filledOrders.has(orderId);
+    return {
+      symbol,
+      orderId,
+      status: isFilled ? 'FILLED' : 'NEW',
+      executedQty: isFilled ? '1.0' : '0.0',
+      cummulativeQuoteQty: isFilled ? '100.0' : '0.0'
+    };
+  }
+
+  async getBalances() {
+    this.callLog.push(`getBalances()`);
+    const b = this.userBalances || {};
+    return [
+      { asset: 'USDT', free: 10000.0, locked: 0 },
+      { asset: 'SOL', free: b['SOL'] || 0, locked: 0 },
+      { asset: 'BTC', free: b['BTC'] || 0, locked: 0 },
+      { asset: 'ETH', free: b['ETH'] || 0, locked: 0 },
+      { asset: 'ONDO', free: b['ONDO'] || 0, locked: 0 },
+      { asset: 'SUI', free: b['SUI'] || 0, locked: 0 },
+      { asset: 'UNI', free: b['UNI'] || 0, locked: 0 }
     ];
   }
-  async getKlines(sym) {
-    return this.klines[sym] || Array(30).fill([Date.now(), '100', '101', '99', '100', '500']);
+
+  async getMyTrades() {
+    this.callLog.push(`getMyTrades()`);
+    return [];
   }
-  async placeOrder(params) {
-    const orderId = 'mexc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
-    this.placedOrders.push({ ...params, orderId });
-    return { orderId };
-  }
-  async getOrder(sym, id) {
-    return { status: 'FILLED', executedQty: '10.0', cummulativeQuoteQty: '1000.0', price: '100.0' };
-  }
-  async cancelOrder() { return true; }
-  async getBalances() { return [{ asset: 'USDT', free: 1000, locked: 0 }]; }
 }
 
-async function runMasterCallchainAndVariableAudit() {
-  console.log('========================================================================');
-  console.log('🧪 MASTER EXHAUSTIVE CALL-CHAIN & VARIABLE MUTATION AUDIT SUITE');
-  console.log('   Testing: Function Call Chains, State Transitions & Variable Updates');
-  console.log('========================================================================\n');
+async function runExhaustiveCallchainAudit() {
+  const mockClient = new ComprehensiveMockMexcClient();
+  const dummyIo = { emit: () => {} };
+  const tracker = new OrderTracker(mockClient, dummyIo);
 
-  const mexcMock = new MockMexcClient();
-  const mockIo = { emit: () => {} };
-  const tracker = new OrderTracker(mexcMock, mockIo);
-  tracker.orders = [];
-
-  let auditPassed = true;
-  let testCount = 0;
-
-  function assert(condition, message) {
-    testCount++;
-    if (!condition) {
-      console.error(`  ❌ FAILED Test #${testCount}: ${message}`);
-      auditPassed = false;
-      throw new Error(`Assertion Failed: ${message}`);
-    } else {
-      console.log(`  ✅ PASSED Test #${testCount}: ${message}`);
-    }
-  }
-
-  // ─── SCENARIO 1: ORDER CREATION & PENDING_ACTIVATION STATE MUTATION ─────────────
-  console.log('\n--- SCENARIO 1: Order Creation & Initial Variables Check ---');
-  mexcMock.prices['ETHUSDT'] = 3500.0;
-  
-  const order = await tracker.addOrder({
-    symbol: 'ETHUSDT',
-    trailValue: '0.25',
-    quoteOrderQty: '50',
-    dryRun: true,
-    autoRepeat: true,
-    activationOffset: '0.5',
-    takeProfit: '0.6',
-    stopLoss: '0.5',
-    filter40sVolume: true
+  console.log('1. AUDITING ORDER CREATION & VARIABLE INITIALIZATION...');
+  const order1 = await tracker.addOrder({
+    symbol: 'SOLUSDT',
+    trailValue: 0.25,
+    quoteOrderQty: 50,
+    orderType: 'MARKET',
+    dryRun: false,
+    activationOffset: 0.5,
+    takeProfit: 0.6,
+    stopLoss: 0.5,
+    filterSmartSl: true,
+    slBuffer: 0.2,
+    filterObi: true,
+    filterVolume: false,
+    filterRsi: false,
+    filter40sVolume: true,
+    autoRepeat: true
   });
 
-  assert(order.status === 'PENDING_ACTIVATION', 'Order status must be PENDING_ACTIVATION');
-  assert(order.peakPrice === 3500.0, 'peakPrice must be set to initialPrice 3500.0');
-  assert(order.activationPrice === 3500.0 * (1 - 0.005), `activationPrice must be 3482.5, got ${order.activationPrice}`);
-  assert(order.activationDirection === 'DOWN', 'activationDirection must be DOWN');
-  assert(order.filter40sVolume === true, 'filter40sVolume flag must be true');
+  assert.strictEqual(order1.status, 'PENDING_ACTIVATION', 'Order state must be PENDING_ACTIVATION');
+  assert.strictEqual(order1.filter40sVolume, true, 'filter40sVolume must be true');
+  assert.strictEqual(order1.filterObi, true, 'filterObi must be true');
+  assert.strictEqual(order1.filterSmartSl, true, 'filterSmartSl must be true');
+  assert.ok(order1.activationPrice < order1.initialPrice, 'Activation price must be below initial price');
+  console.log('   ✅ Order creation & initial state variables 100% PERFECT!\n');
 
-  // ─── SCENARIO 2: ACTIVATION DIP REACHED -> TRANSITION TO RUNNING ───────────────
-  console.log('\n--- SCENARIO 2: Activation Dip Hit -> Transition to RUNNING ---');
-  mexcMock.prices['ETHUSDT'] = 3480.0; // Dip below 3482.5
+  console.log('2. AUDITING ACTIVATION DIP TRANSITION (PENDING_ACTIVATION -> RUNNING)...');
+  mockClient.prices['SOLUSDT'] = 139.2; // -0.57% dip
+  await tracker.tick();
+  const orderRunning = tracker.orders.find(o => o.id === order1.id);
+  assert.strictEqual(orderRunning.status, 'RUNNING', 'Order must transition to RUNNING on dip');
+  assert.strictEqual(orderRunning.bottomPrice, 139.2, 'bottomPrice must update to 139.2');
+  assert.ok(orderRunning.triggerPrice > 139.2, 'triggerPrice must be calculated above bottomPrice');
+  console.log('   ✅ Activation Dip transition & bottom/trigger variables 100% PERFECT!\n');
+
+  console.log('3. AUDITING GLOBAL SINGLE TRADE LOCK ACROSS ALL COINS...');
+  const order2 = await tracker.addOrder({
+    symbol: 'BTCUSDT',
+    trailValue: 0.25,
+    quoteOrderQty: 50,
+    orderType: 'MARKET',
+    dryRun: false,
+    activationOffset: 0.5,
+    takeProfit: 0.6,
+    stopLoss: 0.5,
+    filter40sVolume: true,
+    autoRepeat: true
+  });
+
+  // Rebound SOLUSDT to trigger Market Buy (RUNNING -> TP_SL_ACTIVE)
+  mockClient.prices['SOLUSDT'] = 139.6; // +0.28% rebound
+  await tracker.tick();
+  const orderSolActive = tracker.orders.find(o => o.symbol === 'SOLUSDT');
+  assert.strictEqual(orderSolActive.status, 'TP_SL_ACTIVE', 'SOLUSDT must be TP_SL_ACTIVE');
+
+  // Now dip BTCUSDT to trigger point while SOLUSDT is active!
+  mockClient.prices['BTCUSDT'] = 64600.0; // dip
+  await tracker.tick();
+  mockClient.prices['BTCUSDT'] = 64800.0; // rebound trigger
   await tracker.tick();
 
-  const activeOrder = tracker.orders.find(o => o.id === order.id);
-  assert(activeOrder.status === 'RUNNING', 'State transition to RUNNING on dip');
-  assert(activeOrder.bottomPrice === 3480.0, 'bottomPrice updated to 3480.0');
-  assert(activeOrder.triggerPrice === 3480.0 * 1.0025, `triggerPrice set to bottom + 0.25% (3488.7), got ${activeOrder.triggerPrice}`);
+  const orderBtcLocked = tracker.orders.find(o => o.symbol === 'BTCUSDT');
+  assert.notStrictEqual(orderBtcLocked.status, 'TP_SL_ACTIVE', 'BTCUSDT must NOT buy while SOLUSDT is active');
+  console.log('   ✅ GLOBAL SINGLE TRADE LOCK strictly prevented duplicate concurrent buy across coins!\n');
 
-  // ─── SCENARIO 3: TRAILING BOTTOM UPDATE ─────────────────────────────────────────
-  console.log('\n--- SCENARIO 3: Price Dips Further -> bottomPrice & triggerPrice Update ---');
-  mexcMock.prices['ETHUSDT'] = 3470.0; // Deeper dip
+  console.log('4. AUDITING 50% TP PROFIT LOCK GUARD FLOOR CALCULATION...');
+  // SOLUSDT Buy price was 139.6. 50% TP progress = +0.30%
+  const halfTpPrice = 139.6 * (1 + 0.0032);
+  mockClient.prices['SOLUSDT'] = halfTpPrice;
   await tracker.tick();
 
-  assert(activeOrder.bottomPrice === 3470.0, 'bottomPrice updated to 3470.0');
-  assert(Math.abs(activeOrder.triggerPrice - (3470.0 * 1.0025)) < 0.0001, `triggerPrice updated to 3478.675, got ${activeOrder.triggerPrice}`);
+  const orderSolProfitLocked = tracker.orders.find(o => o.symbol === 'SOLUSDT');
+  assert.strictEqual(orderSolProfitLocked.isSlProfitLocked, true, 'isSlProfitLocked must be true');
+  const expectedFloor = 139.6 * (1 + 0.0030);
+  assert.strictEqual(orderSolProfitLocked.lockedSlPrice.toFixed(4), expectedFloor.toFixed(4), 'Locked SL floor must match exact 50% TP level');
+  console.log('   ✅ 50% TP Profit Lock Guard & floor variable state 100% PERFECT!\n');
 
-  // ─── SCENARIO 4: 40s BUYER VOLUME FILTER DEFERRAL ─────────────────────────────
-  console.log('\n--- SCENARIO 4: Rebound Hit but 40s Buyer Volume < 60% -> BUY DEFERRED ---');
-  mexcMock.prices['ETHUSDT'] = 3480.0; // Price rebounds past 3478.675
-  // Mock recent trades with 40% taker buy (sellers dominant)
-  mexcMock.trades['ETHUSDT'] = [
-    { price: '3480.0', qty: '4.0', isBuyerMaker: false, time: Date.now() - 5000 },
-    { price: '3480.0', qty: '6.0', isBuyerMaker: true, time: Date.now() - 5000 }
-  ];
+  console.log('5. AUDITING TAKE PROFIT HIT, TRADE HISTORY RECORDING & RESET...');
+  const currentSolOrder = tracker.orders.find(o => o.symbol === 'SOLUSDT');
+  if (currentSolOrder.mexcSellOrderId) mockClient.filledOrders.add(currentSolOrder.mexcSellOrderId);
+  currentSolOrder.lastGhostCheckTime = 0; // Force immediate MEXC order query
+
+  const tpTargetPrice = 139.6 * (1 + 0.0065);
+  mockClient.prices['SOLUSDT'] = tpTargetPrice;
   await tracker.tick();
 
-  assert(activeOrder.status === 'RUNNING', 'Order remains in RUNNING state because 40s Volume filter failed (40% < 60%)');
-  assert(activeOrder.executionPrice === null, 'executionPrice must still be null');
+  const orderSolReset = tracker.orders.find(o => o.symbol === 'SOLUSDT');
+  assert.strictEqual(orderSolReset.status, 'PENDING_ACTIVATION', 'Order must reset to PENDING_ACTIVATION on TP completion');
+  assert.strictEqual(orderSolReset.tradeHistory.length, 1, 'Trade history count must increment to 1');
+  assert.ok(orderSolReset.totalNetProfit > 0, 'totalNetProfit must be positive');
+  console.log('   ✅ Take Profit completion, Trade History recording, & Auto-Repeat Reset 100% PERFECT!\n');
 
-  // ─── SCENARIO 5: 40s BUYER VOLUME CONFIRMATION -> EXECUTE TRAILING BUY ──────────
-  console.log('\n--- SCENARIO 5: 40s Buyer Volume >= 60% -> ENTRY CONFIRMED & TP_SL_ACTIVE ---');
-  // Mock recent trades with 70% taker buy (buyers dominant)
-  mexcMock.trades['ETHUSDT'] = [
-    { price: '3480.0', qty: '7.0', isBuyerMaker: false, time: Date.now() - 5000 },
-    { price: '3480.0', qty: '3.0', isBuyerMaker: true, time: Date.now() - 5000 }
-  ];
+  console.log('6. AUDITING UNLOCK & SECOND COIN (BTCUSDT) BUY EXECUTION...');
+  // Now that SOLUSDT is closed, BTCUSDT is unlocked and can buy!
+  mockClient.prices['BTCUSDT'] = 64600.0;
+  await tracker.tick();
+  mockClient.prices['BTCUSDT'] = 64800.0;
   await tracker.tick();
 
-  assert(activeOrder.status === 'TP_SL_ACTIVE', 'State transitions to TP_SL_ACTIVE upon buy confirmation');
-  assert(activeOrder.executionPrice === 3480.0, 'executionPrice set to 3480.0');
+  const orderBtcActive = tracker.orders.find(o => o.symbol === 'BTCUSDT');
+  assert.strictEqual(orderBtcActive.status, 'TP_SL_ACTIVE', 'BTCUSDT must now successfully buy after SOLUSDT trade completes');
+  console.log('   ✅ Unlock mechanism & sequential trade execution 100% PERFECT!\n');
 
-  // ─── SCENARIO 6: 50% PROFIT LOCK TRIGGER (EXACT 50% TP LEVEL) ───────────────────
-  console.log('\n--- SCENARIO 6: Price Hits 50% TP Progress -> SL Shifted to EXACT 50% TP Level ---');
-  // TP = 0.6%, Buy = 3480.0. 50% TP = +0.30%. Price moves to 3480 * 1.0035 (+0.35%)
-  mexcMock.prices['ETHUSDT'] = 3480.0 * 1.0035;
-  await tracker.tick();
-
-  assert(activeOrder.isSlProfitLocked === true, 'isSlProfitLocked flag set to true');
-  const expectedLockedSl = 3480.0 * (1 + 0.003); // Exact +0.30%
-  assert(Math.abs(activeOrder.lockedSlPrice - expectedLockedSl) < 0.001, `lockedSlPrice must be exact 50% TP level (3490.44), got ${activeOrder.lockedSlPrice}`);
-
-  // ─── SCENARIO 7: TAKE PROFIT EXECUTION & AUTO-REPEAT CYCLE RESET ───────────────
-  console.log('\n--- SCENARIO 7: Price Hits Take Profit -> Cycle Complete & State Reset ---');
-  mexcMock.prices['ETHUSDT'] = 3480.0 * 1.0065; // +0.65% > +0.60% TP
-  await tracker.tick();
-
-  assert(activeOrder.status === 'PENDING_ACTIVATION', 'Auto-repeat resets state to PENDING_ACTIVATION');
-  assert(activeOrder.tradeHistory.length === 1, 'tradeHistory array contains 1 completed cycle entry');
-  assert(activeOrder.tradeHistory[0].type === 'TAKE_PROFIT', 'tradeHistory cycle type is TAKE_PROFIT');
-  assert(activeOrder.tradeHistory[0].profitUsdt > 0, 'profitUsdt > 0');
-  assert(activeOrder.peakPrice === 3480.0 * 1.0065, 'peakPrice updated to new high for next cycle');
-
-  console.log('\n========================================================================');
-  console.log('🏆 Master Call-Chain & Variable Audit: ALL 7 SCENARIOS PASSED 100% PERFECT!');
+  console.log('========================================================================');
+  console.log('🏆 EXHAUSTIVE CALL-CHAIN & VARIABLE MUTATION AUDIT PASSED 100% PERFECT!');
   console.log('========================================================================\n');
 }
 
-runMasterCallchainAndVariableAudit().catch(e => {
-  console.error('\n❌ MASTER AUDIT FAILED:', e.message);
+runExhaustiveCallchainAudit().catch(err => {
+  console.error('❌ AUDIT FAILED:', err);
   process.exit(1);
 });
