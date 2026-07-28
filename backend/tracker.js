@@ -835,17 +835,25 @@ class OrderTracker {
 
         const symbol = asset + 'USDT';
         
-        // DO NOT RESTORE if order exists or if user explicitly cancelled it
+        let currentPrice = 0;
+        try { currentPrice = await this.mexcClient.getTickerPrice(symbol); } catch (e) { continue; }
+        if (!currentPrice || currentPrice <= 0) continue;
+
+        const notionalUsdt = totalQty * currentPrice;
         let existingOrder = this.orders.find(o => o.symbol === symbol);
 
+        // STRICT DUST CHECK: If total balance value in wallet is under 10.0 USDT ($0.07, $0.20, $2.00 dust), it is NOT a real position!
+        if (notionalUsdt < 10.0) {
+          if (existingOrder && existingOrder.status === 'TP_SL_ACTIVE') {
+            existingOrder.status = 'PENDING_ACTIVATION';
+            existingOrder.executionPrice = null;
+            this.log(`⚠️ [DUST BALANCE IGNORED] ${asset} wallet value is only $${notionalUsdt.toFixed(2)} USDT (< $10.00 minimum trade). Resetting card state to PENDING_ACTIVATION!`, 'info', symbol);
+            this.saveOrders();
+          }
+          continue;
+        }
+
         if (!existingOrder) {
-          let currentPrice = 0;
-          try { currentPrice = await this.mexcClient.getTickerPrice(symbol); } catch (e) { continue; }
-          if (!currentPrice || currentPrice <= 0) continue;
-
-          const notionalUsdt = totalQty * currentPrice;
-          if (notionalUsdt < 5.0) continue; // Skip small dust under $5
-
           // Find last buy price from trade history or use current ticker price
           let execPrice = currentPrice;
           try {
@@ -904,10 +912,10 @@ class OrderTracker {
           this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Restored Active Tracking Card!`, 'success', symbol);
           this.saveOrders();
         } else if (existingOrder.status !== 'TP_SL_ACTIVE' && existingOrder.status !== 'PENDING_EXECUTION' && existingOrder.status !== 'CANCELLED') {
-          // If asset is physically in wallet but order was PENDING_ACTIVATION or RUNNING, sync it to TP_SL_ACTIVE!
+          // If asset is physically in wallet ($10+ USDT), sync card state to TP_SL_ACTIVE!
           existingOrder.status = 'TP_SL_ACTIVE';
           existingOrder.executionPrice = currentPrice;
-          this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Updated ${symbol} card state to TP_SL_ACTIVE for physical wallet holding!`, 'info', symbol);
+          this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Updated ${symbol} card state to TP_SL_ACTIVE for physical wallet holding ($${notionalUsdt.toFixed(2)} USDT)!`, 'info', symbol);
           this.saveOrders();
         }
       }
@@ -1034,11 +1042,11 @@ class OrderTracker {
             try {
               const balances = await this.mexcClient.getBalances();
               const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
-              const totalBal = assetBal ? ((parseFloat(assetBal.free) || 0) + (parseFloat(assetBal.locked) || 0)) : 0;
-              const expectedQty = order.quantity || (order.quoteOrderQty && order.executionPrice ? (order.quoteOrderQty / order.executionPrice) : 0);
+              const currentPrice = prices[order.symbol] || order.currentPrice || 0;
+              const notionalValUsdt = totalBal * currentPrice;
 
-              if (expectedQty > 0 && totalBal < (expectedQty * 0.01)) {
-                this.log(`🚨 [GHOST ORDER DETECTED] ${order.symbol} status is TP_SL_ACTIVE but MEXC spot balance for ${asset} is ${totalBal.toFixed(4)}. Resetting order from TP_SL_ACTIVE to PENDING_ACTIVATION...`, 'warning', order.symbol);
+              if (notionalValUsdt < 10.0) {
+                this.log(`🚨 [DUST/GHOST ORDER DETECTED] ${order.symbol} status is TP_SL_ACTIVE but physical MEXC ${asset} balance value is only $${notionalValUsdt.toFixed(2)} USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...`, 'warning', order.symbol);
                 order.status = 'PENDING_ACTIVATION';
                 order.executionPrice = null;
                 order.mexcOrderId = null;
