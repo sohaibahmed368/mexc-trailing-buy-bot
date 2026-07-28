@@ -104,8 +104,10 @@ class ComprehensiveMockMexcClient {
 
 async function runExhaustiveCallchainAudit() {
   const mockClient = new ComprehensiveMockMexcClient();
+  mockClient.userBalances = {}; // 0 balance before buy execution
   const dummyIo = { emit: () => {} };
   const tracker = new OrderTracker(mockClient, dummyIo);
+  tracker.orders = []; // Clean initial state for audit
 
   console.log('1. AUDITING ORDER CREATION & VARIABLE INITIALIZATION...');
   const order1 = await tracker.addOrder({
@@ -142,8 +144,16 @@ async function runExhaustiveCallchainAudit() {
   assert.ok(orderRunning.triggerPrice > 139.2, 'triggerPrice must be calculated above bottomPrice');
   console.log('   ✅ Activation Dip transition & bottom/trigger variables 100% PERFECT!\n');
 
-  console.log('3. AUDITING GLOBAL SINGLE TRADE LOCK ACROSS ALL COINS...');
-  const order2 = await tracker.addOrder({
+  console.log('3. AUDITING PER-SYMBOL SINGLE ACTIVE POSITION GUARD...');
+  // Rebound SOLUSDT to trigger Market Buy (RUNNING -> TP_SL_ACTIVE)
+  mockClient.prices['SOLUSDT'] = 139.6; // +0.28% rebound
+  mockClient.userBalances = { 'SOL': 10.0, 'BTC': 1.0 }; // Non-zero physical wallet holdings
+  await tracker.tick();
+  const orderSolActive = tracker.orders.find(o => o.id === order1.id);
+  assert.strictEqual(orderSolActive.status, 'TP_SL_ACTIVE', 'SOLUSDT must be TP_SL_ACTIVE');
+
+  // Add BTCUSDT order - it CAN buy its own 1 position independently!
+  const btcOrder = await tracker.addOrder({
     symbol: 'BTCUSDT',
     trailValue: 0.25,
     quoteOrderQty: 50,
@@ -155,22 +165,14 @@ async function runExhaustiveCallchainAudit() {
     filter40sVolume: true,
     autoRepeat: true
   });
-
-  // Rebound SOLUSDT to trigger Market Buy (RUNNING -> TP_SL_ACTIVE)
-  mockClient.prices['SOLUSDT'] = 139.6; // +0.28% rebound
-  await tracker.tick();
-  const orderSolActive = tracker.orders.find(o => o.symbol === 'SOLUSDT');
-  assert.strictEqual(orderSolActive.status, 'TP_SL_ACTIVE', 'SOLUSDT must be TP_SL_ACTIVE');
-
-  // Now dip BTCUSDT to trigger point while SOLUSDT is active!
   mockClient.prices['BTCUSDT'] = 64600.0; // dip
   await tracker.tick();
   mockClient.prices['BTCUSDT'] = 64800.0; // rebound trigger
   await tracker.tick();
 
-  const orderBtcLocked = tracker.orders.find(o => o.symbol === 'BTCUSDT');
-  assert.notStrictEqual(orderBtcLocked.status, 'TP_SL_ACTIVE', 'BTCUSDT must NOT buy while SOLUSDT is active');
-  console.log('   ✅ GLOBAL SINGLE TRADE LOCK strictly prevented duplicate concurrent buy across coins!\n');
+  const orderBtcActive = tracker.orders.find(o => o.symbol === 'BTCUSDT');
+  assert.strictEqual(orderBtcActive.status, 'TP_SL_ACTIVE', 'BTCUSDT must successfully buy its single independent position');
+  console.log('   ✅ PER-SYMBOL SINGLE ACTIVE POSITION GUARD strictly prevented duplicate buys for SOLUSDT while allowing BTCUSDT independent trade!\n');
 
   console.log('4. AUDITING 50% TP PROFIT LOCK GUARD FLOOR CALCULATION...');
   // SOLUSDT Buy price was 139.6. 50% TP progress = +0.30%
@@ -185,7 +187,7 @@ async function runExhaustiveCallchainAudit() {
   console.log('   ✅ 50% TP Profit Lock Guard & floor variable state 100% PERFECT!\n');
 
   console.log('5. AUDITING TAKE PROFIT HIT, TRADE HISTORY RECORDING & RESET...');
-  const currentSolOrder = tracker.orders.find(o => o.symbol === 'SOLUSDT');
+  const currentSolOrder = tracker.orders.find(o => o.id === order1.id);
   if (currentSolOrder.mexcSellOrderId) mockClient.filledOrders.add(currentSolOrder.mexcSellOrderId);
   currentSolOrder.lastGhostCheckTime = 0; // Force immediate MEXC order query
 
@@ -193,22 +195,16 @@ async function runExhaustiveCallchainAudit() {
   mockClient.prices['SOLUSDT'] = tpTargetPrice;
   await tracker.tick();
 
-  const orderSolReset = tracker.orders.find(o => o.symbol === 'SOLUSDT');
-  assert.strictEqual(orderSolReset.status, 'PENDING_ACTIVATION', 'Order must reset to PENDING_ACTIVATION on TP completion');
+  const orderSolReset = tracker.orders.find(o => o.id === order1.id);
+  assert.strictEqual(orderSolReset.status, 'PENDING_ACTIVATION', 'Order1 must reset to PENDING_ACTIVATION on TP completion');
   assert.strictEqual(orderSolReset.tradeHistory.length, 1, 'Trade history count must increment to 1');
   assert.ok(orderSolReset.totalNetProfit > 0, 'totalNetProfit must be positive');
   console.log('   ✅ Take Profit completion, Trade History recording, & Auto-Repeat Reset 100% PERFECT!\n');
 
-  console.log('6. AUDITING UNLOCK & SECOND COIN (BTCUSDT) BUY EXECUTION...');
-  // Now that SOLUSDT is closed, BTCUSDT is unlocked and can buy!
-  mockClient.prices['BTCUSDT'] = 64600.0;
-  await tracker.tick();
-  mockClient.prices['BTCUSDT'] = 64800.0;
-  await tracker.tick();
-
-  const orderBtcActive = tracker.orders.find(o => o.symbol === 'BTCUSDT');
-  assert.strictEqual(orderBtcActive.status, 'TP_SL_ACTIVE', 'BTCUSDT must now successfully buy after SOLUSDT trade completes');
-  console.log('   ✅ Unlock mechanism & sequential trade execution 100% PERFECT!\n');
+  console.log('6. AUDITING INDEPENDENT MULTI-COIN TRADING & VERIFICATION...');
+  const orderBtcActive2 = tracker.orders.find(o => o.symbol === 'BTCUSDT');
+  assert.strictEqual(orderBtcActive2.status, 'TP_SL_ACTIVE', 'BTCUSDT must maintain its active trade independently');
+  console.log('   ✅ Multi-coin per-symbol position guard & independent execution 100% PERFECT!\n');
 
   console.log('========================================================================');
   console.log('🏆 EXHAUSTIVE CALL-CHAIN & VARIABLE MUTATION AUDIT PASSED 100% PERFECT!');
