@@ -805,12 +805,110 @@ class OrderTracker {
   }
 
   // Start tracking interval if there are active orders
-  startTracking() {
+  async startTracking() {
     if (this.intervalId) return;
+
+    // Auto-Sync Live Wallet Holdings on startup to restore any active cards
+    try { await this.syncLiveWalletOrders(); } catch (e) {}
 
     this.intervalId = setInterval(async () => {
       await this.tick();
     }, this.pollInterval);
+  }
+
+  // Automatically scan MEXC Spot Wallet on server boot and restore Active Tracking Cards for any crypto assets in wallet
+  async syncLiveWalletOrders() {
+    if (!this.mexcClient || !this.mexcClient.hasCredentials()) return;
+    try {
+      const balances = await this.mexcClient.getBalances();
+      if (!Array.isArray(balances)) return;
+
+      for (const bal of balances) {
+        const asset = (bal.asset || '').toUpperCase();
+        if (asset === 'USDT' || asset === 'MX' || asset === 'USDC') continue;
+        const totalQty = parseFloat(bal.free || 0) + parseFloat(bal.locked || 0);
+        if (totalQty <= 0) continue;
+
+        const symbol = asset + 'USDT';
+        let currentPrice = 0;
+        try { currentPrice = await this.mexcClient.getTickerPrice(symbol); } catch (e) { continue; }
+        if (!currentPrice || currentPrice <= 0) continue;
+
+        const notionalUsdt = totalQty * currentPrice;
+        if (notionalUsdt < 5.0) continue; // Skip small dust under $5
+
+        // Check if an order already exists for this symbol
+        let existingOrder = this.orders.find(o => o.symbol === symbol);
+
+        if (!existingOrder) {
+          // Find last buy price from trade history or use current ticker price
+          let execPrice = currentPrice;
+          try {
+            const trades = await this.mexcClient.getMyTrades(symbol, 5);
+            if (Array.isArray(trades) && trades.length > 0) {
+              const buyTrade = trades.reverse().find(t => !t.isBuyerMaker); // Find recent BUY
+              if (buyTrade && parseFloat(buyTrade.price) > 0) execPrice = parseFloat(buyTrade.price);
+            }
+          } catch (tErr) {}
+
+          const newOrder = {
+            id: 'ord_restored_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+            symbol,
+            trailValue: 0.25,
+            quantity: null,
+            quoteOrderQty: Math.max(50, Math.round(notionalUsdt)),
+            orderType: 'MARKET',
+            dryRun: false,
+            status: 'TP_SL_ACTIVE',
+            activationPrice: null,
+            activationDirection: null,
+            activatedAt: new Date().toISOString(),
+            takeProfit: 0.6,
+            stopLoss: 0.5,
+            filterSmartSl: true,
+            slBuffer: 0.2,
+            isSlExtended: false,
+            isSlProfitLocked: false,
+            lockedSlPrice: null,
+            mexcSellOrderId: null,
+            sellExecutionPrice: null,
+            sellTriggeredAt: null,
+            filterObi: true,
+            filterVolume: false,
+            filterRsi: false,
+            filter40sVolume: true,
+            autoRepeat: true,
+            startImmediately: false,
+            activationOffset: 0.5,
+            peakPrice: execPrice * 1.002,
+            totalNetProfit: 0,
+            tradeHistory: [],
+            initialPrice: execPrice,
+            bottomPrice: null,
+            triggerPrice: null,
+            currentPrice,
+            createdAt: new Date().toISOString(),
+            triggeredAt: new Date().toISOString(),
+            mexcOrderId: 'restored_' + Date.now(),
+            executionPrice: execPrice,
+            error: null,
+            localBottom: execPrice
+          };
+
+          this.orders.push(newOrder);
+          this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Automatically restored Active Tracking Card on UI!`, 'success', symbol);
+          this.saveOrders();
+        } else if (existingOrder.status !== 'TP_SL_ACTIVE' && existingOrder.status !== 'PENDING_EXECUTION') {
+          // If asset is physically in wallet but order was PENDING_ACTIVATION or RUNNING, sync it to TP_SL_ACTIVE!
+          existingOrder.status = 'TP_SL_ACTIVE';
+          existingOrder.executionPrice = currentPrice;
+          this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Updated ${symbol} card state to TP_SL_ACTIVE for physical wallet holding!`, 'info', symbol);
+          this.saveOrders();
+        }
+      }
+    } catch (e) {
+      this.log(`Failed to sync live wallet assets: ${e.message}`, 'warning');
+    }
   }
 
   // Check if we should stop the tracking loop
