@@ -461,35 +461,28 @@ class OrderTracker {
   async getFeeAdjustedBalance(symbol, grossQty) {
     const asset = symbol.replace('USDT', '').toUpperCase();
     try {
-      // Wait 1.5 seconds for order fill settlement and balance updating on MEXC
-      await new Promise(r => setTimeout(r, 1500));
-      
-      let balances = await this.mexcClient.getBalances();
-      let assetBal = balances.find(b => b.asset.toUpperCase() === asset);
-      
-      // If balance update is still settling (free balance is significantly less than expected bought qty), wait 1.5s more and re-query
-      if (!assetBal || assetBal.free < (grossQty * 0.5)) {
-        this.log(`Asset balance for ${asset} (${assetBal ? assetBal.free : 0}) is less than expected bought qty (${grossQty}). Waiting 1.5s for MEXC settlement...`, 'warning', symbol);
-        await new Promise(r => setTimeout(r, 1500));
-        balances = await this.mexcClient.getBalances();
-        assetBal = balances.find(b => b.asset.toUpperCase() === asset);
-      }
-
-      if (assetBal && assetBal.free >= (grossQty * 0.5)) {
-        this.log(`Fetched confirmed asset balance for ${asset}: free balance is ${assetBal.free} (gross quantity estimated: ${grossQty}).`, 'info', symbol);
-        // Apply 0.2% safety buffer + truncate to 4 decimal places to prevent 30005 Oversold errors
-        const safeFree = assetBal.free * 0.998;
-        const truncated = Math.floor(safeFree * 10000) / 10000;
-        if (truncated > 0) return truncated;
-      } else {
-        this.log(`Balance query returned insufficient balance for ${asset} (${assetBal ? assetBal.free : 0}). Using fee-adjusted gross estimate (${grossQty}).`, 'warning', symbol);
+      // Poll up to 5 times (waiting 800ms between attempts, total 4s) for MEXC fill balance settlement
+      for (let attempt = 1; attempt <= 5; attempt++) {
+        await new Promise(r => setTimeout(r, 800));
+        try {
+          const balances = await this.mexcClient.getBalances();
+          const assetBal = balances.find(b => b.asset.toUpperCase() === asset);
+          if (assetBal && assetBal.free > (grossQty * 0.1)) {
+            const safeFree = assetBal.free * 0.998;
+            const truncated = Math.floor(safeFree * 10000) / 10000;
+            if (truncated > 0) {
+              this.log(`Fetched confirmed asset balance for ${asset}: free balance is ${assetBal.free} (used safe qty: ${truncated}).`, 'info', symbol);
+              return truncated;
+            }
+          }
+        } catch (bErr) {}
       }
     } catch (err) {
       this.log(`Balance lookup failed: ${err.message}. Falling back to estimated quantity with fee margin.`, 'warning', symbol);
     }
     
-    // Fallback: estimate gross quantity and deduct a 0.3% fee safety margin
-    const estimated = grossQty * 0.997;
+    // Fallback: estimate gross quantity and deduct a 0.5% fee safety margin
+    const estimated = grossQty * 0.995;
     const truncatedEst = Math.floor(estimated * 10000) / 10000;
     this.log(`Using fee-adjusted estimated quantity: ${truncatedEst} (gross: ${grossQty})`, 'info', symbol);
     return truncatedEst;
