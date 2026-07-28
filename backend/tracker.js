@@ -112,6 +112,10 @@ class OrderTracker {
         // Sanitize & Purge old synthetic stress-test histories on server load
         if (Array.isArray(this.orders)) {
           this.orders.forEach(o => {
+            // Auto-migrate: Ensure filter40sVolume is set properly
+            if (o.filter40sVolume === undefined || o.filter40sVolume === null) {
+              o.filter40sVolume = true;
+            }
             if (Array.isArray(o.tradeHistory) && o.tradeHistory.length > 20) {
               o.tradeHistory = [];
               o.totalNetProfit = 0;
@@ -606,7 +610,7 @@ class OrderTracker {
       filterObi: !!filterObi,
       filterVolume: !!filterVolume,
       filterRsi: !!filterRsi,
-      filter40sVolume: !!filter40sVolume,
+      filter40sVolume: filter40sVolume !== undefined ? !!filter40sVolume : true,
       autoRepeat: !!autoRepeat,
       startImmediately: !!startImmediately,
       activationOffset: activationOffset ? parseFloat(activationOffset) : null,
