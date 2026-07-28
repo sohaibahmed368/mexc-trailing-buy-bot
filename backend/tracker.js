@@ -121,6 +121,26 @@ class OrderTracker {
               o.totalNetProfit = 0;
             }
           });
+
+          // Strict Single-Card-Per-Symbol Deduplication: Ensure strictly AT MOST 1 card per symbol!
+          const seenSymbols = new Set();
+          const uniqueOrders = [];
+          // Sort active positions first so active orders take priority over inactive ones
+          const sorted = [...this.orders].sort((a, b) => {
+            const aActive = a.status === 'TP_SL_ACTIVE' || a.status === 'PENDING_EXECUTION';
+            const bActive = b.status === 'TP_SL_ACTIVE' || b.status === 'PENDING_EXECUTION';
+            if (aActive && !bActive) return -1;
+            if (!aActive && bActive) return 1;
+            return 0;
+          });
+          sorted.forEach(o => {
+            const sym = (o.symbol || '').toUpperCase().trim();
+            if (sym && !seenSymbols.has(sym)) {
+              seenSymbols.add(sym);
+              uniqueOrders.push(o);
+            }
+          });
+          this.orders = uniqueOrders;
         }
       } catch (e) {
         this.orders = [];
@@ -514,8 +534,11 @@ class OrderTracker {
   async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately }) {
     symbol = symbol.toUpperCase().trim();
 
-    // Symbol Deduplication Guard: Remove old INACTIVE orders for the same symbol while keeping active positions intact for Position Guard!
-    this.orders = this.orders.filter(o => o.symbol !== symbol || (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
+    // Check if an active position is currently open for this symbol
+    const existingActivePos = this.orders.find(o => o.symbol === symbol && (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
+
+    // Symbol Deduplication Guard: Strictly enforce AT MOST 1 CARD PER SYMBOL in this.orders!
+    this.orders = this.orders.filter(o => o.symbol !== symbol);
 
     trailValue = parseFloat(trailValue);
     
@@ -575,13 +598,15 @@ class OrderTracker {
     let triggerPrice = null;
 
     let startInstantBuy = autoRepeat && startImmediately;
-    const existingActivePos = this.orders.find(o => o.symbol === symbol && (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
     if (startInstantBuy && existingActivePos) {
       this.log(`🔒 [POSITION GUARD LOCKED] Active position already open for ${symbol} (${existingActivePos.id}). Instant buy skipped to prevent duplicate position!`, 'warning', symbol);
       startInstantBuy = false;
     }
 
-    if (startInstantBuy) {
+    if (existingActivePos) {
+      // Preserve active trade status & tracking properties if position is currently active
+      status = existingActivePos.status;
+    } else if (startInstantBuy) {
       status = 'TP_SL_ACTIVE';
     } else if (autoRepeat && activationOffset) {
       const offsetPct = parseFloat(activationOffset);
@@ -599,7 +624,7 @@ class OrderTracker {
     }
 
     const newOrder = {
-      id: 'ord_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+      id: existingActivePos ? existingActivePos.id : ('ord_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5)),
       symbol,
       trailValue,
       quantity: quantity ? parseFloat(quantity) : null,
@@ -607,19 +632,19 @@ class OrderTracker {
       orderType: orderType || 'MARKET',
       dryRun: !!dryRun,
       status,
-      activationPrice: startInstantBuy ? null : parsedActivationPrice,
-      activationDirection: startInstantBuy ? null : activationDirection,
-      activatedAt: startInstantBuy ? new Date().toISOString() : null,
+      activationPrice: (startInstantBuy || existingActivePos) ? null : parsedActivationPrice,
+      activationDirection: (startInstantBuy || existingActivePos) ? null : activationDirection,
+      activatedAt: existingActivePos ? existingActivePos.activatedAt : (startInstantBuy ? new Date().toISOString() : null),
       takeProfit: parsedTakeProfit,
       stopLoss: parsedStopLoss,
       filterSmartSl: !!filterSmartSl,
       slBuffer: parsedSlBuffer,
-      isSlExtended: false,
-      isSlProfitLocked: false,
-      lockedSlPrice: null,
-      mexcSellOrderId: null,
-      sellExecutionPrice: null,
-      sellTriggeredAt: null,
+      isSlExtended: existingActivePos ? existingActivePos.isSlExtended : false,
+      isSlProfitLocked: existingActivePos ? existingActivePos.isSlProfitLocked : false,
+      lockedSlPrice: existingActivePos ? existingActivePos.lockedSlPrice : null,
+      mexcSellOrderId: existingActivePos ? existingActivePos.mexcSellOrderId : null,
+      sellExecutionPrice: existingActivePos ? existingActivePos.sellExecutionPrice : null,
+      sellTriggeredAt: existingActivePos ? existingActivePos.sellTriggeredAt : null,
       filterObi: !!filterObi,
       filterVolume: !!filterVolume,
       filterRsi: !!filterRsi,
@@ -628,16 +653,16 @@ class OrderTracker {
       startImmediately: !!startImmediately,
       activationOffset: activationOffset ? parseFloat(activationOffset) : null,
       peakPrice: initialPrice,
-      totalNetProfit: 0,
-      tradeHistory: [],
+      totalNetProfit: existingActivePos ? existingActivePos.totalNetProfit : 0,
+      tradeHistory: existingActivePos ? (existingActivePos.tradeHistory || []) : [],
       initialPrice,
-      bottomPrice,
-      triggerPrice,
+      bottomPrice: existingActivePos ? existingActivePos.bottomPrice : bottomPrice,
+      triggerPrice: existingActivePos ? existingActivePos.triggerPrice : triggerPrice,
       currentPrice: initialPrice,
-      createdAt: new Date().toISOString(),
-      triggeredAt: startInstantBuy ? new Date().toISOString() : null,
-      mexcOrderId: null,
-      executionPrice: startInstantBuy ? initialPrice : null,
+      createdAt: existingActivePos ? existingActivePos.createdAt : new Date().toISOString(),
+      triggeredAt: existingActivePos ? existingActivePos.triggeredAt : (startInstantBuy ? new Date().toISOString() : null),
+      mexcOrderId: existingActivePos ? existingActivePos.mexcOrderId : null,
+      executionPrice: existingActivePos ? existingActivePos.executionPrice : (startInstantBuy ? initialPrice : null),
       error: null
     };
 

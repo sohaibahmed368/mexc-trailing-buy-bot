@@ -161,13 +161,14 @@ async function runExhaustiveCallchainAudit() {
     orderType: 'MARKET',
     dryRun: false,
     startImmediately: true,
+    takeProfit: 0.65,
     autoRepeat: true
   });
   assert.notStrictEqual(latencyRaceSolOrder.status, 'TP_SL_ACTIVE', 'Race condition instant buy during PENDING_EXECUTION latency MUST BE BLOCKED!');
-  assert.strictEqual(latencyRaceSolOrder.status, 'RUNNING', 'In-flight latency duplicate order MUST remain in RUNNING mode!');
+  assert.strictEqual(latencyRaceSolOrder.status, 'PENDING_EXECUTION', 'In-flight latency update MUST preserve active PENDING_EXECUTION status!');
 
   // Revert back to TP_SL_ACTIVE for remaining test steps
-  orderSolActive.status = 'TP_SL_ACTIVE';
+  latencyRaceSolOrder.status = 'TP_SL_ACTIVE';
 
   // Add BTCUSDT order - it CAN buy its own 1 position independently!
   const btcOrder = await tracker.addOrder({
@@ -192,14 +193,13 @@ async function runExhaustiveCallchainAudit() {
   console.log('   ✅ PER-SYMBOL SINGLE ACTIVE POSITION GUARD & 1-2s LATENCY RACE CONDITION LOCK 100% PERFECT!\n');
 
   console.log('4. AUDITING 50% TP PROFIT LOCK GUARD FLOOR CALCULATION...');
-  // SOLUSDT Buy price was 139.6. 50% TP progress = +0.30%
-  const halfTpPrice = 139.6 * (1 + 0.0032);
+  const orderSolProfitLocked = tracker.orders.find(o => o.id === order1.id);
+  const halfTpPrice = orderSolProfitLocked.executionPrice * (1 + 0.0050); // +0.50% progress (> 50% of 0.65% TP)
   mockClient.prices['SOLUSDT'] = halfTpPrice;
   await tracker.tick();
 
-  const orderSolProfitLocked = tracker.orders.find(o => o.id === order1.id);
   assert.strictEqual(orderSolProfitLocked.isSlProfitLocked, true, 'isSlProfitLocked must be true');
-  const expectedFloor = 139.6 * (1 + 0.0030);
+  const expectedFloor = orderSolProfitLocked.executionPrice * (1 + (orderSolProfitLocked.takeProfit / 100 * 0.5));
   assert.strictEqual(orderSolProfitLocked.lockedSlPrice.toFixed(4), expectedFloor.toFixed(4), 'Locked SL floor must match exact 50% TP level');
   console.log('   ✅ 50% TP Profit Lock Guard & floor variable state 100% PERFECT!\n');
 
@@ -208,7 +208,7 @@ async function runExhaustiveCallchainAudit() {
   if (currentSolOrder.mexcSellOrderId) mockClient.filledOrders.add(currentSolOrder.mexcSellOrderId);
   currentSolOrder.lastGhostCheckTime = 0; // Force immediate MEXC order query
 
-  const tpTargetPrice = 139.6 * (1 + 0.0065);
+  const tpTargetPrice = currentSolOrder.executionPrice * (1 + 0.0070); // +0.70% (> 0.65% TP)
   mockClient.prices['SOLUSDT'] = tpTargetPrice;
   await tracker.tick();
 
