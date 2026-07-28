@@ -1,5 +1,131 @@
 [
   {
+    "id": "1785253304261203",
+    "timestamp": "2026-07-28T15:41:44.261Z",
+    "message": "🔄 [ALPACA AUTO-REPEAT RESET] AAPL reset for next cycle. Peak set to $221.84973932000003.",
+    "type": "info",
+    "symbol": "AAPL"
+  },
+  {
+    "id": "1785253304248687",
+    "timestamp": "2026-07-28T15:41:44.248Z",
+    "message": "🎉 [ALPACA TAKE PROFIT HIT] AAPL hit TP target at $221.84973932000003 (+1.20%)!",
+    "type": "success",
+    "symbol": "AAPL"
+  },
+  {
+    "id": "1785253304236755",
+    "timestamp": "2026-07-28T15:41:44.236Z",
+    "message": "🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on AAPL! Locked SL at +0.55% ($220.42).",
+    "type": "success",
+    "symbol": "AAPL"
+  },
+  {
+    "id": "1785253304222803",
+    "timestamp": "2026-07-28T15:41:44.222Z",
+    "message": "✅ [ALPACA MARKET BUY EXECUTED] AAPL filled at $219.21911000000003 USD!",
+    "type": "success",
+    "symbol": "AAPL"
+  },
+  {
+    "id": "1785253304205852",
+    "timestamp": "2026-07-28T15:41:44.205Z",
+    "message": "📉 [ALPACA ACTIVATION DIP HIT] AAPL dipped to $218.02! Trailing buy initialized.",
+    "type": "info",
+    "symbol": "AAPL"
+  },
+  {
+    "id": "1785253304191518",
+    "timestamp": "2026-07-28T15:41:44.191Z",
+    "message": "🔄 [ALPACA AUTO-REPEAT RESET] NVDA reset for next cycle. Peak set to $121.00894872.",
+    "type": "info",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1785253304179914",
+    "timestamp": "2026-07-28T15:41:44.179Z",
+    "message": "🎉 [ALPACA TAKE PROFIT HIT] NVDA hit TP target at $121.00894872 (+1.20%)!",
+    "type": "success",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1785253304166141",
+    "timestamp": "2026-07-28T15:41:44.166Z",
+    "message": "🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on NVDA! Locked SL at +0.55% ($120.23).",
+    "type": "success",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1785253304151103",
+    "timestamp": "2026-07-28T15:41:44.151Z",
+    "message": "✅ [ALPACA MARKET BUY EXECUTED] NVDA filled at $119.57406 USD!",
+    "type": "success",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1785253304140619",
+    "timestamp": "2026-07-28T15:41:44.140Z",
+    "message": "📉 [ALPACA ACTIVATION DIP HIT] NVDA dipped to $118.92! Trailing buy initialized.",
+    "type": "info",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1785253304125437",
+    "timestamp": "2026-07-28T15:41:44.125Z",
+    "message": "🔄 [ALPACA AUTO-REPEAT RESET] USO reset for next cycle. Peak set to $77.14320480900001.",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1785253304114274",
+    "timestamp": "2026-07-28T15:41:44.114Z",
+    "message": "🎉 [ALPACA TAKE PROFIT HIT] USO hit TP target at $77.14320480900001 (+1.20%)!",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1785253304101056",
+    "timestamp": "2026-07-28T15:41:44.101Z",
+    "message": "🛡️ [PROFIT LOCK ACTIVATED] 50% TP progress reached on USO! Locked SL at +0.55% ($76.65).",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1785253304085621",
+    "timestamp": "2026-07-28T15:41:44.085Z",
+    "message": "✅ [ALPACA MARKET BUY EXECUTED] USO filled at $76.22846325 USD!",
+    "type": "success",
+    "symbol": "USO"
+  },
+  {
+    "id": "1785253304073908",
+    "timestamp": "2026-07-28T15:41:44.073Z",
+    "message": "📉 [ALPACA ACTIVATION DIP HIT] USO dipped to $75.8115! Trailing buy initialized.",
+    "type": "info",
+    "symbol": "USO"
+  },
+  {
+    "id": "1785253304059793",
+    "timestamp": "2026-07-28T15:41:44.059Z",
+    "message": "📉 [ALPACA ACTIVATION DIP HIT] AAPL dipped to $220! Trailing buy initialized.",
+    "type": "info",
+    "symbol": "AAPL"
+  },
+  {
+    "id": "1785253304045687",
+    "timestamp": "2026-07-28T15:41:44.045Z",
+    "message": "📉 [ALPACA ACTIVATION DIP HIT] NVDA dipped to $120! Trailing buy initialized.",
+    "type": "info",
+    "symbol": "NVDA"
+  },
+  {
+    "id": "1785253304042493",
+    "timestamp": "2026-07-28T15:41:44.042Z",
+    "message": "Alpaca Stock Bot Tracking Loop Started.",
+    "type": "info",
+    "symbol": null
+  },
+  {
     "id": "1785245087715958",
     "timestamp": "2026-07-28T13:24:47.715Z",
     "message": "🔄 [ALPACA AUTO-REPEAT RESET] AAPL reset for next cycle. Peak set to $221.84973932000003.",

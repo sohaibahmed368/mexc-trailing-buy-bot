@@ -604,7 +604,17 @@ class OrderTracker {
     let bottomPrice = null;
     let triggerPrice = null;
 
+    // Check if ANY order card already exists for this symbol (active trade or running/pending state)
+    const existingCard = this.orders.find(o => o.symbol === symbol);
+    
     let startInstantBuy = autoRepeat && startImmediately;
+    
+    // Safety Lock: If an order card ALREADY exists for this symbol, DO NOT trigger instant buy on setting update/save!
+    if (startInstantBuy && existingCard) {
+      this.log(`🔒 [SETTINGS UPDATE] Existing card for ${symbol} updated in-place. Instant market buy skipped to prevent unexpected buy on save!`, 'info', symbol);
+      startInstantBuy = false;
+    }
+
     if (startInstantBuy && existingActivePos) {
       this.log(`🔒 [POSITION GUARD LOCKED] Active position already open for ${symbol} (${existingActivePos.id}). Instant buy skipped to prevent duplicate position!`, 'warning', symbol);
       startInstantBuy = false;
@@ -679,7 +689,26 @@ class OrderTracker {
         this.log(`[DRY RUN] Auto-Loop started: First trade bought immediately at market price ${initialPrice} USDT. Transitioning to TP/SL monitoring.`, 'success', symbol);
       } else {
         try {
-          this.log(`🚀 [IMMEDIATE MARKET BUY] Auto-Loop started: Sending instant MARKET BUY order to MEXC server for ${symbol}...`, 'info', symbol);
+          // Real Spot Wallet Holding Guard: Check if asset is ALREADY held in spot wallet before sending instant market buy!
+          try {
+            const balances = await this.mexcClient.getBalances();
+            const asset = symbol.replace('USDT', '').toUpperCase();
+            const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+            if (assetBal) {
+              const totalQty = (parseFloat(assetBal.free || 0) + parseFloat(assetBal.locked || 0));
+              const notionalUsdt = totalQty * initialPrice;
+              if (notionalUsdt >= 10.0) {
+                this.log(`🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for ${symbol} is $${notionalUsdt.toFixed(2)} USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!`, 'warning', symbol);
+                newOrder.status = 'TP_SL_ACTIVE';
+                newOrder.executionPrice = initialPrice;
+                this.orders.push(newOrder);
+                this.saveOrders();
+                return newOrder;
+              }
+            }
+          } catch (wErr) {}
+
+          this.log(`🚀 [IMMEDIATE MARKET BUY VIA UI ACTION] Auto-Loop started: Sending instant MARKET BUY order to MEXC server for ${symbol}...`, 'info', symbol);
           
           let result = null;
           let lastBuyErr = null;
