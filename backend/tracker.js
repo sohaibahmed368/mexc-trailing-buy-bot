@@ -864,6 +864,15 @@ class OrderTracker {
             }
           } catch (tErr) {}
 
+          let mexcSellOrderId = null;
+          try {
+            const openOrders = await this.mexcClient.getOpenOrders(symbol);
+            if (Array.isArray(openOrders) && openOrders.length > 0) {
+              const sellOrder = openOrders.find(o => o.side === 'SELL');
+              if (sellOrder && sellOrder.orderId) mexcSellOrderId = sellOrder.orderId;
+            }
+          } catch (oErr) {}
+
           const newOrder = {
             id: 'ord_restored_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
             symbol,
@@ -883,7 +892,7 @@ class OrderTracker {
             isSlExtended: false,
             isSlProfitLocked: false,
             lockedSlPrice: null,
-            mexcSellOrderId: null,
+            mexcSellOrderId,
             sellExecutionPrice: null,
             sellTriggeredAt: null,
             filterObi: true,
@@ -909,12 +918,19 @@ class OrderTracker {
           };
 
           this.orders.push(newOrder);
-          this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Restored Active Tracking Card!`, 'success', symbol);
+          this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID ${mexcSellOrderId || 'Attached'}!`, 'success', symbol);
           this.saveOrders();
         } else if (existingOrder.status !== 'TP_SL_ACTIVE' && existingOrder.status !== 'PENDING_EXECUTION' && existingOrder.status !== 'CANCELLED') {
           // If asset is physically in wallet ($10+ USDT), sync card state to TP_SL_ACTIVE!
           existingOrder.status = 'TP_SL_ACTIVE';
           existingOrder.executionPrice = currentPrice;
+          try {
+            const openOrders = await this.mexcClient.getOpenOrders(symbol);
+            if (Array.isArray(openOrders) && openOrders.length > 0) {
+              const sellOrder = openOrders.find(o => o.side === 'SELL');
+              if (sellOrder && sellOrder.orderId) existingOrder.mexcSellOrderId = sellOrder.orderId;
+            }
+          } catch (oErr) {}
           this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Updated ${symbol} card state to TP_SL_ACTIVE for physical wallet holding ($${notionalUsdt.toFixed(2)} USDT)!`, 'info', symbol);
           this.saveOrders();
         }
@@ -1042,6 +1058,7 @@ class OrderTracker {
             try {
               const balances = await this.mexcClient.getBalances();
               const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+              const totalBal = assetBal ? ((parseFloat(assetBal.free) || 0) + (parseFloat(assetBal.locked) || 0)) : 0;
               const currentPrice = prices[order.symbol] || order.currentPrice || 0;
               const notionalValUsdt = totalBal * currentPrice;
 
