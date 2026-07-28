@@ -58,12 +58,12 @@ class MasterMockMexcClient {
   async getBalances() {
     return [
       { asset: 'USDT', free: 10000.0, locked: 0 },
-      { asset: 'SOL', free: 10.0, locked: 0 },
-      { asset: 'BTC', free: 1.0, locked: 0 },
-      { asset: 'ETH', free: 5.0, locked: 0 },
-      { asset: 'ONDO', free: 100.0, locked: 0 },
-      { asset: 'SUI', free: 200.0, locked: 0 },
-      { asset: 'UNI', free: 50.0, locked: 0 }
+      { asset: 'SOL', free: 0, locked: 0 },
+      { asset: 'BTC', free: 0, locked: 0 },
+      { asset: 'ETH', free: 0, locked: 0 },
+      { asset: 'ONDO', free: 0, locked: 0 },
+      { asset: 'SUI', free: 0, locked: 0 },
+      { asset: 'UNI', free: 0, locked: 0 }
     ];
   }
   async getMyTrades() { return []; }

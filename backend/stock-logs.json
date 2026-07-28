@@ -1,5 +1,75 @@
 [
   {
+    "id": "1785214278794765",
+    "timestamp": "2026-07-28T04:51:18.794Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 130, Best Ask: 130.001 → #1 TOP SELLER Price: 130.001 (> Bid 130 ✅)",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1785214278779597",
+    "timestamp": "2026-07-28T04:51:18.779Z",
+    "message": "👑 [STOCK TOP BUYER PEG] Best Bid: 130, Best Ask: 130.001 → #1 TOP BUYER Price: 130 (< Ask 130.001 ✅)",
+    "type": "info",
+    "symbol": "SPCXONUSDT"
+  },
+  {
+    "id": "1785214278767265",
+    "timestamp": "2026-07-28T04:51:18.767Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 220, Best Ask: 220.001 → #1 TOP SELLER Price: 220.001 (> Bid 220 ✅)",
+    "type": "info",
+    "symbol": "AAPLONUSDT"
+  },
+  {
+    "id": "1785214278755744",
+    "timestamp": "2026-07-28T04:51:18.755Z",
+    "message": "👑 [STOCK TOP BUYER PEG] Best Bid: 220, Best Ask: 220.001 → #1 TOP BUYER Price: 220 (< Ask 220.001 ✅)",
+    "type": "info",
+    "symbol": "AAPLONUSDT"
+  },
+  {
+    "id": "1785214278742586",
+    "timestamp": "2026-07-28T04:51:18.742Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 250, Best Ask: 250.001 → #1 TOP SELLER Price: 250.001 (> Bid 250 ✅)",
+    "type": "info",
+    "symbol": "TSLAONUSDT"
+  },
+  {
+    "id": "1785214278728445",
+    "timestamp": "2026-07-28T04:51:18.728Z",
+    "message": "👑 [STOCK TOP BUYER PEG] Best Bid: 250, Best Ask: 250.001 → #1 TOP BUYER Price: 250 (< Ask 250.001 ✅)",
+    "type": "info",
+    "symbol": "TSLAONUSDT"
+  },
+  {
+    "id": "1785214278715683",
+    "timestamp": "2026-07-28T04:51:18.715Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 120, Best Ask: 120.001 → #1 TOP SELLER Price: 120.001 (> Bid 120 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785214278702448",
+    "timestamp": "2026-07-28T04:51:18.702Z",
+    "message": "👑 [STOCK TOP BUYER PEG] Best Bid: 120, Best Ask: 120.001 → #1 TOP BUYER Price: 120 (< Ask 120.001 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785214278687140",
+    "timestamp": "2026-07-28T04:51:18.687Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 2400, Best Ask: 2400.01 → #1 TOP SELLER Price: 2400.01 (> Bid 2400 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785214278685760",
+    "timestamp": "2026-07-28T04:51:18.685Z",
+    "message": "👑 [STOCK TOP BUYER PEG] Best Bid: 2400, Best Ask: 2400.01 → #1 TOP BUYER Price: 2400 (< Ask 2400.01 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
     "id": "1784816817207777",
     "timestamp": "2026-07-23T14:26:57.207Z",
     "message": "New Stock Bot order created for MSFTONUSDT (0% Maker Pegging Engine)",
