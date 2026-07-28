@@ -903,9 +903,9 @@ class OrderTracker {
         const notionalUsdt = totalQty * currentPrice;
         let existingOrder = this.orders.find(o => o.symbol === symbol);
 
-        // STRICT DUST CHECK: If total balance value in wallet is under 10.0 USDT ($0.07, $0.20, $2.00 dust), it is NOT a real position!
-        if (notionalUsdt < 10.0) {
-          if (existingOrder && existingOrder.status === 'TP_SL_ACTIVE') {
+        // STRICT DUST CHECK: Only ignore if total balance value in wallet is genuinely under 10.0 USDT and no coins are locked in open sell orders!
+        if (currentPrice > 0 && notionalUsdt < 10.0 && (parseFloat(bal.locked || 0) === 0)) {
+          if (existingOrder && existingOrder.status === 'TP_SL_ACTIVE' && !existingOrder.mexcSellOrderId) {
             existingOrder.status = 'PENDING_ACTIVATION';
             existingOrder.executionPrice = null;
             this.log(`⚠️ [DUST BALANCE IGNORED] ${asset} wallet value is only $${notionalUsdt.toFixed(2)} USDT (< $10.00 minimum trade). Resetting card state to PENDING_ACTIVATION!`, 'info', symbol);
@@ -1119,11 +1119,14 @@ class OrderTracker {
             try {
               const balances = await this.mexcClient.getBalances();
               const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
-              const totalBal = assetBal ? ((parseFloat(assetBal.free) || 0) + (parseFloat(assetBal.locked) || 0)) : 0;
+              const freeBal = assetBal ? (parseFloat(assetBal.free) || 0) : 0;
+              const lockedBal = assetBal ? (parseFloat(assetBal.locked) || 0) : 0;
+              const totalBal = freeBal + lockedBal;
               const currentPrice = prices[order.symbol] || order.currentPrice || 0;
               const notionalValUsdt = totalBal * currentPrice;
 
-              if (notionalValUsdt < 10.0) {
+              // Only reset if price is valid (> 0), no sell order is active, locked balance is 0, AND total balance value is genuinely under 10.0 USDT
+              if (currentPrice > 0 && notionalValUsdt < 10.0 && !order.mexcSellOrderId && lockedBal === 0) {
                 this.log(`🚨 [DUST/GHOST ORDER DETECTED] ${order.symbol} status is TP_SL_ACTIVE but physical MEXC ${asset} balance value is only $${notionalValUsdt.toFixed(2)} USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...`, 'warning', order.symbol);
                 order.status = 'PENDING_ACTIVATION';
                 order.executionPrice = null;
