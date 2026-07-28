@@ -865,6 +865,14 @@ class OrderTracker {
     this.log('Historical orders cleared.', 'info');
   }
 
+  // Purge ALL active tracking cards for fresh start
+  clearAllOrders() {
+    this.orders = [];
+    this.saveOrders();
+    this.log('🧹 ALL active tracking cards purged by user request.', 'warning');
+    return this.orders;
+  }
+
   // Start tracking interval if there are active orders
   async startTracking() {
     if (this.intervalId) return;

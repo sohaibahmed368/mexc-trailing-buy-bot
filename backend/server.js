@@ -335,6 +335,16 @@ app.delete('/api/orders', (req, res) => {
   }
 });
 
+// Purge ALL active tracking cards for fresh restart
+app.delete('/api/orders/purge-all', (req, res) => {
+  try {
+    tracker.clearAllOrders();
+    res.json({ success: true, message: 'All active tracking cards purged.' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // --- STOCK BOT ENDPOINTS ---
 app.get('/api/stock-orders', (req, res) => {
   res.json(stockTracker.getOrders());
