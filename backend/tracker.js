@@ -521,6 +521,13 @@ class OrderTracker {
   }
 
 
+  getSymbolQuantityPrecision(symbol) {
+    symbol = (symbol || '').toUpperCase().trim();
+    if (symbol.startsWith('BTC') || symbol.startsWith('ETH')) return 10000; // 4 decimal places
+    if (symbol.startsWith('SHIB') || symbol.startsWith('PEPE') || symbol.startsWith('BONK') || symbol.startsWith('FLOKI')) return 1; // integers
+    return 100; // 2 decimal places default for SOL, XRP, ONDO, SUI, UNI, DOGE, AVAX, LINK, etc.
+  }
+
   clearTradeHistory() {
     this.orders.forEach(o => {
       o.tradeHistory = [];
@@ -1323,12 +1330,15 @@ class OrderTracker {
 
               // IMMEDIATE MARKET SELL FOR STOP LOSS (Protects capital instantly during market crash / SL extension hit)
               let sellResult = null;
-              const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000, 100000000];
               let lastErr = null;
 
-              for (const mult of decimalsToTry) {
-                const qtyToTry = Math.floor(sellQty * mult) / mult;
-                if (qtyToTry <= 0) continue;
+              // Determine exact symbol precision scale (e.g. 100 for XRP/SOL/ONDO/SUI/UNI, 10000 for BTC/ETH)
+              const precisionMult = this.getSymbolQuantityPrecision(order.symbol);
+
+              for (let attempt = 1; attempt <= 6; attempt++) {
+                const qtyToTry = Math.floor(sellQty * precisionMult) / precisionMult;
+                if (qtyToTry <= 0) break;
+
                 try {
                   const sellParams = {
                     symbol: order.symbol,
@@ -1344,6 +1354,7 @@ class OrderTracker {
                 } catch (err) {
                   lastErr = err;
                   const errMsg = err.message || '';
+
                   if (errMsg.includes('30002') || errMsg.includes('1USDT') || (qtyToTry * currentPrice) < 1.0) {
                     this.log(`⚠️ [DUST BALANCE MIN 1 USDT SKIPPED] Remaining balance ${qtyToTry} ${order.symbol} ($${(qtyToTry * currentPrice).toFixed(4)} USDT) is below MEXC 1.0 USDT trade limit. Marking cycle complete.`, 'warning', order.symbol);
                     order.status = 'TRIGGERED';
@@ -1354,13 +1365,39 @@ class OrderTracker {
                     sellResult = { orderId: 'dust_skipped_' + Date.now() };
                     break;
                   }
-                  if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
+
+                  if (errMsg.includes('Oversold') || errMsg.includes('30005')) {
+                    // Query fresh unlocked free balance from MEXC
+                    try {
+                      const balances = await this.mexcClient.getBalances();
+                      const asset = order.symbol.replace('USDT', '').toUpperCase();
+                      const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+                      if (assetBal && assetBal.free > 0) {
+                        sellQty = assetBal.free * 0.995; // 0.5% fee & settlement safety buffer
+                      } else {
+                        sellQty = sellQty * 0.995;
+                      }
+                    } catch (bErr) {
+                      sellQty = sellQty * 0.995;
+                    }
+                    this.log(`[REAL] Oversold (30005) detected for ${qtyToTry}. Adjusted safe quantity to ${sellQty.toFixed(4)} and retrying (Attempt ${attempt}/6)...`, 'warning', order.symbol);
+                    await new Promise(r => setTimeout(r, 500));
                     continue;
                   }
-                  if (errMsg.includes('Oversold') || errMsg.includes('30005')) {
-                    this.log(`[REAL] Oversold (30005) detected for ${qtyToTry}. Reducing quantity by 0.5% buffer and retrying...`, 'warning', order.symbol);
-                    sellQty = Math.floor(sellQty * 0.995 * 10000) / 10000;
-                    continue;
+
+                  if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
+                    // Precision scale mismatch fallback: try integer or 2-decimal scale
+                    const altMult = precisionMult === 10000 ? 100 : 1;
+                    const altQty = Math.floor(sellQty * altMult) / altMult;
+                    if (altQty > 0) {
+                      try {
+                        sellResult = await this.mexcClient.placeOrder({ symbol: order.symbol, side: 'SELL', type: 'MARKET', quantity: altQty });
+                        if (sellResult && sellResult.orderId) {
+                          this.log(`🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for ${altQty} ${order.symbol} with fallback precision (Order ID: ${sellResult.orderId})`, 'warning', order.symbol);
+                          break;
+                        }
+                      } catch (fErr) {}
+                    }
                   }
                   throw err;
                 }
