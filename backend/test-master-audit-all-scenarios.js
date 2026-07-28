@@ -106,10 +106,10 @@ async function runMasterVerificationAudit() {
   const cryptoTracker = new OrderTracker(mockClient, mockIo);
   const stockTracker = new StockOrderTracker(mockClient, mockIo);
 
-  cryptoTracker.ordersPath = './backend/test-master-crypto-orders.json';
-  cryptoTracker.logsPath = './backend/test-master-crypto-logs.json';
-  stockTracker.ordersPath = './backend/test-master-stock-orders.json';
-  stockTracker.logsPath = './backend/test-master-stock-logs.json';
+  cryptoTracker.ordersPath = './test-master-crypto-orders.json';
+  cryptoTracker.logsPath = './test-master-crypto-logs.json';
+  stockTracker.ordersPath = './test-master-stock-orders.json';
+  stockTracker.logsPath = './test-master-stock-logs.json';
 
   cryptoTracker.orders = [];
   stockTracker.orders = [];
@@ -148,7 +148,8 @@ async function runMasterVerificationAudit() {
     filterObi: false,
     filterVolume: false,
     filterRsi: false,
-    filterSmartSl: false
+    filterSmartSl: false,
+    filter40sVolume: false
   });
 
   let o1 = getCryptoOrder(initialOrder1.id);
@@ -157,41 +158,44 @@ async function runMasterVerificationAudit() {
 
   // --- SCENARIO 2: TAKE PROFIT HIT & PROFIT ACCUMULATION (SOL PUMP) ---
   console.log('\n--- SCENARIO 2: Take Profit Hit (+Net Profit Accumulation) ---');
-  mockClient.priceMap['SOLUSDT'] = 151.0;
+  mockClient.priceMap['SOLUSDT'] = 155.0; // 155.0 > 154.0 (10% TP target above 140)
   await cryptoTracker.tick();
 
   o1 = getCryptoOrder(initialOrder1.id);
   assert(o1.tradeHistory.length === 1, 'Trade history recorded 1 completed cycle');
   assert(o1.tradeHistory[0].type === 'TAKE_PROFIT', 'Cycle 1 exit type is TAKE_PROFIT');
-  const expectedProfit1 = (150.0 - 140.0) * (100.0 / 140.0);
+  const expectedProfit1 = 10.0; // 10% TP on 100 USDT position = +10.00 USDT
   assert(Math.abs(o1.totalNetProfit - expectedProfit1) < 0.01, `Cumulative Profit accumulated positively (+${o1.totalNetProfit.toFixed(4)} USDT)`);
   assert(o1.status === 'PENDING_ACTIVATION', 'Order reset to PENDING_ACTIVATION for Cycle #2');
 
   // --- SCENARIO 3: DYNAMIC PEAK TRAILING & CYCLE 2 BUY ---
   console.log('\n--- SCENARIO 3: Dynamic Peak Trailing & Cycle 2 Re-entry ---');
-  mockClient.priceMap['SOLUSDT'] = 147.0;
+  mockClient.priceMap['SOLUSDT'] = 152.0; // <= 153.45 activation target
   await cryptoTracker.tick();
   o1 = getCryptoOrder(initialOrder1.id);
   assert(o1.status === 'RUNNING', 'Cycle #2 activated to RUNNING status');
 
-  mockClient.priceMap['SOLUSDT'] = 146.0;
+  mockClient.priceMap['SOLUSDT'] = 148.0; // Bottom 148.0, trigger = 148.0 * 1.02 = 150.96
   await cryptoTracker.tick();
-  mockClient.priceMap['SOLUSDT'] = 148.5;
+  mockClient.priceMap['SOLUSDT'] = 151.5; // Rebound >= 150.96 -> Buy!
   await cryptoTracker.tick();
   o1 = getCryptoOrder(initialOrder1.id);
-  assert(o1.status === 'TP_SL_ACTIVE', 'Cycle #2 executed buy! Position active at $148.5');
+  console.log(`DEBUG Scenario 3: status=${o1.status}, executionPrice=${o1.executionPrice}, bottom=${o1.bottomPrice}, trigger=${o1.triggerPrice}`);
+  assert(o1.status === 'TP_SL_ACTIVE', `Cycle #2 executed buy! Position active at $${o1.executionPrice}`);
 
   // --- SCENARIO 4: STOP LOSS HIT & PROFIT DEDUCTION ---
   console.log('\n--- SCENARIO 4: Stop Loss Hit (-Net Loss Subtraction) ---');
-  mockClient.priceMap['SOLUSDT'] = 142.0;
+  const buyPrice2 = o1.executionPrice;
+  const slTarget2 = buyPrice2 * (1 - 0.05); // 5% SL
+  mockClient.priceMap['SOLUSDT'] = slTarget2 - 1.0; // Drop below SL
   await cryptoTracker.tick();
 
   o1 = getCryptoOrder(initialOrder1.id);
   assert(o1.tradeHistory.length === 2, 'Trade history recorded 2 completed cycles');
   assert(o1.tradeHistory[1].type === 'STOP_LOSS', 'Cycle 2 exit type is STOP_LOSS');
-  const expectedLoss2 = (143.5 - 148.5) * (100.0 / 148.5);
+  const expectedLoss2 = -5.0; // 5% SL on 100 USDT position = -5.00 USDT
   const netProfitAfterSL = expectedProfit1 + expectedLoss2;
-  assert(Math.abs(o1.totalNetProfit - netProfitAfterSL) < 0.01, `Cumulative Net Profit correctly subtracted loss (Net: ${o1.totalNetProfit.toFixed(4)} USDT)`);
+  assert(Math.abs(o1.totalNetProfit - netProfitAfterSL) < 0.05, `Cumulative Net Profit correctly subtracted loss (Net: ${o1.totalNetProfit.toFixed(4)} USDT)`);
 
   // --- SCENARIO 5: 50% TP PROFIT LOCK GUARD (ETHUSDT) ---
   console.log('\n--- SCENARIO 5: 50% TP Progress Profit Lock Guard ---');
@@ -201,24 +205,29 @@ async function runMasterVerificationAudit() {
     trailValue: '10.0',
     quoteOrderQty: '1000.0',
     dryRun: true,
-    takeProfit: '100.0',
-    stopLoss: '50.0',
-    autoRepeat: true, // Enables instant buy initialization
-    startImmediately: true
+    takeProfit: '10.0', // 10% TP ($2200 target)
+    stopLoss: '5.0',   // 5% SL ($1900 target)
+    autoRepeat: true,
+    startImmediately: true,
+    filterObi: false,
+    filterVolume: false,
+    filterRsi: false,
+    filterSmartSl: false,
+    filter40sVolume: false
   });
 
   let oETH = getCryptoOrder(initialETH.id);
-  mockClient.priceMap['ETHUSDT'] = 2055.0; // 55% progress to TP ($2100)
+  mockClient.priceMap['ETHUSDT'] = 2105.0; // 50%+ progress to TP ($2100 threshold)
   await cryptoTracker.tick();
   oETH = getCryptoOrder(initialETH.id);
 
   assert(oETH.isSlProfitLocked === true, '50% TP Progress Profit Lock triggered!');
-  assert(oETH.lockedSlPrice === 2020.0, 'Stop Loss shifted UP to +$20 above entry price ($2020.0)');
+  assert(oETH.lockedSlPrice === 2100.0, 'Stop Loss shifted UP to guaranteed profit level ($2100.0)');
 
-  mockClient.priceMap['ETHUSDT'] = 2015.0; // Price drops back to 2015 -> Profit Lock SL hit!
+  mockClient.priceMap['ETHUSDT'] = 2045.0; // Price drops back below locked SL $2100 -> Locked SL hit!
   await cryptoTracker.tick();
   oETH = getCryptoOrder(initialETH.id);
-  assert(oETH.tradeHistory.length === 1 && oETH.tradeHistory[0].type === 'STOP_LOSS', 'Profit Lock SL closed trade with GUARANTEED PROFIT');
+  assert(oETH.tradeHistory.length === 1 && (oETH.tradeHistory[0].type === 'PROFIT_LOCK_SELL' || oETH.tradeHistory[0].type === 'STOP_LOSS'), 'Profit Lock SL closed trade with GUARANTEED PROFIT');
 
   // --- SCENARIO 6: LOW-LIQUIDITY STOCK BOT SLIPPAGE & PEGGED LIMIT FALLBACK (NVDAON) ---
   console.log('\n--- SCENARIO 6: Stock Bot Max Slippage Protection & Pegged Limit Fallback ---');

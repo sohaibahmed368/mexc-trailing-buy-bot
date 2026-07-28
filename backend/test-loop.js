@@ -88,8 +88,8 @@ async function runTest() {
   const tracker = new Tracker(mockClient, mockIo);
   
   // Override paths
-  tracker.ordersPath = './backend/test-orders-db.json';
-  tracker.logsPath = './backend/test-logs-db.json';
+  tracker.ordersPath = './test-orders-db.json';
+  tracker.logsPath = './test-logs-db.json';
   tracker.orders = [];
   tracker.logs = [];
 

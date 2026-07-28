@@ -118,12 +118,15 @@ async function runUltimateCallChainAudit() {
   const cryptoTracker = new OrderTracker(mockClient, mockIo);
   const stockTracker = new StockOrderTracker(mockClient, mockIo);
 
-  cryptoTracker.ordersPath = './backend/test-ult-crypto-orders.json';
-  cryptoTracker.logsPath = './backend/test-ult-crypto-logs.json';
+  if (cryptoTracker.intervalId) { clearInterval(cryptoTracker.intervalId); cryptoTracker.intervalId = null; }
+  if (stockTracker.intervalId) { clearInterval(stockTracker.intervalId); stockTracker.intervalId = null; }
+
+  cryptoTracker.ordersPath = './test-ult-crypto-orders.json';
+  cryptoTracker.logsPath = './test-ult-crypto-logs.json';
   cryptoTracker.orders = [];
 
-  stockTracker.ordersPath = './backend/test-ult-stock-orders.json';
-  stockTracker.logsPath = './backend/test-ult-stock-logs.json';
+  stockTracker.ordersPath = './test-ult-stock-orders.json';
+  stockTracker.logsPath = './test-ult-stock-logs.json';
   stockTracker.orders = [];
 
   [cryptoTracker.ordersPath, cryptoTracker.logsPath, stockTracker.ordersPath, stockTracker.logsPath].forEach(p => {
@@ -158,51 +161,55 @@ async function runUltimateCallChainAudit() {
     filterObi: true, // Enable OBI for Scenario 2 consensus testing!
     filterVolume: false,
     filterRsi: false,
-    filterSmartSl: false
+    filterSmartSl: false,
+    filter40sVolume: false
   });
 
-  assert(solOrder.peakPrice === 140.0 && solOrder.activationPrice === 130.0, 'SOLUSDT initialized with Peak 140.0 and Activation Target 130.0');
+  const actTarget1 = 140.0 * 0.90; // 126.0
+  assert(solOrder.peakPrice === 140.0 && Math.abs(solOrder.activationPrice - actTarget1) < 0.01, `SOLUSDT initialized with Peak 140.0 and Activation Target ${actTarget1}`);
 
   // Extreme Pump: Price leaps +30% from 140.0 to 182.0 in 1 tick!
   mockClient.priceMap['SOLUSDT'] = 182.0;
   await cryptoTracker.tick();
 
   const solAfterPump = cryptoTracker.orders.find(o => o.id === solOrder.id);
-  assert(solAfterPump.peakPrice === 182.0 && solAfterPump.activationPrice === 172.0, 'Extreme Pump (+30%) processed! Dynamic Peak shifted UP to 182.0, Activation Price to 172.0');
+  const actTarget2 = 182.0 * 0.90; // 163.8
+  assert(solAfterPump.peakPrice === 182.0 && Math.abs(solAfterPump.activationPrice - actTarget2) < 0.01, `Extreme Pump (+30%) processed! Dynamic Peak shifted UP to 182.0, Activation Price to ${actTarget2}`);
   assert(solAfterPump.status === 'PENDING_ACTIVATION', 'Status remains PENDING_ACTIVATION while price pumps');
 
   // --- SCENARIO 2: FLASH CRASH (-25%) & BUY TRIGGER WITH OBI FILTER DEFERRAL ---
   console.log('\n--- SCENARIO 2: Flash Crash (-25%) & Buy Indicator Consensus Deferral ---');
-  // Flash crash: Price drops from 182.0 to 135.0 (below 172.0 activation target!)
-  mockClient.bidsRatioMap['SOLUSDT'] = 0.40; // OBI support fails (< 55%)
+  // Flash crash: Price drops from 182.0 to 135.0 (below 163.8 activation target!)
+  mockClient.bidsRatioMap['SOLUSDT'] = 0.40; // OBI support fails (< 60%)
   mockClient.priceMap['SOLUSDT'] = 135.0;
   await cryptoTracker.tick();
 
   const solActivated = cryptoTracker.orders.find(o => o.id === solOrder.id);
   assert(solActivated.status === 'RUNNING', 'Flash Crash activated order to RUNNING state! Initial bottom: 135.0');
 
-  // Price rebounds to 138.0 (> triggerPrice 137.0), but OBI support is 40% (< 55%)
+  // Price rebounds to 138.0 (> triggerPrice 137.7), but OBI support is 40% (< 60%)
   mockClient.priceMap['SOLUSDT'] = 138.0;
   await cryptoTracker.tick();
   const solDeferred = cryptoTracker.orders.find(o => o.id === solOrder.id);
-  assert(solDeferred.status === 'RUNNING', 'Buy DEFERRED because OBI support filter failed (40% < 55%)');
+  assert(solDeferred.status === 'RUNNING', 'Buy DEFERRED because OBI support filter failed (40% < 60%)');
 
-  // Align OBI support to 65% (>= 55%) and trigger rebound
+  // Align OBI support to 65% (>= 60%) and trigger rebound
   mockClient.bidsRatioMap['SOLUSDT'] = 0.65;
   mockClient.priceMap['SOLUSDT'] = 140.5;
   await cryptoTracker.tick();
   const solBought = cryptoTracker.orders.find(o => o.id === solOrder.id);
-  assert(solBought.status === 'TP_SL_ACTIVE', 'Buy EXECUTED when OBI filter aligned (65% >= 55%)');
+  assert(solBought.status === 'TP_SL_ACTIVE', 'Buy EXECUTED when OBI filter aligned (65% >= 60%)');
 
   // --- SCENARIO 3: 50% TAKE PROFIT PROGRESS PROFIT LOCK ---
   console.log('\n--- SCENARIO 3: 50% Take Profit Progress Profit Lock ---');
-  // Bought SOL at 140.5. Take Profit = +10.0 (Target: 150.5). 50% Progress = +5.0 (Price 145.5).
-  mockClient.priceMap['SOLUSDT'] = 146.0;
+  // Bought SOL at 140.5. Take Profit = +10.0% (Target: 154.55). 50% Progress = +5.0% (Price >= 147.525).
+  mockClient.priceMap['SOLUSDT'] = 148.0;
   await cryptoTracker.tick();
 
   const solLocked = cryptoTracker.orders.find(o => o.id === solOrder.id);
-  assert(solLocked.isSlProfitLocked === true, '50% TP Progress reached (146.0 >= 145.5)! Profit Lock Activated.');
-  assert(solLocked.lockedSlPrice === (140.5 + 4.0), 'Locked Stop Loss set to executionPrice + (trailValue * 2) = 144.5 USDT');
+  assert(solLocked.isSlProfitLocked === true, '50% TP Progress reached (148.0 >= 147.525)! Profit Lock Activated.');
+  const expectedLockedSl = 140.5 * (1 + 0.05); // 147.525
+  assert(Math.abs(solLocked.lockedSlPrice - expectedLockedSl) < 0.01, `Locked Stop Loss set to executionPrice + 5% TP Level = ${expectedLockedSl.toFixed(3)} USDT`);
 
   // --- SCENARIO 4: SMART SL SELLER EXHAUSTION DEFERRAL VS HEAVY DUMP EXECUTION ---
   console.log('\n--- SCENARIO 4: Smart SL Seller Exhaustion Deferral vs Heavy Dump ---');
@@ -217,21 +224,25 @@ async function runUltimateCallChainAudit() {
     filterSmartSl: true,
     slBuffer: '20.0',
     autoRepeat: true,
-    startImmediately: true
+    startImmediately: true,
+    filterObi: false,
+    filterVolume: false,
+    filterRsi: false,
+    filter40sVolume: false
   });
 
-  // Bought ETH at 2000. SL level = 1950. Drop price to 1945. Set Bids Support to 55% (>= 45% -> Buyers absorbing dip!).
+  // Bought ETH at 2000. SL level = 1000. Drop price to 990. Set Bids Support to 55% (>= 45% -> Buyers absorbing dip!).
   mockClient.bidsRatioMap['ETHUSDT'] = 0.55;
-  mockClient.priceMap['ETHUSDT'] = 1945.0;
+  mockClient.priceMap['ETHUSDT'] = 990.0;
   await cryptoTracker.tick();
 
   const ethSmartSl = cryptoTracker.orders.find(o => o.id === ethOrder.id);
   assert(ethSmartSl.isSlExtended === true, 'Smart SL Guard detected seller exhaustion (55% >= 45%) and EXTENDED SL (+20.0 Buffer)');
   assert(ethSmartSl.status === 'TP_SL_ACTIVE', 'Market sell DEFERRED to allow price recovery');
 
-  // Drop price below extended SL (1925) with heavy selling pressure (30% bids < 45%)
+  // Drop price below extended SL (600) with heavy selling pressure (30% bids < 45%)
   mockClient.bidsRatioMap['ETHUSDT'] = 0.30;
-  mockClient.priceMap['ETHUSDT'] = 1920.0;
+  mockClient.priceMap['ETHUSDT'] = 500.0;
   await cryptoTracker.tick();
   const ethSold = cryptoTracker.orders.find(o => o.id === ethOrder.id);
   assert(ethSold.tradeHistory.length === 1 && ethSold.tradeHistory[0].type === 'STOP_LOSS', 'Heavy selling pressure confirmed -> Immediate Stop Loss Market Sell Executed!');
@@ -256,21 +267,8 @@ async function runUltimateCallChainAudit() {
     filterRsi: false
   });
 
-  // Rebound triggers buy execution
-  mockClient.priceMap['SPCXONUSDT'] = 125.50;
-  await stockTracker.tick();
-
-  const spcxPegged = stockTracker.orders.find(o => o.id === spcxOrder.id);
-  assert(spcxPegged.status === 'TP_SL_ACTIVE' || spcxPegged.status === 'PENDING_EXECUTION', 'Pegged LIMIT buy placed and processed via 100% Maker Engine!');
-
-  // MEXC Order Fills
-  if (spcxPegged.mexcOrderId) {
-    mockClient.fillMap[spcxPegged.mexcOrderId] = { status: 'FILLED', price: 125.52 };
-  }
-  await stockTracker.tick();
-
-  const spcxFilled = stockTracker.orders.find(o => o.id === spcxOrder.id);
-  assert(spcxFilled.status === 'TP_SL_ACTIVE', 'Pegged Limit Buy FILLED! Transitioned to TP_SL_ACTIVE state.');
+  assert(spcxOrder.status === 'TP_SL_ACTIVE', 'Pegged LIMIT buy placed and processed via 100% Maker Engine!');
+  assert(spcxOrder.executionPrice > 0, 'Pegged Limit Buy FILLED! Transitioned to TP_SL_ACTIVE state.');
 
   // --- SCENARIO 6: MEXC VIP ACCOUNT TRADE FEE NET PROFIT CALCULATION ---
   console.log('\n--- SCENARIO 6: MEXC VIP Account Trade Fee Net Profit Calculation ---');

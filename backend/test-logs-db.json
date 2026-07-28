@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1785268783927-mfsyz",
+    "timestamp": "2026-07-28T19:59:43.927Z",
+    "message": "Created [REAL] trailing stop buy for ETHUSDT. Initial price: 1839. Waiting for activation price: 1655.1000000000001 (Direction: DOWN). Trail: 2",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785268783923-dv7pf",
+    "timestamp": "2026-07-28T19:59:43.923Z",
+    "message": "Fetching initial price for ETHUSDT...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  }
+]

@@ -102,8 +102,8 @@ async function runExactFillsAndIndicatorsTest() {
   const mockClient = new ExactFillMockMexcClient();
   const tracker = new OrderTracker(mockClient, mockIo);
 
-  tracker.ordersPath = './backend/test-exact-crypto-orders.json';
-  tracker.logsPath = './backend/test-exact-crypto-logs.json';
+  tracker.ordersPath = './test-exact-crypto-orders.json';
+  tracker.logsPath = './test-exact-crypto-logs.json';
   tracker.orders = [];
 
   if (fs.existsSync(tracker.ordersPath)) fs.unlinkSync(tracker.ordersPath);

@@ -1,6 +1,6 @@
 [
   {
-    "id": "1784662894623",
+    "id": "1785270515123",
     "symbol": "NVDAONUSDT",
     "trailValue": 2,
     "orderType": "MARKET",
@@ -15,37 +15,46 @@
     "filterRsi": false,
     "autoRepeat": true,
     "activationOffset": null,
-    "maxSlippagePct": 0.5,
     "isStockBot": true,
-    "status": "RUNNING",
+    "status": "PENDING_ACTIVATION",
     "dryRun": false,
-    "peakPrice": 110,
-    "activationPrice": 108,
-    "bottomPrice": 105,
-    "triggerPrice": 107,
+    "peakPrice": 105,
+    "activationPrice": 102.89999999999999,
+    "bottomPrice": null,
+    "triggerPrice": null,
     "executionPrice": null,
     "sellExecutionPrice": null,
     "mexcOrderId": null,
     "mexcSellOrderId": null,
-    "createdAt": "2026-07-21T19:41:34.623Z",
-    "totalNetProfit": -50,
+    "createdAt": "2026-07-28T20:28:35.123Z",
+    "totalNetProfit": -75,
     "tradeHistory": [
       {
         "cycle": 1,
         "buyPrice": 120,
-        "sellPrice": 110,
-        "profit": -10,
-        "profitUsdt": -50,
+        "sellPrice": 105,
+        "grossProfitUsdt": -75,
+        "mexcBuyFeeUsdt": 0,
+        "mexcSellFeeUsdt": 0,
+        "totalMexcFeesUsdt": 0,
+        "profit": -15,
+        "profitUsdt": -75,
         "type": "STOP_LOSS",
-        "timestamp": "2026-07-21T19:41:34.684Z"
+        "timestamp": "2026-07-28T20:28:46.149Z"
       }
     ],
     "isSlExtended": false,
     "isSlProfitLocked": false,
     "lockedSlPrice": null,
     "currentPrice": 105,
+    "makerSellOrderId": "mock_master_1",
+    "makerSellQty": 5,
+    "currentPegPrice": 108.674,
+    "makerSellStartTime": 1785270515186,
+    "makerSellLastCheck": 1785270526147,
+    "makerPegCheckCount": 1,
     "sellTriggeredAt": null,
     "triggeredAt": null,
-    "activatedAt": "2026-07-21T19:41:35.626Z"
+    "activatedAt": null
   }
 ]

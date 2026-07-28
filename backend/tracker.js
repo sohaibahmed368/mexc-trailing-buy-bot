@@ -1117,7 +1117,7 @@ class OrderTracker {
                   order.sellTriggeredAt = new Date().toISOString();
                   this.log(`🎉 [REAL] Take Profit hit! Limit Sell order ${order.mexcSellOrderId} filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
                   changed = true;
-                  this.handleOrderCycleComplete(order);
+                  await this.handleOrderCycleComplete(order);
                   continue;
                 }
               } catch (e) {}
@@ -1189,7 +1189,7 @@ class OrderTracker {
               order.sellTriggeredAt = new Date().toISOString();
               this.log(`[DRY RUN] Take Profit hit! Simulated Limit Sell executed at ${order.sellExecutionPrice.toFixed(4)} USDT.`, 'success', order.symbol);
               changed = true;
-              this.handleOrderCycleComplete(order);
+              await this.handleOrderCycleComplete(order);
               continue;
             }
           }
@@ -1208,7 +1208,7 @@ class OrderTracker {
                   order.sellTriggeredAt = new Date().toISOString();
                   this.log(`[REAL] Take Profit hit! Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
                   changed = true;
-                  this.handleOrderCycleComplete(order);
+                  await this.handleOrderCycleComplete(order);
                   continue;
                 }
               } catch (e) {
@@ -1310,7 +1310,7 @@ class OrderTracker {
             order.sellTriggeredAt = new Date().toISOString();
             this.log(`[DRY RUN] Stop Loss hit! Simulated Market Sell executed at ${targetSlPrice} USDT.`, 'success', order.symbol);
             changed = true;
-            this.handleOrderCycleComplete(order);
+            await this.handleOrderCycleComplete(order);
             continue;
           } else {
             this.log(`[REAL] Stop Loss hit! Price ${currentPrice} <= SL level ${targetSlPrice.toFixed(4)}. Fetching fresh market price for LIMIT SELL...`, 'warning', order.symbol);
@@ -1341,7 +1341,7 @@ class OrderTracker {
                 const asset = order.symbol.replace('USDT', '').toUpperCase();
                 let assetBal = null;
 
-                for (let attempt = 1; attempt <= 4; attempt++) {
+                for (let attempt = 1; attempt <= 6; attempt++) {
                   const balances = await this.mexcClient.getBalances();
                   assetBal = balances.find(b => b.asset.toUpperCase() === asset);
 
@@ -1353,15 +1353,15 @@ class OrderTracker {
                       const truncated = Math.floor(safeFree * 100000000) / 100000000;
                       if (truncated > 0) {
                         sellQty = truncated;
-                        this.log(`[REAL] Stop Loss balance match: free balance ${sellQty} ${asset} unlocked successfully (Attempt ${attempt}/4).`, 'info', order.symbol);
+                        this.log(`[REAL] Stop Loss balance match: free balance ${sellQty} ${asset} unlocked successfully (Attempt ${attempt}/6).`, 'info', order.symbol);
                         break;
                       }
                     }
                   }
 
-                  if (attempt < 4) {
-                    this.log(`[REAL] Waiting 1.0s for MEXC balance unlock after TP cancellation (Attempt ${attempt}/4)...`, 'info', order.symbol);
-                    await new Promise(r => setTimeout(r, 1000));
+                  if (attempt < 6) {
+                    this.log(`[REAL] Waiting 2.0s for MEXC balance unlock after TP cancellation (Attempt ${attempt}/6)...`, 'info', order.symbol);
+                    await new Promise(r => setTimeout(r, 2000));
                   }
                 }
               } catch (balErr) {
@@ -1401,27 +1401,48 @@ class OrderTracker {
                     order.sellExecutionPrice = currentPrice;
                     order.sellTriggeredAt = new Date().toISOString();
                     changed = true;
-                    this.handleOrderCycleComplete(order);
+                    await this.handleOrderCycleComplete(order);
                     sellResult = { orderId: 'dust_skipped_' + Date.now() };
                     break;
                   }
 
                   if (errMsg.includes('Oversold') || errMsg.includes('30005')) {
                     // Query fresh unlocked free balance from MEXC
+                    let freshFree = 0;
                     try {
                       const balances = await this.mexcClient.getBalances();
                       const asset = order.symbol.replace('USDT', '').toUpperCase();
                       const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
-                      if (assetBal && assetBal.free > 0) {
-                        sellQty = assetBal.free * 0.995; // 0.5% fee & settlement safety buffer
+                      freshFree = assetBal ? parseFloat(assetBal.free || 0) : 0;
+                      if (freshFree > 0) {
+                        sellQty = freshFree * 0.999; // 0.1% safety buffer for fees & precision
                       } else {
                         sellQty = sellQty * 0.995;
                       }
                     } catch (bErr) {
                       sellQty = sellQty * 0.995;
                     }
-                    this.log(`[REAL] Oversold (30005) detected for ${qtyToTry}. Adjusted safe quantity to ${sellQty.toFixed(4)} and retrying (Attempt ${attempt}/6)...`, 'warning', order.symbol);
-                    await new Promise(r => setTimeout(r, 500));
+
+                    const adjQty = Math.floor(sellQty * precisionMult) / precisionMult;
+
+                    // CRITICAL FIX: If balance is genuinely 0 (already sold/transferred on MEXC), reset peak to current price and complete cycle!
+                    if (freshFree === 0 || adjQty <= 0) {
+                      this.log(`⚠️ [MANUAL SELL DETECTED] ${order.symbol}: Physical balance is 0 on MEXC (position was manually sold or liquidated). Resetting peak price to current market price ($${currentPrice} USDT) to require fresh dip before re-entry.`, 'warning', order.symbol);
+                      order.peakPrice = currentPrice;
+                      if (order.activationOffset) {
+                        order.activationPrice = currentPrice * (1 - (order.activationOffset / 100));
+                      }
+                      order.status = 'TRIGGERED';
+                      order.sellExecutionPrice = currentPrice;
+                      order.sellTriggeredAt = new Date().toISOString();
+                      changed = true;
+                      await this.handleOrderCycleComplete(order);
+                      sellResult = { orderId: 'zero_balance_oversold_' + Date.now() };
+                      break;
+                    }
+
+                    this.log(`[REAL] Oversold (30005) detected for ${qtyToTry}. Adjusted safe quantity to ${adjQty} ${order.symbol} and retrying (Attempt ${attempt}/6)...`, 'warning', order.symbol);
+                    await new Promise(r => setTimeout(r, 1000));
                     continue;
                   }
 
@@ -1460,7 +1481,7 @@ class OrderTracker {
                 order.status = 'TRIGGERED';
                 order.sellExecutionPrice = slAvgPrice;
                 order.sellTriggeredAt = new Date().toISOString();
-                this.handleOrderCycleComplete(order);
+                await this.handleOrderCycleComplete(order);
               }
             } catch (e) {
               const errMsg = e.message || '';
@@ -1470,9 +1491,17 @@ class OrderTracker {
                 order.sellExecutionPrice = currentPrice;
                 order.sellTriggeredAt = new Date().toISOString();
                 changed = true;
-                this.handleOrderCycleComplete(order);
+                await this.handleOrderCycleComplete(order);
+              } else if ((e.message || '').includes('Oversold') || (e.message || '').includes('30005')) {
+                // CRITICAL FIX: Oversold at outer catch = balance is 0. Mark TRIGGERED to break infinite loop!
+                this.log(`⚠️ [OVERSOLD OUTER CATCH] ${order.symbol}: Oversold after all retries exhausted. Marking cycle complete to stop infinite retry loop. Error: ${e.message}`, 'warning', order.symbol);
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = currentPrice;
+                order.sellTriggeredAt = new Date().toISOString();
+                changed = true;
+                await this.handleOrderCycleComplete(order);
               } else {
-                order.status = 'TP_SL_ACTIVE'; // Revert state for retry
+                order.status = 'TP_SL_ACTIVE'; // Revert state for retry on non-Oversold errors
                 this.log(`Real SL Market Sell Order Error: ${e.message}`, 'error', order.symbol);
               }
             }
@@ -1835,7 +1864,7 @@ class OrderTracker {
               }
             } else {
               order.status = 'TRIGGERED';
-              this.handleOrderCycleComplete(order);
+              await this.handleOrderCycleComplete(order);
             }
           } catch (err) {
             order.status = 'FAILED';

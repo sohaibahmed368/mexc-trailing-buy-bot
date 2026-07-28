@@ -1,64 +1,71 @@
 [
   {
-    "id": "1785270526149483",
-    "timestamp": "2026-07-28T20:28:46.149Z",
-    "message": "Stock Bot Cycle #1 completed (STOP_LOSS). Resetting order to pending activation. New peak: 105, Activation price: 102.89999999999999",
-    "type": "success",
-    "symbol": "NVDAONUSDT"
-  },
-  {
-    "id": "1785270526147921",
-    "timestamp": "2026-07-28T20:28:46.147Z",
-    "message": "🎉 [STOCK 100% MAKER SUCCESS] Stop Loss Order mock_master_1 FILLED as MAKER (0% Fee) after 1 re-peg checks! Avg Price: 105.0000 USDT",
-    "type": "success",
-    "symbol": "NVDAONUSDT"
-  },
-  {
-    "id": "1785270515186762",
-    "timestamp": "2026-07-28T20:28:35.186Z",
-    "message": "[STOCK MAKER PEG SELL] Placed initial 100% MAKER SELL LIMIT order mock_master_1 at 108.674 USDT. Transitioning to non-blocking MAKER_SELLING state.",
-    "type": "success",
-    "symbol": "NVDAONUSDT"
-  },
-  {
-    "id": "1785270515174825",
-    "timestamp": "2026-07-28T20:28:35.174Z",
-    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 101.325, Best Ask: 108.675 → #1 TOP SELLER Price: 108.674 (> Bid 101.325 ✅)",
+    "id": "1785270970630808",
+    "timestamp": "2026-07-28T20:36:10.630Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
     "type": "info",
     "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1785270515160937",
-    "timestamp": "2026-07-28T20:28:35.160Z",
-    "message": "🛡️ [STOCK MAKER TOP SELLER] Price drop exceeds 0.1% slippage margin. Pegging order as 0% Maker Top Seller every 10s until filled...",
-    "type": "warning",
-    "symbol": "NVDAONUSDT"
-  },
-  {
-    "id": "1785270515150626",
-    "timestamp": "2026-07-28T20:28:35.150Z",
-    "message": "Asset NVDAON free balance: 50",
+    "id": "1785270745995449",
+    "timestamp": "2026-07-28T20:32:25.995Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
     "type": "info",
     "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1785270515137783",
-    "timestamp": "2026-07-28T20:28:35.137Z",
-    "message": "[REAL] Stock Stop Loss hit! Market price 105 <= SL level 108.0000. Executing sell...",
-    "type": "warning",
+    "id": "1785270730699627",
+    "timestamp": "2026-07-28T20:32:10.699Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
+    "type": "info",
     "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1785270515127446",
-    "timestamp": "2026-07-28T20:28:35.127Z",
-    "message": "Stock Bot Order tracking loop started.",
+    "id": "1785270711538970",
+    "timestamp": "2026-07-28T20:31:51.538Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
     "type": "info",
-    "symbol": null
+    "symbol": "NVDAONUSDT"
   },
   {
-    "id": "1785270515124487",
-    "timestamp": "2026-07-28T20:28:35.124Z",
-    "message": "New Stock Bot order created for NVDAONUSDT (0% Maker Pegging Engine)",
+    "id": "1785270696139462",
+    "timestamp": "2026-07-28T20:31:36.139Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270678759519",
+    "timestamp": "2026-07-28T20:31:18.759Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270664204566",
+    "timestamp": "2026-07-28T20:31:04.204Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270650893947",
+    "timestamp": "2026-07-28T20:30:50.893Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270635471175",
+    "timestamp": "2026-07-28T20:30:35.471Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270608025804",
+    "timestamp": "2026-07-28T20:30:08.025Z",
+    "message": "👑 [STOCK TOP SELLER PEG] Best Bid: 119.988, Best Ask: 120.012 → #1 TOP SELLER Price: 120.011 (> Bid 119.988 ✅)",
     "type": "info",
     "symbol": "NVDAONUSDT"
   },

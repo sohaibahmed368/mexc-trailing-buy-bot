@@ -1,0 +1,3502 @@
+[
+  {
+    "id": "1785270975051-5z2qf",
+    "timestamp": "2026-07-28T20:36:15.051Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270975037-p0irs",
+    "timestamp": "2026-07-28T20:36:15.037Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270975024-pn8v9",
+    "timestamp": "2026-07-28T20:36:15.024Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270975011-egwjh",
+    "timestamp": "2026-07-28T20:36:15.011Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270974998-9qrel",
+    "timestamp": "2026-07-28T20:36:14.998Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270974985-g4ak2",
+    "timestamp": "2026-07-28T20:36:14.985Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270974972-d4hwb",
+    "timestamp": "2026-07-28T20:36:14.972Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270974961-2gz6g",
+    "timestamp": "2026-07-28T20:36:14.961Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270974944-09h1j",
+    "timestamp": "2026-07-28T20:36:14.944Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270974928-w0bd0",
+    "timestamp": "2026-07-28T20:36:14.928Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270974912-drt6g",
+    "timestamp": "2026-07-28T20:36:14.912Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270974893-rayuw",
+    "timestamp": "2026-07-28T20:36:14.893Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270974878-124fz",
+    "timestamp": "2026-07-28T20:36:14.878Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59194.08, Best Ask: 59205.92 → Guaranteed MAKER SELL Price: 59205.92 (> Bid 59194.08 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270974863-ogo63",
+    "timestamp": "2026-07-28T20:36:14.863Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 59194.08, Best Ask: 59205.92 → Guaranteed MAKER BUY Price: 59194.08 (< Ask 59205.92 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270974846-l3rb6",
+    "timestamp": "2026-07-28T20:36:14.846Z",
+    "message": "Cycle #1 completed (TAKE_PROFIT). Profit: 0.0500 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.05",
+    "type": "success",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270974831-74gk5",
+    "timestamp": "2026-07-28T20:36:14.831Z",
+    "message": "🎉 [REAL] Take Profit hit! Limit Sell order reg_ord_1002 filled on MEXC at 0.050050000000000004 USDT.",
+    "type": "success",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270974813-qikrt",
+    "timestamp": "2026-07-28T20:36:14.813Z",
+    "message": "Created [REAL] trailing stop buy for LOWLIQUSDT. Initial price: 0.05. Bottom: 0.05. Trail: 0.01. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270974798-t9wud",
+    "timestamp": "2026-07-28T20:36:14.798Z",
+    "message": "Initial TP Limit Sell order placed successfully! Sell Qty: 993.01, ID: reg_ord_1002",
+    "type": "success",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270974796-1mvq8",
+    "timestamp": "2026-07-28T20:36:14.796Z",
+    "message": "Using fee-adjusted estimated quantity: 995 (gross: 1000)",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970772-w8rf2",
+    "timestamp": "2026-07-28T20:36:10.772Z",
+    "message": "Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970759-5ccnc",
+    "timestamp": "2026-07-28T20:36:10.759Z",
+    "message": "✅ [MARKET BUY FILLED] Order reg_ord_1001 executed at 0.05 USDT!",
+    "type": "success",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970748-1exk2",
+    "timestamp": "2026-07-28T20:36:10.748Z",
+    "message": "[MEXC API RESPONSE] Query Fills Success -> {\"status\":\"FILLED\",\"cummulativeQuoteQty\":\"NaN\"}",
+    "type": "success",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970732-va1md",
+    "timestamp": "2026-07-28T20:36:10.732Z",
+    "message": "[MEXC API REQUEST] GET /api/v3/order -> Symbol: LOWLIQUSDT, OrderID: reg_ord_1001",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970730-ylw4k",
+    "timestamp": "2026-07-28T20:36:10.730Z",
+    "message": "[MEXC API RESPONSE] Order Placed Success -> {\"orderId\":\"reg_ord_1001\",\"status\":\"FILLED\",\"executedQty\":\"1\",\"cummulativeQuoteQty\":\"100\"}",
+    "type": "success",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970717-5cnof",
+    "timestamp": "2026-07-28T20:36:10.717Z",
+    "message": "[MEXC API REQUEST] POST /api/v3/order -> {\"symbol\":\"LOWLIQUSDT\",\"side\":\"BUY\",\"type\":\"MARKET\",\"quoteOrderQty\":50}",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970703-ra6is",
+    "timestamp": "2026-07-28T20:36:10.703Z",
+    "message": "🚀 [IMMEDIATE MARKET BUY VIA UI ACTION] Auto-Loop started: Sending instant MARKET BUY order to MEXC server for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970691-c9zfj",
+    "timestamp": "2026-07-28T20:36:10.691Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270970675-xc4y7",
+    "timestamp": "2026-07-28T20:36:10.675Z",
+    "message": "Trailing stop buy activated via Dip: price 59200 hit dip activation target 64675.0000. (Trigger target: >= 59792.0000).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270970663-xemb8",
+    "timestamp": "2026-07-28T20:36:10.663Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270970643-m4l1z",
+    "timestamp": "2026-07-28T20:36:10.643Z",
+    "message": "Created [DRY RUN] trailing stop buy for BTCUSDT. Initial price: 65000. Waiting for activation price: 64675 (Direction: DOWN). Trail: 1",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270970632-pzqye",
+    "timestamp": "2026-07-28T20:36:10.632Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270970616-fyaq2",
+    "timestamp": "2026-07-28T20:36:10.616Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270970610-4ntn4",
+    "timestamp": "2026-07-28T20:36:10.610Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270969594-bhoze",
+    "timestamp": "2026-07-28T20:36:09.594Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270969581-do68l",
+    "timestamp": "2026-07-28T20:36:09.581Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270969562-p76hw",
+    "timestamp": "2026-07-28T20:36:09.562Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270969550-0fasv",
+    "timestamp": "2026-07-28T20:36:09.550Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270969519-iqlrm",
+    "timestamp": "2026-07-28T20:36:09.519Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270969509-6nevj",
+    "timestamp": "2026-07-28T20:36:09.509Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270747344-h8ki1",
+    "timestamp": "2026-07-28T20:32:27.344Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270747333-rb8uo",
+    "timestamp": "2026-07-28T20:32:27.333Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270747319-2akw6",
+    "timestamp": "2026-07-28T20:32:27.319Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270747308-l2w5h",
+    "timestamp": "2026-07-28T20:32:27.308Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270747297-tfffw",
+    "timestamp": "2026-07-28T20:32:27.297Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270747286-oduez",
+    "timestamp": "2026-07-28T20:32:27.286Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270747275-0fu53",
+    "timestamp": "2026-07-28T20:32:27.275Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270747264-mwpiv",
+    "timestamp": "2026-07-28T20:32:27.264Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270747253-1s3k8",
+    "timestamp": "2026-07-28T20:32:27.253Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270747240-huxv0",
+    "timestamp": "2026-07-28T20:32:27.240Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270747229-t07cr",
+    "timestamp": "2026-07-28T20:32:27.229Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270747216-mrhcl",
+    "timestamp": "2026-07-28T20:32:27.216Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270747202-9kjj7",
+    "timestamp": "2026-07-28T20:32:27.202Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59194.08, Best Ask: 59205.92 → Guaranteed MAKER SELL Price: 59205.92 (> Bid 59194.08 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270747194-c2ena",
+    "timestamp": "2026-07-28T20:32:27.194Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 59194.08, Best Ask: 59205.92 → Guaranteed MAKER BUY Price: 59194.08 (< Ask 59205.92 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270747177-skdfn",
+    "timestamp": "2026-07-28T20:32:27.177Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] LOWLIQUSDT status is TP_SL_ACTIVE but physical MEXC LOWLIQ balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270747163-1ksbj",
+    "timestamp": "2026-07-28T20:32:27.163Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270747149-6zab3",
+    "timestamp": "2026-07-28T20:32:27.149Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270747144-ze7p7",
+    "timestamp": "2026-07-28T20:32:27.144Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -8.6877 USDT. Fees: 0.0457 USDT. Resetting to PENDING_ACTIVATION. New peak: 59200",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270746130-5yrrv",
+    "timestamp": "2026-07-28T20:32:26.130Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270746117-l66jg",
+    "timestamp": "2026-07-28T20:32:26.117Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270746104-0n347",
+    "timestamp": "2026-07-28T20:32:26.104Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59194.08, Best Ask: 59205.92 → Guaranteed MAKER SELL Price: 59205.92 (> Bid 59194.08 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270746093-9e2nv",
+    "timestamp": "2026-07-28T20:32:26.093Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270746082-18bmb",
+    "timestamp": "2026-07-28T20:32:26.082Z",
+    "message": "[REAL] Stop Loss hit! Price 59200 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270746069-8mwp2",
+    "timestamp": "2026-07-28T20:32:26.069Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270746056-lpwrg",
+    "timestamp": "2026-07-28T20:32:26.056Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270746043-ny333",
+    "timestamp": "2026-07-28T20:32:26.043Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270746024-c7clt",
+    "timestamp": "2026-07-28T20:32:26.024Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270746011-ducdm",
+    "timestamp": "2026-07-28T20:32:26.011Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270745997-sksro",
+    "timestamp": "2026-07-28T20:32:25.997Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270745979-x7980",
+    "timestamp": "2026-07-28T20:32:25.979Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270745972-b970c",
+    "timestamp": "2026-07-28T20:32:25.972Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270744948-uaayw",
+    "timestamp": "2026-07-28T20:32:24.948Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270744929-vee37",
+    "timestamp": "2026-07-28T20:32:24.929Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270744913-vpazh",
+    "timestamp": "2026-07-28T20:32:24.913Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270744889-a5a7e",
+    "timestamp": "2026-07-28T20:32:24.889Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270744871-bu5py",
+    "timestamp": "2026-07-28T20:32:24.871Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270744841-c4tir",
+    "timestamp": "2026-07-28T20:32:24.841Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270744834-a7s5z",
+    "timestamp": "2026-07-28T20:32:24.834Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270732045-2t9jf",
+    "timestamp": "2026-07-28T20:32:12.045Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270732031-ybxjk",
+    "timestamp": "2026-07-28T20:32:12.031Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270732021-49ute",
+    "timestamp": "2026-07-28T20:32:12.021Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270732007-8tfoi",
+    "timestamp": "2026-07-28T20:32:12.007Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270731995-q5czn",
+    "timestamp": "2026-07-28T20:32:11.995Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270731984-4g3li",
+    "timestamp": "2026-07-28T20:32:11.984Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270731973-iar7a",
+    "timestamp": "2026-07-28T20:32:11.973Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270731960-vprr3",
+    "timestamp": "2026-07-28T20:32:11.960Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270731948-itn0g",
+    "timestamp": "2026-07-28T20:32:11.948Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270731938-vc5p5",
+    "timestamp": "2026-07-28T20:32:11.938Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270731926-r8im9",
+    "timestamp": "2026-07-28T20:32:11.926Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270731914-luxzm",
+    "timestamp": "2026-07-28T20:32:11.914Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270731900-ai6hp",
+    "timestamp": "2026-07-28T20:32:11.900Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59194.08, Best Ask: 59205.92 → Guaranteed MAKER SELL Price: 59205.92 (> Bid 59194.08 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270731889-9wi1p",
+    "timestamp": "2026-07-28T20:32:11.889Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 59194.08, Best Ask: 59205.92 → Guaranteed MAKER BUY Price: 59194.08 (< Ask 59205.92 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270731870-km3o2",
+    "timestamp": "2026-07-28T20:32:11.870Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] LOWLIQUSDT status is TP_SL_ACTIVE but physical MEXC LOWLIQ balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270731856-4sawh",
+    "timestamp": "2026-07-28T20:32:11.856Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270731854-69sy3",
+    "timestamp": "2026-07-28T20:32:11.854Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270731836-njg3o",
+    "timestamp": "2026-07-28T20:32:11.836Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -8.6877 USDT. Fees: 0.0457 USDT. Resetting to PENDING_ACTIVATION. New peak: 59200",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270730824-qbpg6",
+    "timestamp": "2026-07-28T20:32:10.824Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270730813-vbr71",
+    "timestamp": "2026-07-28T20:32:10.813Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270730801-2rq7e",
+    "timestamp": "2026-07-28T20:32:10.801Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59194.08, Best Ask: 59205.92 → Guaranteed MAKER SELL Price: 59205.92 (> Bid 59194.08 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270730790-5jcvv",
+    "timestamp": "2026-07-28T20:32:10.790Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270730778-6306l",
+    "timestamp": "2026-07-28T20:32:10.778Z",
+    "message": "[REAL] Stop Loss hit! Price 59200 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270730767-9qrnu",
+    "timestamp": "2026-07-28T20:32:10.767Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270730757-0n4fx",
+    "timestamp": "2026-07-28T20:32:10.757Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270730743-flbrt",
+    "timestamp": "2026-07-28T20:32:10.743Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270730731-jsngc",
+    "timestamp": "2026-07-28T20:32:10.731Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270730718-rn7rk",
+    "timestamp": "2026-07-28T20:32:10.718Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270730701-df3lo",
+    "timestamp": "2026-07-28T20:32:10.701Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270730685-gubjb",
+    "timestamp": "2026-07-28T20:32:10.685Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270730681-vn3vi",
+    "timestamp": "2026-07-28T20:32:10.681Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270729663-u9aop",
+    "timestamp": "2026-07-28T20:32:09.663Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270729644-gwdb9",
+    "timestamp": "2026-07-28T20:32:09.644Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270729625-x2nr8",
+    "timestamp": "2026-07-28T20:32:09.625Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270729599-kditr",
+    "timestamp": "2026-07-28T20:32:09.599Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270729566-e4fhz",
+    "timestamp": "2026-07-28T20:32:09.566Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270729550-axudl",
+    "timestamp": "2026-07-28T20:32:09.550Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270729543-xiukt",
+    "timestamp": "2026-07-28T20:32:09.543Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270712876-ndwb8",
+    "timestamp": "2026-07-28T20:31:52.876Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270712863-n7rrz",
+    "timestamp": "2026-07-28T20:31:52.863Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270712851-35pu6",
+    "timestamp": "2026-07-28T20:31:52.851Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270712841-5mg97",
+    "timestamp": "2026-07-28T20:31:52.841Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270712830-zlmti",
+    "timestamp": "2026-07-28T20:31:52.830Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270712816-pwoq9",
+    "timestamp": "2026-07-28T20:31:52.816Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270712806-rsm7f",
+    "timestamp": "2026-07-28T20:31:52.806Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270712795-wece8",
+    "timestamp": "2026-07-28T20:31:52.795Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270712783-u6q3j",
+    "timestamp": "2026-07-28T20:31:52.783Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270712773-z7yvo",
+    "timestamp": "2026-07-28T20:31:52.773Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270712761-exi8k",
+    "timestamp": "2026-07-28T20:31:52.761Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270712750-rpst1",
+    "timestamp": "2026-07-28T20:31:52.750Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270712739-r557d",
+    "timestamp": "2026-07-28T20:31:52.739Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER SELL Price: 59605.96 (> Bid 59594.04 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270712723-p0310",
+    "timestamp": "2026-07-28T20:31:52.723Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER BUY Price: 59594.04 (< Ask 59605.96 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270712711-az4bz",
+    "timestamp": "2026-07-28T20:31:52.711Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] LOWLIQUSDT status is TP_SL_ACTIVE but physical MEXC LOWLIQ balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270712694-a7188",
+    "timestamp": "2026-07-28T20:31:52.694Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270712680-vjyxa",
+    "timestamp": "2026-07-28T20:31:52.680Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270712675-vw177",
+    "timestamp": "2026-07-28T20:31:52.675Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -8.0707 USDT. Fees: 0.0460 USDT. Resetting to PENDING_ACTIVATION. New peak: 59600",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270711662-4hk75",
+    "timestamp": "2026-07-28T20:31:51.662Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270711649-h4ldn",
+    "timestamp": "2026-07-28T20:31:51.649Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270711638-k62f4",
+    "timestamp": "2026-07-28T20:31:51.638Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER SELL Price: 59605.96 (> Bid 59594.04 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270711627-5at9r",
+    "timestamp": "2026-07-28T20:31:51.627Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270711614-nw6d8",
+    "timestamp": "2026-07-28T20:31:51.614Z",
+    "message": "[REAL] Stop Loss hit! Price 59600 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270711603-ry299",
+    "timestamp": "2026-07-28T20:31:51.603Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270711589-wy1fr",
+    "timestamp": "2026-07-28T20:31:51.589Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270711576-r4aol",
+    "timestamp": "2026-07-28T20:31:51.576Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270711564-pw84v",
+    "timestamp": "2026-07-28T20:31:51.564Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270711551-e2hcf",
+    "timestamp": "2026-07-28T20:31:51.551Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270711540-4chny",
+    "timestamp": "2026-07-28T20:31:51.540Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270711523-xq0oz",
+    "timestamp": "2026-07-28T20:31:51.523Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270711519-xpmja",
+    "timestamp": "2026-07-28T20:31:51.519Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270710496-4pht3",
+    "timestamp": "2026-07-28T20:31:50.496Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270710479-df31w",
+    "timestamp": "2026-07-28T20:31:50.479Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270710461-q2bny",
+    "timestamp": "2026-07-28T20:31:50.461Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270710443-8ywcr",
+    "timestamp": "2026-07-28T20:31:50.443Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270710421-d28fc",
+    "timestamp": "2026-07-28T20:31:50.421Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270710399-itff6",
+    "timestamp": "2026-07-28T20:31:50.399Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270710387-drc9v",
+    "timestamp": "2026-07-28T20:31:50.387Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270697541-i28gw",
+    "timestamp": "2026-07-28T20:31:37.541Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270697529-erc25",
+    "timestamp": "2026-07-28T20:31:37.529Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270697517-t5wte",
+    "timestamp": "2026-07-28T20:31:37.517Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270697499-tm280",
+    "timestamp": "2026-07-28T20:31:37.499Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270697487-pwjgs",
+    "timestamp": "2026-07-28T20:31:37.487Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270697473-vivau",
+    "timestamp": "2026-07-28T20:31:37.473Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270697460-0c84j",
+    "timestamp": "2026-07-28T20:31:37.460Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270697447-76rox",
+    "timestamp": "2026-07-28T20:31:37.447Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270697436-ctetx",
+    "timestamp": "2026-07-28T20:31:37.436Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270697423-0u4xc",
+    "timestamp": "2026-07-28T20:31:37.423Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270697409-2vk2o",
+    "timestamp": "2026-07-28T20:31:37.409Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270697395-f0oog",
+    "timestamp": "2026-07-28T20:31:37.395Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270697377-z2nsm",
+    "timestamp": "2026-07-28T20:31:37.377Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER SELL Price: 59605.96 (> Bid 59594.04 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270697370-1mp1y",
+    "timestamp": "2026-07-28T20:31:37.370Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER BUY Price: 59594.04 (< Ask 59605.96 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270697352-56ajy",
+    "timestamp": "2026-07-28T20:31:37.352Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] LOWLIQUSDT status is TP_SL_ACTIVE but physical MEXC LOWLIQ balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270697339-y2c19",
+    "timestamp": "2026-07-28T20:31:37.339Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270697330-h0lk0",
+    "timestamp": "2026-07-28T20:31:37.330Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270697311-dnyyi",
+    "timestamp": "2026-07-28T20:31:37.311Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -8.0707 USDT. Fees: 0.0460 USDT. Resetting to PENDING_ACTIVATION. New peak: 59600",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270696295-usba0",
+    "timestamp": "2026-07-28T20:31:36.295Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270696283-9wuph",
+    "timestamp": "2026-07-28T20:31:36.283Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270696269-c5ae7",
+    "timestamp": "2026-07-28T20:31:36.269Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER SELL Price: 59605.96 (> Bid 59594.04 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270696252-da8kw",
+    "timestamp": "2026-07-28T20:31:36.252Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270696234-0dfjz",
+    "timestamp": "2026-07-28T20:31:36.234Z",
+    "message": "[REAL] Stop Loss hit! Price 59600 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270696226-3k1p3",
+    "timestamp": "2026-07-28T20:31:36.226Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270696208-taj82",
+    "timestamp": "2026-07-28T20:31:36.208Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270696189-oivvl",
+    "timestamp": "2026-07-28T20:31:36.189Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270696175-c16vr",
+    "timestamp": "2026-07-28T20:31:36.175Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270696157-74vhf",
+    "timestamp": "2026-07-28T20:31:36.157Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270696141-ipfy2",
+    "timestamp": "2026-07-28T20:31:36.141Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270696137-n7jvb",
+    "timestamp": "2026-07-28T20:31:36.137Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270696116-ksfji",
+    "timestamp": "2026-07-28T20:31:36.116Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270695092-yzsos",
+    "timestamp": "2026-07-28T20:31:35.092Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270695074-zvjmh",
+    "timestamp": "2026-07-28T20:31:35.074Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270695057-h0s0j",
+    "timestamp": "2026-07-28T20:31:35.057Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270695038-g6qhg",
+    "timestamp": "2026-07-28T20:31:35.038Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270695022-86wxs",
+    "timestamp": "2026-07-28T20:31:35.022Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270694992-2h9nh",
+    "timestamp": "2026-07-28T20:31:34.992Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270694986-qpjww",
+    "timestamp": "2026-07-28T20:31:34.986Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270680141-onpzn",
+    "timestamp": "2026-07-28T20:31:20.141Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270680128-p4118",
+    "timestamp": "2026-07-28T20:31:20.128Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270680117-62dta",
+    "timestamp": "2026-07-28T20:31:20.117Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270680105-dplqa",
+    "timestamp": "2026-07-28T20:31:20.105Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270680092-29e0h",
+    "timestamp": "2026-07-28T20:31:20.092Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270680080-nw3pg",
+    "timestamp": "2026-07-28T20:31:20.080Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270680068-3xi6v",
+    "timestamp": "2026-07-28T20:31:20.068Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270680055-qo2o4",
+    "timestamp": "2026-07-28T20:31:20.055Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270680041-jqx9z",
+    "timestamp": "2026-07-28T20:31:20.041Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270680027-vil15",
+    "timestamp": "2026-07-28T20:31:20.027Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270680015-fd5ah",
+    "timestamp": "2026-07-28T20:31:20.015Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270679999-zna54",
+    "timestamp": "2026-07-28T20:31:19.999Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270679985-5d1lr",
+    "timestamp": "2026-07-28T20:31:19.985Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER SELL Price: 59605.96 (> Bid 59594.04 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270679974-d47f6",
+    "timestamp": "2026-07-28T20:31:19.974Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER BUY Price: 59594.04 (< Ask 59605.96 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270679957-j3dbw",
+    "timestamp": "2026-07-28T20:31:19.957Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] LOWLIQUSDT status is TP_SL_ACTIVE but physical MEXC LOWLIQ balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270679942-3f7jf",
+    "timestamp": "2026-07-28T20:31:19.942Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270679919-lxspt",
+    "timestamp": "2026-07-28T20:31:19.919Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270679916-llqjc",
+    "timestamp": "2026-07-28T20:31:19.916Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -8.0707 USDT. Fees: 0.0460 USDT. Resetting to PENDING_ACTIVATION. New peak: 59600",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270678902-qd5gr",
+    "timestamp": "2026-07-28T20:31:18.902Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270678888-cjefn",
+    "timestamp": "2026-07-28T20:31:18.888Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270678875-7i5m2",
+    "timestamp": "2026-07-28T20:31:18.875Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 59594.04, Best Ask: 59605.96 → Guaranteed MAKER SELL Price: 59605.96 (> Bid 59594.04 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270678861-gd86i",
+    "timestamp": "2026-07-28T20:31:18.861Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270678849-naoei",
+    "timestamp": "2026-07-28T20:31:18.849Z",
+    "message": "[REAL] Stop Loss hit! Price 59600 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270678832-r7hck",
+    "timestamp": "2026-07-28T20:31:18.832Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270678818-j6nhx",
+    "timestamp": "2026-07-28T20:31:18.818Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270678803-43wa6",
+    "timestamp": "2026-07-28T20:31:18.803Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270678789-ofc03",
+    "timestamp": "2026-07-28T20:31:18.789Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270678774-b7qec",
+    "timestamp": "2026-07-28T20:31:18.774Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270678761-6xq56",
+    "timestamp": "2026-07-28T20:31:18.761Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270678746-g4fih",
+    "timestamp": "2026-07-28T20:31:18.746Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270678742-gtz2c",
+    "timestamp": "2026-07-28T20:31:18.742Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270677726-76ypf",
+    "timestamp": "2026-07-28T20:31:17.726Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270677712-nrdnm",
+    "timestamp": "2026-07-28T20:31:17.712Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270677702-xav0e",
+    "timestamp": "2026-07-28T20:31:17.702Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270677688-4vyl9",
+    "timestamp": "2026-07-28T20:31:17.688Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270677676-5ub0b",
+    "timestamp": "2026-07-28T20:31:17.677Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270677659-9igwk",
+    "timestamp": "2026-07-28T20:31:17.660Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270677655-egcbq",
+    "timestamp": "2026-07-28T20:31:17.655Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270665575-9eaz9",
+    "timestamp": "2026-07-28T20:31:05.575Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270665564-632v0",
+    "timestamp": "2026-07-28T20:31:05.564Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270665552-vgy2v",
+    "timestamp": "2026-07-28T20:31:05.552Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270665538-34ofb",
+    "timestamp": "2026-07-28T20:31:05.538Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270665528-vb05d",
+    "timestamp": "2026-07-28T20:31:05.528Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270665516-rvtqs",
+    "timestamp": "2026-07-28T20:31:05.516Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270665500-1e6y5",
+    "timestamp": "2026-07-28T20:31:05.500Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270665484-ojvs1",
+    "timestamp": "2026-07-28T20:31:05.484Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270665471-a6kz0",
+    "timestamp": "2026-07-28T20:31:05.471Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270665461-s7534",
+    "timestamp": "2026-07-28T20:31:05.461Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270665448-dbiba",
+    "timestamp": "2026-07-28T20:31:05.448Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270665434-tdz7a",
+    "timestamp": "2026-07-28T20:31:05.434Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270665419-clmsr",
+    "timestamp": "2026-07-28T20:31:05.419Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64193.58, Best Ask: 64206.42 → Guaranteed MAKER SELL Price: 64206.42 (> Bid 64193.58 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270665403-jlyhu",
+    "timestamp": "2026-07-28T20:31:05.403Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 64193.58, Best Ask: 64206.42 → Guaranteed MAKER BUY Price: 64193.58 (< Ask 64206.42 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270665385-q13qq",
+    "timestamp": "2026-07-28T20:31:05.385Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] LOWLIQUSDT status is TP_SL_ACTIVE but physical MEXC LOWLIQ balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270665372-nhwjx",
+    "timestamp": "2026-07-28T20:31:05.372Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270665361-autif",
+    "timestamp": "2026-07-28T20:31:05.361Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270665354-un6jt",
+    "timestamp": "2026-07-28T20:31:05.354Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -0.9755 USDT. Fees: 0.0495 USDT. Resetting to PENDING_ACTIVATION. New peak: 64200",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270664351-9dowc",
+    "timestamp": "2026-07-28T20:31:04.351Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270664348-zebbz",
+    "timestamp": "2026-07-28T20:31:04.348Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270664346-401hx",
+    "timestamp": "2026-07-28T20:31:04.346Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64193.58, Best Ask: 64206.42 → Guaranteed MAKER SELL Price: 64206.42 (> Bid 64193.58 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270664303-izgpq",
+    "timestamp": "2026-07-28T20:31:04.303Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270664289-hz4eq",
+    "timestamp": "2026-07-28T20:31:04.289Z",
+    "message": "[REAL] Stop Loss hit! Price 64200 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270664279-hfmng",
+    "timestamp": "2026-07-28T20:31:04.279Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270664265-3by3d",
+    "timestamp": "2026-07-28T20:31:04.265Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270664249-2rrq3",
+    "timestamp": "2026-07-28T20:31:04.249Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270664236-nd934",
+    "timestamp": "2026-07-28T20:31:04.236Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270664221-gve34",
+    "timestamp": "2026-07-28T20:31:04.221Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270664206-lusf4",
+    "timestamp": "2026-07-28T20:31:04.206Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270664185-74orq",
+    "timestamp": "2026-07-28T20:31:04.185Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270664181-mjvry",
+    "timestamp": "2026-07-28T20:31:04.181Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270663161-11wcp",
+    "timestamp": "2026-07-28T20:31:03.161Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270663147-okep5",
+    "timestamp": "2026-07-28T20:31:03.147Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270663126-6f9vq",
+    "timestamp": "2026-07-28T20:31:03.126Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270663113-ennxs",
+    "timestamp": "2026-07-28T20:31:03.113Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270663100-5kokq",
+    "timestamp": "2026-07-28T20:31:03.100Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270663081-8scjc",
+    "timestamp": "2026-07-28T20:31:03.081Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270663073-dqvhd",
+    "timestamp": "2026-07-28T20:31:03.073Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270652263-cirzc",
+    "timestamp": "2026-07-28T20:30:52.263Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270652253-obhq4",
+    "timestamp": "2026-07-28T20:30:52.253Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270652239-r7neh",
+    "timestamp": "2026-07-28T20:30:52.239Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270652226-j42la",
+    "timestamp": "2026-07-28T20:30:52.226Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270652214-tpdpx",
+    "timestamp": "2026-07-28T20:30:52.214Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270652204-ys56y",
+    "timestamp": "2026-07-28T20:30:52.204Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270652191-t9vxm",
+    "timestamp": "2026-07-28T20:30:52.191Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270652177-eotk3",
+    "timestamp": "2026-07-28T20:30:52.177Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270652175-5600s",
+    "timestamp": "2026-07-28T20:30:52.175Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270652160-84smw",
+    "timestamp": "2026-07-28T20:30:52.160Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270652147-j00y3",
+    "timestamp": "2026-07-28T20:30:52.147Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270652134-7wlje",
+    "timestamp": "2026-07-28T20:30:52.134Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270652122-l8gs8",
+    "timestamp": "2026-07-28T20:30:52.122Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER SELL Price: 64606.46 (> Bid 64593.54 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270652105-9i39r",
+    "timestamp": "2026-07-28T20:30:52.105Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER BUY Price: 64593.54 (< Ask 64606.46 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270652085-tewfm",
+    "timestamp": "2026-07-28T20:30:52.085Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] LOWLIQUSDT status is TP_SL_ACTIVE but physical MEXC LOWLIQ balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270652072-05l8p",
+    "timestamp": "2026-07-28T20:30:52.072Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270652070-f8gkg",
+    "timestamp": "2026-07-28T20:30:52.070Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270652052-60do3",
+    "timestamp": "2026-07-28T20:30:52.052Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -0.3585 USDT. Fees: 0.0498 USDT. Resetting to PENDING_ACTIVATION. New peak: 64600",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270651035-jy2ae",
+    "timestamp": "2026-07-28T20:30:51.035Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270651024-oa247",
+    "timestamp": "2026-07-28T20:30:51.024Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270651010-vdhkn",
+    "timestamp": "2026-07-28T20:30:51.010Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER SELL Price: 64606.46 (> Bid 64593.54 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270650997-knku3",
+    "timestamp": "2026-07-28T20:30:50.997Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270650983-hafap",
+    "timestamp": "2026-07-28T20:30:50.984Z",
+    "message": "[REAL] Stop Loss hit! Price 64600 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270650975-3a90t",
+    "timestamp": "2026-07-28T20:30:50.975Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270650961-1jkij",
+    "timestamp": "2026-07-28T20:30:50.961Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270650945-9u41d",
+    "timestamp": "2026-07-28T20:30:50.945Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270650929-dv69x",
+    "timestamp": "2026-07-28T20:30:50.929Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270650910-lqtly",
+    "timestamp": "2026-07-28T20:30:50.910Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270650895-4am0e",
+    "timestamp": "2026-07-28T20:30:50.895Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270650874-3kbmo",
+    "timestamp": "2026-07-28T20:30:50.874Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270650871-rvuoi",
+    "timestamp": "2026-07-28T20:30:50.871Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270649857-cl0ir",
+    "timestamp": "2026-07-28T20:30:49.857Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270649842-cph1l",
+    "timestamp": "2026-07-28T20:30:49.842Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270649827-uwg15",
+    "timestamp": "2026-07-28T20:30:49.827Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270649810-zscq6",
+    "timestamp": "2026-07-28T20:30:49.810Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270649795-h2pmb",
+    "timestamp": "2026-07-28T20:30:49.795Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270649775-da3u3",
+    "timestamp": "2026-07-28T20:30:49.775Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270649767-p80ew",
+    "timestamp": "2026-07-28T20:30:49.767Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270636844-c51dj",
+    "timestamp": "2026-07-28T20:30:36.844Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270636834-1alai",
+    "timestamp": "2026-07-28T20:30:36.834Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270636822-sfmbg",
+    "timestamp": "2026-07-28T20:30:36.822Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270636809-rv5bf",
+    "timestamp": "2026-07-28T20:30:36.809Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270636798-yaepp",
+    "timestamp": "2026-07-28T20:30:36.798Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270636785-9r2ih",
+    "timestamp": "2026-07-28T20:30:36.785Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270636773-gu936",
+    "timestamp": "2026-07-28T20:30:36.774Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270636762-my6p8",
+    "timestamp": "2026-07-28T20:30:36.762Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270636751-v0tkt",
+    "timestamp": "2026-07-28T20:30:36.751Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270636739-mdr1n",
+    "timestamp": "2026-07-28T20:30:36.739Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270636726-vvm6g",
+    "timestamp": "2026-07-28T20:30:36.726Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270636710-8mhyp",
+    "timestamp": "2026-07-28T20:30:36.710Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270636697-48luq",
+    "timestamp": "2026-07-28T20:30:36.697Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER SELL Price: 64606.46 (> Bid 64593.54 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270636682-dvjir",
+    "timestamp": "2026-07-28T20:30:36.682Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER BUY Price: 64593.54 (< Ask 64606.46 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270636667-3y534",
+    "timestamp": "2026-07-28T20:30:36.667Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] LOWLIQUSDT status is TP_SL_ACTIVE but physical MEXC LOWLIQ balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270636652-ovcy3",
+    "timestamp": "2026-07-28T20:30:36.652Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270636633-gac59",
+    "timestamp": "2026-07-28T20:30:36.633Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270636627-lkc06",
+    "timestamp": "2026-07-28T20:30:36.627Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -0.3585 USDT. Fees: 0.0498 USDT. Resetting to PENDING_ACTIVATION. New peak: 64600",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270635613-3tdi2",
+    "timestamp": "2026-07-28T20:30:35.613Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270635602-j12y0",
+    "timestamp": "2026-07-28T20:30:35.602Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270635590-rbtnx",
+    "timestamp": "2026-07-28T20:30:35.590Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER SELL Price: 64606.46 (> Bid 64593.54 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270635576-by7by",
+    "timestamp": "2026-07-28T20:30:35.576Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270635562-mylxc",
+    "timestamp": "2026-07-28T20:30:35.562Z",
+    "message": "[REAL] Stop Loss hit! Price 64600 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270635550-dlapd",
+    "timestamp": "2026-07-28T20:30:35.550Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270635536-lzdiy",
+    "timestamp": "2026-07-28T20:30:35.536Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270635523-csbgw",
+    "timestamp": "2026-07-28T20:30:35.523Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270635509-3hieu",
+    "timestamp": "2026-07-28T20:30:35.509Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270635490-jfhge",
+    "timestamp": "2026-07-28T20:30:35.490Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270635473-1o6m5",
+    "timestamp": "2026-07-28T20:30:35.473Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270635455-su9g5",
+    "timestamp": "2026-07-28T20:30:35.455Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270635451-smntt",
+    "timestamp": "2026-07-28T20:30:35.451Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270634434-hykyv",
+    "timestamp": "2026-07-28T20:30:34.434Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270634421-zu548",
+    "timestamp": "2026-07-28T20:30:34.421Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270634405-7p7bd",
+    "timestamp": "2026-07-28T20:30:34.405Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270634386-slvlg",
+    "timestamp": "2026-07-28T20:30:34.386Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270634372-1crjc",
+    "timestamp": "2026-07-28T20:30:34.372Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270634355-jjp52",
+    "timestamp": "2026-07-28T20:30:34.355Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270634349-2et8d",
+    "timestamp": "2026-07-28T20:30:34.349Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270609395-fjxzk",
+    "timestamp": "2026-07-28T20:30:09.395Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270609381-x6lx2",
+    "timestamp": "2026-07-28T20:30:09.381Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270609369-wqwki",
+    "timestamp": "2026-07-28T20:30:09.369Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270609358-f2b6k",
+    "timestamp": "2026-07-28T20:30:09.358Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270609346-wp2q5",
+    "timestamp": "2026-07-28T20:30:09.346Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270609332-uqv92",
+    "timestamp": "2026-07-28T20:30:09.332Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270609321-stvrc",
+    "timestamp": "2026-07-28T20:30:09.321Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270609309-pu44f",
+    "timestamp": "2026-07-28T20:30:09.309Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270609296-aelsd",
+    "timestamp": "2026-07-28T20:30:09.296Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270609282-qul7r",
+    "timestamp": "2026-07-28T20:30:09.282Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270609271-1ayzg",
+    "timestamp": "2026-07-28T20:30:09.271Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270609257-ze7lh",
+    "timestamp": "2026-07-28T20:30:09.257Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270609244-yhac7",
+    "timestamp": "2026-07-28T20:30:09.244Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER SELL Price: 64606.46 (> Bid 64593.54 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270609228-n1gis",
+    "timestamp": "2026-07-28T20:30:09.228Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER BUY Price: 64593.54 (< Ask 64606.46 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270609214-k77zs",
+    "timestamp": "2026-07-28T20:30:09.214Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270609197-x9oaf",
+    "timestamp": "2026-07-28T20:30:09.197Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270609194-6gjc4",
+    "timestamp": "2026-07-28T20:30:09.194Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -0.3585 USDT. Fees: 0.0498 USDT. Resetting to PENDING_ACTIVATION. New peak: 64600",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270608180-1q2c9",
+    "timestamp": "2026-07-28T20:30:08.180Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 1.497 BTCUSDT to instantly protect capital (Order ID: reg_ord_1001)",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270608166-88y6t",
+    "timestamp": "2026-07-28T20:30:08.166Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270608151-janpw",
+    "timestamp": "2026-07-28T20:30:08.151Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64593.54, Best Ask: 64606.46 → Guaranteed MAKER SELL Price: 64606.46 (> Bid 64593.54 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270608139-1wkuj",
+    "timestamp": "2026-07-28T20:30:08.139Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated PEPEUSDT card state to TP_SL_ACTIVE for physical wallet holding ($50.00 USDT)!",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270608123-xydj6",
+    "timestamp": "2026-07-28T20:30:08.123Z",
+    "message": "[REAL] Stop Loss hit! Price 64600 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270608113-hha0s",
+    "timestamp": "2026-07-28T20:30:08.114Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270608095-i5omm",
+    "timestamp": "2026-07-28T20:30:08.095Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270608076-9ts13",
+    "timestamp": "2026-07-28T20:30:08.076Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270608061-x9ia9",
+    "timestamp": "2026-07-28T20:30:08.061Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270608043-o82or",
+    "timestamp": "2026-07-28T20:30:08.043Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270608028-aza28",
+    "timestamp": "2026-07-28T20:30:08.028Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270608008-n32ro",
+    "timestamp": "2026-07-28T20:30:08.008Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270608001-8xug3",
+    "timestamp": "2026-07-28T20:30:08.001Z",
+    "message": "Cycle #1 completed (STOP_LOSS). Profit: -29.7508 USDT. Fees: 0.0101 USDT. Resetting to PENDING_ACTIVATION. New peak: 0.000005",
+    "type": "success",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270606984-y5ymp",
+    "timestamp": "2026-07-28T20:30:06.984Z",
+    "message": "🚨 [IMMEDIATE SL MARKET SELL] Stop Loss triggered! Executed MARKET SELL for 9980000 PEPEUSDT to instantly protect capital (Order ID: reg_ord_1000)",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270606967-vw2x6",
+    "timestamp": "2026-07-28T20:30:06.967Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270606950-60lfk",
+    "timestamp": "2026-07-28T20:30:06.950Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270606931-7xo5d",
+    "timestamp": "2026-07-28T20:30:06.931Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270606916-rhjio",
+    "timestamp": "2026-07-28T20:30:06.916Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270606894-z8wij",
+    "timestamp": "2026-07-28T20:30:06.894Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270606884-9k1y1",
+    "timestamp": "2026-07-28T20:30:06.884Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270285562-o3i84",
+    "timestamp": "2026-07-28T20:24:45.562Z",
+    "message": "Real SL Market Sell Order Error: CRITICAL FAILURE: Market Order MARKET attempted! Must be LIMIT only!",
+    "type": "error",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285550-xltjx",
+    "timestamp": "2026-07-28T20:24:45.550Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9.98 SOL unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285537-1owey",
+    "timestamp": "2026-07-28T20:24:45.537Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 124.98, Best Ask: 125.02 → Guaranteed MAKER SELL Price: 125.02 (> Bid 124.98 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285524-f9tvo",
+    "timestamp": "2026-07-28T20:24:45.524Z",
+    "message": "[REAL] Stop Loss hit! Price 125 <= SL level 145.5000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285509-t2ew5",
+    "timestamp": "2026-07-28T20:24:45.509Z",
+    "message": "Real SL Market Sell Order Error: CRITICAL FAILURE: Market Order MARKET attempted! Must be LIMIT only!",
+    "type": "error",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285492-9m4ae",
+    "timestamp": "2026-07-28T20:24:45.492Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9.98 SOL unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285477-eaybs",
+    "timestamp": "2026-07-28T20:24:45.477Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 131.96, Best Ask: 132 → Guaranteed MAKER SELL Price: 132 (> Bid 131.96 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285464-a78e1",
+    "timestamp": "2026-07-28T20:24:45.464Z",
+    "message": "[REAL] Stop Loss hit! Price 132 <= SL level 145.5000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285451-h2scz",
+    "timestamp": "2026-07-28T20:24:45.451Z",
+    "message": "⏳ Trailing buy trigger reached at 138 USDT, but BUY DEFERRED. Failed confirmations: 40s Buyer Volume 50.0% < 60%. Waiting for indicator alignment.",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285437-16h2f",
+    "timestamp": "2026-07-28T20:24:45.437Z",
+    "message": "Real SL Market Sell Order Error: CRITICAL FAILURE: Market Order MARKET attempted! Must be LIMIT only!",
+    "type": "error",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285422-r1trx",
+    "timestamp": "2026-07-28T20:24:45.422Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9.98 SOL unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285407-gpdw2",
+    "timestamp": "2026-07-28T20:24:45.407Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 141.96, Best Ask: 142 → Guaranteed MAKER SELL Price: 142 (> Bid 141.96 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285393-zn3dt",
+    "timestamp": "2026-07-28T20:24:45.393Z",
+    "message": "[REAL] Stop Loss hit! Price 142 <= SL level 145.5000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285380-kh1za",
+    "timestamp": "2026-07-28T20:24:45.380Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270285360-16u88",
+    "timestamp": "2026-07-28T20:24:45.360Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for SOLUSDT is $1500.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270285355-8jowc",
+    "timestamp": "2026-07-28T20:24:45.355Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270268326-y3kyx",
+    "timestamp": "2026-07-28T20:24:28.326Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER SELL Price: 120.012 (> Bid 119.988 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270268316-d3tls",
+    "timestamp": "2026-07-28T20:24:28.316Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 119.988, Best Ask: 120.012 → Guaranteed MAKER BUY Price: 119.988 (< Ask 120.012 ✅)",
+    "type": "info",
+    "symbol": "NVDAONUSDT"
+  },
+  {
+    "id": "1785270268304-2tkj5",
+    "timestamp": "2026-07-28T20:24:28.304Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER SELL Price: 2400.24 (> Bid 2399.76 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270268292-x68rf",
+    "timestamp": "2026-07-28T20:24:28.292Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 2399.76, Best Ask: 2400.24 → Guaranteed MAKER BUY Price: 2399.76 (< Ask 2400.24 ✅)",
+    "type": "info",
+    "symbol": "GOLDONUSDT"
+  },
+  {
+    "id": "1785270268282-kk0ux",
+    "timestamp": "2026-07-28T20:24:28.282Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270268267-pgp5o",
+    "timestamp": "2026-07-28T20:24:28.267Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270268256-5oarx",
+    "timestamp": "2026-07-28T20:24:28.256Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER SELL Price: 0.4042 (> Bid 0.4039596 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270268243-2e395",
+    "timestamp": "2026-07-28T20:24:28.243Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.4039596, Best Ask: 0.4040404 → Guaranteed MAKER BUY Price: 0.4038 (< Ask 0.4040404 ✅)",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270268233-pmwe2",
+    "timestamp": "2026-07-28T20:24:28.233Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER SELL Price: 150.015 (> Bid 149.985 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270268220-uf8w3",
+    "timestamp": "2026-07-28T20:24:28.220Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 149.985, Best Ask: 150.015 → Guaranteed MAKER BUY Price: 149.985 (< Ask 150.015 ✅)",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270268208-bzl9k",
+    "timestamp": "2026-07-28T20:24:28.208Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER SELL Price: 3500.35 (> Bid 3499.65 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270268197-9k98l",
+    "timestamp": "2026-07-28T20:24:28.197Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 3499.65, Best Ask: 3500.35 → Guaranteed MAKER BUY Price: 3499.65 (< Ask 3500.35 ✅)",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270268185-fm85i",
+    "timestamp": "2026-07-28T20:24:28.185Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64693.53, Best Ask: 64706.47 → Guaranteed MAKER SELL Price: 64706.47 (> Bid 64693.53 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270268173-uhiom",
+    "timestamp": "2026-07-28T20:24:28.173Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 64693.53, Best Ask: 64706.47 → Guaranteed MAKER BUY Price: 64693.53 (< Ask 64706.47 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270268160-utmyw",
+    "timestamp": "2026-07-28T20:24:28.160Z",
+    "message": "Real SL Market Sell Order Error: REGRESSION FAILURE: Type MARKET placed! Must be 100% LIMIT!",
+    "type": "error",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270268149-qk3ga",
+    "timestamp": "2026-07-28T20:24:28.149Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270268137-yym0k",
+    "timestamp": "2026-07-28T20:24:28.137Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270268124-xm0ml",
+    "timestamp": "2026-07-28T20:24:28.124Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270268114-6vytv",
+    "timestamp": "2026-07-28T20:24:28.114Z",
+    "message": "Real SL Market Sell Order Error: REGRESSION FAILURE: Type MARKET placed! Must be 100% LIMIT!",
+    "type": "error",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270268101-o6zg5",
+    "timestamp": "2026-07-28T20:24:28.101Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270268086-jcspy",
+    "timestamp": "2026-07-28T20:24:28.086Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64693.53, Best Ask: 64706.47 → Guaranteed MAKER SELL Price: 64706.47 (> Bid 64693.53 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270268073-68pyu",
+    "timestamp": "2026-07-28T20:24:28.073Z",
+    "message": "[REAL] Stop Loss hit! Price 64700 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270268060-q9b1e",
+    "timestamp": "2026-07-28T20:24:28.060Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270268047-95832",
+    "timestamp": "2026-07-28T20:24:28.047Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for LOWLIQUSDT is $25.00 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270268033-i3uxe",
+    "timestamp": "2026-07-28T20:24:28.033Z",
+    "message": "Fetching initial price for LOWLIQUSDT...",
+    "type": "info",
+    "symbol": "LOWLIQUSDT"
+  },
+  {
+    "id": "1785270268020-hden2",
+    "timestamp": "2026-07-28T20:24:28.020Z",
+    "message": "Real SL Market Sell Order Error: REGRESSION FAILURE: Type MARKET placed! Must be 100% LIMIT!",
+    "type": "error",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270268007-5wtuw",
+    "timestamp": "2026-07-28T20:24:28.007Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267994-8q0ki",
+    "timestamp": "2026-07-28T20:24:27.994Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267983-0pxtj",
+    "timestamp": "2026-07-28T20:24:27.983Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267970-ovt20",
+    "timestamp": "2026-07-28T20:24:27.970Z",
+    "message": "Real SL Market Sell Order Error: REGRESSION FAILURE: Type MARKET placed! Must be 100% LIMIT!",
+    "type": "error",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270267956-l3wgi",
+    "timestamp": "2026-07-28T20:24:27.956Z",
+    "message": "[REAL] Stop Loss balance match: free balance 1.497 BTC unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270267944-5gwpn",
+    "timestamp": "2026-07-28T20:24:27.944Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 64693.53, Best Ask: 64706.47 → Guaranteed MAKER SELL Price: 64706.47 (> Bid 64693.53 ✅)",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270267931-3k0o4",
+    "timestamp": "2026-07-28T20:24:27.931Z",
+    "message": "[REAL] Stop Loss hit! Price 64700 <= SL level 64994.4000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270267917-2p1s5",
+    "timestamp": "2026-07-28T20:24:27.917Z",
+    "message": "🔒 [PROFIT LOCK EXECUTED] Price dropped back to $64994.4000 USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270267901-zpup2",
+    "timestamp": "2026-07-28T20:24:27.901Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 1000.0000 ONDO in MEXC wallet ($404.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785270267886-y1lh2",
+    "timestamp": "2026-07-28T20:24:27.886Z",
+    "message": "🔄 [AUTO-SYNCED WALLET ASSET] Updated SOLUSDT card state to TP_SL_ACTIVE for physical wallet holding ($7500.00 USDT)!",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785270267873-ujdep",
+    "timestamp": "2026-07-28T20:24:27.873Z",
+    "message": "🔄 [AUTO-RESTORED WALLET ASSET] Found 10.0000 ETH in MEXC wallet ($35000.00 USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID Attached!",
+    "type": "success",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785270267855-j1pai",
+    "timestamp": "2026-07-28T20:24:27.855Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Bottom: 65000. Trail: 100. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270267838-cbyuu",
+    "timestamp": "2026-07-28T20:24:27.838Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270267820-xplyx",
+    "timestamp": "2026-07-28T20:24:27.820Z",
+    "message": "[MAKER PEG BUY] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER BUY Price: 0.000003 (< Ask 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267806-j2c5o",
+    "timestamp": "2026-07-28T20:24:27.806Z",
+    "message": "Real SL Market Sell Order Error: REGRESSION FAILURE: Type MARKET placed! Must be 100% LIMIT!",
+    "type": "error",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267790-p4eka",
+    "timestamp": "2026-07-28T20:24:27.790Z",
+    "message": "[REAL] Stop Loss balance match: free balance 9980000 PEPE unlocked successfully (Attempt 1/6).",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267775-1mx93",
+    "timestamp": "2026-07-28T20:24:27.775Z",
+    "message": "[MAKER PEG SELL] Depth Best Bid: 0.000005, Best Ask: 0.000005 → Guaranteed MAKER SELL Price: 0.000007 (> Bid 0.000005 ✅)",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267763-u03k3",
+    "timestamp": "2026-07-28T20:24:27.763Z",
+    "message": "[REAL] Stop Loss hit! Price 0.000005 <= SL level 0.0000. Fetching fresh market price for LIMIT SELL...",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267751-3f5pb",
+    "timestamp": "2026-07-28T20:24:27.751Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (65000.0000 >= 64994.4000 USDT)! Stop Loss shifted UP to Buy Price +0.30% (64994.4000 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785270267733-ow8y6",
+    "timestamp": "2026-07-28T20:24:27.733Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for PEPEUSDT is $123.40 USDT (>= $10.00). Instant Market Buy CANCELLED! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785270267727-vxjby",
+    "timestamp": "2026-07-28T20:24:27.727Z",
+    "message": "Fetching initial price for PEPEUSDT...",
+    "type": "info",
+    "symbol": "PEPEUSDT"
+  },
+  {
+    "id": "1785264521807-v3whk",
+    "timestamp": "2026-07-28T18:48:41.807Z",
+    "message": "Cycle #1 completed (TAKE_PROFIT). Profit: 0.3250 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 140.57719999999998",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521789-cso2q",
+    "timestamp": "2026-07-28T18:48:41.789Z",
+    "message": "🎉 [REAL] Take Profit hit! Limit Sell order C02_TEST_TP_SELL_1 filled on MEXC at 140.5074 USDT.",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521773-fqsad",
+    "timestamp": "2026-07-28T18:48:41.773Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (140.2980 >= 140.0537 USDT)! Stop Loss shifted UP to Buy Price +0.33% (140.0537 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521757-yi6kg",
+    "timestamp": "2026-07-28T18:48:41.757Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for BTCUSDT is $64800.00 USDT (>= $10.00 minimum). Market Buy CANCELLED to prevent duplicate buy! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785264521741-whho3",
+    "timestamp": "2026-07-28T18:48:41.741Z",
+    "message": "Trailing stop buy activated via Dip: price 64600 hit dip activation target 64675.0000. (Trigger target: >= 64761.5000).",
+    "type": "success",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785264521730-pg005",
+    "timestamp": "2026-07-28T18:48:41.730Z",
+    "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Waiting for activation price: 64675 (Direction: DOWN). Trail: 0.25",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785264521717-r7i93",
+    "timestamp": "2026-07-28T18:48:41.717Z",
+    "message": "Fetching initial price for BTCUSDT...",
+    "type": "info",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "id": "1785264521704-efdmw",
+    "timestamp": "2026-07-28T18:48:41.704Z",
+    "message": "Created [REAL] trailing stop buy for SOLUSDT. Initial price: 139.6. Bottom: 139.6. Trail: 0.25. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521691-7dcj2",
+    "timestamp": "2026-07-28T18:48:41.691Z",
+    "message": "🔒 [POSITION GUARD LOCKED] Active position already open for SOLUSDT (ord_1785264521619_1i8c4). Instant buy skipped to prevent duplicate position!",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521681-6b0cy",
+    "timestamp": "2026-07-28T18:48:41.681Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521662-1fzct",
+    "timestamp": "2026-07-28T18:48:41.662Z",
+    "message": "🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for SOLUSDT is $1396.00 USDT (>= $10.00 minimum). Market Buy CANCELLED to prevent duplicate buy! Card state transitioned to TP/SL monitoring!",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521643-imo3k",
+    "timestamp": "2026-07-28T18:48:41.643Z",
+    "message": "Trailing stop buy activated via Dip: price 139.2 hit dip activation target 139.3000. (Trigger target: >= 139.5480).",
+    "type": "success",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521620-nfumt",
+    "timestamp": "2026-07-28T18:48:41.620Z",
+    "message": "Created [REAL] trailing stop buy for SOLUSDT. Initial price: 140. Waiting for activation price: 139.3 (Direction: DOWN). Trail: 0.25",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264521612-fdb60",
+    "timestamp": "2026-07-28T18:48:41.612Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264480432-9g740",
+    "timestamp": "2026-07-28T18:48:00.432Z",
+    "message": "🚨 [DUST/GHOST ORDER DETECTED] SOLUSDT status is TP_SL_ACTIVE but physical MEXC SOL balance value is only $0.00 USDT (< $10.00 minimum). Resetting card state from TP_SL_ACTIVE to PENDING_ACTIVATION...",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264479377-kdmgm",
+    "timestamp": "2026-07-28T18:47:59.377Z",
+    "message": "Created [REAL] trailing stop buy for SOLUSDT. Initial price: 140. Bottom: 140. Trail: 0.25. Trigger targets: >= null",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264479367-f5she",
+    "timestamp": "2026-07-28T18:47:59.367Z",
+    "message": "🔒 [POSITION GUARD LOCKED] Active position already open for SOLUSDT (ord_1785264479346_3izlj). Instant buy skipped to prevent duplicate position!",
+    "type": "warning",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264479356-qj04n",
+    "timestamp": "2026-07-28T18:47:59.356Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264479346-tdk9y",
+    "timestamp": "2026-07-28T18:47:59.346Z",
+    "message": "Created [REAL] trailing stop buy for SOLUSDT. Initial price: 140. Bottom: 140. Trail: 0.25. Trigger targets: >= 140.35",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264479338-p8wiy",
+    "timestamp": "2026-07-28T18:47:59.338Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264479322-6upra",
+    "timestamp": "2026-07-28T18:47:59.322Z",
+    "message": "Cycle #1 completed (TAKE_PROFIT). Profit: 0.5945 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 1.8605518555518554",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264479311-d2g84",
+    "timestamp": "2026-07-28T18:47:59.311Z",
+    "message": "🎉 [REAL] Take Profit hit! Limit Sell order mock_ord_1785264479284_hj5q filled on MEXC at 1.872 USDT.",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264479300-7p1hz",
+    "timestamp": "2026-07-28T18:47:59.300Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (1.8606 >= 1.8556 USDT)! Stop Loss shifted UP to Buy Price +0.30% (1.8556 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264479286-6ovj5",
+    "timestamp": "2026-07-28T18:47:59.286Z",
+    "message": "🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for 26.838 SUIUSDT @ $1.8611 USDT (+0.6% TP Target)! (MEXC Order ID: mock_ord_1785264479284_hj5q)",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264479284-1jgp7",
+    "timestamp": "2026-07-28T18:47:59.284Z",
+    "message": "[MEXC API RESPONSE] TP Order Placed Success -> {\"orderId\":\"mock_ord_1785264479284_hj5q\"}",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264479256-u6zw1",
+    "timestamp": "2026-07-28T18:47:59.256Z",
+    "message": "[MEXC API REQUEST] POST /api/v3/order -> {\"symbol\":\"SUIUSDT\",\"side\":\"SELL\",\"type\":\"LIMIT\",\"quantity\":26.838,\"price\":1.861101861101861}",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264479252-hk67j",
+    "timestamp": "2026-07-28T18:47:59.252Z",
+    "message": "Using fee-adjusted estimated quantity: 26.8918 (gross: 27.027)",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475228-0xr5b",
+    "timestamp": "2026-07-28T18:47:55.228Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475216-6be95",
+    "timestamp": "2026-07-28T18:47:55.216Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: mock_ord_1785264475163_2o3h. Exec Price: 1.85000185000185. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475203-y4eik",
+    "timestamp": "2026-07-28T18:47:55.203Z",
+    "message": "✅ [MARKET BUY FILLED] Order mock_ord_1785264475163_2o3h executed at 1.85000185000185 USDT! Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475191-0y01k",
+    "timestamp": "2026-07-28T18:47:55.191Z",
+    "message": "[MEXC API RESPONSE] Query Fills Success -> {\"orderId\":\"mock_ord_1785264475163_2o3h\",\"status\":\"NEW\",\"executedQty\":\"27.027\",\"cummulativeQuoteQty\":\"50.00\",\"price\":\"1.85\"}",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475176-2n0fc",
+    "timestamp": "2026-07-28T18:47:55.176Z",
+    "message": "[MEXC API REQUEST] GET /api/v3/order -> Symbol: SUIUSDT, OrderID: mock_ord_1785264475163_2o3h",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475163-au8qx",
+    "timestamp": "2026-07-28T18:47:55.163Z",
+    "message": "[MEXC API RESPONSE] Order Placed Success -> {\"orderId\":\"mock_ord_1785264475163_2o3h\"}",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475150-58zji",
+    "timestamp": "2026-07-28T18:47:55.150Z",
+    "message": "[MEXC API REQUEST] POST /api/v3/order -> {\"symbol\":\"SUIUSDT\",\"side\":\"BUY\",\"type\":\"MARKET\",\"quoteOrderQty\":50}",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475137-gdcwu",
+    "timestamp": "2026-07-28T18:47:55.137Z",
+    "message": "🚀 [IMMEDIATE MARKET BUY] Trailing dip trigger + Consensus indicators ALIGNED! Sending instant MARKET BUY order to MEXC server for SUIUSDT...",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475124-74pu6",
+    "timestamp": "2026-07-28T18:47:55.124Z",
+    "message": "🟢 ENTRY CONFIRMED! Trailing stop buy triggered at 1.855 USDT! (Confirmed Metrics: OBI Support 90.9% >= 60%, Smart SL Entry Guard 90.9% bids >= 60%, 40s Buyer Volume 75.0% >= 60%). Executing [REAL] buy...",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475108-j96jh",
+    "timestamp": "2026-07-28T18:47:55.108Z",
+    "message": "Trailing stop buy activated via Dip: price 1.84 hit dip activation target 1.8408. (Trigger target: >= 1.8446).",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264475090-18jgt",
+    "timestamp": "2026-07-28T18:47:55.090Z",
+    "message": "Created [REAL] trailing stop buy for ETHUSDT. Initial price: 3500. Waiting for activation price: 3482.5 (Direction: DOWN). Trail: 0.25",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785264475075-arne5",
+    "timestamp": "2026-07-28T18:47:55.075Z",
+    "message": "Fetching initial price for ETHUSDT...",
+    "type": "info",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "id": "1785264475062-rjg1j",
+    "timestamp": "2026-07-28T18:47:55.062Z",
+    "message": "Created [REAL] trailing stop buy for SOLUSDT. Initial price: 140. Waiting for activation price: 139.3 (Direction: DOWN). Trail: 0.25",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264475050-b68jb",
+    "timestamp": "2026-07-28T18:47:55.050Z",
+    "message": "Fetching initial price for SOLUSDT...",
+    "type": "info",
+    "symbol": "SOLUSDT"
+  },
+  {
+    "id": "1785264475031-8zkhc",
+    "timestamp": "2026-07-28T18:47:55.031Z",
+    "message": "Created [REAL] trailing stop buy for ONDOUSDT. Initial price: 1.05. Waiting for activation price: 1.04475 (Direction: DOWN). Trail: 0.25",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785264475018-e4hle",
+    "timestamp": "2026-07-28T18:47:55.018Z",
+    "message": "Fetching initial price for ONDOUSDT...",
+    "type": "info",
+    "symbol": "ONDOUSDT"
+  },
+  {
+    "id": "1785264475002-loagv",
+    "timestamp": "2026-07-28T18:47:55.002Z",
+    "message": "Created [REAL] trailing stop buy for SUIUSDT. Initial price: 1.85. Waiting for activation price: 1.84075 (Direction: DOWN). Trail: 0.25",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264474998-h6qjy",
+    "timestamp": "2026-07-28T18:47:54.998Z",
+    "message": "Fetching initial price for SUIUSDT...",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264463680-trqww",
+    "timestamp": "2026-07-28T18:47:43.680Z",
+    "message": "Cycle #1 completed (PROFIT_LOCK_SELL). Profit: -0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 1.8716851666851664",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264463669-fdv3r",
+    "timestamp": "2026-07-28T18:47:43.669Z",
+    "message": "🎉 [REAL] Take Profit hit! Limit Sell order mock_ord_1785264463633_rwoq filled on MEXC at 1.8611 USDT.",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264463657-r5mow",
+    "timestamp": "2026-07-28T18:47:43.657Z",
+    "message": "🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (1.8717 >= 1.8667 USDT)! Stop Loss shifted UP to Buy Price +0.30% (1.8667 USDT, Exact 50% TP Level). Profit Locked!",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264463646-armr2",
+    "timestamp": "2026-07-28T18:47:43.646Z",
+    "message": "🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for 26.6779 SUIUSDT @ $1.8723 USDT (+0.6% TP Target)! (MEXC Order ID: mock_ord_1785264463633_rwoq)",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264463633-ujjvv",
+    "timestamp": "2026-07-28T18:47:43.633Z",
+    "message": "[MEXC API RESPONSE] TP Order Placed Success -> {\"orderId\":\"mock_ord_1785264463633_rwoq\"}",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264463631-60mhf",
+    "timestamp": "2026-07-28T18:47:43.631Z",
+    "message": "[MEXC API REQUEST] POST /api/v3/order -> {\"symbol\":\"SUIUSDT\",\"side\":\"SELL\",\"type\":\"LIMIT\",\"quantity\":26.6779,\"price\":1.872268472268472}",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264463627-w0u8k",
+    "timestamp": "2026-07-28T18:47:43.627Z",
+    "message": "Using fee-adjusted estimated quantity: 26.7314 (gross: 26.86580516898609)",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264459606-7826h",
+    "timestamp": "2026-07-28T18:47:39.606Z",
+    "message": "[REAL] Querying asset balance to calculate fee-adjusted sell quantity...",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264459596-sk7ra",
+    "timestamp": "2026-07-28T18:47:39.596Z",
+    "message": "[REAL] BUY Order placed successfully! Order ID: mock_ord_1785264459555_7khj. Exec Price: 1.8611018611018608. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264459586-b0w5d",
+    "timestamp": "2026-07-28T18:47:39.586Z",
+    "message": "✅ [MARKET BUY FILLED] Order mock_ord_1785264459555_7khj executed at 1.8611018611018608 USDT! Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264459576-1bc1m",
+    "timestamp": "2026-07-28T18:47:39.576Z",
+    "message": "[MEXC API RESPONSE] Query Fills Success -> {\"orderId\":\"mock_ord_1785264459555_7khj\",\"status\":\"NEW\",\"executedQty\":\"27.027\",\"cummulativeQuoteQty\":\"50.30\",\"price\":\"1.8611\"}",
+    "type": "success",
+    "symbol": "SUIUSDT"
+  },
+  {
+    "id": "1785264459566-ba8w1",
+    "timestamp": "2026-07-28T18:47:39.566Z",
+    "message": "[MEXC API REQUEST] GET /api/v3/order -> Symbol: SUIUSDT, OrderID: mock_ord_1785264459555_7khj",
+    "type": "info",
+    "symbol": "SUIUSDT"
+  }
+]

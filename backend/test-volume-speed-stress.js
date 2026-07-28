@@ -1,4 +1,4 @@
-const OrderTracker = require('../tracker');
+const OrderTracker = require('./tracker');
 const assert = require('assert');
 
 console.log('========================================================================');

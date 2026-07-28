@@ -605,7 +605,7 @@ class StockOrderTracker {
               changed = true;
 
               if (!order.takeProfit && !order.stopLoss) {
-                this.handleOrderCycleComplete(order);
+                await this.handleOrderCycleComplete(order);
               }
             } else {
               this.log(`⏳ [REAL] Pegged Limit Buy order ${order.mexcOrderId} still pending fill on MEXC...`, 'info', order.symbol);
@@ -739,7 +739,7 @@ class StockOrderTracker {
               changed = true;
 
               if (!order.takeProfit && !order.stopLoss) {
-                this.handleOrderCycleComplete(order);
+                await this.handleOrderCycleComplete(order);
               }
             } else {
               try {
@@ -816,7 +816,7 @@ class StockOrderTracker {
                   }
                 } else {
                   order.status = 'TRIGGERED';
-                  this.handleOrderCycleComplete(order);
+                  await this.handleOrderCycleComplete(order);
                 }
                 changed = true;
               } catch (err) {
@@ -849,7 +849,7 @@ class StockOrderTracker {
                   order.sellTriggeredAt = new Date().toISOString();
                   this.log(`🎉 [STOCK 100% MAKER SUCCESS] Stop Loss Order ${order.makerSellOrderId} FILLED as MAKER (0% Fee) after ${order.makerPegCheckCount} re-peg checks! Avg Price: ${avgPrice.toFixed(4)} USDT`, 'success', order.symbol);
                   changed = true;
-                  this.handleOrderCycleComplete(order);
+                  await this.handleOrderCycleComplete(order);
                   continue;
                 }
               }
@@ -864,7 +864,7 @@ class StockOrderTracker {
                 order.sellExecutionPrice = order.currentPegPrice || currentPrice;
                 order.sellTriggeredAt = new Date().toISOString();
                 changed = true;
-                this.handleOrderCycleComplete(order);
+                await this.handleOrderCycleComplete(order);
                 continue;
               }
 
@@ -912,7 +912,7 @@ class StockOrderTracker {
                 order.sellTriggeredAt = new Date().toISOString();
                 this.log(`🎉 [REAL] Stock Take Profit Hit! 0% Maker Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
                 changed = true;
-                this.handleOrderCycleComplete(order);
+                await this.handleOrderCycleComplete(order);
                 continue;
               }
             } catch (e) {
@@ -951,14 +951,14 @@ class StockOrderTracker {
                 order.sellTriggeredAt = new Date().toISOString();
                 this.log(`[DRY RUN] Stock Take Profit Hit at ${tpPrice.toFixed(4)} USDT! Order cycle complete.`, 'success', order.symbol);
                 changed = true;
-                this.handleOrderCycleComplete(order);
+                await this.handleOrderCycleComplete(order);
                 continue;
               } else {
                 order.status = 'TRIGGERED';
                 order.sellExecutionPrice = tpPrice;
                 this.log(`[REAL] Stock Take Profit Order Hit at ${tpPrice.toFixed(4)} USDT!`, 'success', order.symbol);
                 changed = true;
-                this.handleOrderCycleComplete(order);
+                await this.handleOrderCycleComplete(order);
                 continue;
               }
             }
@@ -1026,7 +1026,7 @@ class StockOrderTracker {
               order.sellTriggeredAt = new Date().toISOString();
               this.log(`[DRY RUN] Stock Stop Loss hit! Sold at ${targetSlPrice} USDT.`, 'success', order.symbol);
               changed = true;
-              this.handleOrderCycleComplete(order);
+              await this.handleOrderCycleComplete(order);
               continue;
             } else {
               this.log(`[REAL] Stock Stop Loss hit! Market price ${currentPrice} <= SL level ${targetSlPrice.toFixed(4)}. Executing sell...`, 'warning', order.symbol);
@@ -1064,7 +1064,7 @@ class StockOrderTracker {
                     order.sellExecutionPrice = currentPrice;
                     this.log(`[REAL] Stock Stop Loss Market Sell filled cleanly at ${currentPrice.toFixed(4)} USDT!`, 'success', order.symbol);
                     changed = true;
-                    this.handleOrderCycleComplete(order);
+                    await this.handleOrderCycleComplete(order);
                     continue;
                   }
                 } catch (mktErr) {
