@@ -152,6 +152,23 @@ async function runExhaustiveCallchainAudit() {
   const orderSolActive = tracker.orders.find(o => o.id === order1.id);
   assert.strictEqual(orderSolActive.status, 'TP_SL_ACTIVE', 'SOLUSDT must be TP_SL_ACTIVE');
 
+  // 🧪 LATENCY RACE-CONDITION AUDIT: Simulate in-flight PENDING_EXECUTION status during 1-2s Limit Sell binding window
+  orderSolActive.status = 'PENDING_EXECUTION'; // simulate in-flight API call latency
+  const latencyRaceSolOrder = await tracker.addOrder({
+    symbol: 'SOLUSDT',
+    trailValue: 0.25,
+    quoteOrderQty: 50,
+    orderType: 'MARKET',
+    dryRun: false,
+    startImmediately: true,
+    autoRepeat: true
+  });
+  assert.notStrictEqual(latencyRaceSolOrder.status, 'TP_SL_ACTIVE', 'Race condition instant buy during PENDING_EXECUTION latency MUST BE BLOCKED!');
+  assert.strictEqual(latencyRaceSolOrder.status, 'RUNNING', 'In-flight latency duplicate order MUST remain in RUNNING mode!');
+
+  // Revert back to TP_SL_ACTIVE for remaining test steps
+  orderSolActive.status = 'TP_SL_ACTIVE';
+
   // Add BTCUSDT order - it CAN buy its own 1 position independently!
   const btcOrder = await tracker.addOrder({
     symbol: 'BTCUSDT',
@@ -172,7 +189,7 @@ async function runExhaustiveCallchainAudit() {
 
   const orderBtcActive = tracker.orders.find(o => o.symbol === 'BTCUSDT');
   assert.strictEqual(orderBtcActive.status, 'TP_SL_ACTIVE', 'BTCUSDT must successfully buy its single independent position');
-  console.log('   ✅ PER-SYMBOL SINGLE ACTIVE POSITION GUARD strictly prevented duplicate buys for SOLUSDT while allowing BTCUSDT independent trade!\n');
+  console.log('   ✅ PER-SYMBOL SINGLE ACTIVE POSITION GUARD & 1-2s LATENCY RACE CONDITION LOCK 100% PERFECT!\n');
 
   console.log('4. AUDITING 50% TP PROFIT LOCK GUARD FLOOR CALCULATION...');
   // SOLUSDT Buy price was 139.6. 50% TP progress = +0.30%
@@ -180,7 +197,7 @@ async function runExhaustiveCallchainAudit() {
   mockClient.prices['SOLUSDT'] = halfTpPrice;
   await tracker.tick();
 
-  const orderSolProfitLocked = tracker.orders.find(o => o.symbol === 'SOLUSDT');
+  const orderSolProfitLocked = tracker.orders.find(o => o.id === order1.id);
   assert.strictEqual(orderSolProfitLocked.isSlProfitLocked, true, 'isSlProfitLocked must be true');
   const expectedFloor = 139.6 * (1 + 0.0030);
   assert.strictEqual(orderSolProfitLocked.lockedSlPrice.toFixed(4), expectedFloor.toFixed(4), 'Locked SL floor must match exact 50% TP level');

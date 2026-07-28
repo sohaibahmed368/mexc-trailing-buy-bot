@@ -514,8 +514,8 @@ class OrderTracker {
   async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately }) {
     symbol = symbol.toUpperCase().trim();
 
-    // Symbol Deduplication Guard: Remove any pre-existing tracking order for the same symbol to prevent duplicates
-    this.orders = this.orders.filter(o => o.symbol !== symbol);
+    // Symbol Deduplication Guard: Remove old INACTIVE orders for the same symbol while keeping active positions intact for Position Guard!
+    this.orders = this.orders.filter(o => o.symbol !== symbol || (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
 
     trailValue = parseFloat(trailValue);
     
