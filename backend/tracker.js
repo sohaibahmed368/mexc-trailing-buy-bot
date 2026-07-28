@@ -1588,6 +1588,26 @@ class OrderTracker {
           continue;
         }
 
+        // 🛑 REAL SPOT WALLET HOLDING GUARD: Query live MEXC spot balance before sending any Market Buy request!
+        if (!order.dryRun) {
+          try {
+            const balances = await this.mexcClient.getBalances();
+            const asset = order.symbol.replace('USDT', '').toUpperCase();
+            const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+            if (assetBal) {
+              const totalQty = (parseFloat(assetBal.free || 0) + parseFloat(assetBal.locked || 0));
+              const notionalUsdt = totalQty * currentPrice;
+              if (notionalUsdt >= 10.0) {
+                this.log(`🔒 [REAL WALLET HOLDING GUARD] Physical wallet balance for ${order.symbol} is $${notionalUsdt.toFixed(2)} USDT (>= $10.00 minimum). Market Buy CANCELLED to prevent duplicate buy! Card state transitioned to TP/SL monitoring!`, 'warning', order.symbol);
+                order.status = 'TP_SL_ACTIVE';
+                order.executionPrice = currentPrice;
+                this.saveOrders();
+                continue;
+              }
+            }
+          } catch (wErr) {}
+        }
+
         order.triggeredAt = new Date().toISOString();
         const mode = order.dryRun ? '[DRY RUN]' : '[REAL]';
         const indicatorLog = confirmedReasons.length > 0 ? ` (Confirmed Metrics: ${confirmedReasons.join(', ')})` : '';

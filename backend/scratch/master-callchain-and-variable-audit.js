@@ -205,8 +205,10 @@ async function runExhaustiveCallchainAudit() {
 
   console.log('5. AUDITING TAKE PROFIT HIT, TRADE HISTORY RECORDING & RESET...');
   const currentSolOrder = tracker.orders.find(o => o.id === order1.id);
-  if (currentSolOrder.mexcSellOrderId) mockClient.filledOrders.add(currentSolOrder.mexcSellOrderId);
+  currentSolOrder.mexcSellOrderId = 'C02_TEST_TP_SELL_1';
+  mockClient.filledOrders.add('C02_TEST_TP_SELL_1');
   currentSolOrder.lastGhostCheckTime = 0; // Force immediate MEXC order query
+  mockClient.userBalances['SOL'] = 0; // TP sale sold physical SOL back to USDT
 
   const tpTargetPrice = currentSolOrder.executionPrice * (1 + 0.0070); // +0.70% (> 0.65% TP)
   mockClient.prices['SOLUSDT'] = tpTargetPrice;
