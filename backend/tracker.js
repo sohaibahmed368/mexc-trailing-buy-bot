@@ -566,7 +566,12 @@ class OrderTracker {
     let bottomPrice = null;
     let triggerPrice = null;
 
-    const startInstantBuy = autoRepeat && startImmediately;
+    let startInstantBuy = autoRepeat && startImmediately;
+    const existingActivePos = this.orders.find(o => o.symbol === symbol && (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
+    if (startInstantBuy && existingActivePos) {
+      this.log(`🔒 [POSITION GUARD LOCKED] Active position already open for ${symbol} (${existingActivePos.id}). Instant buy skipped to prevent over-buying!`, 'warning', symbol);
+      startInstantBuy = false;
+    }
 
     if (startInstantBuy) {
       status = 'TP_SL_ACTIVE';
@@ -1374,6 +1379,17 @@ class OrderTracker {
           if (!order.lastFilterFailLogTime || (now - order.lastFilterFailLogTime > 5000)) {
             order.lastFilterFailLogTime = now;
             this.log(`⏳ Trailing buy trigger reached at ${currentPrice} USDT, but BUY DEFERRED. Failed confirmations: ${failedReasons.join(', ')}. Waiting for indicator alignment.`, 'info', order.symbol);
+          }
+          continue;
+        }
+
+        // 🔒 STRICT SINGLE ACTIVE POSITION GUARD: Block any buy if an active trade/position already exists for this symbol!
+        const existingPosition = this.orders.find(o => o.symbol === order.symbol && o.id !== order.id && (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
+        if (existingPosition) {
+          const now = Date.now();
+          if (!order.lastPosGuardLogTime || (now - order.lastPosGuardLogTime > 10000)) {
+            order.lastPosGuardLogTime = now;
+            this.log(`🔒 [POSITION GUARD LOCKED] Active position already open for ${order.symbol} (${existingPosition.id}). New buy blocked until active trade completes TP/SL!`, 'warning', order.symbol);
           }
           continue;
         }

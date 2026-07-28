@@ -1,6 +1,6 @@
 [
   {
-    "id": "alpaca_1785197825295_zca1d",
+    "id": "alpaca_1785198587467_97ccy",
     "symbol": "USO",
     "trailValue": 0.4,
     "quantity": 10,
@@ -33,21 +33,21 @@
         "sellPrice": 77.14320480900001,
         "type": "TAKE_PROFIT",
         "profit": 1.2000000000000086,
-        "timestamp": "2026-07-28T00:17:05.381Z"
+        "timestamp": "2026-07-28T00:29:47.547Z"
       }
     ],
     "initialPrice": 76.5,
     "bottomPrice": 75.8115,
     "triggerPrice": 76.114746,
     "currentPrice": 77.14320480900001,
-    "createdAt": "2026-07-28T00:17:05.295Z",
+    "createdAt": "2026-07-28T00:29:47.467Z",
     "triggeredAt": null,
     "alpacaOrderId": null,
     "executionPrice": null,
     "error": null
   },
   {
-    "id": "alpaca_1785197825399_u9jaz",
+    "id": "alpaca_1785198587560_2tjex",
     "symbol": "NVDA",
     "trailValue": 0.4,
     "quantity": 10,
@@ -80,21 +80,21 @@
         "sellPrice": 121.00894872,
         "type": "TAKE_PROFIT",
         "profit": 1.200000000000003,
-        "timestamp": "2026-07-28T00:17:05.472Z"
+        "timestamp": "2026-07-28T00:29:47.614Z"
       }
     ],
     "initialPrice": 120,
     "bottomPrice": 118.92,
     "triggerPrice": 119.39568,
     "currentPrice": 121.00894872,
-    "createdAt": "2026-07-28T00:17:05.399Z",
+    "createdAt": "2026-07-28T00:29:47.560Z",
     "triggeredAt": null,
     "alpacaOrderId": null,
     "executionPrice": null,
     "error": null
   },
   {
-    "id": "alpaca_1785197825485_01fph",
+    "id": "alpaca_1785198587629_azzy4",
     "symbol": "AAPL",
     "trailValue": 0.4,
     "quantity": 10,
@@ -127,14 +127,14 @@
         "sellPrice": 221.84973932000003,
         "type": "TAKE_PROFIT",
         "profit": 1.1999999999999984,
-        "timestamp": "2026-07-28T00:17:05.547Z"
+        "timestamp": "2026-07-28T00:29:47.682Z"
       }
     ],
     "initialPrice": 220,
     "bottomPrice": 218.02,
     "triggerPrice": 218.89208000000002,
     "currentPrice": 221.84973932000003,
-    "createdAt": "2026-07-28T00:17:05.485Z",
+    "createdAt": "2026-07-28T00:29:47.629Z",
     "triggeredAt": null,
     "alpacaOrderId": null,
     "executionPrice": null,

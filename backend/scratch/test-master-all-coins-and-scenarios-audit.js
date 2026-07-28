@@ -131,6 +131,7 @@ async function runMasterAllCoinsAudit() {
       filterObi: false,
       filterVolume: false,
       filterRsi: false,
+      filter40sVolume: false,
       autoRepeat: true
     });
 
