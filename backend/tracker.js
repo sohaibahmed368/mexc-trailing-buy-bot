@@ -464,6 +464,14 @@ class OrderTracker {
 
   async getFeeAdjustedBalance(symbol, grossQty) {
     const asset = symbol.replace('USDT', '').toUpperCase();
+    let decimals = 4;
+    if (asset === 'BTC') decimals = 6;
+    else if (asset === 'ETH') decimals = 5;
+    else if (asset === 'SOL') decimals = 4;
+    else decimals = 4;
+
+    const multFactor = Math.pow(10, decimals);
+
     try {
       // Poll up to 5 times (waiting 800ms between attempts, total 4s) for MEXC fill balance settlement
       for (let attempt = 1; attempt <= 5; attempt++) {
@@ -471,9 +479,9 @@ class OrderTracker {
         try {
           const balances = await this.mexcClient.getBalances();
           const assetBal = balances.find(b => b.asset.toUpperCase() === asset);
-          if (assetBal && assetBal.free > (grossQty * 0.1)) {
-            const safeFree = assetBal.free * 0.998;
-            const truncated = Math.floor(safeFree * 10000) / 10000;
+          if (assetBal && assetBal.free > 0) {
+            const safeFree = assetBal.free * 0.995; // 0.5% fee & settlement safety buffer
+            const truncated = Math.floor(safeFree * multFactor) / multFactor;
             if (truncated > 0) {
               this.log(`Fetched confirmed asset balance for ${asset}: free balance is ${assetBal.free} (used safe qty: ${truncated}).`, 'info', symbol);
               return truncated;
@@ -487,7 +495,7 @@ class OrderTracker {
     
     // Fallback: estimate gross quantity and deduct a 0.5% fee safety margin
     const estimated = grossQty * 0.995;
-    const truncatedEst = Math.floor(estimated * 10000) / 10000;
+    const truncatedEst = Math.floor(estimated * multFactor) / multFactor;
     this.log(`Using fee-adjusted estimated quantity: ${truncatedEst} (gross: ${grossQty})`, 'info', symbol);
     return truncatedEst;
   }
@@ -1174,6 +1182,16 @@ class OrderTracker {
                 } catch (err) {
                   lastErr = err;
                   const errMsg = err.message || '';
+                  if (errMsg.includes('30002') || errMsg.includes('1USDT') || (qtyToTry * currentPrice) < 1.0) {
+                    this.log(`⚠️ [DUST BALANCE MIN 1 USDT SKIPPED] Remaining balance ${qtyToTry} ${order.symbol} ($${(qtyToTry * currentPrice).toFixed(4)} USDT) is below MEXC 1.0 USDT trade limit. Marking cycle complete.`, 'warning', order.symbol);
+                    order.status = 'TRIGGERED';
+                    order.sellExecutionPrice = currentPrice;
+                    order.sellTriggeredAt = new Date().toISOString();
+                    changed = true;
+                    this.handleOrderCycleComplete(order);
+                    sellResult = { orderId: 'dust_skipped_' + Date.now() };
+                    break;
+                  }
                   if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
                     continue;
                   }
@@ -1190,20 +1208,32 @@ class OrderTracker {
                 throw lastErr || new Error('Failed to place SL Market Sell after precision retries.');
               }
 
-              // Fetch actual fill price or use current price
-              let slAvgPrice = currentPrice;
-              try {
-                const fills = await this.getActualOrderFills(order.symbol, sellResult.orderId, currentPrice);
-                if (fills && fills.avgPrice) slAvgPrice = fills.avgPrice;
-              } catch (fErr) {}
+              if (order.status !== 'PENDING_ACTIVATION') {
+                // Fetch actual fill price or use current price
+                let slAvgPrice = currentPrice;
+                try {
+                  const fills = await this.getActualOrderFills(order.symbol, sellResult.orderId, currentPrice);
+                  if (fills && fills.avgPrice) slAvgPrice = fills.avgPrice;
+                } catch (fErr) {}
 
-              order.status = 'TRIGGERED';
-              order.sellExecutionPrice = slAvgPrice;
-              order.sellTriggeredAt = new Date().toISOString();
-              this.handleOrderCycleComplete(order);
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = slAvgPrice;
+                order.sellTriggeredAt = new Date().toISOString();
+                this.handleOrderCycleComplete(order);
+              }
             } catch (e) {
-              order.status = 'TP_SL_ACTIVE'; // Revert state for retry
-              this.log(`[REAL] Stop Loss Market Sell order failed: ${e.message}`, 'error', order.symbol);
+              const errMsg = e.message || '';
+              if (errMsg.includes('30002') || errMsg.includes('1USDT') || errMsg.includes('minimum transaction volume')) {
+                this.log(`⚠️ [DUST BALANCE MIN 1 USDT SKIPPED] Trade value is below MEXC 1.0 USDT limit (${e.message}). Marking order cycle complete.`, 'warning', order.symbol);
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = currentPrice;
+                order.sellTriggeredAt = new Date().toISOString();
+                changed = true;
+                this.handleOrderCycleComplete(order);
+              } else {
+                order.status = 'TP_SL_ACTIVE'; // Revert state for retry
+                this.log(`Real SL Market Sell Order Error: ${e.message}`, 'error', order.symbol);
+              }
             }
             changed = true;
             continue;
@@ -1511,6 +1541,23 @@ class OrderTracker {
                     } catch (err) {
                       lastTpErr = err;
                       const errMsg = err.message || '';
+                      if (errMsg.includes('Oversold') || errMsg.includes('30005')) {
+                        this.log(`[REAL] Oversold (30005) detected on TP Limit Sell for ${order.symbol}. Retrying with 0.5% reduced quantity...`, 'warning', order.symbol);
+                        const retryQty = Math.floor(qtyToTry * 0.995 * mult) / mult;
+                        if (retryQty > 0) {
+                          try {
+                            const retryParams = { symbol: order.symbol, side: 'SELL', type: 'LIMIT', quantity: retryQty, price: tpPrice };
+                            this.log(`[MEXC API REQUEST] POST /api/v3/order (RETRY) -> ${JSON.stringify(retryParams)}`, 'info', order.symbol);
+                            tpResult = await this.mexcClient.placeOrder(retryParams);
+                            if (tpResult && tpResult.orderId) {
+                              order.mexcSellOrderId = tpResult.orderId;
+                              this.log(`🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for ${retryQty} ${order.symbol} @ $${tpPrice.toFixed(4)} USDT (+${order.takeProfit}% TP Target)! (MEXC Order ID: ${tpResult.orderId})`, 'success', order.symbol);
+                              break;
+                            }
+                          } catch (rErr) {}
+                        }
+                        continue;
+                      }
                       if (errMsg.includes('quantity scale') || errMsg.includes('400') || errMsg.includes('code":400')) {
                         continue;
                       }
