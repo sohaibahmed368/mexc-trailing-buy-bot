@@ -1674,11 +1674,12 @@ class OrderTracker {
         }
 
         if (!passedFilters) {
-          // Throttling logs to once every 5 seconds per order symbol
+          // Throttling waiting logs to once every 4 seconds per order symbol
           const now = Date.now();
-          if (!order.lastFilterFailLogTime || (now - order.lastFilterFailLogTime > 5000)) {
+          if (!order.lastFilterFailLogTime || (now - order.lastFilterFailLogTime > 4000)) {
             order.lastFilterFailLogTime = now;
-            this.log(`⏳ Trailing buy trigger reached at ${currentPrice} USDT, but BUY DEFERRED. Failed confirmations: ${failedReasons.join(', ')}. Waiting for indicator alignment.`, 'info', order.symbol);
+            const confirmedStr = confirmedReasons.length > 0 ? ` (Passed so far: ${confirmedReasons.join(' | ')})` : '';
+            this.log(`⏳ [BUY DEFERRED — WAITING FOR SIGNALS] ${order.symbol}: Rebound target reached at ${currentPrice} USDT, but waiting for all enabled indicators to align. Pending/Failed: ${failedReasons.join(' | ')}.${confirmedStr}. Continuous trailing loop active...`, 'info', order.symbol);
           }
           continue;
         }
@@ -1716,8 +1717,8 @@ class OrderTracker {
 
         order.triggeredAt = new Date().toISOString();
         const mode = order.dryRun ? '[DRY RUN]' : '[REAL]';
-        const indicatorLog = confirmedReasons.length > 0 ? ` (Confirmed Metrics: ${confirmedReasons.join(', ')})` : '';
-        this.log(`🟢 ENTRY CONFIRMED! Trailing stop buy triggered at ${currentPrice} USDT!${indicatorLog}. Executing ${mode} buy...`, 'success', order.symbol);
+        const indicatorLog = confirmedReasons.length > 0 ? ` (Exact Confirmed Metrics: ${confirmedReasons.join(' | ')})` : '';
+        this.log(`🎯 [ENTRY CONFIRMED] Trailing buy triggered at ${currentPrice} USDT! All enabled indicators aligned 100%!${indicatorLog}. Executing ${mode} Market Buy...`, 'success', order.symbol);
 
         if (order.dryRun) {
           order.executionPrice = currentPrice;
