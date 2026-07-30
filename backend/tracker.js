@@ -892,7 +892,7 @@ class OrderTracker {
       const balances = await this.mexcClient.getBalances();
       if (!Array.isArray(balances)) return;
 
-      const allowedCryptoWhitelist = new Set(['BTC', 'ETH', 'SOL', 'ONDO', 'SUI', 'UNI', 'XRP', 'DOGE', 'ADA', 'AVAX', 'LINK', 'DOT', 'SHIB', 'PEPE', 'NEAR', 'FET', 'RNDR', 'TAO', 'WIF', 'BONK', 'FLOKI', 'BNB', 'MATIC']);
+      const allowedCryptoWhitelist = new Set(['BTC', 'ETH', 'SOL', 'ONDO', 'SUI', 'UNI', 'XRP', 'DOGE', 'ADA', 'AVAX', 'LINK', 'DOT', 'SHIB', 'PEPE', 'NEAR', 'FET', 'RNDR', 'TAO', 'WIF', 'BONK', 'FLOKI', 'BNB', 'MATIC', 'XAUT', 'PAXG', 'GOLD']);
 
       for (const bal of balances) {
         const asset = (bal.asset || '').toUpperCase();
@@ -2000,6 +2000,18 @@ class OrderTracker {
       this.intervalId = null;
       this.startTracking();
     }
+  }
+
+  // Determine exact symbol quantity precision scale based on asset price and symbol
+  getSymbolQuantityPrecision(symbol) {
+    const sym = (symbol || '').toUpperCase();
+    if (sym.includes('XAUT') || sym.includes('GOLD') || sym.includes('PAXG') || sym.includes('BTC')) {
+      return 100000; // 5 decimal places for Gold ($4,000+) & BTC ($65,000+) to prevent $39 unsold balance remainder!
+    }
+    if (sym.includes('ETH') || sym.includes('TAO') || sym.includes('BNB') || sym.includes('SOL')) {
+      return 10000; // 4 decimal places for ETH, SOL, TAO, BNB
+    }
+    return 100; // 2 decimal places for SUI, XRP, ONDO, UNI, NEAR, DOGE
   }
 
   // Calculate Relative Strength Index (Wilder's smoothing)
