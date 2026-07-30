@@ -1372,8 +1372,8 @@ class OrderTracker {
               let sellResult = null;
               let lastErr = null;
 
-              // Determine exact symbol precision scale (e.g. 100 for XRP/SOL/ONDO/SUI/UNI, 10000 for BTC/ETH)
-              const precisionMult = this.getSymbolQuantityPrecision(order.symbol);
+              // Determine exact symbol precision scale (e.g. 100 for XRP/SOL/ONDO/SUI/UNI, 10000 for ETH/SOL/BNB, 100000 for BTC/Gold)
+              const precisionMult = this.getSymbolQuantityPrecision(order.symbol, currentPrice);
 
               for (let attempt = 1; attempt <= 6; attempt++) {
                 const qtyToTry = Math.floor(sellQty * precisionMult) / precisionMult;
@@ -2003,15 +2003,23 @@ class OrderTracker {
   }
 
   // Determine exact symbol quantity precision scale based on asset price and symbol
-  getSymbolQuantityPrecision(symbol) {
+  getSymbolQuantityPrecision(symbol, currentPrice = 0) {
     const sym = (symbol || '').toUpperCase();
-    if (sym.includes('XAUT') || sym.includes('GOLD') || sym.includes('PAXG') || sym.includes('BTC')) {
-      return 100000; // 5 decimal places for Gold ($4,000+) & BTC ($65,000+) to prevent $39 unsold balance remainder!
+    const price = currentPrice || 0;
+
+    if (price >= 10000 || sym.includes('BTC') || sym.includes('WBTC') || sym.includes('SBTC')) {
+      return 1000000; // 6 decimal places for $10,000+ assets (BTC, WBTC, SBTC) -> $0.01 remainder!
     }
-    if (sym.includes('ETH') || sym.includes('TAO') || sym.includes('BNB') || sym.includes('SOL')) {
-      return 10000; // 4 decimal places for ETH, SOL, TAO, BNB
+    if (price >= 1000 || sym.includes('XAUT') || sym.includes('GOLD') || sym.includes('PAXG') || sym.includes('YFI')) {
+      return 100000; // 5 decimal places for $1000+ assets (Gold XAUT/PAXG, YFI)
     }
-    return 100; // 2 decimal places for SUI, XRP, ONDO, UNI, NEAR, DOGE
+    if (price >= 10.0 || sym.includes('ETH') || sym.includes('TAO') || sym.includes('BNB') || sym.includes('SOL') || sym.includes('MKR') || sym.includes('AAVE') || sym.includes('LTC') || sym.includes('QNT')) {
+      return 10000; // 4 decimal places for $10+ assets (ETH, SOL, TAO, BNB, LTC, QNT)
+    }
+    if (price >= 0.01) {
+      return 100; // 2 decimal places for $0.01 to $10 assets (SUI, XRP, ONDO, UNI, NEAR, DOGE)
+    }
+    return 1; // 0 decimal places (whole integers) for micro-penny tokens (< $0.01 like PEPE, SHIB, BONK)
   }
 
   // Calculate Relative Strength Index (Wilder's smoothing)
