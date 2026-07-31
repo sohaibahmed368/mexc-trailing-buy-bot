@@ -22,7 +22,10 @@ class MexcClient {
     const url = `${this.baseUrl}${endpoint}`;
     
     let headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'Accept': 'application/json, text/plain, */*',
+      'Accept-Language': 'en-US,en;q=0.9'
     };
 
     let queryParams = { ...params };
@@ -37,7 +40,6 @@ class MexcClient {
       queryParams.timestamp = Date.now();
 
       // Build query string for signing
-      // Sort keys to maintain signature consistency (good practice for Binance-like APIs)
       const sortedKeys = Object.keys(queryParams).sort();
       const urlParams = new URLSearchParams();
       sortedKeys.forEach(key => {
@@ -52,7 +54,6 @@ class MexcClient {
       
       urlParams.append('signature', signature);
       
-      // Private requests on MEXC require parameters in query string even for POST
       const requestUrl = `${url}?${urlParams.toString()}`;
       
       try {
@@ -60,13 +61,19 @@ class MexcClient {
           method,
           url: requestUrl,
           headers,
-          data: {} // Empty body as params are in the query string
+          data: {},
+          timeout: 10000
         });
         return response.data;
       } catch (error) {
-        const errorMsg = error.response && error.response.data 
-          ? JSON.stringify(error.response.data) 
-          : error.message;
+        let errorMsg = error.message;
+        if (error.response && error.response.data) {
+          if (typeof error.response.data === 'string' && error.response.data.includes('Access Denied')) {
+            errorMsg = 'MEXC WAF Rate Limit / Access Denied (Akamai Shield). Retrying...';
+          } else {
+            errorMsg = JSON.stringify(error.response.data);
+          }
+        }
         throw new Error(`MEXC API Error: ${errorMsg}`);
       }
     } else {
@@ -76,13 +83,19 @@ class MexcClient {
           method,
           url,
           params: queryParams,
-          headers
+          headers,
+          timeout: 10000
         });
         return response.data;
       } catch (error) {
-        const errorMsg = error.response && error.response.data 
-          ? JSON.stringify(error.response.data) 
-          : error.message;
+        let errorMsg = error.message;
+        if (error.response && error.response.data) {
+          if (typeof error.response.data === 'string' && error.response.data.includes('Access Denied')) {
+            errorMsg = 'MEXC WAF Rate Limit / Access Denied (Akamai Shield). Retrying...';
+          } else {
+            errorMsg = JSON.stringify(error.response.data);
+          }
+        }
         throw new Error(`MEXC Public API Error: ${errorMsg}`);
       }
     }

@@ -1033,18 +1033,32 @@ class OrderTracker {
     const symbols = [...new Set(activeOrders.map(o => o.symbol))];
     const prices = {};
 
-    // Fetch latest prices for active symbols
-    await Promise.all(
-      symbols.map(async (symbol) => {
-        try {
-          const price = await this.mexcClient.getTickerPrice(symbol);
-          prices[symbol] = price;
-        } catch (e) {
-          // Log price fetch error, but don't crash
-          this.log(`Error fetching price for ${symbol}: ${e.message}`, 'error', symbol);
+    // Use bulk ticker fetching if tracking multiple symbols to avoid Akamai WAF rate-limiting
+    if (symbols.length > 1) {
+      try {
+        const allTickers = await this.mexcClient.getAllTickerPrices();
+        if (Array.isArray(allTickers)) {
+          const priceMap = {};
+          allTickers.forEach(t => { if (t.symbol && t.price) priceMap[t.symbol.toUpperCase()] = parseFloat(t.price); });
+          symbols.forEach(sym => {
+            if (priceMap[sym]) prices[sym] = priceMap[sym];
+          });
         }
-      })
-    );
+      } catch (bulkErr) {
+        // Fallback to single symbol queries
+      }
+    }
+
+    // Fetch any missing symbols individually with retry
+    for (const symbol of symbols) {
+      if (prices[symbol] !== undefined) continue;
+      try {
+        const price = await this.mexcClient.getTickerPrice(symbol);
+        prices[symbol] = price;
+      } catch (e) {
+        this.log(`Error fetching price for ${symbol}: ${e.message}`, 'warning', symbol);
+      }
+    }
 
     let changed = false;
 
