@@ -538,7 +538,7 @@ class OrderTracker {
     return this.orders;
   }
 
-  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately }) {
+  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately, consensusMode }) {
     symbol = symbol.toUpperCase().trim();
 
     // Check if an active position is currently open for this symbol
@@ -666,6 +666,7 @@ class OrderTracker {
       filterVolume: !!filterVolume,
       filterRsi: !!filterRsi,
       filter40sVolume: filter40sVolume !== undefined ? !!filter40sVolume : true,
+      consensusMode: consensusMode || 'SMART_CONFLUENCE',
       autoRepeat: !!autoRepeat,
       startImmediately: !!startImmediately,
       activationOffset: activationOffset ? parseFloat(activationOffset) : null,
@@ -1541,12 +1542,21 @@ class OrderTracker {
 
       // 2. Check if price went up by the trail value (hits or exceeds trigger price)
       if (currentPrice >= order.triggerPrice) {
-        // Run indicators filters confirmation checks if enabled
-        let passedFilters = true;
+        // Solution 1: Smart Confluence Consensus Engine
+        let obiPassed = false;
+        let rsiPassed = false;
+        let volPassed = false;
+        let takerPassed = false;
+
+        let checkedCount = 0;
+        let passedCount = 0;
+
         const failedReasons = [];
         const confirmedReasons = [];
 
+        // 1. OBI Support Check
         if (order.filterObi) {
+          checkedCount++;
           try {
             const depth = await this.mexcClient.getDepth(order.symbol, 100);
             let bidsValue = 0;
@@ -1570,120 +1580,102 @@ class OrderTracker {
             const totalValue = bidsValue + asksValue;
             const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
             const pctStr = (bidsRatio * 100).toFixed(1);
-            if (bidsRatio < 0.60) {
-              passedFilters = false;
-              failedReasons.push(`OBI Support ${pctStr}% < 60%`);
-            } else {
+            if (bidsRatio >= 0.60) {
+              obiPassed = true;
+              passedCount++;
               confirmedReasons.push(`OBI Support ${pctStr}% >= 60%`);
+            } else {
+              failedReasons.push(`OBI Support ${pctStr}% < 60%`);
             }
           } catch (e) {
-            this.log(`OBI Filter query failed: ${e.message}`, 'warning', order.symbol);
-            passedFilters = false;
             failedReasons.push(`OBI Query Error`);
           }
         }
 
+        // 2. Volume Spike Check
         if (order.filterVolume) {
+          checkedCount++;
           try {
             const klines = await this.mexcClient.getKlines(order.symbol, '1m', 6);
             if (klines && klines.length >= 6) {
-              const currentVol = parseFloat(klines[5][5]); // Volume is index 5
+              const currentVol = parseFloat(klines[5][5]);
               let totalPrevVol = 0;
-              for (let j = 0; j < 5; j++) {
-                totalPrevVol += parseFloat(klines[j][5]);
-              }
+              for (let j = 0; j < 5; j++) totalPrevVol += parseFloat(klines[j][5]);
               const avgPrevVol = totalPrevVol / 5;
-              if (currentVol < avgPrevVol * 1.5) {
-                passedFilters = false;
-                failedReasons.push(`Volume Spike ${currentVol.toFixed(1)} < 1.5x avg (${(avgPrevVol * 1.5).toFixed(1)})`);
-              } else {
+              if (currentVol >= avgPrevVol * 1.5) {
+                volPassed = true;
+                passedCount++;
                 confirmedReasons.push(`Volume Spike ${currentVol.toFixed(1)} >= 1.5x avg`);
+              } else {
+                failedReasons.push(`Volume Spike ${currentVol.toFixed(1)} < 1.5x avg`);
               }
             } else {
-              passedFilters = false;
               failedReasons.push(`Insufficient Volume Data`);
             }
           } catch (e) {
-            this.log(`Volume Filter query failed: ${e.message}`, 'warning', order.symbol);
-            passedFilters = false;
             failedReasons.push(`Volume Query Error`);
           }
         }
 
+        // 3. RSI Oversold Check
         if (order.filterRsi) {
+          checkedCount++;
           try {
             const klines = await this.mexcClient.getKlines(order.symbol, '1m', 30);
             if (klines && klines.length >= 15) {
               const closes = klines.map(k => parseFloat(k[4]));
               const rsi = this.calculateRSI(closes);
-              if (rsi > 35) {
-                passedFilters = false;
-                failedReasons.push(`RSI ${rsi.toFixed(1)} > 35`);
-              } else {
+              if (rsi <= 35) {
+                rsiPassed = true;
+                passedCount++;
                 confirmedReasons.push(`RSI ${rsi.toFixed(1)} <= 35`);
+              } else {
+                failedReasons.push(`RSI ${rsi.toFixed(1)} > 35`);
               }
             } else {
-              passedFilters = false;
               failedReasons.push(`Insufficient RSI Data`);
             }
           } catch (e) {
-            this.log(`RSI Filter calculation failed: ${e.message}`, 'warning', order.symbol);
-            passedFilters = false;
             failedReasons.push(`RSI Calc Error`);
           }
         }
 
-        if (order.filterSmartSl) {
-          try {
-            const depth = await this.mexcClient.getDepth(order.symbol, 100);
-            let bidsValue = 0;
-            let asksValue = 0;
-            const rangeLower = currentPrice * 0.985;
-            const rangeUpper = currentPrice * 1.015;
-
-            if (depth && Array.isArray(depth.bids)) {
-              depth.bids.forEach(([p, q]) => {
-                const price = parseFloat(p);
-                if (price >= rangeLower && price <= rangeUpper) bidsValue += (price * parseFloat(q));
-              });
-            }
-            if (depth && Array.isArray(depth.asks)) {
-              depth.asks.forEach(([p, q]) => {
-                const price = parseFloat(p);
-                if (price >= rangeLower && price <= rangeUpper) asksValue += (price * parseFloat(q));
-              });
-            }
-
-            const totalValue = bidsValue + asksValue;
-            const bidsRatio = totalValue > 0 ? (bidsValue / totalValue) : 0;
-            const pctStr = (bidsRatio * 100).toFixed(1);
-            if (bidsRatio < 0.60) {
-              passedFilters = false;
-              failedReasons.push(`Smart SL Entry Guard ${pctStr}% bids < 60%`);
-            } else {
-              confirmedReasons.push(`Smart SL Entry Guard ${pctStr}% bids >= 60%`);
-            }
-          } catch (e) {
-            this.log(`Smart SL Entry Guard Filter query failed: ${e.message}`, 'warning', order.symbol);
-            passedFilters = false;
-            failedReasons.push(`Smart SL Entry Guard Error`);
-          }
-        }
-
-        // 40s Buyer Volume Check (Taker Buy Volume >= 60%)
+        // 4. 40s Buyer Volume Check
         if (order.filter40sVolume) {
+          checkedCount++;
           try {
             const delta = await this.calculateTakerVolumeDelta(order.symbol, 40000);
             const valStr = delta.takerBuyPct.toFixed(1);
-            if (delta.takerBuyPct < 60.0) {
-              passedFilters = false;
-              failedReasons.push(`40s Buyer Volume ${valStr}% < 60%`);
-            } else {
+            if (delta.takerBuyPct >= 60.0) {
+              takerPassed = true;
+              passedCount++;
               confirmedReasons.push(`40s Buyer Volume ${valStr}% >= 60%`);
+            } else {
+              failedReasons.push(`40s Buyer Volume ${valStr}% < 60%`);
             }
           } catch (vErr) {
-            passedFilters = false;
             failedReasons.push(`40s Buyer Volume Error`);
+          }
+        }
+
+        // Dynamic Pass Threshold Evaluation
+        let passedFilters = false;
+        const isStrict = order.consensusMode === 'STRICT_ALL';
+
+        if (isStrict) {
+          passedFilters = (checkedCount === 0) || (passedCount === checkedCount);
+        } else {
+          // Default: SMART_CONFLUENCE Mode (3/4, 2/3, 2/2, 1/1)
+          if (checkedCount === 4) {
+            passedFilters = (passedCount >= 3) || (rsiPassed && obiPassed);
+          } else if (checkedCount === 3) {
+            passedFilters = (passedCount >= 2);
+          } else if (checkedCount === 2) {
+            passedFilters = (passedCount >= 2);
+          } else if (checkedCount === 1) {
+            passedFilters = (passedCount >= 1);
+          } else {
+            passedFilters = true; // No checkboxes checked -> default pass
           }
         }
 
@@ -1693,7 +1685,8 @@ class OrderTracker {
           if (!order.lastFilterFailLogTime || (now - order.lastFilterFailLogTime > 4000)) {
             order.lastFilterFailLogTime = now;
             const confirmedStr = confirmedReasons.length > 0 ? ` (Passed so far: ${confirmedReasons.join(' | ')})` : '';
-            this.log(`⏳ [BUY DEFERRED — WAITING FOR SIGNALS] ${order.symbol}: Rebound target reached at ${currentPrice} USDT, but waiting for all enabled indicators to align. Pending/Failed: ${failedReasons.join(' | ')}.${confirmedStr}. Continuous trailing loop active...`, 'info', order.symbol);
+            const reqStr = isStrict ? `${checkedCount}/${checkedCount} Strict` : (checkedCount === 4 ? `3/4 Confluence` : `${Math.max(1, checkedCount - 1)}/${checkedCount} Confluence`);
+            this.log(`⏳ [BUY DEFERRED — WAITING FOR SIGNALS] ${order.symbol}: Rebound target reached at ${currentPrice} USDT, but waiting for consensus (${passedCount}/${checkedCount} passed, Need ${reqStr}). Pending/Failed: ${failedReasons.join(' | ')}.${confirmedStr}. Continuous trailing loop active...`, 'info', order.symbol);
           }
           continue;
         }
