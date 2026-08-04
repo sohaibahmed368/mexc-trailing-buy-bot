@@ -6,6 +6,7 @@ class MexcClient {
     this.apiKey = apiKey;
     this.secretKey = secretKey;
     this.baseUrl = 'https://api.mexc.com';
+    this.timeOffset = 0; // Difference in ms between MEXC server time and local system clock
   }
 
   setCredentials(apiKey, secretKey) {
@@ -15,6 +16,20 @@ class MexcClient {
 
   hasCredentials() {
     return !!(this.apiKey && this.secretKey);
+  }
+
+  // Synchronize local time with MEXC server time to prevent Error 700003 (recvWindow)
+  async syncTimeOffset() {
+    try {
+      const response = await axios.get(`${this.baseUrl}/api/v3/time`, { timeout: 5000 });
+      if (response.data && response.data.serverTime) {
+        const mexcTime = response.data.serverTime;
+        const localTime = Date.now();
+        this.timeOffset = mexcTime - localTime;
+      }
+    } catch (e) {
+      // Fallback offset 0 if network time check fails
+    }
   }
 
   // Internal helper to make signed requests (GET/POST)
@@ -36,25 +51,33 @@ class MexcClient {
       }
       headers['X-MEXC-APIKEY'] = this.apiKey;
       
-      // Add timestamp to private requests (current time in milliseconds)
-      queryParams.timestamp = Date.now();
+      // Auto-sync time offset on initial private call
+      if (!this.timeOffsetSynced) {
+        this.timeOffsetSynced = true;
+        await this.syncTimeOffset();
+      }
+
+      // Add timestamp + 60s recvWindow to private requests
+      queryParams.timestamp = Date.now() + (this.timeOffset || 0);
+      queryParams.recvWindow = 60000;
 
       // Build query string for signing
-      const sortedKeys = Object.keys(queryParams).sort();
-      const urlParams = new URLSearchParams();
-      sortedKeys.forEach(key => {
-        urlParams.append(key, queryParams[key].toString());
-      });
-      
-      const queryString = urlParams.toString();
-      const signature = crypto
-        .createHmac('sha256', this.secretKey)
-        .update(queryString)
-        .digest('hex');
-      
-      urlParams.append('signature', signature);
-      
-      const requestUrl = `${url}?${urlParams.toString()}`;
+      const buildSignedUrl = (qParams) => {
+        const sortedKeys = Object.keys(qParams).sort();
+        const urlParams = new URLSearchParams();
+        sortedKeys.forEach(key => {
+          urlParams.append(key, qParams[key].toString());
+        });
+        const queryString = urlParams.toString();
+        const signature = crypto
+          .createHmac('sha256', this.secretKey)
+          .update(queryString)
+          .digest('hex');
+        urlParams.append('signature', signature);
+        return `${url}?${urlParams.toString()}`;
+      };
+
+      const requestUrl = buildSignedUrl(queryParams);
       
       try {
         const response = await axios({
@@ -74,6 +97,20 @@ class MexcClient {
             errorMsg = JSON.stringify(error.response.data);
           }
         }
+
+        // Auto-healing retry for Error 700003 (recvWindow time drift):
+        if (errorMsg.includes('700003') || errorMsg.includes('recvWindow')) {
+          try {
+            await this.syncTimeOffset();
+            queryParams.timestamp = Date.now() + (this.timeOffset || 0);
+            const retryUrl = buildSignedUrl(queryParams);
+            const retryRes = await axios({ method, url: retryUrl, headers, data: {}, timeout: 10000 });
+            return retryRes.data;
+          } catch (retryErr) {
+            throw new Error(`MEXC API Error: ${retryErr.message}`);
+          }
+        }
+
         throw new Error(`MEXC API Error: ${errorMsg}`);
       }
     } else {
