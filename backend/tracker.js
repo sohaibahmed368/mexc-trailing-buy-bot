@@ -1167,24 +1167,22 @@ class OrderTracker {
           }
         }
         // Profit Lock Guard: Check if price reached 50% progress to Take Profit
-        if (order.takeProfit && !order.isSlProfitLocked && order.executionPrice) {
-          const tpDollar = (order.takeProfit / 100) * order.executionPrice;
-          const tpTargetProgress = tpDollar * 0.5;
-
-          if (currentPrice >= (order.executionPrice + tpTargetProgress - 0.00000001)) {
+        // Early Profit Lock Guard: Lock SL at Break-even +0.10% as soon as price reaches +0.25% gain
+        if (order.executionPrice && !order.isSlProfitLocked) {
+          const gainPct = ((currentPrice - order.executionPrice) / order.executionPrice) * 100;
+          if (gainPct >= 0.25 - 0.000001) {
             order.isSlProfitLocked = true;
             order.justProfitLocked = true;
             
-            // Dynamic Locked SL % = Exact 50% TP Offset % (e.g. 0.6% TP -> 0.3% Locked SL)
-            const halfTpPct = order.takeProfit * 0.5;
-            const lockedSlPct = halfTpPct;
+            // Lock SL Floor at Break-even +0.10% Net Gain
+            const lockedSlPct = 0.10;
             const lockedSlDollar = (lockedSlPct / 100) * order.executionPrice;
             
             order.lockedSlPrice = order.executionPrice + lockedSlDollar;
-            const tpTriggerPrice = (order.executionPrice + tpTargetProgress).toFixed(4);
+            const targetGainPrice = (order.executionPrice * 1.0025).toFixed(4);
             const newSlTarget = order.lockedSlPrice.toFixed(4);
             this.log(
-              `🔒 [PROFIT LOCK GUARD] Price reached 50% TP progress (${currentPrice.toFixed(4)} >= ${tpTriggerPrice} USDT)! Stop Loss shifted UP to Buy Price +${lockedSlPct.toFixed(2)}% (${newSlTarget} USDT, Exact 50% TP Level). Profit Locked!`,
+              `🔒 [EARLY PROFIT LOCK GUARD] Price reached +${gainPct.toFixed(2)}% gain (${currentPrice.toFixed(4)} >= ${targetGainPrice} USDT)! Stop Loss floor locked at Buy Price +${lockedSlPct.toFixed(2)}% ($${newSlTarget} USDT). Risk-Free Profit Locked!`,
               'success',
               order.symbol
             );
@@ -1527,6 +1525,11 @@ class OrderTracker {
         continue; // Wait for next tick, do not run trailing buy checks
       }
 
+      // Maintain recent price ticks for 2-tick rebound momentum confirmation
+      order.recentTicks = order.recentTicks || [];
+      order.recentTicks.push(currentPrice);
+      if (order.recentTicks.length > 5) order.recentTicks.shift();
+
       // 1. Check if price bottomed out further
       if (currentPrice < order.bottomPrice) {
         const oldBottom = order.bottomPrice;
@@ -1542,6 +1545,19 @@ class OrderTracker {
 
       // 2. Check if price went up by the trail value (hits or exceeds trigger price)
       if (currentPrice >= order.triggerPrice) {
+        // Solution 3: 2-Tick Micro Rebound Confirmation Filter (Fakeout Protection)
+        const tickCount = order.recentTicks.length;
+        if (tickCount >= 2) {
+          const prevTick = order.recentTicks[tickCount - 2];
+          if (currentPrice < prevTick) {
+            const now = Date.now();
+            if (!order.lastMomentumWaitLogTime || (now - order.lastMomentumWaitLogTime > 4000)) {
+              order.lastMomentumWaitLogTime = now;
+              this.log(`⏳ [REBOUND CONFIRMATION WAITING] ${order.symbol}: Rebound target reached at ${currentPrice} USDT, but micro-tick is dipping (${currentPrice} < ${prevTick}). Waiting for 2-tick upward confirmation...`, 'info', order.symbol);
+            }
+            continue;
+          }
+        }
         // Solution 1: Smart Confluence Consensus Engine
         let obiPassed = false;
         let rsiPassed = false;

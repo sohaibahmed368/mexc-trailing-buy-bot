@@ -88,14 +88,14 @@ async function runMasterAudit() {
   console.assert(order1.status === 'TP_SL_ACTIVE', 'order1 should transition to TP_SL_ACTIVE');
   console.log('   ✅ 3/4 Confluence Aligned -> Rebound Buy Executed! State shifted to TP_SL_ACTIVE.\n');
 
-  console.log('4. VERIFYING 50% TP PROFIT LOCK GUARD (+50% PROGRESS)...');
-  mockClient.price = 99.95; // Entry 99.65, TP 100.25 (Progress +50%)
+  console.log('4. VERIFYING EARLY PROFIT LOCK GUARD (+0.25% PROGRESS)...');
+  mockClient.price = 99.91; // Entry 99.65, Gain +0.26% (>= +0.25% target)
   await tracker.tick();
   console.assert(order1.isSlProfitLocked === true, 'isSlProfitLocked should be true');
-  console.log('   ✅ Price hit +50% TP target progress -> isSlProfitLocked=true.\n');
+  console.log('   ✅ Price hit +0.25% target gain -> Early Profit Lock active (SL Floor locked at +0.10% break-even).\n');
 
   console.log('5. VERIFYING TAKE PROFIT HIT, TRADE HISTORY & AUTO-REPEAT RESET...');
-  mockClient.price = 100.30; // TP Hit
+  mockClient.price = 100.36; // TP Hit (+0.70% TP Target reached)
   await tracker.tick();
   console.assert(order1.status === 'PENDING_ACTIVATION', 'order1 status should reset to PENDING_ACTIVATION');
   console.assert(order1.tradeHistory.length === 1, 'tradeHistory length should be 1');
