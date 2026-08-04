@@ -1,3 +1,11 @@
+process.on('uncaughtException', (err) => {
+  console.error('⚠️ [GLOBAL UNCAUGHT EXCEPTION PREVENTED]:', err ? err.message : err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('⚠️ [GLOBAL UNHANDLED REJECTION PREVENTED]:', reason ? (reason.message || reason) : reason);
+});
+
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -101,11 +109,11 @@ if (process.env.ALPACA_API_KEY_ID && process.env.ALPACA_SECRET_KEY) {
   }
 }
 
-// Start tracking immediately if there are running orders from storage
-tracker.startTracking();
-stockTracker.startTracking();
-alpacaStockTracker.startTracking();
-smartGridTracker.startTracking();
+// Start tracking immediately with fail-safe isolation
+try { tracker.startTracking(); } catch (e) { console.error('Error starting MEXC tracker:', e.message); }
+try { stockTracker.startTracking(); } catch (e) { console.error('Error starting Stock tracker:', e.message); }
+try { alpacaStockTracker.startTracking(); } catch (e) { console.error('Error starting Alpaca tracker:', e.message); }
+try { smartGridTracker.startTracking(); } catch (e) { console.error('Error starting Smart Grid tracker:', e.message); }
 
 // Cache trading symbols from MEXC on startup
 let symbolsCache = [];
