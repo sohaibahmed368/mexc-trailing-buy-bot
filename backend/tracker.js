@@ -1306,23 +1306,23 @@ class OrderTracker {
               order.symbol
             );
           }
-            order.lastStatusCheckTime = now;
-            if (order.mexcSellOrderId) {
-              try {
-                const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
-                if (queryRes && queryRes.status === 'FILLED') {
-                  const tpDollar = (order.takeProfit / 100) * order.executionPrice;
-                  order.status = 'TRIGGERED';
-                  order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + tpDollar);
-                  order.sellTriggeredAt = new Date().toISOString();
-                  this.log(`[REAL] Take Profit hit! Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
-                  changed = true;
-                  await this.handleOrderCycleComplete(order);
-                  continue;
-                }
-              } catch (e) {
-                this.log(`Error querying TP order status from MEXC: ${e.message}`, 'error', order.symbol);
+
+          order.lastStatusCheckTime = now;
+          if (order.mexcSellOrderId) {
+            try {
+              const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
+              if (queryRes && queryRes.status === 'FILLED') {
+                const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + tpDollar);
+                order.sellTriggeredAt = new Date().toISOString();
+                this.log(`[REAL] Take Profit hit! Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
+                changed = true;
+                await this.handleOrderCycleComplete(order);
+                continue;
               }
+            } catch (e) {
+              this.log(`Error querying TP order status from MEXC: ${e.message}`, 'error', order.symbol);
             }
           }
         }
