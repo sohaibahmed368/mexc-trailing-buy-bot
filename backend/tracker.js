@@ -180,7 +180,9 @@ class OrderTracker {
     }
     
     fs.writeFileSync(this.logsPath, JSON.stringify(this.logs, null, 2));
-    this.io.emit('log_entry', logEntry);
+    if (this.io && typeof this.io.emit === 'function') {
+      this.io.emit('log_entry', logEntry);
+    }
   }
 
   getOrders() {
@@ -480,6 +482,73 @@ class OrderTracker {
     } catch (cancelErr) {}
 
     return { avgPrice: currentPrice, executedQty: null, filled: false, maker: true };
+  }
+
+  async calculate15mRSI(symbol) {
+    try {
+      const klines = await this.mexcClient.getKlines(symbol, '15m', 25);
+      if (!klines || klines.length < 15) return 50.0;
+      
+      const closes = klines.map(k => parseFloat(k[4])).filter(c => !isNaN(c));
+      if (closes.length < 15) return 50.0;
+
+      let gains = 0;
+      let losses = 0;
+      for (let i = 1; i < 15; i++) {
+        const diff = closes[i] - closes[i - 1];
+        if (diff >= 0) gains += diff;
+        else losses -= diff;
+      }
+
+      let avgGain = gains / 14;
+      let avgLoss = losses / 14;
+
+      for (let i = 15; i < closes.length; i++) {
+        const diff = closes[i] - closes[i - 1];
+        if (diff >= 0) {
+          avgGain = (avgGain * 13 + diff) / 14;
+          avgLoss = (avgLoss * 13) / 14;
+        } else {
+          avgGain = (avgGain * 13) / 14;
+          avgLoss = (avgLoss * 13 - diff) / 14;
+        }
+      }
+
+      if (avgLoss === 0) return 100.0;
+      const rs = avgGain / avgLoss;
+      return parseFloat((100 - (100 / (1 + rs))).toFixed(1));
+    } catch (err) {
+      return 50.0;
+    }
+  }
+
+  async apply15mTrendGuard(order) {
+    order.buyTime = Date.now();
+    try {
+      const rsi15m = await this.calculate15mRSI(order.symbol);
+      order.rsi15mAtBuy = rsi15m;
+      if (rsi15m >= 45) {
+        order.adaptiveSlMode = 'NO_SL';
+        order.activeSlPrice = null;
+        this.log(
+          `🛡️ [15M TREND GUARD: NO-SL ACTIVE] ${order.symbol} 15m RSI = ${rsi15m.toFixed(1)} (>= 45 Bullish/Sideways). Stop Loss DISABLED! Holding for +${order.takeProfit || 0.8}% TP Limit Sell fill!`,
+          'success',
+          order.symbol
+        );
+      } else {
+        order.adaptiveSlMode = 'SL_ACTIVE';
+        const slDollar = ((order.stopLoss || 0.3) / 100) * order.executionPrice;
+        order.activeSlPrice = order.executionPrice - slDollar;
+        this.log(
+          `⚠️ [15M TREND GUARD: SL ACTIVE] ${order.symbol} 15m RSI = ${rsi15m.toFixed(1)} (< 40 Crashing). Active Stop Loss ENABLED at $${order.activeSlPrice.toFixed(4)} USDT!`,
+          'warning',
+          order.symbol
+        );
+      }
+    } catch (err) {
+      order.adaptiveSlMode = 'SL_ACTIVE';
+      this.log(`15m Trend Guard calculation failed: ${err.message}. Defaulting to SL Active.`, 'warning', order.symbol);
+    }
   }
 
   async getFeeAdjustedBalance(symbol, grossQty) {
@@ -1242,10 +1311,34 @@ class OrderTracker {
           targetSlPrice -= bufferDollar;
         }
 
-        // Check if Stop Loss target is hit
+        // 45-Minute Stale Trade Break-even Exit Guard
+        if (order.adaptiveSlMode === 'NO_SL' && order.buyTime && (now - order.buyTime >= 45 * 60 * 1000)) {
+          if (!order.lastStaleCheckTime || (now - order.lastStaleCheckTime > 30000)) {
+            order.lastStaleCheckTime = now;
+            try {
+              const rsi15mNow = await this.calculate15mRSI(order.symbol);
+              if (rsi15mNow < 42) {
+                this.log(
+                  `⏳ [45-MIN STALE TRADE BREAK-EVEN EXIT] ${order.symbol} held 45m without TP & 15m RSI dropped to ${rsi15mNow.toFixed(1)} (< 42). Executing Break-even Exit to free capital!`,
+                  'warning',
+                  order.symbol
+                );
+                // Force exit to free capital
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = currentPrice;
+                order.sellTriggeredAt = new Date().toISOString();
+                changed = true;
+                await this.handleOrderCycleComplete(order);
+                continue;
+              }
+            } catch (staleErr) {}
+          }
+        }
+
+        // Check if Stop Loss target is hit (Bypassed if 15m Trend Guard set NO_SL!)
         if (order.justProfitLocked) {
           delete order.justProfitLocked;
-        } else if (order.stopLoss && currentPrice <= targetSlPrice) {
+        } else if (order.stopLoss && order.adaptiveSlMode !== 'NO_SL' && currentPrice <= targetSlPrice) {
           order.status = 'PENDING_EXECUTION'; // Transition immediately to block duplicate execution!
 
           // Smart SL Guard seller exhaustion evaluation (ONLY evaluated if Profit Lock was NOT activated!)
@@ -1747,6 +1840,7 @@ class OrderTracker {
           order.executionPrice = currentPrice;
           if (order.takeProfit || order.stopLoss) {
             order.status = 'TP_SL_ACTIVE';
+            await this.apply15mTrendGuard(order);
             this.log(`[DRY RUN] Simulated Spot Buy order executed at ${currentPrice} USDT. Transitioning to TP/SL monitoring.`, 'success', order.symbol);
           } else {
             order.status = 'TRIGGERED';
@@ -1811,6 +1905,7 @@ class OrderTracker {
 
             if (order.takeProfit || order.stopLoss) {
               order.status = 'TP_SL_ACTIVE';
+              await this.apply15mTrendGuard(order);
               this.log(
                 `[REAL] BUY Order placed successfully! Order ID: ${result.orderId}. Exec Price: ${execPrice}. Transitioning to TP/SL monitoring.`,
                 'success',
