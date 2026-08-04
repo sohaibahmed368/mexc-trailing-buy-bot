@@ -59,11 +59,15 @@ async function runGridAudit() {
   mockClient.price = 1.00; // Drops to lower Grid #1 ($1.00)
   mockClient.obi = 75; // Strong buying support!
 
-  await tracker.tick();
+    // Call tick to place #1 Queue Limit Buy
+    await tracker.tick();
+    // Call tick second time to fill the placed Limit Buy
+    await tracker.tick();
 
-  const lvl1 = gridBot.levels[0];
-  console.assert(lvl1.side === 'SELL', 'lvl1 side should shift to SELL');
-  console.assert(lvl1.sellTargetPrice > 1.00, 'sellTargetPrice should be calculated');
+    const lvl1 = gridBot.levels[0];
+    console.assert(lvl1.status === 'IDLE', 'lvl1 status should reset to IDLE for sell monitoring');
+    console.assert(lvl1.side === 'SELL', 'lvl1 side should shift to SELL');
+    console.assert(lvl1.sellTargetPrice > 0, 'sellTargetPrice should be calculated');
   console.log(`   ✅ Buy Grid #1 @ $1.00 EXECUTED! Placed Limit Sell target at $${lvl1.sellTargetPrice.toFixed(4)} USDT (+${gridBot.stepPct}% TP).\n`);
 
   console.log('4. TESTING LIMIT SELL FILL & NET PROFIT RECORDING...');

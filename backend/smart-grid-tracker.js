@@ -306,18 +306,13 @@ class SmartGridTracker {
               const confluencePassed = checkedCount === 0 || (passedCount >= requiredCount);
 
               if (confluencePassed) {
-                // Signals ENABLED: Execute Buy at Grid Level!
-                level.status = 'BUY_FILLED';
-                level.buyExecPrice = currentPrice;
-                level.filledAt = new Date().toISOString();
+                // Signals ENABLED: Place Limit Buy at Best Bid + 0.01 to claim #1 Queue Position with ZERO SLIPPAGE!
+                const frontRunBidPrice = parseFloat((currentPrice + 0.01).toFixed(4));
+                level.status = 'BUY_PLACED';
+                level.placedBidPrice = frontRunBidPrice;
+                level.placedAt = Date.now();
                 
-                // Immediately calculate target Limit Sell price: ExecPrice * (1 + stepPct/100)
-                level.sellTargetPrice = parseFloat((currentPrice * (1 + (grid.stepPct / 100))).toFixed(4));
-                level.side = 'SELL'; // Shift level to SELL side for the next loop!
-                level.status = 'IDLE'; // Ready for Limit Sell monitoring
-
-                const grossQty = grid.investmentPerGrid / currentPrice;
-                this.log(`🎯 [SMART GRID BUY EXECUTED] ${grid.symbol} Grid #${level.index + 1} bought at $${currentPrice.toFixed(4)} USDT (OBI: ${obiVal.toFixed(1)}%, Taker: ${takerVal.toFixed(1)}%). Placed Limit Sell target at $${level.sellTargetPrice.toFixed(4)} USDT (+${grid.stepPct}% TP).`, 'success', grid.symbol, grid.id);
+                this.log(`🎯 [FRONT-RUNNER BUY LIMIT PLACED] ${grid.symbol} Grid #${level.index + 1}: Placed #1 Queue Limit Buy at $${frontRunBidPrice} USDT (Best Bid + $0.01). Zero Slippage!`, 'success', grid.symbol, grid.id);
                 changed = true;
               } else {
                 // Signals FAILED (Heavy Selling Pressure): CANCEL BUY ORDER and let price drop to lower grid!
@@ -327,6 +322,33 @@ class SmartGridTracker {
                   changed = true;
                 }
               }
+            }
+          }
+
+          // A2. Monitor & Maintain Placed Buy Limit Queue (20s Overbid Re-positioning)
+          else if (level.side === 'BUY' && level.status === 'BUY_PLACED') {
+            // Check if Buy Limit Order is Filled
+            if (currentPrice <= (level.placedBidPrice || level.price) * 1.001) {
+              const execPrice = level.placedBidPrice || currentPrice;
+              level.status = 'BUY_FILLED';
+              level.buyExecPrice = execPrice;
+              level.filledAt = new Date().toISOString();
+
+              // Immediately calculate target Limit Sell price: ExecPrice * (1 + stepPct/100)
+              level.sellTargetPrice = parseFloat((execPrice * (1 + (grid.stepPct / 100))).toFixed(4));
+              level.side = 'SELL'; // Shift level to SELL side for the next loop!
+              level.status = 'IDLE'; // Ready for Limit Sell monitoring
+
+              this.log(`💰 [SMART GRID BUY FILLED] ${grid.symbol} Grid #${level.index + 1} filled at $${execPrice.toFixed(4)} USDT. Placed Limit Sell target at $${level.sellTargetPrice.toFixed(4)} USDT (+${grid.stepPct}% TP).`, 'success', grid.symbol, grid.id);
+              changed = true;
+            }
+            // 20-Second Queue Maintenance: Re-position to Top Bid + 0.01 if overbid or 20s elapsed
+            else if (Date.now() - (level.placedAt || 0) >= 20000) {
+              const newFrontRunBid = parseFloat((currentPrice + 0.01).toFixed(4));
+              level.placedBidPrice = newFrontRunBid;
+              level.placedAt = Date.now();
+              this.log(`🔄 [BUY QUEUE RE-POSITIONED] ${grid.symbol} Grid #${level.index + 1}: Re-positioned #1 Queue Limit Buy to $${newFrontRunBid.toFixed(4)} USDT (+1 Tick Overbid).`, 'info', grid.symbol, grid.id);
+              changed = true;
             }
           }
 
