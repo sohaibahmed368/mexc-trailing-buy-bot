@@ -1187,9 +1187,9 @@ class OrderTracker {
           continue;
         }
 
-        // Live Heartbeat Tick Log (Every 8 seconds) so user sees live tracking progress in Logs Console
+        // Live Heartbeat Tick Log (Every 3 seconds) so user sees live tracking progress in Logs Console
         const now = Date.now();
-        if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime > 8000)) {
+        if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime > 3000)) {
           order.lastHeartbeatLogTime = now;
           const dipOffset = order.activationOffset || 0.6;
           const targetPriceStr = order.activationPrice ? order.activationPrice.toFixed(4) : '-';
@@ -1299,8 +1299,8 @@ class OrderTracker {
             }
           }
         } else {
-          // Live Position Heartbeat Tick Log (Every 8 seconds) so user sees active position progress
-          if (!order.lastPosHeartbeatLogTime || (now - order.lastPosHeartbeatLogTime > 8000)) {
+          // Live Position Heartbeat Tick Log (Every 3 seconds) so user sees active position progress
+          if (!order.lastPosHeartbeatLogTime || (now - order.lastPosHeartbeatLogTime > 3000)) {
             order.lastPosHeartbeatLogTime = now;
             const modeLabel = order.adaptiveSlMode === 'NO_SL' ? '🛡️ NO_SL Mode (Hold for TP)' : `⚠️ SL Active ($${(order.activeSlPrice || 0).toFixed(4)})`;
             const tpTarget = (order.executionPrice || currentPrice) * (1 + ((order.takeProfit || 0.6) / 100));
