@@ -529,11 +529,13 @@ class OrderTracker {
     try {
       const rsi15m = await this.calculate15mRSI(order.symbol);
       order.rsi15mAtBuy = rsi15m;
+      const tpTargetPrice = order.executionPrice * (1 + ((order.takeProfit || 0.6) / 100));
+
       if (rsi15m >= 45) {
         order.adaptiveSlMode = 'NO_SL';
         order.activeSlPrice = null;
         this.log(
-          `🛡️ [15M TREND GUARD: NO-SL ACTIVE] ${order.symbol} 15m RSI = ${rsi15m.toFixed(1)} (>= 45 Bullish/Sideways). Stop Loss DISABLED! Holding for +${order.takeProfit || 0.8}% TP Limit Sell fill!`,
+          `🛡️ [15M TREND GUARD — NO-SL ACTIVATED] ${order.symbol} 15m RSI = ${rsi15m.toFixed(1)} (>= 45 Bullish/Sideways Zone). Stop Loss DISABLED! Placing +${order.takeProfit || 0.6}% TP Limit Sell Order @ $${tpTargetPrice.toFixed(4)} USDT. Noise wicks will be held safely until TP fills!`,
           'success',
           order.symbol
         );
@@ -542,7 +544,7 @@ class OrderTracker {
         const slDollar = ((order.stopLoss || 0.3) / 100) * order.executionPrice;
         order.activeSlPrice = order.executionPrice - slDollar;
         this.log(
-          `⚠️ [15M TREND GUARD: SL ACTIVE] ${order.symbol} 15m RSI = ${rsi15m.toFixed(1)} (< 40 Crashing). Active Stop Loss ENABLED at $${order.activeSlPrice.toFixed(4)} USDT!`,
+          `⚠️ [15M TREND GUARD — ACTIVE SL ENABLED] ${order.symbol} 15m RSI = ${rsi15m.toFixed(1)} (< 40 Crashing Zone). Market in downtrend! Active Stop Loss ENABLED at $${order.activeSlPrice.toFixed(4)} USDT (-${order.stopLoss || 0.3}%) to protect USDT capital.`,
           'warning',
           order.symbol
         );
