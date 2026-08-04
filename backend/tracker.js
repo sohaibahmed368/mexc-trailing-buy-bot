@@ -947,16 +947,16 @@ class OrderTracker {
     return this.orders;
   }
 
-  // Start tracking interval if there are active orders
   async startTracking() {
     if (this.intervalId) return;
 
-    // Auto-Sync Live Wallet Holdings on startup to restore any active cards
-    try { await this.syncLiveWalletOrders(); } catch (e) {}
-
+    // Register tracking loop IMMEDIATELY so ticks run without delay
     this.intervalId = setInterval(async () => {
       await this.tick();
     }, this.pollInterval);
+
+    // Auto-Sync Live Wallet Holdings asynchronously in background (NON-BLOCKING)
+    this.syncLiveWalletOrders().catch(() => {});
   }
 
   // Automatically scan MEXC Spot Wallet on server boot and restore Active Tracking Cards for whitelist crypto assets in wallet
