@@ -185,6 +185,10 @@ class OrderTracker {
     if (this.io && typeof this.io.emit === 'function') {
       this.io.emit('log_entry', logEntry);
     }
+
+    // Output all logs directly to stdout so PM2 logs and VPS terminal reflect live bot activity in real-time
+    const timeStr = new Date().toLocaleTimeString();
+    console.log(`[${timeStr}] [BOT ${type.toUpperCase()}]${symbol ? ` [${symbol}]` : ''} ${message}`);
   }
 
   getOrders() {
@@ -1203,9 +1207,9 @@ class OrderTracker {
 
       // 1.5 Check TP/SL OCO checks if already bought and holding
       if (order.status === 'TP_SL_ACTIVE') {
+        const now = Date.now();
         // Automatic Ghost Order Self-Healing: Verify real MEXC balance for real trades
         if (!order.dryRun) {
-          const now = Date.now();
           if (!order.lastGhostCheckTime || (now - order.lastGhostCheckTime > 5000)) {
             order.lastGhostCheckTime = now;
 
