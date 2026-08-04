@@ -48,8 +48,8 @@ const signalRadar = new MultiExchangeSignalRadar(mexcClient);
 
 app.use('/api/grid-bots', createGridRouter(smartGridTracker));
 
-// Port configuration
-const PORT = process.env.PORT || 3001;
+// Port configuration (Default to 8100 to match VPS Nginx upstream proxy)
+const PORT = process.env.PORT || 8100;
 
 // Path variables
 const configDir = path.join(__dirname, 'config');
