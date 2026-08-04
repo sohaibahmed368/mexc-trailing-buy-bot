@@ -11,6 +11,9 @@ const AlpacaClient = require('./alpaca-client');
 const AlpacaStockOrderTracker = require('./alpaca-stock-tracker');
 const MultiExchangeSignalRadar = require('./multi-exchange-radar');
 
+const SmartGridTracker = require('./smart-grid-tracker');
+const createGridRouter = require('./routes/grid-routes');
+
 const app = express();
 const server = http.createServer(app);
 
@@ -25,13 +28,17 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
-// Initialize MEXC client, Alpaca client, Trackers, and Standalone Signal Radar
+// Initialize MEXC client, Alpaca client, Trackers, Smart Grid Tracker, and Standalone Signal Radar
 const mexcClient = new MexcClient();
 const tracker = new OrderTracker(mexcClient, io);
 const stockTracker = new StockOrderTracker(mexcClient, io);
 const alpacaClient = new AlpacaClient();
 const alpacaStockTracker = new AlpacaStockOrderTracker(alpacaClient, io);
+const smartGridTracker = new SmartGridTracker(mexcClient);
+smartGridTracker.io = io;
 const signalRadar = new MultiExchangeSignalRadar(mexcClient);
+
+app.use('/api/grid-bots', createGridRouter(smartGridTracker));
 
 // Port configuration
 const PORT = process.env.PORT || 3001;
@@ -98,6 +105,7 @@ if (process.env.ALPACA_API_KEY_ID && process.env.ALPACA_SECRET_KEY) {
 tracker.startTracking();
 stockTracker.startTracking();
 alpacaStockTracker.startTracking();
+smartGridTracker.startTracking();
 
 // Cache trading symbols from MEXC on startup
 let symbolsCache = [];
