@@ -115,24 +115,28 @@ try { stockTracker.startTracking(); } catch (e) { console.error('Error starting 
 try { alpacaStockTracker.startTracking(); } catch (e) { console.error('Error starting Alpaca tracker:', e.message); }
 try { smartGridTracker.startTracking(); } catch (e) { console.error('Error starting Smart Grid tracker:', e.message); }
 
-// Cache trading symbols from MEXC on startup
-let symbolsCache = [];
+// Pre-populate symbolsCache immediately with popular pairs so server is instantly ready in 0ms
+let symbolsCache = [
+  'ADAUSDT', 'AVAXUSDT', 'BNBUSDT', 'BTCUSDT', 'DOGEUSDT', 'DOTUSDT', 'ETHUSDT', 
+  'LINKUSDT', 'MXUSDT', 'ONDOUSDT', 'PEPEUSDT', 'SHIBUSDT', 'SOLUSDT', 'SUIUSDT', 'UNIUSDT', 'XRPUSDT'
+];
+
 async function loadSymbolsCache() {
-  try {
-    const info = await mexcClient.getExchangeInfo();
-    if (info && Array.isArray(info.symbols)) {
-      // Filter for online USDT trading pairs
-      symbolsCache = info.symbols
-        .filter(s => s.quoteAsset === 'USDT' && (s.status === '1' || s.status === 'ENABLED' || s.status === 'TRADING' || s.status === 'online'))
-        .map(s => s.symbol)
-        .sort();
-      tracker.log(`Successfully cached ${symbolsCache.length} active USDT trading pairs from MEXC.`, 'success');
+  // Run asynchronously 3 seconds AFTER server boot so HTTP server starts instantly without waiting for 8.5MB MEXC payload
+  setTimeout(async () => {
+    try {
+      const info = await mexcClient.getExchangeInfo();
+      if (info && Array.isArray(info.symbols)) {
+        symbolsCache = info.symbols
+          .filter(s => s.quoteAsset === 'USDT' && (s.status === '1' || s.status === 'ENABLED' || s.status === 'TRADING' || s.status === 'online'))
+          .map(s => s.symbol)
+          .sort();
+        tracker.log(`Successfully cached ${symbolsCache.length} active USDT trading pairs from MEXC.`, 'success');
+      }
+    } catch (e) {
+      tracker.log(`Exchange symbols background update skipped: ${e.message}. Active fallback pairs in use.`, 'info');
     }
-  } catch (e) {
-    tracker.log(`Failed to load exchange symbols: ${e.message}. Using standard fallback pairs.`, 'error');
-    // Fallback list of major pairs
-    symbolsCache = ['BTCUSDT', 'ETHUSDT', 'MXUSDT', 'SOLUSDT', 'XRPUSDT', 'ADAUSDT', 'DOGEUSDT', 'LINKUSDT', 'AVAXUSDT'];
-  }
+  }, 3000);
 }
 loadSymbolsCache();
 
@@ -744,6 +748,9 @@ const staticPath = fs.existsSync(backendPublicPath)
 if (staticPath) {
   app.use(express.static(staticPath));
   app.get('*', (req, res) => {
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ error: `API route ${req.path} not found` });
+    }
     res.sendFile(path.join(staticPath, 'index.html'));
   });
 }
