@@ -1183,6 +1183,19 @@ class OrderTracker {
           continue;
         }
 
+        // Live Heartbeat Tick Log (Every 8 seconds) so user sees live tracking progress in Logs Console
+        const now = Date.now();
+        if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime > 8000)) {
+          order.lastHeartbeatLogTime = now;
+          const dipOffset = order.activationOffset || 0.6;
+          const targetPriceStr = order.activationPrice ? order.activationPrice.toFixed(4) : '-';
+          this.log(
+            `⚡ [LIVE TICK] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Dip Activation Target: $${targetPriceStr} USDT (-${dipOffset}%). Price monitoring active...`,
+            'info',
+            order.symbol
+          );
+        }
+
         continue; // Wait for next tick to monitor trailing stop
       }
 
@@ -1282,9 +1295,17 @@ class OrderTracker {
             }
           }
         } else {
-          // Real Order OCO Checks
-          const now = Date.now();
-          if (!order.lastStatusCheckTime || (now - order.lastStatusCheckTime > 5000)) {
+          // Live Position Heartbeat Tick Log (Every 8 seconds) so user sees active position progress
+          if (!order.lastPosHeartbeatLogTime || (now - order.lastPosHeartbeatLogTime > 8000)) {
+            order.lastPosHeartbeatLogTime = now;
+            const modeLabel = order.adaptiveSlMode === 'NO_SL' ? '🛡️ NO_SL Mode (Hold for TP)' : `⚠️ SL Active ($${(order.activeSlPrice || 0).toFixed(4)})`;
+            const tpTarget = (order.executionPrice || currentPrice) * (1 + ((order.takeProfit || 0.6) / 100));
+            this.log(
+              `⚡ [LIVE POSITION TICK] ${order.symbol}: Entry $${(order.executionPrice || currentPrice).toFixed(4)} | Live $${currentPrice.toFixed(4)} USDT | TP Target: $${tpTarget.toFixed(4)} USDT | Mode: ${modeLabel}`,
+              'info',
+              order.symbol
+            );
+          }
             order.lastStatusCheckTime = now;
             if (order.mexcSellOrderId) {
               try {
