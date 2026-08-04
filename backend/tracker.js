@@ -1099,7 +1099,11 @@ class OrderTracker {
     try {
       const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
       if (activeOrders.length === 0) {
-        this.checkTrackingLoop();
+        const now = Date.now();
+        if (!this.lastStandbyHeartbeat || (now - this.lastStandbyHeartbeat > 30000)) {
+          this.lastStandbyHeartbeat = now;
+          this.log('💚 [ENGINE STANDBY] Bot engine active & polling ready. Waiting for tracking cards...', 'info');
+        }
         return;
       }
 
