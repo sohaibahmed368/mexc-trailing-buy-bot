@@ -110,21 +110,32 @@ class SmartGridTracker {
 
     const lowerPrice = parseFloat(params.lowerPrice);
     const upperPrice = parseFloat(params.upperPrice);
-    const gridCount = parseInt(params.gridCount, 10);
     const totalInvestmentUsdt = parseFloat(params.totalInvestmentUsdt);
 
     if (isNaN(lowerPrice) || lowerPrice <= 0) throw new Error('Invalid lower price limit.');
     if (isNaN(upperPrice) || upperPrice <= lowerPrice) throw new Error('Upper price must be greater than lower price.');
-    if (isNaN(gridCount) || gridCount < 2) throw new Error('Grid count must be at least 2.');
     if (isNaN(totalInvestmentUsdt) || totalInvestmentUsdt <= 0) throw new Error('Invalid total investment USDT.');
+
+    let gridCount = 5;
+    let stepSize = 0;
+    let stepPct = 0;
+
+    if (params.gridStepPct && parseFloat(params.gridStepPct) > 0) {
+      stepPct = parseFloat(params.gridStepPct);
+      stepSize = lowerPrice * (stepPct / 100);
+      gridCount = Math.max(2, Math.floor((upperPrice - lowerPrice) / stepSize) + 1);
+    } else {
+      gridCount = parseInt(params.gridCount, 10);
+      if (isNaN(gridCount) || gridCount < 2) throw new Error('Grid count must be at least 2.');
+      stepSize = (upperPrice - lowerPrice) / (gridCount - 1);
+      stepPct = (stepSize / lowerPrice) * 100;
+    }
+
+    const investmentPerGrid = totalInvestmentUsdt / gridCount;
 
     // Fetch live ticker price
     const currentPrice = await this.mexcClient.getTickerPrice(symbol);
     if (!currentPrice || currentPrice <= 0) throw new Error(`Could not fetch live price for ${symbol}`);
-
-    const stepSize = (upperPrice - lowerPrice) / (gridCount - 1);
-    const stepPct = (stepSize / lowerPrice) * 100;
-    const investmentPerGrid = totalInvestmentUsdt / gridCount;
 
     const levels = [];
     for (let i = 0; i < gridCount; i++) {
