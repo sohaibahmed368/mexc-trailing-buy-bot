@@ -226,23 +226,25 @@ app.get('/api/balances', async (req, res) => {
     return res.status(400).json({ error: 'API Credentials not configured.' });
   }
   try {
-    const [balances, tickerPrices, feesSummary] = await Promise.all([
-      mexcClient.getBalances(),
-      mexcClient.getAllTickerPrices(),
-      tracker.getTotalMexcFeesPaid()
-    ]);
+    const balances = await mexcClient.getBalances().catch(() => []);
+    const tickerPrices = await mexcClient.getAllTickerPrices().catch(() => []);
+    const feesSummary = await tracker.getTotalMexcFeesPaid().catch(() => null);
 
-    // Create a map of symbol prices for fast lookup
     const priceMap = new Map();
     if (Array.isArray(tickerPrices)) {
       tickerPrices.forEach(p => {
-        priceMap.set(p.symbol, parseFloat(p.price));
+        if (p && p.symbol && p.price) {
+          priceMap.set(p.symbol, parseFloat(p.price));
+        }
       });
     }
 
     let totalUsdt = 0;
-    const enrichedBalances = balances.map(b => {
-      const total = b.free + b.locked;
+    const rawBalances = Array.isArray(balances) ? balances : [];
+    const enrichedBalances = rawBalances.map(b => {
+      const free = parseFloat(b.free || 0);
+      const locked = parseFloat(b.locked || 0);
+      const total = free + locked;
       let price = 0;
       let estUsdtValue = 0;
 
@@ -260,20 +262,18 @@ app.get('/api/balances', async (req, res) => {
       totalUsdt += estUsdtValue;
 
       return {
-        ...b,
+        asset: b.asset,
+        free,
+        locked,
         price,
         estUsdtValue: parseFloat(estUsdtValue.toFixed(4))
       };
     });
 
-    // Sort balances: USDT/USD first, then highest value, then alphabetical
     enrichedBalances.sort((a, b) => {
       if (a.asset === 'USDT' || a.asset === 'USD') return -1;
       if (b.asset === 'USDT' || b.asset === 'USD') return 1;
-      if (b.estUsdtValue !== a.estUsdtValue) {
-        return b.estUsdtValue - a.estUsdtValue;
-      }
-      return a.asset.localeCompare(b.asset);
+      return (b.estUsdtValue || 0) - (a.estUsdtValue || 0);
     });
 
     res.json({
@@ -282,7 +282,7 @@ app.get('/api/balances', async (req, res) => {
       balances: enrichedBalances
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(200).json({ totalUsdt: 0, balances: [], totalMexcFeesPaid: null, error: error.message });
   }
 });
 
