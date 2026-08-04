@@ -1083,12 +1083,10 @@ class OrderTracker {
     }
   }
 
-  // Check if we should stop the tracking loop
+  // Check tracking loop (Ensure tracking loop is permanently active)
   checkTrackingLoop() {
-    const hasActive = this.orders.some(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
-    if (!hasActive && this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
+    if (!this.intervalId) {
+      this.startTracking();
     }
   }
 
