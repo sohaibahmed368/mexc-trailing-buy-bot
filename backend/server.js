@@ -741,9 +741,9 @@ app.get('/api/alpaca/assets', async (req, res) => {
 const backendPublicPath = path.join(__dirname, 'public');
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
 
-const staticPath = fs.existsSync(backendPublicPath)
+const staticPath = fs.existsSync(path.join(backendPublicPath, 'index.html'))
   ? backendPublicPath
-  : (fs.existsSync(frontendDistPath) ? frontendDistPath : null);
+  : (fs.existsSync(path.join(frontendDistPath, 'index.html')) ? frontendDistPath : null);
 
 if (staticPath) {
   app.use(express.static(staticPath));
@@ -752,6 +752,13 @@ if (staticPath) {
       return res.status(404).json({ error: `API route ${req.path} not found` });
     }
     res.sendFile(path.join(staticPath, 'index.html'));
+  });
+} else {
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ error: `API route ${req.path} not found` });
+    }
+    res.status(200).send('<!doctype html><html><body><h2>MEXC Bot Backend Active</h2></body></html>');
   });
 }
 
@@ -765,7 +772,16 @@ io.on('connection', (socket) => {
   });
 });
 
-// Start Server
+// Start Server with EADDRINUSE resilience
 server.listen(PORT, () => {
   tracker.log(`MEXC Trailing Buy Bot Server is running on port ${PORT}`, 'success');
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`🚨 PORT ${PORT} IN USE: Attempting fallback to port 3001...`);
+    server.listen(3001, () => {
+      tracker.log(`MEXC Trailing Buy Bot Server running on fallback port 3001`, 'success');
+    });
+  } else {
+    console.error('Server listen error:', err.message);
+  }
 });
