@@ -162,7 +162,9 @@ class OrderTracker {
 
   saveOrders() {
     fs.writeFileSync(this.ordersPath, JSON.stringify(this.orders, null, 2));
-    this.io.emit('orders_update', this.orders);
+    if (this.io && typeof this.io.emit === 'function') {
+      this.io.emit('orders_update', this.orders);
+    }
   }
 
   log(message, type = 'info', symbol = null) {
@@ -1133,8 +1135,8 @@ class OrderTracker {
     let changed = false;
 
     for (const order of activeOrders) {
-      const currentPrice = prices[order.symbol];
-      if (currentPrice === undefined) continue; // Skip if we failed to get the price this tick
+      const currentPrice = prices[order.symbol] !== undefined ? prices[order.symbol] : order.currentPrice;
+      if (currentPrice === undefined || currentPrice === null) continue;
 
       order.currentPrice = currentPrice;
       changed = true;
@@ -1235,23 +1237,25 @@ class OrderTracker {
             } catch (ghostErr) {}
           }
         }
-        // Profit Lock Guard: Check if price reached 50% progress to Take Profit
-        // Early Profit Lock Guard: Lock SL at Break-even +0.10% as soon as price reaches +0.25% gain
+        // 50% Take Profit Progress Lock Guard: Lock SL Floor when price reaches 50% of TP target
         if (order.executionPrice && !order.isSlProfitLocked) {
           const gainPct = ((currentPrice - order.executionPrice) / order.executionPrice) * 100;
-          if (gainPct >= 0.25 - 0.000001) {
+          const tpTargetPct = (order.takeProfit || 0.6);
+          const halfTpPct = tpTargetPct * 0.50; // 50% of Take Profit offset
+
+          if (gainPct >= halfTpPct - 0.000001) {
             order.isSlProfitLocked = true;
             order.justProfitLocked = true;
             
-            // Lock SL Floor at Break-even +0.10% Net Gain
-            const lockedSlPct = 0.10;
+            // Lock SL Floor at 50% TP Gain (or Break-even +0.15% Net Gain minimum)
+            const lockedSlPct = Math.max(0.15, halfTpPct * 0.70);
             const lockedSlDollar = (lockedSlPct / 100) * order.executionPrice;
             
             order.lockedSlPrice = order.executionPrice + lockedSlDollar;
-            const targetGainPrice = (order.executionPrice * 1.0025).toFixed(4);
+            const targetGainPrice = (order.executionPrice * (1 + halfTpPct / 100)).toFixed(4);
             const newSlTarget = order.lockedSlPrice.toFixed(4);
             this.log(
-              `🔒 [EARLY PROFIT LOCK GUARD] Price reached +${gainPct.toFixed(2)}% gain (${currentPrice.toFixed(4)} >= ${targetGainPrice} USDT)! Stop Loss floor locked at Buy Price +${lockedSlPct.toFixed(2)}% ($${newSlTarget} USDT). Risk-Free Profit Locked!`,
+              `🔒 [50% TP PROFIT LOCK GUARD] Price reached 50% TP progress (+${gainPct.toFixed(2)}% gain >= ${targetGainPrice} USDT)! Stop Loss floor locked at Buy Price +${lockedSlPct.toFixed(2)}% ($${newSlTarget} USDT). Risk-Free Profit Locked!`,
               'success',
               order.symbol
             );
