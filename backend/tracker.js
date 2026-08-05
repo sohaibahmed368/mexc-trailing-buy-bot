@@ -624,9 +624,9 @@ class OrderTracker {
     // Symbol Deduplication Guard: Strictly enforce AT MOST 1 CARD PER SYMBOL in this.orders!
     this.orders = this.orders.filter(o => o.symbol !== symbol);
 
-    trailValue = parseFloat(trailValue);
+    const parsedTrail = trailValue && trailValue.toString().trim() !== '' ? parseFloat(trailValue) : 0.15;
     
-    if (isNaN(trailValue) || trailValue <= 0) {
+    if (isNaN(parsedTrail) || parsedTrail <= 0) {
       throw new Error('Trail value must be a positive number.');
     }
 
@@ -689,18 +689,12 @@ class OrderTracker {
       status = existingActivePos.status;
     } else if (startInstantBuy) {
       status = 'TP_SL_ACTIVE';
-    } else if (autoRepeat && activationOffset) {
-      const offsetPct = parseFloat(activationOffset);
-      parsedActivationPrice = initialPrice * (1 - (offsetPct / 100));
+    } else if (filterObi !== false || (autoRepeat && activationOffset) || parsedActivationPrice !== null) {
       status = 'PENDING_ACTIVATION';
       activationDirection = 'DOWN';
-    } else if (parsedActivationPrice !== null) {
-      status = 'PENDING_ACTIVATION';
-      // Determine if starting price is above or below activation target
-      activationDirection = initialPrice > parsedActivationPrice ? 'DOWN' : 'UP';
     } else {
       bottomPrice = initialPrice;
-      const trailDollar = initialPrice * (trailValue / 100);
+      const trailDollar = initialPrice * (parsedTrail / 100);
       triggerPrice = initialPrice + trailDollar;
     }
 
