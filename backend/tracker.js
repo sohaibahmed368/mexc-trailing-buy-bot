@@ -112,9 +112,9 @@ class OrderTracker {
         // Sanitize & Purge old synthetic stress-test histories on server load
         if (Array.isArray(this.orders)) {
           this.orders.forEach(o => {
-            // Auto-migrate: Ensure filter40sVolume is set properly
-            if (o.filter40sVolume === undefined || o.filter40sVolume === null) {
-              o.filter40sVolume = true;
+            o.filterObi = true;
+            if (o.status === 'RUNNING' || o.status === 'PENDING_BUY' || o.status === 'PENDING_EXECUTION') {
+              o.status = 'PENDING_ACTIVATION';
             }
             if (Array.isArray(o.tradeHistory) && o.tradeHistory.length > 20) {
               o.tradeHistory = [];
@@ -1193,6 +1193,94 @@ class OrderTracker {
         continue;
       }
 
+      // 1.45 Execute Market Buy & Place Limit Sell TP when PENDING_BUY is triggered
+      if (order.status === 'PENDING_BUY') {
+        this.log(`🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ${order.symbol}...`, 'info', order.symbol);
+        
+        if (order.dryRun) {
+          order.executionPrice = currentPrice;
+          order.status = 'TP_SL_ACTIVE';
+          this.log(`[DRY RUN] Simulated Market Buy executed for ${order.symbol} at $${currentPrice.toFixed(4)} USDT. Transitioning to TP/SL monitoring.`, 'success', order.symbol);
+          changed = true;
+          continue;
+        }
+
+        try {
+          let result = null;
+          let buyQty = null;
+          const decimalsToTry = [10000, 100, 10, 1, 100000, 1000000];
+
+          if (order.quantity) {
+            for (const mult of decimalsToTry) {
+              const qtyToTry = Math.floor(order.quantity * mult) / mult;
+              if (qtyToTry <= 0) continue;
+              try {
+                result = await this.mexcClient.placeOrder({ symbol: order.symbol, side: 'BUY', type: 'MARKET', quantity: qtyToTry });
+                if (result && result.orderId) { buyQty = qtyToTry; break; }
+              } catch (err) {
+                if ((err.message || '').includes('quantity scale')) continue;
+                throw err;
+              }
+            }
+          } else if (order.quoteOrderQty) {
+            result = await this.mexcClient.placeOrder({ symbol: order.symbol, side: 'BUY', type: 'MARKET', quoteOrderQty: order.quoteOrderQty });
+          }
+
+          if (!result || !result.orderId) throw new Error('Failed to place MARKET buy order on MEXC.');
+
+          order.mexcOrderId = result.orderId;
+          let execPrice = currentPrice;
+          try {
+            const fills = await this.mexcClient.getOrder(order.symbol, result.orderId);
+            if (fills && parseFloat(fills.executedQty) > 0) {
+              const cumQuote = parseFloat(fills.cummulativeQuoteQty || 0);
+              const execQty  = parseFloat(fills.executedQty || 1);
+              if (cumQuote > 0) execPrice = cumQuote / execQty;
+            }
+          } catch(e) {}
+
+          order.executionPrice = execPrice;
+          this.log(`✅ [MARKET BUY FILLED] Order ${result.orderId} executed on MEXC at $${execPrice.toFixed(4)} USDT!`, 'success', order.symbol);
+
+          // Place Take Profit Limit Sell Order on MEXC immediately
+          const tpPct = (order.takeProfit || 0.6);
+          const tpPrice = execPrice * (1 + (tpPct / 100));
+          const grossQty = order.quantity || (order.quoteOrderQty / execPrice);
+          const sellQty = await this.getFeeAdjustedBalance(order.symbol, grossQty);
+          const safeQty = sellQty * 0.998;
+
+          for (const mult of decimalsToTry) {
+            const qtyToTry = Math.floor(safeQty * mult) / mult;
+            if (qtyToTry <= 0) continue;
+            try {
+              const tpResult = await this.mexcClient.placeOrder({
+                symbol: order.symbol,
+                side: 'SELL',
+                type: 'LIMIT',
+                quantity: qtyToTry,
+                price: tpPrice
+              });
+              if (tpResult && tpResult.orderId) {
+                order.mexcSellOrderId = tpResult.orderId;
+                this.log(`🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for ${qtyToTry} ${order.symbol} @ $${tpPrice.toFixed(4)} USDT (+${tpPct}% TP Target)! (MEXC Order ID: ${tpResult.orderId})`, 'success', order.symbol);
+                break;
+              }
+            } catch (tpErr) {
+              if ((tpErr.message || '').includes('quantity scale')) continue;
+              break;
+            }
+          }
+
+          order.status = 'TP_SL_ACTIVE';
+          changed = true;
+        } catch (buyErr) {
+          order.status = 'FAILED';
+          order.error = buyErr.message;
+          this.log(`❌ [MEXC BUY ERROR] Market Buy failed: ${buyErr.message}`, 'error', order.symbol);
+        }
+        continue;
+      }
+
       // 1.5 Check TP/SL OCO checks if already bought and holding
       if (order.status === 'TP_SL_ACTIVE') {
         const now = Date.now();
@@ -1598,6 +1686,7 @@ class OrderTracker {
               }
             }
             changed = true;
+            // Legacy trailing dip engine completely removed. Strategies execute strictly via Top 10 Exchanges OBI Dual-Lock Gate in PENDING_ACTIVATION!
             continue;
           }
         }
