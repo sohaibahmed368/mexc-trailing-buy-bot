@@ -646,21 +646,8 @@ class OrderTracker {
       throw new Error('Take Profit offset must be a positive number.');
     }
 
-    const parsedStopLoss = stopLoss && stopLoss.toString().trim() !== ''
-      ? parseFloat(stopLoss)
-      : null;
-
-    if (parsedStopLoss !== null && parsedStopLoss !== 0 && (isNaN(parsedStopLoss) || parsedStopLoss < 0)) {
-      throw new Error('Stop Loss offset must be a positive number.');
-    }
-
-    const parsedSlBuffer = slBuffer && slBuffer.toString().trim() !== ''
-      ? parseFloat(slBuffer)
-      : 2.0;
-
-    if (isNaN(parsedSlBuffer) || parsedSlBuffer <= 0) {
-      throw new Error('Smart SL Buffer must be a positive number.');
-    }
+    const parsedStopLoss = stopLoss && stopLoss.toString().trim() !== '' ? parseFloat(stopLoss) : null;
+    const parsedSlBuffer = slBuffer && slBuffer.toString().trim() !== '' ? parseFloat(slBuffer) : 0;
 
     // Check if MEXC client is initialized for real orders
     if (!dryRun && !this.mexcClient.hasCredentials()) {
