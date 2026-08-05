@@ -1175,6 +1175,25 @@ class OrderTracker {
         }
 
         if (shouldActivateDip) {
+          // Hard Downtrend Lock Check: Query 15m RSI to 100% block buying during market downtrends!
+          if (order.hardTrendLock !== false) {
+            try {
+              const rsi15m = await this.calculate15mRSI(order.symbol);
+              if (rsi15m < 48) {
+                const now = Date.now();
+                if (!order.lastDowntrendLockLogTime || (now - order.lastDowntrendLockLogTime > 10000)) {
+                  order.lastDowntrendLockLogTime = now;
+                  this.log(
+                    `🛑 [HARD DOWNTREND BUYING LOCKED] ${order.symbol}: 15m RSI = ${rsi15m.toFixed(1)} (< 48 Downtrend Zone). Buying 100% BLOCKED to protect capital! Waiting for Sideways/Uptrend reversal...`,
+                    'warning',
+                    order.symbol
+                  );
+                }
+                continue; // Block dip buying during downtrends
+              }
+            } catch (trendErr) {}
+          }
+
           order.status = 'RUNNING';
           order.activatedAt = new Date().toISOString();
           order.bottomPrice = currentPrice;
