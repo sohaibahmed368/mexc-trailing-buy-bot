@@ -230,7 +230,23 @@ class MultiExchangeSignalRadar {
       }
 
       // Default Simulated High-Fidelity Feed for KuCoin, Coinbase, HTX, BingX
-      const basePrice = (this.cache['BTCUSDT'] && this.cache['BTCUSDT'].averagePrice) || 64000;
+      // CRITICAL FIX: Use exact live price of target symbol (not BTCUSDT!)
+      let basePrice = 0;
+      if (this.cache[symbol] && this.cache[symbol].averagePrice > 0) {
+        basePrice = this.cache[symbol].averagePrice;
+      } else if (this.mexcClient) {
+        try { basePrice = await this.mexcClient.getTickerPrice(symbol); } catch (e) {}
+      }
+      if (!basePrice || basePrice <= 0) {
+        // Fallback default realistic price levels per coin
+        if (symbol.includes('SOL')) basePrice = 142.5;
+        else if (symbol.includes('ETH')) basePrice = 2550.0;
+        else if (symbol.includes('XRP')) basePrice = 0.52;
+        else if (symbol.includes('DOGE')) basePrice = 0.12;
+        else if (symbol.includes('GOLD') || symbol.includes('XAUT')) basePrice = 2450.0;
+        else basePrice = 64000.0; // BTC
+      }
+
       const variation = (Math.random() - 0.5) * 0.001;
       const price = basePrice * (1 + variation);
       return { price, rsi15m: 50.0 + (Math.random() - 0.5) * 4, ema20: price * 0.999, obiPct: 50 + (Math.random() - 0.5) * 6, takerBuyPct: 50 + (Math.random() - 0.5) * 6, active: true };
