@@ -1175,8 +1175,8 @@ class OrderTracker {
           continue;
         }
 
-        // Live Heartbeat Scan Log (Every 5 seconds)
-        if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime > 5000)) {
+        // Live 1-Second Heartbeat OBI Scan Log Stream
+        if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime >= 1000)) {
           order.lastHeartbeatLogTime = now;
           this.log(
             `⚡ [TOP 10 OBI SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 70.0%) | Min Exchange Floor: ${minExchangeObi.toFixed(1)}% (Req >= 55.0%). Scanning live orderbooks...`,
