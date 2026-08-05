@@ -1137,31 +1137,37 @@ class OrderTracker {
         let avgObi = 50.0;
         let minExchangeObi = 55.0;
 
-        if (order.filterObi !== false && this.signalRadar) {
+        if (order.filterObi !== false) {
           try {
-            let radarMetrics = this.signalRadar.getRadarMetrics(order.symbol);
-            if (!radarMetrics) {
-              // Fetch live metrics synchronously if cache is warming up
-              radarMetrics = await this.signalRadar.getMultiExchangeMetrics(order.symbol).catch(() => null);
-            }
+            let radarMetrics = this.signalRadar ? this.signalRadar.getRadarMetrics(order.symbol) : null;
 
-            if (radarMetrics) {
-              avgObi = radarMetrics.averageObiPct || 50.0;
+            if (radarMetrics && radarMetrics.averageObiPct !== undefined && radarMetrics.averageObiPct > 0) {
+              avgObi = radarMetrics.averageObiPct;
               const exchanges = radarMetrics.exchanges || [];
-              
-              // Condition A: Aggregated Top 10 Exchanges Average OBI >= 70.0%
-              const condA = avgObi >= 70.0;
-
-              // Condition B: Single Exchange OBI Floor >= 55.0% (No exchange is dumping < 55%)
               let condB = true;
               let lowestObiEx = 100.0;
               exchanges.forEach(ex => {
                 if (ex.active && ex.obiPct < lowestObiEx) lowestObiEx = ex.obiPct;
                 if (ex.active && ex.obiPct < 55.0) condB = false;
               });
-
               minExchangeObi = lowestObiEx;
-              obiGatePassed = condA && condB;
+              obiGatePassed = (avgObi >= 70.0) && condB;
+            } else {
+              // Direct Live Mexc Orderbook Depth Fallback
+              const depth = await this.mexcClient.getDepth(order.symbol, 100);
+              if (depth && Array.isArray(depth.bids) && Array.isArray(depth.asks)) {
+                let b = 0, a = 0;
+                const rangeLower = currentPrice * 0.985;
+                const rangeUpper = currentPrice * 1.015;
+                depth.bids.forEach(([p, q]) => { const pr = parseFloat(p); if (pr >= rangeLower && pr <= rangeUpper) b += pr * parseFloat(q); });
+                depth.asks.forEach(([p, q]) => { const pr = parseFloat(p); if (pr >= rangeLower && pr <= rangeUpper) a += pr * parseFloat(q); });
+                if (b + a > 0) {
+                  const mexcObi = (b / (b + a)) * 100;
+                  avgObi = parseFloat(mexcObi.toFixed(1));
+                  minExchangeObi = parseFloat((mexcObi * 0.92).toFixed(1));
+                  obiGatePassed = (avgObi >= 70.0) && (minExchangeObi >= 55.0);
+                }
+              }
             }
           } catch (e) {}
         }

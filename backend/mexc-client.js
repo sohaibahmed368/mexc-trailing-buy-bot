@@ -160,8 +160,11 @@ class MexcClient {
     return await this._request('GET', '/api/v3/trades', { symbol: symbol.toUpperCase(), limit }, false);
   }
 
-  async getKlines(symbol, interval, limit = 500) {
-    return await this._request('GET', '/api/v3/klines', { symbol: symbol.toUpperCase(), interval, limit }, false);
+  async getKlines(symbol, interval, limit = 500, startTime = null, endTime = null) {
+    const params = { symbol: symbol.toUpperCase(), interval, limit };
+    if (startTime) params.startTime = startTime;
+    if (endTime) params.endTime = endTime;
+    return await this._request('GET', '/api/v3/klines', params, false);
   }
 
   async testConnection() {
