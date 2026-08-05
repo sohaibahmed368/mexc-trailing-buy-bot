@@ -1153,23 +1153,11 @@ class OrderTracker {
               minExchangeObi = lowestObiEx;
               obiGatePassed = (avgObi >= 70.0) && condB;
             } else {
-              // Direct Live Mexc Orderbook Depth Fallback
-              const depth = await this.mexcClient.getDepth(order.symbol, 100);
-              if (depth && Array.isArray(depth.bids) && Array.isArray(depth.asks)) {
-                let b = 0, a = 0;
-                const rangeLower = currentPrice * 0.985;
-                const rangeUpper = currentPrice * 1.015;
-                depth.bids.forEach(([p, q]) => { const pr = parseFloat(p); if (pr >= rangeLower && pr <= rangeUpper) b += pr * parseFloat(q); });
-                depth.asks.forEach(([p, q]) => { const pr = parseFloat(p); if (pr >= rangeLower && pr <= rangeUpper) a += pr * parseFloat(q); });
-                if (b + a > 0) {
-                  const mexcObi = (b / (b + a)) * 100;
-                  avgObi = parseFloat(mexcObi.toFixed(1));
-                  minExchangeObi = parseFloat((mexcObi * 0.92).toFixed(1));
-                  obiGatePassed = (avgObi >= 70.0) && (minExchangeObi >= 55.0);
-                }
-              }
+              obiGatePassed = false;
             }
-          } catch (e) {}
+          } catch (e) {
+            obiGatePassed = false;
+          }
         }
 
         if (obiGatePassed) {

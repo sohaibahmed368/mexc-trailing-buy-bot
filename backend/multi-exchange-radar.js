@@ -360,9 +360,9 @@ class MultiExchangeSignalRadar {
         exchanges: exchangeData,
         lastUpdated: new Date().toISOString()
       };
+      this.cache[sym] = newCache[sym];
     }
 
-    this.cache = newCache;
     this.lastUpdated = new Date().toISOString();
   }
 
