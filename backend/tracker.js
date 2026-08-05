@@ -1080,7 +1080,7 @@ class OrderTracker {
     if (this.isTicking) return;
     this.isTicking = true;
     try {
-      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'TP_SL_ACTIVE');
+      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'PENDING_BUY' || o.status === 'PENDING_EXECUTION' || o.status === 'TP_SL_ACTIVE');
       if (activeOrders.length === 0) {
         const now = Date.now();
         if (!this.lastStandbyHeartbeat || (now - this.lastStandbyHeartbeat > 30000)) {
@@ -1133,13 +1133,18 @@ class OrderTracker {
       // 1.4 Check Top 10 Exchanges OBI Dual-Lock Gate if waiting
       if (order.status === 'PENDING_ACTIVATION') {
         const now = Date.now();
-        let obiGatePassed = true;
+        let obiGatePassed = false;
         let avgObi = 50.0;
         let minExchangeObi = 55.0;
 
         if (order.filterObi !== false && this.signalRadar) {
           try {
-            const radarMetrics = this.signalRadar.getRadarMetrics(order.symbol);
+            let radarMetrics = this.signalRadar.getRadarMetrics(order.symbol);
+            if (!radarMetrics) {
+              // Fetch live metrics synchronously if cache is warming up
+              radarMetrics = await this.signalRadar.getMultiExchangeMetrics(order.symbol).catch(() => null);
+            }
+
             if (radarMetrics) {
               avgObi = radarMetrics.averageObiPct || 50.0;
               const exchanges = radarMetrics.exchanges || [];
@@ -1165,7 +1170,7 @@ class OrderTracker {
           order.status = 'PENDING_EXECUTION';
           order.activatedAt = new Date().toISOString();
           this.log(
-            `🎯 [TOP 10 OBI DUAL-LOCK ENTRY TRIGGERED] ${order.symbol}: Top 10 Aggregated OBI = ${avgObi.toFixed(1)}% (>= 70.0%) & Single Exchange Floor = ${minExchangeObi.toFixed(1)}% (>= 55.0%)! Executing Immediate Market Buy...`,
+            `🎯 [TOP 10 OBI DUAL-LOCK ENTRY CONFIRMED] ${order.symbol}: Top 10 Aggregated OBI = ${avgObi.toFixed(1)}% (>= 70.0%) & Single Exchange Floor = ${minExchangeObi.toFixed(1)}% (>= 55.0%)! Executing Immediate Market Buy...`,
             'success',
             order.symbol
           );
