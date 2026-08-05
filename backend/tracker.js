@@ -1327,45 +1327,6 @@ class OrderTracker {
           targetSlPrice -= bufferDollar;
         }
 
-        // 45-Minute Stale Trade Break-even Exit Guard & 15m RSI Bearish Rescue
-        if (order.executionPrice && (now - (order.buyTime || 0) >= 45 * 60 * 1000 || !order.lastRsiRescueCheck || now - order.lastRsiRescueCheck > 10000)) {
-          order.lastRsiRescueCheck = now;
-          try {
-            const rsi15mNow = await this.calculate15mRSI(order.symbol);
-            const gainPct = ((currentPrice - order.executionPrice) / order.executionPrice) * 100;
-
-            // A) 15m RSI Bearish Rescue Guard: Exit immediately in profit/break-even if 15m RSI drops < 38
-            if (gainPct >= 0 && rsi15mNow < 38) {
-              this.log(
-                `🛡️ [15M RSI BEARISH PROFIT RESCUE] ${order.symbol}: 15m RSI dropped to ${rsi15mNow.toFixed(1)} (< 38 Bearish Zone) while in gain (+${gainPct.toFixed(2)}%)! Executing IMMEDIATE MARKET SELL to rescue profit before crash!`,
-                'warning',
-                order.symbol
-              );
-              order.status = 'TRIGGERED';
-              order.sellExecutionPrice = currentPrice;
-              order.sellTriggeredAt = new Date().toISOString();
-              changed = true;
-              await this.handleOrderCycleComplete(order);
-              continue;
-            }
-
-            // B) 45-Minute Stale Trade Break-even Exit Guard
-            if (now - (order.buyTime || 0) >= 45 * 60 * 1000 && rsi15mNow < 45) {
-              this.log(
-                `⏳ [45-MIN STALE TRADE EXIT] ${order.symbol} held 45m without TP & 15m RSI is ${rsi15mNow.toFixed(1)} (< 45 Stagnant). Executing Market Exit at $${currentPrice.toFixed(4)} USDT to free capital!`,
-                'warning',
-                order.symbol
-              );
-              order.status = 'TRIGGERED';
-              order.sellExecutionPrice = currentPrice;
-              order.sellTriggeredAt = new Date().toISOString();
-              changed = true;
-              await this.handleOrderCycleComplete(order);
-              continue;
-            }
-          } catch (staleErr) {}
-        }
-
         // Check if Stop Loss target is hit (Bypassed if 15m Trend Guard set NO_SL!)
         if (order.justProfitLocked) {
           delete order.justProfitLocked;
