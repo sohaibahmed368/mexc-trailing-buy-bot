@@ -650,7 +650,7 @@ class OrderTracker {
       ? parseFloat(stopLoss)
       : null;
 
-    if (parsedStopLoss !== null && (isNaN(parsedStopLoss) || parsedStopLoss <= 0)) {
+    if (parsedStopLoss !== null && parsedStopLoss !== 0 && (isNaN(parsedStopLoss) || parsedStopLoss < 0)) {
       throw new Error('Stop Loss offset must be a positive number.');
     }
 
