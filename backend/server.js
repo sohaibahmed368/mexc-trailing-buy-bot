@@ -737,6 +737,11 @@ app.get('/api/alpaca/assets', async (req, res) => {
   }
 });
 
+// Standalone Multi-Exchange Signal Radar (Top 10 Exchanges: 20 EMA, 15m RSI, OBI Liquidity, Taker Flow)
+app.get('/api/radar', (req, res) => {
+  res.json(signalRadar.getRadarMetrics(req.query.symbol));
+});
+
 // Serve frontend build in production (prioritize committed backend/public, fallback to frontend/dist)
 const backendPublicPath = path.join(__dirname, 'public');
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
