@@ -1175,11 +1175,11 @@ class OrderTracker {
           continue;
         }
 
-        // Live Heartbeat Tick Log (Every 3 seconds)
-        if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime > 3000)) {
+        // Live Heartbeat Scan Log (Every 5 seconds)
+        if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime > 5000)) {
           order.lastHeartbeatLogTime = now;
           this.log(
-            `⚡ [LIVE LIQUIDITY SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 70%) | Min Exchange Floor: ${minExchangeObi.toFixed(1)}% (Req >= 55%). Waiting for Dual-Lock Liquidity Gate...`,
+            `⚡ [TOP 10 OBI SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 70.0%) | Min Exchange Floor: ${minExchangeObi.toFixed(1)}% (Req >= 55.0%). Scanning live orderbooks...`,
             'info',
             order.symbol
           );
@@ -1283,18 +1283,7 @@ class OrderTracker {
               continue;
             }
           }
-        } else {
-          // Live Position Heartbeat Tick Log (Every 3 seconds) so user sees active position progress
-          if (!order.lastPosHeartbeatLogTime || (now - order.lastPosHeartbeatLogTime > 3000)) {
-            order.lastPosHeartbeatLogTime = now;
-            const modeLabel = order.adaptiveSlMode === 'NO_SL' ? '🛡️ NO_SL Mode (Hold for TP)' : `⚠️ SL Active ($${(order.activeSlPrice || 0).toFixed(4)})`;
-            const tpTarget = (order.executionPrice || currentPrice) * (1 + ((order.takeProfit || 0.6) / 100));
-            this.log(
-              `⚡ [LIVE POSITION TICK] ${order.symbol}: Entry $${(order.executionPrice || currentPrice).toFixed(4)} | Live $${currentPrice.toFixed(4)} USDT | TP Target: $${tpTarget.toFixed(4)} USDT | Mode: ${modeLabel}`,
-              'info',
-              order.symbol
-            );
-          }
+          // Limit Sell order active on MEXC (or Dry Run mode) — UI Card handles live price display automatically.
 
           order.lastStatusCheckTime = now;
           if (order.mexcSellOrderId) {
