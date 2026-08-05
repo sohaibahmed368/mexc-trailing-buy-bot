@@ -1149,60 +1149,62 @@ class OrderTracker {
       order.currentPrice = currentPrice;
       changed = true;
 
-      // 1.4 Check activation price if waiting
+      // 1.4 Check Top 10 Exchanges OBI Dual-Lock Gate if waiting
       if (order.status === 'PENDING_ACTIVATION') {
-        // Dynamic Peak Tracking: if autoRepeat is active and price goes up, trail the peak and activationPrice
-        if (order.autoRepeat && order.activationOffset) {
-          if (!order.peakPrice || currentPrice > order.peakPrice) {
-            order.peakPrice = currentPrice;
-            order.activationPrice = order.peakPrice * (1 - (order.activationOffset / 100));
-            changed = true;
-          }
+        const now = Date.now();
+        let obiGatePassed = true;
+        let avgObi = 50.0;
+        let minExchangeObi = 55.0;
+
+        if (order.filterObi !== false && this.signalRadar) {
+          try {
+            const radarMetrics = this.signalRadar.getRadarMetrics(order.symbol);
+            if (radarMetrics) {
+              avgObi = radarMetrics.averageObiPct || 50.0;
+              const exchanges = radarMetrics.exchanges || [];
+              
+              // Condition A: Aggregated Top 10 Exchanges Average OBI >= 70.0%
+              const condA = avgObi >= 70.0;
+
+              // Condition B: Single Exchange OBI Floor >= 55.0% (No exchange is dumping < 55%)
+              let condB = true;
+              let lowestObiEx = 100.0;
+              exchanges.forEach(ex => {
+                if (ex.active && ex.obiPct < lowestObiEx) lowestObiEx = ex.obiPct;
+                if (ex.active && ex.obiPct < 55.0) condB = false;
+              });
+
+              minExchangeObi = lowestObiEx;
+              obiGatePassed = condA && condB;
+            }
+          } catch (e) {}
         }
 
-        // Check Standard Dip Activation -> Trails buy
-        let shouldActivateDip = false;
-        let activationReason = '';
-
-        const isDownDirection = order.activationDirection === 'DOWN' || !order.activationDirection || (order.autoRepeat && order.activationOffset);
-
-        if (isDownDirection && currentPrice <= order.activationPrice) {
-          shouldActivateDip = true;
-          activationReason = `price ${currentPrice} hit dip activation target ${order.activationPrice.toFixed(4)}`;
-        } else if (order.activationDirection === 'UP' && currentPrice >= order.activationPrice) {
-          shouldActivateDip = true;
-          activationReason = `price ${currentPrice} hit target ${order.activationPrice.toFixed(4)}`;
-        }
-
-        if (shouldActivateDip) {
-          order.status = 'RUNNING';
+        if (obiGatePassed) {
+          order.status = 'PENDING_EXECUTION';
           order.activatedAt = new Date().toISOString();
-          order.bottomPrice = currentPrice;
-          const trailDollar = currentPrice * (order.trailValue / 100);
-          order.triggerPrice = currentPrice + trailDollar;
           this.log(
-            `Trailing stop buy activated via Dip: ${activationReason}. (Trigger target: >= ${order.triggerPrice.toFixed(4)}).`,
+            `🎯 [TOP 10 OBI DUAL-LOCK ENTRY TRIGGERED] ${order.symbol}: Top 10 Aggregated OBI = ${avgObi.toFixed(1)}% (>= 70.0%) & Single Exchange Floor = ${minExchangeObi.toFixed(1)}% (>= 55.0%)! Executing Immediate Market Buy...`,
             'success',
             order.symbol
           );
           changed = true;
+          // Immediate Market Buy trigger!
+          order.status = 'PENDING_BUY';
           continue;
         }
 
-        // Live Heartbeat Tick Log (Every 3 seconds) so user sees live tracking progress in Logs Console
-        const now = Date.now();
+        // Live Heartbeat Tick Log (Every 3 seconds)
         if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime > 3000)) {
           order.lastHeartbeatLogTime = now;
-          const dipOffset = order.activationOffset || 0.6;
-          const targetPriceStr = order.activationPrice ? order.activationPrice.toFixed(4) : '-';
           this.log(
-            `⚡ [LIVE TICK] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Dip Activation Target: $${targetPriceStr} USDT (-${dipOffset}%). Price monitoring active...`,
+            `⚡ [LIVE LIQUIDITY SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 70%) | Min Exchange Floor: ${minExchangeObi.toFixed(1)}% (Req >= 55%). Waiting for Dual-Lock Liquidity Gate...`,
             'info',
             order.symbol
           );
         }
 
-        continue; // Wait for next tick to monitor trailing stop
+        continue;
       }
 
       // 1.5 Check TP/SL OCO checks if already bought and holding
