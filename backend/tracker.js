@@ -687,11 +687,11 @@ class OrderTracker {
     if (existingActivePos) {
       // Preserve active trade status & tracking properties if position is currently active
       status = existingActivePos.status;
-    } else if (startInstantBuy) {
-      status = 'TP_SL_ACTIVE';
     } else if (filterObi !== false || (autoRepeat && activationOffset) || parsedActivationPrice !== null) {
       status = 'PENDING_ACTIVATION';
       activationDirection = 'DOWN';
+    } else if (startInstantBuy) {
+      status = 'TP_SL_ACTIVE';
     } else {
       bottomPrice = initialPrice;
       const trailDollar = initialPrice * (parsedTrail / 100);
