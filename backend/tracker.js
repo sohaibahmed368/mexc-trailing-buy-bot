@@ -7,9 +7,11 @@ class OrderTracker {
     this.io = io;
     this.ordersPath = path.join(__dirname, 'data', 'orders.json');
     this.logsPath = path.join(__dirname, 'data', 'logs.json');
+    this.auditLogPath = path.join(__dirname, 'data', 'scanner_audit.log');
     
     this.orders = [];
     this.logs = [];
+    this.logsSaveTimeout = null;
     this.intervalId = null;
     this.pollInterval = 1800; // 1.8 seconds interval (within 1.5s - 2.0s user range)
     this.cachedFeeSummary = null;
@@ -181,11 +183,16 @@ class OrderTracker {
     };
     
     this.logs.unshift(logEntry); // Add to beginning of logs
-    if (this.logs.length > 500) {
-      this.logs = this.logs.slice(0, 500); // limit to 500 logs
+    if (this.logs.length > 1000) {
+      this.logs = this.logs.slice(0, 1000); // limit RAM buffer to 1000 logs
     }
     
-    fs.writeFileSync(this.logsPath, JSON.stringify(this.logs, null, 2));
+    // Optimized debounced disk saver (saves at most once every 3 seconds to avoid disk CPU/IO bottleneck)
+    this.scheduleLogsSave();
+    
+    // Ultra-optimized auto-rotating log file (capped at 5MB max file size to prevent VPS storage overload)
+    this.appendAuditLog(logEntry);
+
     if (this.io && typeof this.io.emit === 'function') {
       this.io.emit('log_entry', logEntry);
     }
@@ -193,6 +200,34 @@ class OrderTracker {
     // Output all logs directly to stdout so PM2 logs and VPS terminal reflect live bot activity in real-time
     const timeStr = new Date().toLocaleTimeString();
     console.log(`[${timeStr}] [BOT ${type.toUpperCase()}]${symbol ? ` [${symbol}]` : ''} ${message}`);
+  }
+
+  // Debounced asynchronous disk saver to protect CPU & disk I/O performance
+  scheduleLogsSave() {
+    if (this.logsSaveTimeout) return;
+    this.logsSaveTimeout = setTimeout(() => {
+      this.logsSaveTimeout = null;
+      try {
+        fs.writeFileSync(this.logsPath, JSON.stringify(this.logs, null, 2));
+      } catch (e) {}
+    }, 3000);
+  }
+
+  // Auto-rotating NDJSON audit logger hard-capped at 5 MB max per file to guarantee zero VPS disk overflow
+  appendAuditLog(logEntry) {
+    try {
+      if (fs.existsSync(this.auditLogPath)) {
+        const stats = fs.statSync(this.auditLogPath);
+        if (stats.size > 5 * 1024 * 1024) { // > 5 MB
+          const oldPath = path.join(__dirname, 'data', 'scanner_audit.old.log');
+          if (fs.existsSync(oldPath)) {
+            try { fs.unlinkSync(oldPath); } catch (e) {}
+          }
+          fs.renameSync(this.auditLogPath, oldPath);
+        }
+      }
+      fs.appendFileSync(this.auditLogPath, JSON.stringify(logEntry) + '\n');
+    } catch (e) {}
   }
 
   getOrders() {
