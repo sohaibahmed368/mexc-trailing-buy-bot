@@ -18,6 +18,10 @@ class OrderTracker {
     this.initStorage();
   }
 
+  setSignalRadar(radar) {
+    this.signalRadar = radar;
+  }
+
   async getTotalMexcFeesPaid(forceRefresh = false) {
     const now = Date.now();
     if (!forceRefresh && this.cachedFeeSummary && (now - this.lastFeeCheckTime < 10000)) {
@@ -1142,6 +1146,9 @@ class OrderTracker {
         if (order.filterObi !== false) {
           try {
             let radarMetrics = this.signalRadar ? this.signalRadar.getRadarMetrics(order.symbol) : null;
+            if (!radarMetrics && this.signalRadar) {
+              radarMetrics = await this.signalRadar.getMultiExchangeMetrics(order.symbol).catch(() => null);
+            }
 
             if (radarMetrics && radarMetrics.averageObiPct !== undefined && radarMetrics.averageObiPct > 0) {
               avgObi = radarMetrics.averageObiPct;

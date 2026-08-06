@@ -45,6 +45,7 @@ const alpacaStockTracker = new AlpacaStockOrderTracker(alpacaClient, io);
 const smartGridTracker = new SmartGridTracker(mexcClient);
 smartGridTracker.io = io;
 const signalRadar = new MultiExchangeSignalRadar(mexcClient);
+tracker.setSignalRadar(signalRadar);
 
 app.use('/api/grid-bots', createGridRouter(smartGridTracker));
 

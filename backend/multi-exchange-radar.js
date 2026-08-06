@@ -366,10 +366,91 @@ class MultiExchangeSignalRadar {
     this.lastUpdated = new Date().toISOString();
   }
 
+  async getMultiExchangeMetrics(symbol) {
+    if (!symbol) return null;
+    const sym = symbol.toUpperCase();
+    if (!this.symbols.includes(sym)) {
+      this.symbols.push(sym);
+    }
+    const exchangePromises = this.supportedExchanges.map(ex => this.fetchExchangeMetrics(ex, sym));
+    const exchangeResults = await Promise.all(exchangePromises);
+
+    const exchangeData = [];
+    let sumPrice = 0, countPrice = 0;
+    let sumRsi = 0, countRsi = 0;
+    let sumEma = 0, countEma = 0;
+    let sumObi = 0, countObi = 0;
+    let sumTaker = 0, countTaker = 0;
+
+    this.supportedExchanges.forEach((ex, idx) => {
+      const res = exchangeResults[idx];
+      exchangeData.push({
+        exchangeId: ex.id,
+        name: ex.name,
+        icon: ex.icon,
+        rank: ex.rank,
+        price: res.price,
+        rsi15m: res.rsi15m,
+        ema20: res.ema20,
+        obiPct: res.obiPct,
+        takerBuyPct: res.takerBuyPct,
+        active: res.active
+      });
+
+      if (res.price > 0) { sumPrice += res.price; countPrice++; }
+      if (res.rsi15m > 0) { sumRsi += res.rsi15m; countRsi++; }
+      if (res.ema20 > 0) { sumEma += res.ema20; countEma++; }
+      if (res.obiPct > 0) { sumObi += res.obiPct; countObi++; }
+      if (res.takerBuyPct > 0) { sumTaker += res.takerBuyPct; countTaker++; }
+    });
+
+    const avgPrice = countPrice > 0 ? (sumPrice / countPrice) : 0;
+    const avgRsi15m = countRsi > 0 ? (sumRsi / countRsi) : 50.0;
+    const avgEma20 = countEma > 0 ? (sumEma / countEma) : avgPrice;
+    const avgObiPct = countObi > 0 ? (sumObi / countObi) : 50.0;
+    const avgTakerBuyPct = countTaker > 0 ? (sumTaker / countTaker) : 50.0;
+
+    let trendStatus = 'NEUTRAL / CONSOLIDATION';
+    let trendBadge = '🛡️ SIDEWAYS CONSOLIDATION';
+    let trendColor = '#f59e0b';
+
+    if (avgRsi15m >= 55.0 && avgPrice >= avgEma20 && avgObiPct >= 52.0) {
+      trendStatus = 'BULLISH UPTREND';
+      trendBadge = '🟢 STRONG BULLISH TREND';
+      trendColor = '#10b981';
+    } else if (avgRsi15m < 45.0 || avgPrice < avgEma20 * 0.998) {
+      trendStatus = 'BEARISH DOWNTREND';
+      trendBadge = '🔴 BEARISH DOWNTREND (BUYING BLOCKED)';
+      trendColor = '#ef4444';
+    }
+
+    const metricsObj = {
+      symbol: sym,
+      averagePrice: parseFloat(avgPrice.toFixed(4)),
+      averageEma20: parseFloat(avgEma20.toFixed(4)),
+      averageRsi15m: parseFloat(avgRsi15m.toFixed(2)),
+      averageObiPct: parseFloat(avgObiPct.toFixed(2)),
+      averageTakerBuyPct: parseFloat(avgTakerBuyPct.toFixed(2)),
+      trendStatus,
+      trendBadge,
+      trendColor,
+      exchangesCount: countPrice,
+      exchanges: exchangeData,
+      lastUpdated: new Date().toISOString()
+    };
+
+    this.cache[sym] = metricsObj;
+    return metricsObj;
+  }
+
   // Public API endpoint method
   getRadarMetrics(symbol = null) {
     if (symbol) {
-      return this.cache[symbol.toUpperCase()] || null;
+      const sym = symbol.toUpperCase();
+      if (!this.symbols.includes(sym)) {
+        this.symbols.push(sym);
+      }
+      return this.cache[sym] || null;
     }
     return {
       lastUpdated: this.lastUpdated,
