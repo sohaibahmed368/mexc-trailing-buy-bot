@@ -1153,7 +1153,6 @@ class OrderTracker {
             if (radarMetrics && radarMetrics.averageObiPct !== undefined && radarMetrics.averageObiPct > 0) {
               avgObi = radarMetrics.averageObiPct;
               const exchanges = radarMetrics.exchanges || [];
-              let condB = true;
               let lowestObiEx = 100.0;
               const exDetailsArr = [];
 
@@ -1161,13 +1160,12 @@ class OrderTracker {
                 const exName = ex.name || ex.exchangeId;
                 const obiVal = ex.obiPct !== undefined ? ex.obiPct.toFixed(1) : '50.0';
                 exDetailsArr.push(`${exName}: ${obiVal}%`);
-
                 if (ex.active && ex.obiPct < lowestObiEx) lowestObiEx = ex.obiPct;
-                if (ex.active && ex.obiPct < 55.0) condB = false;
               });
 
               minExchangeObi = lowestObiEx;
-              obiGatePassed = (avgObi >= 70.0) && condB;
+              // Pure Top 10 Aggregated Avg OBI >= 55.0% Gate (No min floor restriction)
+              obiGatePassed = (avgObi >= 55.0);
               if (exDetailsArr.length > 0) {
                 exchangeDetailsStr = ` | Exchanges Breakdown: [${exDetailsArr.join(', ')}]`;
               }
@@ -1183,7 +1181,7 @@ class OrderTracker {
           order.status = 'PENDING_EXECUTION';
           order.activatedAt = new Date().toISOString();
           this.log(
-            `🎯 [TOP 10 OBI DUAL-LOCK ENTRY CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= 70.0%) & Min Exchange Floor = ${minExchangeObi.toFixed(1)}% (>= 55.0%)!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
+            `🎯 [TOP 10 OBI ENTRY CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= 55.0%)!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
             'success',
             order.symbol
           );
@@ -1197,7 +1195,7 @@ class OrderTracker {
         if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime >= 1000)) {
           order.lastHeartbeatLogTime = now;
           this.log(
-            `⚡ [TOP 10 OBI SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 70.0%) | Min Floor: ${minExchangeObi.toFixed(1)}% (Req >= 55.0%)${exchangeDetailsStr}. Scanning live orderbooks...`,
+            `⚡ [TOP 10 OBI SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 55.0%)${exchangeDetailsStr}. Scanning live orderbooks...`,
             'info',
             order.symbol
           );
