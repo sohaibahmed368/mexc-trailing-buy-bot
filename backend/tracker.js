@@ -213,17 +213,20 @@ class OrderTracker {
     }, 3000);
   }
 
-  // Auto-rotating NDJSON audit logger hard-capped at 5 MB max per file to guarantee zero VPS disk overflow
+  // FIFO Rolling Truncation Audit Logger: Hard-capped at 5 MB max per file.
+  // When 5 MB is reached, drops oldest 30% lines from top and appends newest at bottom!
   appendAuditLog(logEntry) {
     try {
       if (fs.existsSync(this.auditLogPath)) {
         const stats = fs.statSync(this.auditLogPath);
         if (stats.size > 5 * 1024 * 1024) { // > 5 MB
-          const oldPath = path.join(__dirname, 'data', 'scanner_audit.old.log');
-          if (fs.existsSync(oldPath)) {
-            try { fs.unlinkSync(oldPath); } catch (e) {}
+          const content = fs.readFileSync(this.auditLogPath, 'utf8');
+          const lines = content.split('\n').filter(l => l.trim().length > 0);
+          if (lines.length > 2000) {
+            // Drop top 30% oldest lines, keep newest 70% lines
+            const trimmedLines = lines.slice(Math.floor(lines.length * 0.3));
+            fs.writeFileSync(this.auditLogPath, trimmedLines.join('\n') + '\n');
           }
-          fs.renameSync(this.auditLogPath, oldPath);
         }
       }
       fs.appendFileSync(this.auditLogPath, JSON.stringify(logEntry) + '\n');
