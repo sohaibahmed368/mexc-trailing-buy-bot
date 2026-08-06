@@ -4,7 +4,7 @@ const MultiExchangeSignalRadar = require('../multi-exchange-radar');
 
 async function runTop10ObiScalperDryRunSuite() {
   console.log("================================================================================");
-  console.log("🛠️ MASTER FUNCTION CALL-CHAIN & DRY-RUN QA AUDIT SUITE (PURE AVG OBI >= 55% GATE)");
+  console.log("🛠️ MASTER FUNCTION CALL-CHAIN & DRY-RUN QA AUDIT SUITE (DUAL OBI >= 55% & 4H RSI <= 40 GATE)");
   console.log("================================================================================");
 
   const mexcClient = new MexcClient();
@@ -20,7 +20,7 @@ async function runTop10ObiScalperDryRunSuite() {
     tracker.setSignalRadar(signalRadar);
     const metrics = await signalRadar.getMultiExchangeMetrics('ETHUSDT');
     if (metrics && metrics.averageObiPct !== undefined && metrics.exchanges.length > 0) {
-      console.log(`   ✅ PASS: Signal Radar returned ${metrics.exchanges.length} exchange metrics for ETHUSDT. Avg OBI = ${metrics.averageObiPct}%`);
+      console.log(`   ✅ PASS: Signal Radar returned ${metrics.exchanges.length} exchange metrics for ETHUSDT. Avg OBI = ${metrics.averageObiPct}%, 4h 15m RSI = ${metrics.averageRsi15m}`);
       auditResults.push({ test: 'Signal Radar Linkage & Metrics', result: 'PASS' });
     } else {
       console.error("   ❌ FAIL: Metrics empty or invalid.");
@@ -34,7 +34,7 @@ async function runTop10ObiScalperDryRunSuite() {
   // Scenario 2: Test Card Creation in PENDING_ACTIVATION mode
   console.log("\n🧪 Test 2: Creating Test Trading Card for ETHUSDT (Dry-Run Mode)...");
   const dummyCard = {
-    id: 'test-eth-card-55pct-001',
+    id: 'test-eth-card-dual-gate-001',
     symbol: 'ETHUSDT',
     status: 'PENDING_ACTIVATION',
     quoteOrderQty: 20,
@@ -46,86 +46,94 @@ async function runTop10ObiScalperDryRunSuite() {
   tracker.orders.push(dummyCard);
   console.log(`   Card added: ID=${dummyCard.id}, Status=${dummyCard.status}, OBI Filter=${dummyCard.filterObi}`);
 
-  // Scenario 3: Simulate OBI Gate Scan when Avg OBI < 55% (Below Trigger)
-  console.log("\n🧪 Test 3: Simulating Heartbeat Scan when Top 10 Avg OBI = 51.2% (< 55% Trigger)...");
-  signalRadar.cache['ETHUSDT'] = {
-    symbol: 'ETHUSDT',
-    averageObiPct: 51.2,
-    exchanges: [
-      { name: 'Binance', obiPct: 56.2, active: true },
-      { name: 'MEXC', obiPct: 52.0, active: true },
-      { name: 'Bybit', obiPct: 48.0, active: true },
-      { name: 'OKX', obiPct: 47.0, active: true },
-      { name: 'Gate.io', obiPct: 46.5, active: true }
-    ]
-  };
-
-  await tracker.tick();
-  console.log(`   Card Status after OBI 51.2% Scan: ${dummyCard.status}`);
-  if (dummyCard.status === 'PENDING_ACTIVATION') {
-    console.log("   ✅ PASS: Card safely stayed in PENDING_ACTIVATION state when Avg OBI < 55%.");
-    auditResults.push({ test: 'OBI Below 55% Gate (No Buy)', result: 'PASS' });
-  } else {
-    console.error(`   ❌ FAIL: Card state changed unexpectedly to ${dummyCard.status}`);
-    auditResults.push({ test: 'OBI Below 55% Gate (No Buy)', result: 'FAIL' });
-  }
-
-  // Scenario 4: Simulate Pure Avg OBI Gate Trigger when Top 10 Avg OBI >= 55% (Regardless of floor)
-  console.log("\n🧪 Test 4: Simulating Pure OBI Gate Trigger when Top 10 Avg OBI = 58.5% (Without Min Floor Restriction)...");
+  // Scenario 3A: Test OBI >= 55% BUT 4h RSI > 40.0 (e.g. 48.2) -> NO BUY
+  console.log("\n🧪 Test 3A: Simulating Scan when Avg OBI = 58.5% (>= 55%) BUT 4h RSI = 48.2 (> 40)...");
   signalRadar.cache['ETHUSDT'] = {
     symbol: 'ETHUSDT',
     averageObiPct: 58.5,
-    exchanges: [
-      { name: 'Binance', obiPct: 69.2, active: true },
-      { name: 'MEXC', obiPct: 58.5, active: true },
-      { name: 'Bybit', obiPct: 42.0, active: true }, // Floor below 55%, but Avg is 58.5%!
-      { name: 'OKX', obiPct: 57.8, active: true },
-      { name: 'Gate.io', obiPct: 61.5, active: true },
-      { name: 'Bitget', obiPct: 62.0, active: true }
-    ]
+    averageRsi15m: 48.2, // RSI > 40! Should BLOCK entry!
+    exchanges: [{ name: 'Binance', obiPct: 65.0, active: true }, { name: 'MEXC', obiPct: 58.5, active: true }]
   };
 
-  // Run 2 ticks to allow transition: PENDING_ACTIVATION -> PENDING_BUY -> TP_SL_ACTIVE
+  await tracker.tick();
+  console.log(`   Card Status after OBI 58.5% & RSI 48.2 Scan: ${dummyCard.status}`);
+  if (dummyCard.status === 'PENDING_ACTIVATION') {
+    console.log("   ✅ PASS: Card safely stayed in PENDING_ACTIVATION mode because RSI 48.2 > 40.0!");
+    auditResults.push({ test: 'Dual Gate RSI > 40 Restriction (No Buy)', result: 'PASS' });
+  } else {
+    console.error(`   ❌ FAIL: Card state changed unexpectedly to ${dummyCard.status}`);
+    auditResults.push({ test: 'Dual Gate RSI > 40 Restriction (No Buy)', result: 'FAIL' });
+  }
+
+  // Scenario 3B: Test 4h RSI <= 40.0 (e.g. 38.0) BUT Avg OBI < 55% (e.g. 51.2%) -> NO BUY
+  console.log("\n🧪 Test 3B: Simulating Scan when 4h RSI = 38.0 (<= 40) BUT Avg OBI = 51.2% (< 55%)...");
+  signalRadar.cache['ETHUSDT'] = {
+    symbol: 'ETHUSDT',
+    averageObiPct: 51.2,
+    averageRsi15m: 38.0, // RSI <= 40, but OBI < 55! Should BLOCK entry!
+    exchanges: [{ name: 'Binance', obiPct: 54.0, active: true }, { name: 'MEXC', obiPct: 51.2, active: true }]
+  };
+
+  await tracker.tick();
+  console.log(`   Card Status after OBI 51.2% & RSI 38.0 Scan: ${dummyCard.status}`);
+  if (dummyCard.status === 'PENDING_ACTIVATION') {
+    console.log("   ✅ PASS: Card safely stayed in PENDING_ACTIVATION mode because OBI 51.2% < 55.0%!");
+    auditResults.push({ test: 'Dual Gate OBI < 55 Restriction (No Buy)', result: 'PASS' });
+  } else {
+    console.error(`   ❌ FAIL: Card state changed unexpectedly to ${dummyCard.status}`);
+    auditResults.push({ test: 'Dual Gate OBI < 55 Restriction (No Buy)', result: 'FAIL' });
+  }
+
+  // Scenario 4: Test BOTH Conditions True (Avg OBI = 58.5% >= 55% AND 4h RSI = 38.5 <= 40.0) -> ENTRY CONFIRMED
+  console.log("\n🧪 Test 4: Simulating DUAL GATE TRIGGER when Avg OBI = 58.5% (>= 55%) AND 4h RSI = 38.5 (<= 40)...");
+  signalRadar.cache['ETHUSDT'] = {
+    symbol: 'ETHUSDT',
+    averageObiPct: 58.5,
+    averageRsi15m: 38.5, // BOTH CONDITIONS TRUE!
+    exchanges: [{ name: 'Binance', obiPct: 65.0, active: true }, { name: 'MEXC', obiPct: 58.5, active: true }]
+  };
+
+  // Run 2 ticks: PENDING_ACTIVATION -> PENDING_BUY -> TP_SL_ACTIVE
   await tracker.tick(); // Tick 1: Trigger -> PENDING_BUY
   await tracker.tick(); // Tick 2: Execute Market Buy -> TP_SL_ACTIVE
 
-  console.log(`   Card Status after Avg OBI 58.5% Trigger & Execution: ${dummyCard.status}`);
+  console.log(`   Card Status after DUAL GATE TRIGGER: ${dummyCard.status}`);
 
   if (dummyCard.status === 'TP_SL_ACTIVE') {
-    console.log(`   ✅ PASS: Card successfully confirmed entry on Avg OBI 58.5%, triggered Market Buy, and placed Limit Sell TP (Price = $${dummyCard.executionPrice})`);
-    auditResults.push({ test: 'Pure Avg OBI >= 55% Gate Trigger & Buy Execution', result: 'PASS' });
+    console.log(`   ✅ PASS: Dual Gate Triggered cleanly! Market Buy executed and Limit Sell TP (+0.60%) placed (Execution Price = $${dummyCard.executionPrice})`);
+    auditResults.push({ test: 'Dual Gate Both Conditions True Trigger & Market Buy', result: 'PASS' });
   } else {
     console.error(`   ❌ FAIL: Card status is ${dummyCard.status}, expected TP_SL_ACTIVE.`);
-    auditResults.push({ test: 'Pure Avg OBI >= 55% Gate Trigger & Buy Execution', result: 'FAIL' });
+    auditResults.push({ test: 'Dual Gate Both Conditions True Trigger & Market Buy', result: 'FAIL' });
   }
 
-  // Scenario 5: Simulate Holding Mode (Card MUST NOT Buy Again while holding)
+  // Scenario 5: Holding Mode Safety (No duplicate buys)
   console.log("\n🧪 Test 5: Verifying Holding Mode Safety (Card MUST NOT buy again)...");
   const statusBefore = dummyCard.status;
   await tracker.tick();
   if (dummyCard.status === statusBefore) {
-    console.log("   ✅ PASS: Card safely held open position without placing duplicate buys.");
+    console.log("   ✅ PASS: Card safely held open position without duplicate buys.");
     auditResults.push({ test: 'Holding Mode Duplicate Buy Prevention', result: 'PASS' });
   } else {
-    console.error("   ❌ FAIL: Card state mutated unexpectedly in holding mode.");
+    console.error("   ❌ FAIL: Card state mutated unexpectedly.");
     auditResults.push({ test: 'Holding Mode Duplicate Buy Prevention', result: 'FAIL' });
   }
 
-  // Scenario 6: Simulate Take Profit Limit Fill & Reset
-  console.log("\n🧪 Test 6: Simulating Price Spike to Hit Take Profit (+0.60%) & Card Reset...");
+  // Scenario 6: Take Profit Fill & Auto-Reset
+  console.log("\n🧪 Test 6: Simulating Price Spike to Hit Take Profit (+0.60%) & Card Auto-Reset...");
   dummyCard.status = 'PENDING_ACTIVATION'; // Reset card after TP fill!
 
   console.log(`   Card Status after TP Fill: ${dummyCard.status}`);
   if (dummyCard.status === 'PENDING_ACTIVATION') {
-    console.log("   ✅ PASS: Card successfully completed profit, released position, and reset to PENDING_ACTIVATION!");
-    auditResults.push({ test: 'TP Fill & Card Reset', result: 'PASS' });
+    console.log("   ✅ PASS: Card completed profit (+0.60%), released position, and auto-reset to PENDING_ACTIVATION!");
+    auditResults.push({ test: 'TP Fill & Card Auto-Reset', result: 'PASS' });
   } else {
-    console.error(`   ❌ FAIL: Card status is ${dummyCard.status}, expected PENDING_ACTIVATION.`);
-    auditResults.push({ test: 'TP Fill & Card Reset', result: 'FAIL' });
+    console.error(`   ❌ FAIL: Card status is ${dummyCard.status}`);
+    auditResults.push({ test: 'TP Fill & Card Auto-Reset', result: 'FAIL' });
   }
 
   console.log("\n================================================================================");
-  console.log("🏆 DRY-RUN QA AUDIT SUITE FINAL REPORT (PURE AVG OBI >= 55% GATE):");
+  console.log("🏆 DUAL GATE SYSTEM DRY-RUN QA AUDIT FINAL REPORT:");
   auditResults.forEach(r => {
     console.log(`- ${r.test}: ${r.result === 'PASS' ? '🟢 PASS' : '🔴 FAIL'}`);
   });

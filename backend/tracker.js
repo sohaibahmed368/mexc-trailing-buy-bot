@@ -1137,8 +1137,9 @@ class OrderTracker {
       // 1.4 Check Top 10 Exchanges OBI Dual-Lock Gate if waiting
       if (order.status === 'PENDING_ACTIVATION') {
         const now = Date.now();
-        let obiGatePassed = false;
+        let dualGatePassed = false;
         let avgObi = 50.0;
+        let rsi4h = 50.0;
         let minExchangeObi = 55.0;
 
         let exchangeDetailsStr = '';
@@ -1152,6 +1153,7 @@ class OrderTracker {
 
             if (radarMetrics && radarMetrics.averageObiPct !== undefined && radarMetrics.averageObiPct > 0) {
               avgObi = radarMetrics.averageObiPct;
+              rsi4h = radarMetrics.averageRsi15m !== undefined ? radarMetrics.averageRsi15m : 50.0;
               const exchanges = radarMetrics.exchanges || [];
               let lowestObiEx = 100.0;
               const exDetailsArr = [];
@@ -1164,24 +1166,27 @@ class OrderTracker {
               });
 
               minExchangeObi = lowestObiEx;
-              // Pure Top 10 Aggregated Avg OBI >= 55.0% Gate (No min floor restriction)
-              obiGatePassed = (avgObi >= 55.0);
+              // Dual Gate: Pure Top 10 Aggregated Avg OBI >= 55.0% AND 4h 15m RSI <= 40.0
+              const obiGatePassed = (avgObi >= 55.0);
+              const rsiGatePassed = (rsi4h <= 40.0);
+              dualGatePassed = obiGatePassed && rsiGatePassed;
+
               if (exDetailsArr.length > 0) {
                 exchangeDetailsStr = ` | Exchanges Breakdown: [${exDetailsArr.join(', ')}]`;
               }
             } else {
-              obiGatePassed = false;
+              dualGatePassed = false;
             }
           } catch (e) {
-            obiGatePassed = false;
+            dualGatePassed = false;
           }
         }
 
-        if (obiGatePassed) {
+        if (dualGatePassed) {
           order.status = 'PENDING_EXECUTION';
           order.activatedAt = new Date().toISOString();
           this.log(
-            `🎯 [TOP 10 OBI ENTRY CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= 55.0%)!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
+            `🎯 [DUAL GATE ENTRY CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= 55.0%) & 4h 15m RSI = ${rsi4h.toFixed(1)} (<= 40.0)!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
             'success',
             order.symbol
           );
@@ -1195,7 +1200,7 @@ class OrderTracker {
         if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime >= 1000)) {
           order.lastHeartbeatLogTime = now;
           this.log(
-            `⚡ [TOP 10 OBI SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 55.0%)${exchangeDetailsStr}. Scanning live orderbooks...`,
+            `⚡ [DUAL GATE SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 55.0%) | 4h 15m RSI: ${rsi4h.toFixed(1)} (Req <= 40.0)${exchangeDetailsStr}. Scanning live orderbooks & RSI...`,
             'info',
             order.symbol
           );
