@@ -213,16 +213,16 @@ class OrderTracker {
     }, 3000);
   }
 
-  // FIFO Rolling Truncation Audit Logger: Hard-capped at 5 MB max per file.
-  // When 5 MB is reached, drops oldest 30% lines from top and appends newest at bottom!
+  // FIFO Rolling Truncation Audit Logger: Hard-capped at 10 MB max per file.
+  // When 10 MB is reached, drops oldest 30% lines from top and appends newest at bottom!
   appendAuditLog(logEntry) {
     try {
       if (fs.existsSync(this.auditLogPath)) {
         const stats = fs.statSync(this.auditLogPath);
-        if (stats.size > 5 * 1024 * 1024) { // > 5 MB
+        if (stats.size > 10 * 1024 * 1024) { // > 10 MB
           const content = fs.readFileSync(this.auditLogPath, 'utf8');
           const lines = content.split('\n').filter(l => l.trim().length > 0);
-          if (lines.length > 2000) {
+          if (lines.length > 5000) {
             // Drop top 30% oldest lines, keep newest 70% lines
             const trimmedLines = lines.slice(Math.floor(lines.length * 0.3));
             fs.writeFileSync(this.auditLogPath, trimmedLines.join('\n') + '\n');
