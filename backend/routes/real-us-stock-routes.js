@@ -13,6 +13,16 @@ function createRealUsStockRouter(realUsStockTracker) {
     }
   });
 
+  // GET /api/real-us-stocks/account (Alpaca Portfolio & Live Positions)
+  router.get('/account', async (req, res) => {
+    try {
+      const accountData = await realUsStockTracker.getAlpacaAccountSummary();
+      res.json({ success: true, data: accountData });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
   // POST /api/real-us-stocks/cards (Launch New Real US Stock Card)
   router.post('/cards', async (req, res) => {
     try {
