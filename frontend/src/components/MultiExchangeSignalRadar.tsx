@@ -57,7 +57,10 @@ export const MultiExchangeSignalRadar: React.FC = () => {
 
     fetchRadar();
 
-    // 2. WebSocket Real-Time Stream
+    // 2. 5-Second Fallback Polling Loop
+    const intervalId = setInterval(fetchRadar, 5000);
+
+    // 3. WebSocket Real-Time Stream
     const socket = io(BACKEND_URL);
     socket.on('signal_radar_update', (payload: SignalRadarPayload) => {
       setData(payload);
@@ -65,6 +68,7 @@ export const MultiExchangeSignalRadar: React.FC = () => {
     });
 
     return () => {
+      clearInterval(intervalId);
       socket.disconnect();
     };
   }, []);

@@ -43,7 +43,7 @@ const stockTracker = new StockOrderTracker(mexcClient, io);
 const alpacaClient = new AlpacaClient();
 const alpacaStockTracker = new AlpacaStockOrderTracker(alpacaClient, io);
 const realUsStockTracker = new RealUSStockTracker(alpacaClient, io);
-const signalRadar = new MultiExchangeSignalRadar(mexcClient);
+const signalRadar = new MultiExchangeSignalRadar(mexcClient, io);
 tracker.setSignalRadar(signalRadar);
 
 app.use('/api/real-us-stocks', createRealUsStockRouter(realUsStockTracker));

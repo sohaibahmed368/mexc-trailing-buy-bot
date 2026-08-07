@@ -10,10 +10,11 @@ const http = require('http');
  * Automatically refreshes metrics every 15 SECONDS.
  */
 class MultiExchangeSignalRadar {
-  constructor(mexcClient = null) {
+  constructor(mexcClient = null, io = null) {
     this.mexcClient = mexcClient;
+    this.io = io;
     this.cache = {};
-    this.updateIntervalMs = 15000; // 15 seconds refresh interval
+    this.updateIntervalMs = 5000; // 5-second fast live refresh
     this.intervalId = null;
     this.lastUpdated = null;
 
@@ -30,14 +31,18 @@ class MultiExchangeSignalRadar {
       { id: 'bingx', name: 'BingX', icon: '🌐', rank: 10 }
     ];
 
-    this.symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'XRPUSDT', 'DOGEUSDT', 'GOLD(XAUT)USDT'];
+    this.symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'SUIUSDT', 'GOLD(XAUT)USDT', 'XRPUSDT'];
     
-    // Start 15-second background auto-refresh loop
+    // Start 5-second background auto-refresh loop
     this.startAutoRefresh();
   }
 
   setMexcClient(client) {
     this.mexcClient = client;
+  }
+
+  setIo(io) {
+    this.io = io;
   }
 
   startAutoRefresh() {
@@ -46,9 +51,17 @@ class MultiExchangeSignalRadar {
     // Fetch initial metrics immediately
     this.refreshAllMetrics().catch(() => {});
 
-    // Refresh every 15 seconds
+    // Refresh every 5 seconds
     this.intervalId = setInterval(async () => {
-      await this.refreshAllMetrics();
+      try {
+        await this.refreshAllMetrics();
+        if (this.io) {
+          this.io.emit('signal_radar_update', {
+            symbols: this.cache,
+            updatedAt: this.lastUpdated
+          });
+        }
+      } catch (e) {}
     }, this.updateIntervalMs);
   }
 
