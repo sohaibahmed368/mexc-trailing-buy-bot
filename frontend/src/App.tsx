@@ -8,9 +8,9 @@ import ActiveOrders from './components/ActiveOrders';
 import OrderHistory from './components/OrderHistory';
 import LogsConsole from './components/LogsConsole';
 import OrderBookAnalysis from './components/OrderBookAnalysis';
-import ScalpRadar from './components/ScalpRadar';
 import { StockBotTab } from './components/StockBotTab';
 import { RealUSStockBoard } from './components/RealUSStockBoard';
+import { MultiExchangeSignalRadar } from './components/MultiExchangeSignalRadar';
 
 const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:3001' : window.location.origin;
 
@@ -446,8 +446,8 @@ export default function App() {
             <StockBotTab apiBaseUrl={BACKEND_URL} availableSymbols={availableSymbols} />
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
-              {/* Top Independent Scalp Radar */}
-              <ScalpRadar availableSymbols={availableSymbols} />
+              {/* Top 10 Exchanges Signal Radar Dashboard */}
+              <MultiExchangeSignalRadar />
 
               {/* Set Trailing Buy order form */}
               <OrderForm 
