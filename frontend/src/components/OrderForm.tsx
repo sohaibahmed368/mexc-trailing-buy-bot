@@ -405,7 +405,7 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
                 disabled={loading}
                 style={{ width: '15px', height: '15px', accentColor: 'var(--color-cyan)', cursor: 'pointer' }}
               />
-              <span>Order Book Imbalance (Bids support &ge; 55% in 1.5% range)</span>
+              <span style={{ fontWeight: 600, color: 'var(--color-cyan)' }}>🎯 Dual Gate System (Top 10 Avg OBI &ge; 55.0% AND 4h 15m RSI &le; 40.0)</span>
             </label>
 
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', cursor: 'pointer' }}>

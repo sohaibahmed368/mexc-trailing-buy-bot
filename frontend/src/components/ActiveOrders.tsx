@@ -279,8 +279,8 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                   </span>
                 )}
                 {order.filterObi && (
-                  <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(0, 242, 254, 0.08)', color: 'var(--color-cyan)', border: '1px solid rgba(0, 242, 254, 0.15)', fontWeight: 500 }}>
-                    OBI Confirm
+                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--color-cyan)', border: '1px solid rgba(0, 242, 254, 0.3)', fontWeight: 600 }}>
+                    🎯 Dual Gate (OBI ≥ 55% & 4h 15m RSI ≤ 40.0)
                   </span>
                 )}
                 {order.filterVolume && (
