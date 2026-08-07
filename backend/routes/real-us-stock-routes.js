@@ -13,6 +13,26 @@ function createRealUsStockRouter(realUsStockTracker) {
     }
   });
 
+  // POST /api/real-us-stocks/cards (Launch New Real US Stock Card)
+  router.post('/cards', async (req, res) => {
+    try {
+      const card = await realUsStockTracker.createCard(req.body);
+      res.json({ success: true, card });
+    } catch (e) {
+      res.status(400).json({ success: false, error: e.message });
+    }
+  });
+
+  // DELETE /api/real-us-stocks/cards/:id (Cancel Real US Stock Card)
+  router.delete('/cards/:id', async (req, res) => {
+    try {
+      const ok = await realUsStockTracker.cancelCard(req.params.id);
+      res.json({ success: ok });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  });
+
   return router;
 }
 

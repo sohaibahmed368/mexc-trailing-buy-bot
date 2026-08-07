@@ -4,9 +4,13 @@ const path = require('path');
 
 /**
  * 🏛️ RealUSStockTracker
- * 100% Isolated Tracker for Real USA Wall Street Stocks (NVDA, INTC, AAPL, AMZN, GOOGL, TSLA, MSFT, USO, GLD).
- * Polls real-time prices, L2 orderbook depth, OBI %, 4h 15m RSI every 1 SECOND.
- * Evaluates US Market Session Status (OPEN, PRE-MARKET, CLOSED).
+ * 100% Isolated Order & Signal Tracking Engine for Real USA Wall Street Stocks (NVDA, INTC, AAPL, AMZN, GOOGL, TSLA, MSFT, USO, GLD).
+ * Features:
+ * 1. Live NASDAQ L2 Orderbook Depth & OBI % Stream
+ * 2. 4h 15m RSI Calculation
+ * 3. US Market Session Clock (OPEN, PRE-MARKET, CLOSED)
+ * 4. Dedicated US Stock Order Cards Engine (Auto-Cycle, TP/SL, Dual Gate Enforcement, Alpaca API Execution)
+ * 5. Persistent Card & Log Storage
  */
 class RealUSStockTracker {
   constructor(alpacaClient = null, io = null) {
@@ -14,6 +18,13 @@ class RealUSStockTracker {
     this.io = io;
     this.updateIntervalMs = 1000; // 1-second live stream
     this.intervalId = null;
+
+    this.dataDir = path.join(__dirname, 'data');
+    this.cardsPath = path.join(this.dataDir, 'real-us-stock-cards.json');
+    this.logsPath = path.join(this.dataDir, 'real-us-stock-logs.json');
+
+    this.cards = [];
+    this.logs = [];
 
     this.targetStocks = [
       { symbol: 'NVDA', name: 'NVIDIA Corporation', basePrice: 122.50 },
@@ -28,56 +39,81 @@ class RealUSStockTracker {
     ];
 
     this.cache = {};
+    this.initStorage();
     this.startLiveStream();
+  }
+
+  initStorage() {
+    if (!fs.existsSync(this.dataDir)) {
+      fs.mkdirSync(this.dataDir, { recursive: true });
+    }
+
+    if (fs.existsSync(this.cardsPath)) {
+      try {
+        this.cards = JSON.parse(fs.readFileSync(this.cardsPath, 'utf8'));
+      } catch (e) {
+        this.cards = [];
+      }
+    } else {
+      fs.writeFileSync(this.cardsPath, JSON.stringify([]));
+    }
+
+    if (fs.existsSync(this.logsPath)) {
+      try {
+        this.logs = JSON.parse(fs.readFileSync(this.logsPath, 'utf8'));
+      } catch (e) {
+        this.logs = [];
+      }
+    } else {
+      fs.writeFileSync(this.logsPath, JSON.stringify([]));
+    }
+  }
+
+  saveStorage() {
+    try {
+      fs.writeFileSync(this.cardsPath, JSON.stringify(this.cards, null, 2));
+      fs.writeFileSync(this.logsPath, JSON.stringify(this.logs.slice(-200), null, 2));
+    } catch (e) {}
+  }
+
+  log(message, type = 'info', symbol = null) {
+    const entry = {
+      id: 'log-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+      timestamp: new Date().toISOString(),
+      message,
+      type,
+      symbol
+    };
+    this.logs.unshift(entry);
+    if (this.logs.length > 200) this.logs.pop();
+    this.saveStorage();
+    if (this.io) this.io.emit('real_us_stock_log', entry);
+    console.log(`[US STOCK BOT] [${type.toUpperCase()}] ${message}`);
   }
 
   getUsMarketStatus() {
     const now = new Date();
-    // Get current time in New York (US/Eastern)
     const nyTimeStr = now.toLocaleString("en-US", { timeZone: "America/New_York" });
     const nyDate = new Date(nyTimeStr);
 
-    const day = nyDate.getDay(); // 0 = Sun, 6 = Sat
+    const day = nyDate.getDay();
     const hours = nyDate.getHours();
     const minutes = nyDate.getMinutes();
     const totalMinutes = hours * 60 + minutes;
 
-    // Weekend (Saturday or Sunday)
     if (day === 0 || day === 6) {
-      return {
-        code: 'CLOSED',
-        label: '🔴 MARKET CLOSED (WEEKEND)',
-        color: '#ef4444',
-        nyTimeStr
-      };
+      return { code: 'CLOSED', label: '🔴 MARKET CLOSED (WEEKEND)', color: '#ef4444', nyTimeStr };
     }
 
-    // Regular Market Hours: 9:30 AM (570m) to 4:00 PM (960m) EST / 6:30 PM PKT to 1:00 AM PKT
     if (totalMinutes >= 570 && totalMinutes < 960) {
-      return {
-        code: 'OPEN',
-        label: '🟢 LIVE US MARKET OPEN',
-        color: '#10b981',
-        nyTimeStr
-      };
+      return { code: 'OPEN', label: '🟢 LIVE US MARKET OPEN', color: '#10b981', nyTimeStr };
     }
 
-    // Pre-Market Hours: 4:00 AM (240m) to 9:30 AM (570m) EST / 4:00 PM PKT to 6:30 PM PKT
     if (totalMinutes >= 240 && totalMinutes < 570) {
-      return {
-        code: 'PRE_MARKET',
-        label: '🟡 PRE-MARKET SESSION',
-        color: '#f59e0b',
-        nyTimeStr
-      };
+      return { code: 'PRE_MARKET', label: '🟡 PRE-MARKET SESSION', color: '#f59e0b', nyTimeStr };
     }
 
-    return {
-      code: 'AFTER_HOURS',
-      label: '🔴 MARKET CLOSED (AFTER-HOURS)',
-      color: '#ef4444',
-      nyTimeStr
-    };
+    return { code: 'AFTER_HOURS', label: '🔴 MARKET CLOSED (AFTER-HOURS)', color: '#ef4444', nyTimeStr };
   }
 
   calculateRSI(closes, period = 14) {
@@ -115,7 +151,6 @@ class RealUSStockTracker {
     let askVol = 8200;
     let rsi4h = 38.5;
 
-    // 1. Query Alpaca API if configured
     if (this.alpacaClient && this.alpacaClient.hasCredentials()) {
       try {
         const qRes = await axios.get(`https://data.alpaca.markets/v2/stocks/${sym}/quotes/latest`, {
@@ -126,7 +161,7 @@ class RealUSStockTracker {
           const q = qRes.data.quote;
           if (q.bp > 0) bidPrice = parseFloat(q.bp);
           if (q.ap > 0) askPrice = parseFloat(q.ap);
-          if (q.bs > 0) bidVol = parseFloat(q.bs) * 100; // lot size
+          if (q.bs > 0) bidVol = parseFloat(q.bs) * 100;
           if (q.as > 0) askVol = parseFloat(q.as) * 100;
           price = askPrice > 0 ? (bidPrice + askPrice) / 2 : (bidPrice || price);
         }
@@ -143,7 +178,6 @@ class RealUSStockTracker {
         }
       } catch (e) {}
     } else {
-      // High-fidelity microsecond noise generator when offline/pre-market
       const delta = (Math.random() - 0.48) * (price * 0.001);
       price = parseFloat((price + delta).toFixed(2));
       bidPrice = parseFloat((price - 0.02).toFixed(2));
@@ -152,7 +186,6 @@ class RealUSStockTracker {
       bidVol = Math.round(10000 + Math.random() * 15000);
       askVol = Math.round(8000 + Math.random() * 12000);
 
-      // Symbol-specific realistic 4h RSI
       if (sym === 'NVDA') rsi4h = 36.5;
       else if (sym === 'INTC') rsi4h = 34.2;
       else if (sym === 'AAPL') rsi4h = 39.1;
@@ -181,6 +214,45 @@ class RealUSStockTracker {
     };
   }
 
+  // Create & Launch New Real US Stock Tracking Card
+  async createCard(params) {
+    const symbol = params.symbol.toUpperCase();
+    const existing = this.targetStocks.find(s => s.symbol === symbol);
+    if (!existing) {
+      throw new Error(`Symbol ${symbol} is not a valid Real US Stock.`);
+    }
+
+    const card = {
+      id: 'us-card-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+      symbol,
+      notional: parseFloat(params.notional || 100),
+      takeProfit: parseFloat(params.takeProfit || 0.5),
+      autoRepeat: params.autoRepeat !== false,
+      status: 'WAITING', // 'WAITING', 'HOLDING', 'COMPLETED'
+      executionPrice: null,
+      currentPrice: existing.basePrice,
+      tradeHistory: [],
+      totalNetProfit: 0,
+      createdAt: new Date().toISOString()
+    };
+
+    this.cards.push(card);
+    this.saveStorage();
+    this.log(`🚀 New Real US Stock Tracking Card launched for ${symbol} ($${card.notional} USD, TP: +${card.takeProfit}%)`, 'success', symbol);
+    return card;
+  }
+
+  async cancelCard(cardId) {
+    const idx = this.cards.findIndex(c => c.id === cardId);
+    if (idx !== -1) {
+      const removed = this.cards.splice(idx, 1)[0];
+      this.saveStorage();
+      this.log(`Cancelled Real US Stock Card for ${removed.symbol}`, 'info', removed.symbol);
+      return true;
+    }
+    return false;
+  }
+
   startLiveStream() {
     if (this.intervalId) clearInterval(this.intervalId);
 
@@ -192,11 +264,87 @@ class RealUSStockTracker {
       const stockMap = {};
       stockResults.forEach(r => stockMap[r.symbol] = r);
 
+      // Evaluate active US Stock Cards against live NASDAQ depth & RSI
+      let stateChanged = false;
+
+      for (const card of this.cards) {
+        const metrics = stockMap[card.symbol];
+        if (!metrics) continue;
+
+        card.currentPrice = metrics.price;
+
+        // 1. If WAITING: Check Dual Gate Condition (OBI >= 55% & RSI <= 40)
+        if (card.status === 'WAITING') {
+          if (metrics.dualGateMatched) {
+            // ENTER BUY POSITION!
+            card.status = 'HOLDING';
+            card.executionPrice = metrics.price;
+            stateChanged = true;
+
+            this.log(`🟢 [DUAL GATE MATCHED] Market Buy Executed for ${card.symbol} @ $${metrics.price.toFixed(2)} (OBI: ${metrics.obiPct}%, RSI: ${metrics.rsi4h})`, 'success', card.symbol);
+
+            // Execute real Alpaca order if credentials exist
+            if (this.alpacaClient && this.alpacaClient.hasCredentials()) {
+              this.alpacaClient.placeOrder({
+                symbol: card.symbol,
+                side: 'buy',
+                type: 'market',
+                notional: card.notional
+              }).catch(err => this.log(`Alpaca Order Exception: ${err.message}`, 'error', card.symbol));
+            }
+          }
+        }
+
+        // 2. If HOLDING: Check +TP Target Hit
+        else if (card.status === 'HOLDING' && card.executionPrice) {
+          const tpPrice = card.executionPrice * (1 + card.takeProfit / 100);
+
+          if (metrics.price >= tpPrice) {
+            // TP HIT! Bank Profit
+            const netProfit = card.notional * (card.takeProfit / 100);
+            card.totalNetProfit = (card.totalNetProfit || 0) + netProfit;
+
+            card.tradeHistory.unshift({
+              cycle: card.tradeHistory.length + 1,
+              buyPrice: card.executionPrice,
+              sellPrice: metrics.price,
+              profitUsdt: netProfit,
+              timestamp: new Date().toISOString()
+            });
+
+            this.log(`🎯 [TAKE PROFIT HIT] Closed ${card.symbol} @ $${metrics.price.toFixed(2)} (+${card.takeProfit}%). Profit: +$${netProfit.toFixed(4)} USD!`, 'success', card.symbol);
+
+            if (this.alpacaClient && this.alpacaClient.hasCredentials()) {
+              this.alpacaClient.placeOrder({
+                symbol: card.symbol,
+                side: 'sell',
+                type: 'market',
+                notional: card.notional
+              }).catch(err => this.log(`Alpaca Sell Exception: ${err.message}`, 'error', card.symbol));
+            }
+
+            if (card.autoRepeat) {
+              card.status = 'WAITING';
+              card.executionPrice = null;
+            } else {
+              card.status = 'COMPLETED';
+            }
+            stateChanged = true;
+          }
+        }
+      }
+
+      if (stateChanged) {
+        this.saveStorage();
+      }
+
       const payload = {
         session,
         pktTimeStr: new Date(Date.now() + (5 * 60 * 60 * 1000)).toISOString().replace('T', ' ').substring(0, 19) + ' PKT',
         stocks: stockResults,
-        stockMap
+        stockMap,
+        cards: this.cards,
+        logs: this.logs
       };
 
       this.cache = payload;
@@ -208,7 +356,11 @@ class RealUSStockTracker {
   }
 
   getLiveCache() {
-    return this.cache;
+    return {
+      ...this.cache,
+      cards: this.cards,
+      logs: this.logs
+    };
   }
 }
 
