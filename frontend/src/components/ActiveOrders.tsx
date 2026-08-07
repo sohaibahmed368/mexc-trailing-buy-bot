@@ -148,67 +148,27 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
               </div>
             </div>
 
-            {/* Trailing Buy activation status details (rendered ONLY when tracking dip to buy) */}
-            {(order.status === 'PENDING_ACTIVATION' || order.status === 'RUNNING') && order.activationPrice !== null && (
-              <div style={{ 
-                fontSize: '0.85rem', 
-                color: 'var(--text-secondary)', 
-                display: 'flex', 
-                justifyContent: 'space-between',
-                marginTop: '0.25rem',
-                padding: '0.25rem 0.5rem',
-                background: 'rgba(255, 255, 255, 0.02)',
-                borderRadius: '6px'
-              }}>
-                {order.autoRepeat && order.peakPrice !== null ? (
-                  <>
-                    <span>Peak Price: <strong style={{ color: 'var(--text-primary)' }}>${fmtPrice(order.peakPrice)}</strong></span>
-                    <span>Target Dip: <strong style={{ color: 'var(--color-cyan)' }}>${fmtPrice(order.activationPrice)}</strong></span>
-                  </>
-                ) : (
-                  <>
-                    <span>Activation Target: <strong style={{ color: 'var(--text-primary)' }}>${fmtPrice(order.activationPrice)}</strong></span>
-                    <span style={{ 
-                      color: order.status !== 'PENDING_ACTIVATION' ? 'var(--color-green)' : 'var(--text-muted)',
-                      fontWeight: 600
-                    }}>
-                      {order.status !== 'PENDING_ACTIVATION' ? 'Activated ✓' : 'Pending ✗'}
-                    </span>
-                  </>
-                )}
-              </div>
-            )}
-
-            {/* Position Holding summary (rendered ONLY when bought & holding TP/SL) */}
-            {order.status === 'TP_SL_ACTIVE' && order.executionPrice && (
-              <div style={{ 
-                fontSize: '0.85rem', 
-                display: 'flex', 
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: '0.25rem',
-                padding: '0.3rem 0.5rem',
-                background: 'rgba(0, 230, 118, 0.06)',
-                borderRadius: '6px',
-                border: '1px solid rgba(0, 230, 118, 0.15)'
-              }}>
-                <span>Bought At: <strong style={{ color: 'var(--color-green)' }}>${fmtPrice(order.executionPrice)}</strong></span>
+            {/* Current Market Price & Bought Price Bar */}
+            <div style={{ 
+              fontSize: '0.85rem', 
+              display: 'flex', 
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: '0.4rem',
+              padding: '0.4rem 0.6rem',
+              background: '#020617',
+              borderRadius: '6px',
+              border: '1px solid #1e293b'
+            }}>
+              <span>
+                Current Price: <strong style={{ color: '#38bdf8' }}>${fmtPrice(order.currentPrice)}</strong>
+              </span>
+              {order.status === 'TP_SL_ACTIVE' && order.executionPrice && (
                 <span>
-                  Current: <strong style={{ color: 'var(--text-primary)' }}>${fmtPrice(order.currentPrice || order.executionPrice)}</strong>
-                  {order.currentPrice && (
-                    <span style={{ 
-                      marginLeft: '0.35rem', 
-                      fontSize: '0.75rem', 
-                      fontWeight: 700,
-                      color: order.currentPrice >= order.executionPrice ? 'var(--color-green)' : 'var(--color-red)'
-                    }}>
-                      ({((order.currentPrice - order.executionPrice) / order.executionPrice * 100) >= 0 ? '+' : ''}
-                      {((order.currentPrice - order.executionPrice) / order.executionPrice * 100).toFixed(2)}%)
-                    </span>
-                  )}
+                  Bought At: <strong style={{ color: '#34d399' }}>${fmtPrice(order.executionPrice)}</strong>
                 </span>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Take Profit & Stop Loss details */}
             {(order.takeProfit !== null || order.stopLoss !== null) && (
@@ -247,18 +207,6 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                             )} (-${(Number(order.stopLoss) + (order.isSlExtended && order.slBuffer ? Number(order.slBuffer) : 0)).toFixed(3)}%)` 
                           : `Buy Price - ${order.stopLoss}%`}
                       </strong>
-                      {order.isSlProfitLocked && (
-                        <div style={{ fontSize: '0.7rem', color: 'var(--color-cyan)', fontWeight: 600 }}>
-                          🔒 Profit Lock Active (+${fmtPrice((order.trailValue * 2 / 100) * (order.executionPrice || 100))} | +{(order.trailValue * 2).toFixed(2)}%)
-                        </div>
-                      )}
-                      {order.filterSmartSl && (
-                        <div style={{ fontSize: '0.7rem', color: order.isSlExtended ? '#00e676' : 'var(--color-green)', fontWeight: order.isSlExtended ? 600 : 500 }}>
-                          {order.isSlExtended 
-                            ? `🛡️ Smart SL Extended (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +${order.slBuffer || 0.15}% Buffer)` 
-                            : `🛡️ Smart Guard Active (+${fmtPrice(((order.slBuffer || 0.15) / 100) * (order.executionPrice || order.currentPrice))} | +${order.slBuffer || 0.15}% Buffer)`}
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}
@@ -266,102 +214,13 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
             )}
 
             {/* Enabled Indicators Badges */}
-            {(order.filterObi || order.filterVolume || order.filterRsi || order.filterSmartSl || order.isSlProfitLocked) && (
+            {(order.filterObi || order.filterSmartSl || order.isSlProfitLocked) && (
               <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.4rem', padding: '0 0.1rem' }}>
-                {order.isSlProfitLocked && (
-                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--color-cyan)', border: '1px solid rgba(0, 242, 254, 0.3)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                    🔒 Profit Locked (+${fmtPrice(order.trailValue * 2)} Above Buy)
-                  </span>
-                )}
-                {order.filterSmartSl && (
-                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: order.isSlExtended ? 'rgba(0, 230, 118, 0.25)' : 'rgba(0, 230, 118, 0.12)', color: 'var(--color-green)', border: order.isSlExtended ? '1px solid #00e676' : '1px solid rgba(0, 230, 118, 0.3)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                    {order.isSlExtended ? `🛡️ Smart SL Extended (Buffer: +${order.slBuffer || 0.15}%)` : `🛡️ Smart SL Guard Active (Buffer: +${order.slBuffer || 0.15}%)`}
-                  </span>
-                )}
                 {order.filterObi && (
-                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--color-cyan)', border: '1px solid rgba(0, 242, 254, 0.3)', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid #10b981', fontWeight: 700 }}>
                     🎯 Dual Gate (OBI ≥ 55% & 4h 15m RSI ≤ 40.0)
                   </span>
                 )}
-                {order.filterVolume && (
-                  <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(0, 242, 254, 0.08)', color: 'var(--color-cyan)', border: '1px solid rgba(0, 242, 254, 0.15)', fontWeight: 500 }}>
-                    Volume Spike
-                  </span>
-                )}
-                {order.filterRsi && (
-                  <span style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(0, 242, 254, 0.08)', color: 'var(--color-cyan)', border: '1px solid rgba(0, 242, 254, 0.15)', fontWeight: 500 }}>
-                    RSI Oversold
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Price Cards Grid */}
-            <div className="order-prices">
-              <div className="price-card current">
-                <span className="price-label">Current Price</span>
-                <span className="price-value">${fmtPrice(order.currentPrice)}</span>
-              </div>
-              <div className="price-card bottom">
-                <span className="price-label">{order.status === 'PENDING_ACTIVATION' ? 'Activation Target' : 'Lowest Bottom'}</span>
-                <span className="price-value">
-                  ${order.status === 'PENDING_ACTIVATION' 
-                    ? fmtPrice(order.activationPrice) 
-                    : fmtPrice(order.bottomPrice)}
-                </span>
-              </div>
-              <div className="price-card trigger">
-                <span className="price-label">Buy Trigger (≥)</span>
-                <span className="price-value">
-                  {order.triggerPrice ? `$${fmtPrice(order.triggerPrice)}` : 'Inactive'}
-                </span>
-              </div>
-              <div className="price-card trail">
-                <span className="price-label">Trail Value</span>
-                <span className="price-value">+{order.trailValue}%</span>
-              </div>
-            </div>
-
-            {/* Tracking Progress */}
-            {order.status === 'PENDING_ACTIVATION' ? (
-              <div className="tracking-progress" style={{ backgroundColor: 'rgba(255, 255, 255, 0.01)', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px dashed var(--border-color)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  <span style={{ color: 'var(--color-cyan)', fontWeight: 500 }}>Awaiting Dip Activation...</span>
-                  <span>
-                    Target: {order.activationDirection === 'DOWN' ? '≤' : '≥'} ${fmtPrice(order.activationPrice)}
-                  </span>
-                </div>
-              </div>
-            ) : order.status === 'TP_SL_ACTIVE' ? (
-              <div className="tracking-progress" style={{ backgroundColor: 'rgba(255, 255, 255, 0.01)', padding: '0.6rem 0.8rem', borderRadius: '8px', border: '1px dashed rgba(155, 93, 229, 0.3)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  <span style={{ color: '#b388ff', fontWeight: 500 }}>Monitoring TP/SL Targets...</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Bought at: ${fmtPrice(order.executionPrice)}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="tracking-progress">
-                <div className="progress-labels">
-                  <span>Bottom (${fmtPrice(order.bottomPrice)})</span>
-                  <span style={{ color: progressPercent > 80 ? 'var(--color-amber)' : 'inherit', fontWeight: progressPercent > 80 ? 600 : 'normal' }}>
-                    {progressPercent.toFixed(1)}% to Trigger
-                  </span>
-                  <span>Trigger (${fmtPrice(order.triggerPrice)})</span>
-                </div>
-                <div className="progress-bar-bg" title={`${progressPercent.toFixed(1)}% completed`}>
-                  <div 
-                    className="progress-bar-fill" 
-                    style={{ 
-                      width: `${progressPercent}%`,
-                      background: progressPercent > 85
-                        ? 'linear-gradient(135deg, #ffb300 0%, #ff8f00 100%)' 
-                        : 'var(--gradient-primary)'
-                    }} 
-                  />
-                  <div className="progress-bar-bottom-marker" style={{ left: '0%' }} />
-                </div>
               </div>
             )}
 
@@ -383,28 +242,36 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
                   gap: '0.3rem',
                   paddingRight: '0.2rem'
                 }}>
-                  {order.tradeHistory.map((trade: any) => (
-                    <div key={trade.cycle} style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      fontSize: '0.75rem',
-                      background: 'rgba(255, 255, 255, 0.01)',
-                      padding: '0.25rem 0.5rem',
-                      borderRadius: '4px',
-                      border: '1px solid rgba(255, 255, 255, 0.02)'
-                    }}>
-                      <span>
-                        Cycle #{trade.cycle} ({trade.type === 'TAKE_PROFIT' ? 'TP hit' : 'SL hit'})
-                      </span>
-                      <span style={{ color: 'var(--text-muted)' }}>
-                        Buy: ${fmtPrice(trade.buyPrice)} &rarr; Sell: ${fmtPrice(trade.sellPrice)}
-                      </span>
-                      <strong style={{ color: trade.profit >= 0 ? 'var(--color-green)' : 'var(--color-red)' }}>
-                        {trade.profit >= 0 ? '+' : ''}${fmtPrice(trade.profit)}
-                      </strong>
-                    </div>
-                  ))}
+                  {order.tradeHistory.map((trade: any) => {
+                    const cycleProfitUsdt = typeof trade.profitUsdt === 'number'
+                      ? trade.profitUsdt
+                      : (trade.sellPrice && trade.buyPrice && order.quoteOrderQty)
+                      ? ((trade.sellPrice - trade.buyPrice) / trade.buyPrice) * order.quoteOrderQty
+                      : (trade.profit || 0);
+
+                    return (
+                      <div key={trade.cycle} style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center',
+                        fontSize: '0.75rem',
+                        background: 'rgba(255, 255, 255, 0.01)',
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '4px',
+                        border: '1px solid rgba(255, 255, 255, 0.02)'
+                      }}>
+                        <span>
+                          Cycle #{trade.cycle} ({trade.type === 'TAKE_PROFIT' ? 'TP hit' : 'SL hit'})
+                        </span>
+                        <span style={{ color: 'var(--text-muted)' }}>
+                          Buy: ${fmtPrice(trade.buyPrice)} &rarr; Sell: ${fmtPrice(trade.sellPrice)}
+                        </span>
+                        <strong style={{ color: cycleProfitUsdt >= 0 ? 'var(--color-green)' : 'var(--color-red)' }}>
+                          {cycleProfitUsdt >= 0 ? '+' : ''}${cycleProfitUsdt.toFixed(4)} USDT
+                        </strong>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
