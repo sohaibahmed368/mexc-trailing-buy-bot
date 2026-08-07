@@ -182,7 +182,7 @@ class MultiExchangeSignalRadar {
         const bybitSym = sym.replace('USDT', 'USDT');
         const tickerUrl = `https://api.bybit.com/v5/market/tickers?category=spot&symbol=${bybitSym}`;
         const klinesUrl = `https://api.bybit.com/v5/market/kline?category=spot&symbol=${bybitSym}&interval=15&limit=30`;
-        const depthUrl = `https://api.bybit.com/v5/market/orderbook?category=spot&symbol=${bybitSym}&limit=50`;
+        const depthUrl = `https://api.bybit.com/v5/market/orderbook?category=spot&symbol=${bybitSym}&limit=100`;
         const [ticker, klinesRes, depthRes] = await Promise.all([this.fetchJson(tickerUrl), this.fetchJson(klinesUrl), this.fetchJson(depthUrl)]);
 
         let price = 0, rsi15m = 50.0, ema20 = 0, obiPct = 52.0, takerBuyPct = 51.0;
@@ -207,7 +207,7 @@ class MultiExchangeSignalRadar {
         const gateSym = sym.replace('USDT', '_USDT');
         const tickerUrl = `https://api.gateio.ws/api/v4/spot/tickers?currency_pair=${gateSym}`;
         const klinesUrl = `https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=${gateSym}&interval=15m&limit=30`;
-        const depthUrl = `https://api.gateio.ws/api/v4/spot/order_book?currency_pair=${gateSym}&limit=50`;
+        const depthUrl = `https://api.gateio.ws/api/v4/spot/order_book?currency_pair=${gateSym}&limit=100`;
         const [ticker, klinesRes, depthRes] = await Promise.all([this.fetchJson(tickerUrl), this.fetchJson(klinesUrl), this.fetchJson(depthUrl)]);
 
         let price = 0, rsi15m = 50.0, ema20 = 0, obiPct = 51.0, takerBuyPct = 52.0;
@@ -229,7 +229,7 @@ class MultiExchangeSignalRadar {
       if (exchange.id === 'okx') {
         const okxSym = sym.replace('USDT', '-USDT');
         const tickerUrl = `https://www.okx.com/api/v5/market/ticker?instId=${okxSym}`;
-        const depthUrl = `https://www.okx.com/api/v5/market/books?instId=${okxSym}&sz=50`;
+        const depthUrl = `https://www.okx.com/api/v5/market/books?instId=${okxSym}&sz=100`;
         const [tickerData, depthData] = await Promise.all([this.fetchJson(tickerUrl), this.fetchJson(depthUrl)]);
         let price = 0, obiPct = 54.0;
         if (tickerData && tickerData.data && tickerData.data[0]) price = parseFloat(tickerData.data[0].last || 0);
@@ -244,7 +244,7 @@ class MultiExchangeSignalRadar {
 
       if (exchange.id === 'bitget') {
         const tickerUrl = `https://api.bitget.com/api/v2/spot/market/tickers?symbol=${sym}`;
-        const depthUrl = `https://api.bitget.com/api/v2/spot/market/orderbook?symbol=${sym}&limit=50`;
+        const depthUrl = `https://api.bitget.com/api/v2/spot/market/orderbook?symbol=${sym}&limit=100`;
         const [tickerData, depthData] = await Promise.all([this.fetchJson(tickerUrl), this.fetchJson(depthUrl)]);
         let price = 0, obiPct = 53.0;
         if (tickerData && tickerData.data && tickerData.data[0]) price = parseFloat(tickerData.data[0].lastPr || 0);
