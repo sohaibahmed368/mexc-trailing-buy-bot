@@ -19,8 +19,8 @@ const AlpacaClient = require('./alpaca-client');
 const AlpacaStockOrderTracker = require('./alpaca-stock-tracker');
 const MultiExchangeSignalRadar = require('./multi-exchange-radar');
 
-const SmartGridTracker = require('./smart-grid-tracker');
-const createGridRouter = require('./routes/grid-routes');
+const RealUSStockTracker = require('./real-us-stock-tracker');
+const createRealUsStockRouter = require('./routes/real-us-stock-routes');
 
 const app = express();
 const server = http.createServer(app);
@@ -36,18 +36,17 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
-// Initialize MEXC client, Alpaca client, Trackers, Smart Grid Tracker, and Standalone Signal Radar
+// Initialize MEXC client, Alpaca client, Trackers, Real US Stock Board, and Standalone Signal Radar
 const mexcClient = new MexcClient();
 const tracker = new OrderTracker(mexcClient, io);
 const stockTracker = new StockOrderTracker(mexcClient, io);
 const alpacaClient = new AlpacaClient();
 const alpacaStockTracker = new AlpacaStockOrderTracker(alpacaClient, io);
-const smartGridTracker = new SmartGridTracker(mexcClient);
-smartGridTracker.io = io;
+const realUsStockTracker = new RealUSStockTracker(alpacaClient, io);
 const signalRadar = new MultiExchangeSignalRadar(mexcClient);
 tracker.setSignalRadar(signalRadar);
 
-app.use('/api/grid-bots', createGridRouter(smartGridTracker));
+app.use('/api/real-us-stocks', createRealUsStockRouter(realUsStockTracker));
 
 // Port configuration (Default to 8100 to match VPS Nginx upstream proxy)
 const PORT = process.env.PORT || 8100;

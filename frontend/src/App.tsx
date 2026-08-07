@@ -10,6 +10,7 @@ import LogsConsole from './components/LogsConsole';
 import OrderBookAnalysis from './components/OrderBookAnalysis';
 import ScalpRadar from './components/ScalpRadar';
 import { StockBotTab } from './components/StockBotTab';
+import { RealUSStockBoard } from './components/RealUSStockBoard';
 
 const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:3001' : window.location.origin;
 
@@ -333,7 +334,7 @@ export default function App() {
     (o) => o.status !== 'TRIGGERED' && o.status !== 'CANCELLED' && o.status !== 'FAILED'
   ).length;
 
-  const [mainMode, setMainMode] = useState<'crypto' | 'stock'>('crypto');
+  const [mainMode, setMainMode] = useState<'crypto' | 'real-us-stocks' | 'stock'>('crypto');
 
   return (
     <div className="app-container">
@@ -364,6 +365,22 @@ export default function App() {
             }}
           >
             🚀 Crypto Trailing Bot
+          </button>
+          <button
+            type="button"
+            onClick={() => setMainMode('real-us-stocks')}
+            style={{
+              background: mainMode === 'real-us-stocks' ? 'linear-gradient(135deg, #059669 0%, #0d9488 100%)' : 'transparent',
+              color: '#fff',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: '0.9rem'
+            }}
+          >
+            🏛️ Real US Stock Board
           </button>
           <button
             type="button"
@@ -423,7 +440,9 @@ export default function App() {
 
         {/* Right Column: Trading & Logs */}
         <div className="main-content">
-          {mainMode === 'stock' ? (
+          {mainMode === 'real-us-stocks' ? (
+            <RealUSStockBoard />
+          ) : mainMode === 'stock' ? (
             <StockBotTab apiBaseUrl={BACKEND_URL} availableSymbols={availableSymbols} />
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
