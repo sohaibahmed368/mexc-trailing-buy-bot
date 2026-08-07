@@ -26,24 +26,24 @@ interface OrderFormProps {
 }
 
 export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }: OrderFormProps) {
-  const [symbol, setSymbol] = useState('MXUSDT');
+  const [symbol, setSymbol] = useState('ETHUSDT');
   const [activationPrice, setActivationPrice] = useState('');
-  const [takeProfit, setTakeProfit] = useState('');
-  const [stopLoss, setStopLoss] = useState('');
+  const [takeProfit, setTakeProfit] = useState('0.60');
+  const [stopLoss, setStopLoss] = useState('0');
   const [filterSmartSl, setFilterSmartSl] = useState(false);
-  const [slBuffer, setSlBuffer] = useState('2');
-  const [filterObi, setFilterObi] = useState(false);
+  const [slBuffer, setSlBuffer] = useState('0.15');
+  const [filterObi, setFilterObi] = useState(true); // Dual Gate System Enabled by default
   const [filterVolume, setFilterVolume] = useState(false);
   const [filterRsi, setFilterRsi] = useState(false);
-  const [autoRepeat, setAutoRepeat] = useState(false);
-  const [activationOffset, setActivationOffset] = useState('10');
-  const [startImmediately, setStartImmediately] = useState(false);
-  const [trailValue, setTrailValue] = useState('0.05');
+  const [autoRepeat, setAutoRepeat] = useState(true); // Auto-Cycle Loop Enabled by default
+  const [activationOffset, setActivationOffset] = useState('0.15');
+  const [startImmediately, setStartImmediately] = useState(true); // Start First Trade Immediately Enabled by default
+  const [trailValue, setTrailValue] = useState('0.15'); // 0.15% Rebound Trail
   const [qtyMode, setQtyMode] = useState<'usdt' | 'coin'>('usdt');
   const [quantity, setQuantity] = useState('');
-  const [quoteOrderQty, setQuoteOrderQty] = useState('10');
+  const [quoteOrderQty, setQuoteOrderQty] = useState('100'); // 100 USDT
   const [orderType, setOrderType] = useState('MARKET');
-  const [dryRun, setDryRun] = useState(true);
+  const [dryRun, setDryRun] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
