@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Terminal, Ban, Sliders } from 'lucide-react';
 
 interface LogEntry {
@@ -48,8 +48,10 @@ export default function LogsConsole({ logs, pollInterval, onUpdateInterval }: Lo
     isAtBottomRef.current = distanceFromBottom <= 35;
   };
 
-  // Render logs oldest-to-newest so they read naturally like a terminal
-  const chronologicalLogs = [...logs].reverse();
+  // Render logs oldest-to-newest so they read naturally like a terminal (Memoized to prevent UI thread lag!)
+  const chronologicalLogs = useMemo(() => {
+    return [...(logs || []).slice(0, 60)].reverse();
+  }, [logs]);
 
   const handleSaveInterval = async (e: React.FormEvent) => {
     e.preventDefault();

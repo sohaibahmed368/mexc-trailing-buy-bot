@@ -161,13 +161,13 @@ export default function App() {
     });
 
     socket.on('logs_init', (initialLogs: LogEntry[]) => {
-      setLogs(initialLogs);
+      setLogs((initialLogs || []).slice(0, 60));
     });
 
     socket.on('log_entry', (newLog: LogEntry) => {
       setLogs((prevLogs) => {
         const next = [newLog, ...prevLogs];
-        return next.slice(0, 500); // limit to 500 logs in React state
+        return next.slice(0, 60); // limit to 60 logs max in React state for instant 60fps UI
       });
     });
 

@@ -182,19 +182,36 @@ class OrderTracker {
       symbol
     };
     
-    this.logs.unshift(logEntry); // Add to beginning of logs
-    if (this.logs.length > 1000) {
-      this.logs = this.logs.slice(0, 1000); // limit RAM buffer to 1000 logs
-    }
-    
-    // Optimized debounced disk saver (saves at most once every 3 seconds to avoid disk CPU/IO bottleneck)
-    this.scheduleLogsSave();
-    
-    // Ultra-optimized auto-rotating log file (capped at 5MB max file size to prevent VPS storage overload)
+    // Always append ALL raw logs to disk audit log file for 100% full history
     this.appendAuditLog(logEntry);
 
-    if (this.io && typeof this.io.emit === 'function') {
-      this.io.emit('log_entry', logEntry);
+    // Filter UI WebSocket & RAM Buffer: Avoid choking UI thread with 1-second routine heartbeat scans
+    const isRoutineScan = message.includes('DUAL GATE SCAN');
+    const now = Date.now();
+    this.lastScanWsEmitTime = this.lastScanWsEmitTime || {};
+    const symKey = symbol || 'GENERAL';
+
+    let shouldEmitToUi = true;
+    if (isRoutineScan && type === 'info') {
+      // Throttle routine scan heartbeats to emit over WebSocket at most once every 5 seconds per coin
+      if (this.lastScanWsEmitTime[symKey] && (now - this.lastScanWsEmitTime[symKey] < 5000)) {
+        shouldEmitToUi = false;
+      } else {
+        this.lastScanWsEmitTime[symKey] = now;
+      }
+    }
+
+    if (shouldEmitToUi) {
+      this.logs.unshift(logEntry); // Add to UI logs buffer
+      if (this.logs.length > 100) {
+        this.logs = this.logs.slice(0, 100); // limit RAM buffer to 100 logs max for lightning fast UI
+      }
+      
+      this.scheduleLogsSave();
+
+      if (this.io && typeof this.io.emit === 'function') {
+        this.io.emit('log_entry', logEntry);
+      }
     }
 
     // Output all logs directly to stdout so PM2 logs and VPS terminal reflect live bot activity in real-time
