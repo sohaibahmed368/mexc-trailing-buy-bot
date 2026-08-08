@@ -1095,7 +1095,9 @@ class OrderTracker {
         } else if (existingOrder.status !== 'TP_SL_ACTIVE' && existingOrder.status !== 'PENDING_EXECUTION' && existingOrder.status !== 'CANCELLED') {
           // If asset is physically in wallet ($10+ USDT), sync card state to TP_SL_ACTIVE!
           existingOrder.status = 'TP_SL_ACTIVE';
-          existingOrder.executionPrice = currentPrice;
+          if (!existingOrder.executionPrice || existingOrder.executionPrice <= 0) {
+            existingOrder.executionPrice = currentPrice;
+          }
           try {
             const openOrders = await this.mexcClient.getOpenOrders(symbol);
             if (Array.isArray(openOrders) && openOrders.length > 0) {
@@ -1103,8 +1105,31 @@ class OrderTracker {
               if (sellOrder && sellOrder.orderId) existingOrder.mexcSellOrderId = sellOrder.orderId;
             }
           } catch (oErr) {}
-          this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Updated ${symbol} card state to TP_SL_ACTIVE for physical wallet holding ($${notionalUsdt.toFixed(2)} USDT)!`, 'info', symbol);
+          this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Updated ${symbol} card state to TP_SL_ACTIVE for physical wallet holding ($${notionalUsdt.toFixed(2)} USDT)! (Bought At: $${existingOrder.executionPrice})`, 'info', symbol);
           this.saveOrders();
+        }
+      }
+
+      // 🎯 REBOOT TP SYNC: Check all TP_SL_ACTIVE cards to finalize filled / completed TP orders immediately
+      for (const order of this.orders) {
+        if (order.status === 'TP_SL_ACTIVE') {
+          const buyPrice = order.executionPrice || order.initialPrice || order.currentPrice;
+          const tpPct = order.takeProfit || 0.6;
+          const tpPrice = buyPrice * (1 + (tpPct / 100));
+          const currentPrice = prices[order.symbol] || order.currentPrice || buyPrice;
+
+          try {
+            const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
+            const sellOrderOpen = Array.isArray(openOrders) && openOrders.some(o => o.side === 'SELL');
+
+            if (!sellOrderOpen || currentPrice >= (tpPrice - 0.00000001)) {
+              this.log(`🎯 [REBOOT TP SYNC] ${order.symbol}: Target $${tpPrice.toFixed(4)} reached or limit sell filled on MEXC! Finalizing TP cycle...`, 'success', order.symbol);
+              order.status = 'TRIGGERED';
+              order.sellExecutionPrice = Math.max(currentPrice, tpPrice);
+              order.sellTriggeredAt = new Date().toISOString();
+              await this.handleOrderCycleComplete(order);
+            }
+          } catch (syncErr) {}
         }
       }
     } catch (e) {
