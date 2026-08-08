@@ -995,117 +995,93 @@ class OrderTracker {
       const balances = await this.mexcClient.getBalances();
       if (!Array.isArray(balances)) return;
 
-      const allowedCryptoWhitelist = new Set(['BTC', 'ETH', 'SOL', 'ONDO', 'SUI', 'UNI', 'XRP', 'DOGE', 'ADA', 'AVAX', 'LINK', 'DOT', 'SHIB', 'PEPE', 'NEAR', 'FET', 'RNDR', 'TAO', 'WIF', 'BONK', 'FLOKI', 'BNB', 'MATIC', 'XAUT', 'PAXG', 'GOLD']);
+      const prices = await this.mexcClient.getAllPrices().catch(() => ({}));
 
       for (const bal of balances) {
-        const asset = (bal.asset || '').toUpperCase();
-        // IGNORE fiat/stablecoins and IGNORE any stock tokens/equity derivatives (like NVDAX, USO, AAPL, etc.)
-        if (!allowedCryptoWhitelist.has(asset)) continue;
+        const freeQty = parseFloat(bal.free || 0);
+        const lockedQty = parseFloat(bal.locked || 0);
+        const totalQty = freeQty + lockedQty;
 
-        const totalQty = parseFloat(bal.free || 0) + parseFloat(bal.locked || 0);
         if (totalQty <= 0) continue;
 
-        const symbol = asset + 'USDT';
-        
-        let currentPrice = 0;
-        try { currentPrice = await this.mexcClient.getTickerPrice(symbol); } catch (e) { continue; }
-        if (!currentPrice || currentPrice <= 0) continue;
+        const asset = bal.asset.toUpperCase();
+        if (asset === 'USDT' || asset === 'USDC' || asset === 'USD') continue;
 
+        const symbol = asset + 'USDT';
+        const currentPrice = parseFloat(prices[symbol] || prices[asset + 'USDT'] || 0);
         const notionalUsdt = totalQty * currentPrice;
+
         let existingOrder = this.orders.find(o => o.symbol === symbol);
 
-        // STRICT DUST CHECK: Only ignore if total balance value in wallet is genuinely under 10.0 USDT and no coins are locked in open sell orders!
-        if (currentPrice > 0 && notionalUsdt < 10.0 && (parseFloat(bal.locked || 0) === 0)) {
-          if (existingOrder && existingOrder.status === 'TP_SL_ACTIVE' && !existingOrder.mexcSellOrderId) {
-            existingOrder.status = 'PENDING_ACTIVATION';
-            existingOrder.executionPrice = null;
-            this.log(`⚠️ [DUST BALANCE IGNORED] ${asset} wallet value is only $${notionalUsdt.toFixed(2)} USDT (< $10.00 minimum trade). Resetting card state to PENDING_ACTIVATION!`, 'info', symbol);
-            this.saveOrders();
-          }
-          continue;
-        }
-
-        if (!existingOrder) {
-          // Find last buy price from trade history or use current ticker price
-          let execPrice = currentPrice;
-          try {
-            const trades = await this.mexcClient.getMyTrades(symbol, 5);
-            if (Array.isArray(trades) && trades.length > 0) {
-              const buyTrade = trades.reverse().find(t => !t.isBuyerMaker); // Find recent BUY
-              if (buyTrade && parseFloat(buyTrade.price) > 0) execPrice = parseFloat(buyTrade.price);
-            }
-          } catch (tErr) {}
-
+        // 🎯 STRICT PHYSICAL HOLDING GUARD: If MEXC wallet holds >= $10.00 USDT or has locked coins in open sell orders
+        if (notionalUsdt >= 10.0 || lockedQty > 0) {
           let mexcSellOrderId = null;
+          let buyPrice = currentPrice;
+
           try {
             const openOrders = await this.mexcClient.getOpenOrders(symbol);
             if (Array.isArray(openOrders) && openOrders.length > 0) {
               const sellOrder = openOrders.find(o => o.side === 'SELL');
-              if (sellOrder && sellOrder.orderId) mexcSellOrderId = sellOrder.orderId;
+              if (sellOrder && sellOrder.orderId) {
+                mexcSellOrderId = sellOrder.orderId;
+                const openSellPrice = parseFloat(sellOrder.price || 0);
+                if (openSellPrice > 0) {
+                  const tpPct = existingOrder ? (existingOrder.takeProfit || 0.5) : 0.5;
+                  buyPrice = openSellPrice / (1 + (tpPct / 100));
+                }
+              }
             }
-          } catch (oErr) {}
+          } catch (e) {}
 
-          const newOrder = {
-            id: 'ord_restored_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-            symbol,
-            trailValue: 0.25,
-            quantity: null,
-            quoteOrderQty: Math.max(50, Math.round(notionalUsdt)),
-            orderType: 'MARKET',
-            dryRun: false,
-            status: 'TP_SL_ACTIVE',
-            activationPrice: null,
-            activationDirection: null,
-            activatedAt: new Date().toISOString(),
-            takeProfit: 0.6,
-            stopLoss: 0.5,
-            filterSmartSl: true,
-            slBuffer: 0.2,
-            isSlExtended: false,
-            isSlProfitLocked: false,
-            lockedSlPrice: null,
-            mexcSellOrderId,
-            sellExecutionPrice: null,
-            sellTriggeredAt: null,
-            filterObi: true,
-            filterVolume: false,
-            filterRsi: false,
-            filter40sVolume: true,
-            autoRepeat: true,
-            startImmediately: false,
-            activationOffset: 0.5,
-            peakPrice: execPrice * 1.002,
-            totalNetProfit: 0,
-            tradeHistory: [],
-            initialPrice: execPrice,
-            bottomPrice: null,
-            triggerPrice: null,
-            currentPrice,
-            createdAt: new Date().toISOString(),
-            triggeredAt: new Date().toISOString(),
-            mexcOrderId: 'restored_' + Date.now(),
-            executionPrice: execPrice,
-            error: null,
-            localBottom: execPrice
-          };
+          if (!existingOrder) {
+            const newOrder = {
+              id: 'ord_restored_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+              symbol,
+              trailValue: 0.25,
+              quantity: null,
+              quoteOrderQty: Math.max(15, Math.round(notionalUsdt)),
+              orderType: 'MARKET',
+              dryRun: false,
+              status: 'TP_SL_ACTIVE',
+              activationPrice: null,
+              activationDirection: null,
+              activatedAt: new Date().toISOString(),
+              takeProfit: 0.5,
+              stopLoss: 0.0,
+              filterSmartSl: false,
+              slBuffer: 0.0,
+              isSlExtended: false,
+              isSlProfitLocked: false,
+              lockedSlPrice: null,
+              mexcSellOrderId,
+              sellExecutionPrice: null,
+              sellTriggeredAt: null,
+              filterObi: true,
+              autoRepeat: true,
+              startImmediately: false,
+              executionPrice: buyPrice,
+              initialPrice: buyPrice,
+              currentPrice,
+              createdAt: new Date().toISOString(),
+              triggeredAt: new Date().toISOString(),
+              mexcOrderId: 'restored_' + Date.now(),
+              error: null,
+              localBottom: buyPrice
+            };
 
-          this.orders.push(newOrder);
-          this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Restored Active Tracking Card with MEXC Limit Sell Order ID ${mexcSellOrderId || 'Attached'}!`, 'success', symbol);
-          this.saveOrders();
-        } else if (existingOrder.status !== 'TP_SL_ACTIVE' && existingOrder.status !== 'PENDING_EXECUTION' && existingOrder.status !== 'CANCELLED') {
-          // If asset is physically in wallet ($10+ USDT), sync card state to TP_SL_ACTIVE!
-          existingOrder.status = 'TP_SL_ACTIVE';
-          if (!existingOrder.executionPrice || existingOrder.executionPrice <= 0) {
-            existingOrder.executionPrice = currentPrice;
+            this.orders.push(newOrder);
+            this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Restored Active Card with status TP_SL_ACTIVE!`, 'success', symbol);
+          } else {
+            // FORCE SYNC EXISTING CARD STATUS TO TP_SL_ACTIVE FOR PHYSICAL WALLET HOLDING!
+            existingOrder.status = 'TP_SL_ACTIVE';
+            if (!existingOrder.executionPrice || existingOrder.executionPrice <= 0) {
+              existingOrder.executionPrice = buyPrice;
+            }
+            if (mexcSellOrderId) {
+              existingOrder.mexcSellOrderId = mexcSellOrderId;
+            }
+            this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Forced ${symbol} card status to TP_SL_ACTIVE for physical wallet holding ($${notionalUsdt.toFixed(2)} USDT)! (Bought At: $${existingOrder.executionPrice.toFixed(4)})`, 'success', symbol);
           }
-          try {
-            const openOrders = await this.mexcClient.getOpenOrders(symbol);
-            if (Array.isArray(openOrders) && openOrders.length > 0) {
-              const sellOrder = openOrders.find(o => o.side === 'SELL');
-              if (sellOrder && sellOrder.orderId) existingOrder.mexcSellOrderId = sellOrder.orderId;
-            }
-          } catch (oErr) {}
-          this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Updated ${symbol} card state to TP_SL_ACTIVE for physical wallet holding ($${notionalUsdt.toFixed(2)} USDT)! (Bought At: $${existingOrder.executionPrice})`, 'info', symbol);
           this.saveOrders();
         }
       }
