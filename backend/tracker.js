@@ -1106,13 +1106,24 @@ class OrderTracker {
           let buyPrice = currentPrice;
 
           try {
+            // Fetch actual trade history from MEXC to get the REAL exact buy fill price!
+            const trades = await this.mexcClient.getMyTrades(symbol, 10).catch(() => []);
+            if (Array.isArray(trades) && trades.length > 0) {
+              const buyTrades = trades.filter(t => t.isBuyer || t.side === 'BUY' || (t.isMaker === false && parseFloat(t.qty || 0) > 0));
+              const lastBuy = buyTrades.length > 0 ? buyTrades[buyTrades.length - 1] : null;
+              if (lastBuy) {
+                const realPrice = parseFloat(lastBuy.price || lastBuy.execPrice || 0);
+                if (realPrice > 0) buyPrice = realPrice;
+              }
+            }
+
             const openOrders = await this.mexcClient.getOpenOrders(symbol);
             if (Array.isArray(openOrders) && openOrders.length > 0) {
               const sellOrder = openOrders.find(o => o.side === 'SELL');
               if (sellOrder && sellOrder.orderId) {
                 mexcSellOrderId = sellOrder.orderId;
                 const openSellPrice = parseFloat(sellOrder.price || 0);
-                if (openSellPrice > 0) {
+                if (openSellPrice > 0 && buyPrice === currentPrice) {
                   const tpPct = existingOrder ? (existingOrder.takeProfit || 0.5) : 0.5;
                   buyPrice = openSellPrice / (1 + (tpPct / 100));
                 }
@@ -1281,13 +1292,24 @@ class OrderTracker {
               let buyPrice = currentPrice;
 
               try {
+                // Fetch actual trade history from MEXC to get the REAL exact buy fill price!
+                const trades = await this.mexcClient.getMyTrades(order.symbol, 10).catch(() => []);
+                if (Array.isArray(trades) && trades.length > 0) {
+                  const buyTrades = trades.filter(t => t.isBuyer || t.side === 'BUY' || (t.isMaker === false && parseFloat(t.qty || 0) > 0));
+                  const lastBuy = buyTrades.length > 0 ? buyTrades[buyTrades.length - 1] : null;
+                  if (lastBuy) {
+                    const realPrice = parseFloat(lastBuy.price || lastBuy.execPrice || 0);
+                    if (realPrice > 0) buyPrice = realPrice;
+                  }
+                }
+
                 const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
                 if (Array.isArray(openOrders) && openOrders.length > 0) {
                   const sellOrder = openOrders.find(o => o.side === 'SELL');
                   if (sellOrder && sellOrder.orderId) {
                     mexcSellOrderId = sellOrder.orderId;
                     const openSellPrice = parseFloat(sellOrder.price || 0);
-                    if (openSellPrice > 0) {
+                    if (openSellPrice > 0 && buyPrice === currentPrice) {
                       buyPrice = openSellPrice / (1 + ((order.takeProfit || 0.5) / 100));
                     }
                   }

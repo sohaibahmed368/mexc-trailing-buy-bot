@@ -10,7 +10,7 @@ class MockMexcClientForWalletSync {
     this.orderStatusMap = {
       'mexc_hype_777': { orderId: 'mexc_hype_777', symbol: 'HYPEUSDT', side: 'SELL', price: '54.45', origQty: '0.27', executedQty: '0', status: 'NEW' }
     };
-    this.simulatedPrice = 54.30; // Price below TP target ($54.45) initially
+    this.simulatedPrice = 54.30;
   }
 
   hasCredentials() { return true; }
@@ -19,6 +19,12 @@ class MockMexcClientForWalletSync {
     return [
       { asset: 'USDT', free: '100.00', locked: '0.00' },
       { asset: 'HYPE', free: '0.01', locked: '0.27' }
+    ];
+  }
+
+  async getMyTrades(symbol, limit) {
+    return [
+      { price: '54.1791', qty: '0.27', isBuyer: true, time: Date.now() - 60000 }
     ];
   }
 
@@ -80,7 +86,7 @@ async function runWalletHoldingSyncAudit() {
   assert.strictEqual(hypeCard.status, 'PENDING_ACTIVATION', 'Card initialized in Waiting status');
   console.log("   Card Status before sync: PENDING_ACTIVATION (Waiting)");
 
-  // 2️⃣ STEP 2: Run syncLiveWalletOrders() when price ($54.30) is BELOW TP target ($54.45)
+  // 2️⃣ STEP 2: Run syncLiveWalletOrders() when price ($54.30) is below TP target ($54.45)
   console.log("\n2️⃣ STEP 2: Running syncLiveWalletOrders() when price ($54.30) is below TP target ($54.45)...");
   await tracker.syncLiveWalletOrders();
 
