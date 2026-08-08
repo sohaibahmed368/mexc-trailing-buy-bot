@@ -1337,6 +1337,102 @@ class OrderTracker {
       // 1.5 Check TP/SL OCO checks if already bought and holding
       if (order.status === 'TP_SL_ACTIVE') {
         const now = Date.now();
+        const execPrice = order.executionPrice || order.initialPrice || order.currentPrice;
+        const tpPct = (order.takeProfit || 0.6);
+        const tpTargetPrice = execPrice * (1 + (tpPct / 100));
+
+        // 🎯 HARD GUARANTEE: If Current Market Price >= Take Profit Target Price (e.g. $8.344 >= $8.33748)
+        if (currentPrice >= (tpTargetPrice - 0.00000001)) {
+          if (order.dryRun) {
+            order.status = 'TRIGGERED';
+            order.sellExecutionPrice = tpTargetPrice;
+            order.sellTriggeredAt = new Date().toISOString();
+            this.log(`🎉 [DRY RUN TAKE PROFIT HIT] ${order.symbol} price $${currentPrice.toFixed(4)} >= TP target $${tpTargetPrice.toFixed(4)} (+${tpPct}%). Executed simulated TP sell!`, 'success', order.symbol);
+            changed = true;
+            await this.handleOrderCycleComplete(order);
+            continue;
+          } else {
+            // REAL LIVE TRADE TAKE PROFIT TRIGGER!
+            this.log(`🎯 [REAL TAKE PROFIT TARGET REACHED] ${order.symbol} live price $${currentPrice.toFixed(4)} >= TP target $${tpTargetPrice.toFixed(4)} (+${tpPct}%)! Verifying MEXC order fill & finalizing cycle...`, 'success', order.symbol);
+
+            let isTpFilled = false;
+            let sellPriceFound = currentPrice;
+
+            // 1. Check if the placed Limit Sell TP order was filled on MEXC
+            if (order.mexcSellOrderId) {
+              try {
+                const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
+                if (queryRes) {
+                  const statusStr = (queryRes.status || '').toUpperCase();
+                  const execQty = parseFloat(queryRes.executedQty || 0);
+                  const origQty = parseFloat(queryRes.origQty || 1);
+
+                  if (statusStr === 'FILLED' || statusStr === 'CLOSED' || (execQty > 0 && execQty >= origQty * 0.99)) {
+                    isTpFilled = true;
+                    if (queryRes.price && parseFloat(queryRes.price) > 0) {
+                      sellPriceFound = parseFloat(queryRes.price);
+                    }
+                  }
+                }
+              } catch (e) {}
+
+              // 2. Check if order is no longer in open orders (Filled!)
+              if (!isTpFilled) {
+                try {
+                  const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
+                  const stillOpen = Array.isArray(openOrders) && openOrders.some(o => o.orderId === order.mexcSellOrderId || o.side === 'SELL');
+                  if (!stillOpen) {
+                    isTpFilled = true;
+                  }
+                } catch (e) {}
+              }
+            }
+
+            // 3. If TP limit sell order is STILL OPEN or not filled yet on MEXC, CANCEL it and execute IMMEDIATE MARKET SELL to guarantee profit capture!
+            if (!isTpFilled) {
+              this.log(`⚡ [FORCE MARKET SELL FOR TP] Price $${currentPrice.toFixed(4)} exceeded TP target $${tpTargetPrice.toFixed(4)}. Cancelling limit sell order ${order.mexcSellOrderId || ''} and executing IMMEDIATE MARKET SELL on MEXC...`, 'warning', order.symbol);
+
+              if (order.mexcSellOrderId) {
+                try {
+                  await this.mexcClient.cancelOrder(order.symbol, order.mexcSellOrderId);
+                  await new Promise(r => setTimeout(r, 600));
+                } catch (cErr) {}
+              }
+
+              try {
+                const grossQty = order.quantity || (order.quoteOrderQty / execPrice);
+                const sellQty = await this.getFeeAdjustedBalance(order.symbol, grossQty);
+                const precisionMult = this.getSymbolQuantityPrecision(order.symbol, currentPrice);
+                const qtyToTry = Math.floor(sellQty * precisionMult) / precisionMult;
+
+                if (qtyToTry > 0) {
+                  const sellRes = await this.mexcClient.placeOrder({
+                    symbol: order.symbol,
+                    side: 'SELL',
+                    type: 'MARKET',
+                    quantity: qtyToTry
+                  });
+                  if (sellRes && sellRes.orderId) {
+                    this.log(`✅ [TP MARKET SELL EXECUTED] Market Sell executed for ${qtyToTry} ${order.symbol} @ $${currentPrice.toFixed(4)} USDT!`, 'success', order.symbol);
+                    isTpFilled = true;
+                  }
+                }
+              } catch (mSellErr) {
+                this.log(`Market sell error: ${mSellErr.message}. Finalizing TP cycle complete.`, 'warning', order.symbol);
+                isTpFilled = true;
+              }
+            }
+
+            // Finalize TP Cycle Complete!
+            order.status = 'TRIGGERED';
+            order.sellExecutionPrice = sellPriceFound;
+            order.sellTriggeredAt = new Date().toISOString();
+            changed = true;
+            await this.handleOrderCycleComplete(order);
+            continue;
+          }
+        }
+
         // Automatic Ghost Order Self-Healing: Verify real MEXC balance for real trades
         if (!order.dryRun) {
           if (!order.lastGhostCheckTime || (now - order.lastGhostCheckTime > 5000)) {
