@@ -961,12 +961,36 @@ class OrderTracker {
     const order = this.orders.find(o => o.id === id);
     if (!order) return;
 
-    if (order.status === 'TP_SL_ACTIVE' && !order.dryRun && order.mexcSellOrderId) {
+    if (order.status === 'TP_SL_ACTIVE' && !order.dryRun) {
+      if (order.mexcSellOrderId) {
+        try {
+          await this.mexcClient.cancelOrder(order.symbol, order.mexcSellOrderId);
+          this.log(`Cancelled active TP Limit Sell order ${order.mexcSellOrderId} on MEXC.`, 'info', order.symbol);
+        } catch (e) {
+          this.log(`Failed to cancel TP order on MEXC: ${e.message}`, 'error', order.symbol);
+        }
+      }
+
+      // Execute Immediate Market Sell on MEXC to liquidate holdings back to USDT
       try {
-        await this.mexcClient.cancelOrder(order.symbol, order.mexcSellOrderId);
-        this.log(`Cancelled active TP Limit Sell order ${order.mexcSellOrderId} on MEXC.`, 'info', order.symbol);
-      } catch (e) {
-        this.log(`Failed to cancel TP order on MEXC: ${e.message}`, 'error', order.symbol);
+        const asset = order.symbol.replace('USDT', '').toUpperCase();
+        const balances = await this.mexcClient.getBalances();
+        const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+        const freeQty = assetBal ? parseFloat(assetBal.free || 0) : 0;
+        const precisionMult = this.getSymbolQuantityPrecision(order.symbol, order.currentPrice || 100);
+        const qtyToSell = Math.floor(freeQty * precisionMult) / precisionMult;
+
+        if (qtyToSell > 0) {
+          await this.mexcClient.placeOrder({
+            symbol: order.symbol,
+            side: 'SELL',
+            type: 'MARKET',
+            quantity: qtyToSell
+          });
+          this.log(`✅ [CANCEL MARKET SELL] Executed Market Sell for ${qtyToSell} ${order.symbol} on MEXC. Holdings converted to USDT!`, 'success', order.symbol);
+        }
+      } catch (mErr) {
+        this.log(`Market sell on cancel notice: ${mErr.message}`, 'warning', order.symbol);
       }
     }
 
@@ -976,6 +1000,52 @@ class OrderTracker {
     
     // Stop tracking loop if no active orders remain
     this.checkTrackingLoop();
+  }
+
+  // Force Market Sell position holdings and re-cycle card back to PENDING_ACTIVATION (Waiting) mode for next dip
+  async recycleOrder(id) {
+    const order = this.orders.find(o => o.id === id || o.symbol === id);
+    if (!order) return;
+
+    if (!order.dryRun && this.mexcClient && this.mexcClient.hasCredentials()) {
+      if (order.mexcSellOrderId) {
+        try {
+          await this.mexcClient.cancelOrder(order.symbol, order.mexcSellOrderId);
+          this.log(`Cancelled active TP Limit Sell order ${order.mexcSellOrderId} on MEXC.`, 'info', order.symbol);
+        } catch (e) {}
+      }
+
+      try {
+        const asset = order.symbol.replace('USDT', '').toUpperCase();
+        const balances = await this.mexcClient.getBalances();
+        const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+        const totalQty = assetBal ? (parseFloat(assetBal.free || 0) + parseFloat(assetBal.locked || 0)) : 0;
+        const precisionMult = this.getSymbolQuantityPrecision(order.symbol, order.currentPrice || 100);
+        const qtyToSell = Math.floor(totalQty * precisionMult) / precisionMult;
+
+        if (qtyToSell > 0) {
+          await this.mexcClient.placeOrder({
+            symbol: order.symbol,
+            side: 'SELL',
+            type: 'MARKET',
+            quantity: qtyToSell
+          });
+          this.log(`✅ [RE-CYCLE MARKET SELL] Executed Market Sell for ${qtyToSell} ${order.symbol} on MEXC! Holdings liquidated to USDT.`, 'success', order.symbol);
+        }
+      } catch (mErr) {
+        this.log(`Re-cycle market sell notice: ${mErr.message}`, 'warning', order.symbol);
+      }
+    }
+
+    order.status = 'PENDING_ACTIVATION';
+    order.executionPrice = null;
+    order.initialPrice = null;
+    order.mexcSellOrderId = null;
+    order.mexcOrderId = null;
+    order.error = null;
+    this.saveOrders();
+    this.log(`🔄 [CARD RE-CYCLED] ${order.symbol} card status reset to PENDING_ACTIVATION (Waiting for next dip)!`, 'success', order.symbol);
+    return order;
   }
 
   // Clear completed order history

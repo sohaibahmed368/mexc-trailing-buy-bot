@@ -345,6 +345,17 @@ app.delete('/api/orders/:id', async (req, res) => {
   }
 });
 
+// Re-cycle order card (Force Market Sell holdings on MEXC and reset card status to Waiting mode)
+app.post('/api/orders/:id/recycle', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedOrder = await tracker.recycleOrder(id);
+    res.json({ success: true, order: updatedOrder });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 // Clear historical orders
 app.delete('/api/orders', (req, res) => {
   try {
