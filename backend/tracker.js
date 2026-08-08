@@ -713,7 +713,9 @@ class OrderTracker {
     // Check if ANY order card already exists for this symbol (active trade or running/pending state)
     const existingCard = this.orders.find(o => o.symbol === symbol);
     
-    let startInstantBuy = autoRepeat && startImmediately;
+    // Safety Guard: If Dual Gate System is enabled (filterObi = true), NEVER buy immediately on card creation!
+    // Card MUST start in PENDING_ACTIVATION (Waiting) mode to await OBI >= 55% & 4h 15m RSI <= 40.0!
+    let startInstantBuy = autoRepeat && startImmediately && !filterObi;
     
     // Safety Lock: If an order card ALREADY exists for this symbol, DO NOT trigger instant buy on setting update/save!
     if (startInstantBuy && existingCard) {
@@ -1345,19 +1347,56 @@ class OrderTracker {
 
             // FIRST: Check if the placed TP Limit Sell order was filled on MEXC!
             if (order.mexcSellOrderId) {
+              let isTpFilled = false;
+              let sellPriceFound = null;
+
               try {
                 const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
-                if (queryRes && queryRes.status === 'FILLED') {
-                  const tpDollar = (order.takeProfit / 100) * (order.executionPrice || order.initialPrice);
-                  order.status = 'TRIGGERED';
-                  order.sellExecutionPrice = parseFloat(queryRes.price) || ((order.executionPrice || order.initialPrice) + tpDollar);
-                  order.sellTriggeredAt = new Date().toISOString();
-                  this.log(`🎉 [REAL] Take Profit hit! Limit Sell order ${order.mexcSellOrderId} filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
-                  changed = true;
-                  await this.handleOrderCycleComplete(order);
-                  continue;
+                if (queryRes) {
+                  const statusStr = (queryRes.status || '').toUpperCase();
+                  const execQty = parseFloat(queryRes.executedQty || 0);
+                  const origQty = parseFloat(queryRes.origQty || 1);
+
+                  if (statusStr === 'FILLED' || statusStr === 'CLOSED' || (execQty > 0 && execQty >= origQty * 0.99)) {
+                    isTpFilled = true;
+                    if (queryRes.price && parseFloat(queryRes.price) > 0) {
+                      sellPriceFound = parseFloat(queryRes.price);
+                    }
+                  }
                 }
               } catch (e) {}
+
+              // Secondary Fallback: Check if order is NO LONGER in MEXC open orders (Order filled!)
+              if (!isTpFilled) {
+                try {
+                  const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
+                  const sellOrderStillOpen = Array.isArray(openOrders) && openOrders.some(o => o.orderId === order.mexcSellOrderId || o.side === 'SELL');
+                  if (!sellOrderStillOpen) {
+                    // Order is no longer in open orders! Query recent trade history for exact sell fill price
+                    isTpFilled = true;
+                    try {
+                      const trades = await this.mexcClient.getMyTrades(order.symbol, 5);
+                      if (Array.isArray(trades) && trades.length > 0) {
+                        const sellTrade = trades.reverse().find(t => t.isBuyerMaker || t.isMaker);
+                        if (sellTrade && parseFloat(sellTrade.price) > 0) {
+                          sellPriceFound = parseFloat(sellTrade.price);
+                        }
+                      }
+                    } catch (tErr) {}
+                  }
+                } catch (e) {}
+              }
+
+              if (isTpFilled) {
+                const tpDollar = ((order.takeProfit || 0.6) / 100) * (order.executionPrice || order.initialPrice);
+                order.status = 'TRIGGERED';
+                order.sellExecutionPrice = sellPriceFound || ((order.executionPrice || order.initialPrice) + tpDollar);
+                order.sellTriggeredAt = new Date().toISOString();
+                this.log(`🎉 [REAL TAKE PROFIT FILLED] Limit Sell order ${order.mexcSellOrderId} filled on MEXC @ $${order.sellExecutionPrice.toFixed(4)} USDT!`, 'success', order.symbol);
+                changed = true;
+                await this.handleOrderCycleComplete(order);
+                continue;
+              }
             }
 
             const asset = order.symbol.replace('USDT', '').toUpperCase();
