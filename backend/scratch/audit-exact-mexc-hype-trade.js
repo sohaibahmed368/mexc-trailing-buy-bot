@@ -10,61 +10,58 @@ async function auditExactMexcHypeTrade() {
   let apiKey = process.env.MEXC_API_KEY;
   let secretKey = process.env.MEXC_SECRET_KEY;
 
-  const possiblePaths = [
-    path.join(__dirname, '../data/credentials.json'),
-    path.join(__dirname, 'data/credentials.json'),
-    path.join(__dirname, '../credentials.json'),
-    path.join(process.cwd(), 'data/credentials.json'),
-    path.join(process.cwd(), 'credentials.json')
+  // Search all possible directories for credentials files or .env files
+  const searchDirs = [
+    process.cwd(),
+    path.join(process.cwd(), 'data'),
+    path.join(process.cwd(), 'config'),
+    path.join(__dirname, '..'),
+    path.join(__dirname, '../data')
   ];
 
-  for (const p of possiblePaths) {
-    if (fs.existsSync(p)) {
-      try {
-        const creds = JSON.parse(fs.readFileSync(p, 'utf8'));
-        if (creds.apiKey && creds.secretKey) {
-          apiKey = creds.apiKey;
-          secretKey = creds.secretKey;
-          console.log(`   Loaded API Credentials from ${p}`);
-          break;
-        }
-      } catch (e) {}
-    }
-  }
-
-  if (!apiKey || !secretKey) {
-    const possibleEnvPaths = [
-      path.join(__dirname, '../.env'),
-      path.join(__dirname, '.env'),
-      path.join(process.cwd(), '.env')
-    ];
-
-    for (const envP of possibleEnvPaths) {
-      if (fs.existsSync(envP)) {
-        try {
-          const envText = fs.readFileSync(envP, 'utf8');
-          const lines = envText.split('\n');
-          lines.forEach(l => {
-            const parts = l.split('=');
-            if (parts.length >= 2) {
-              const key = parts[0].trim();
-              const val = parts.slice(1).join('=').trim().replace(/^["']|["']$/g, '');
-              if (key === 'MEXC_API_KEY' && val) apiKey = val;
-              if (key === 'MEXC_SECRET_KEY' && val) secretKey = val;
+  for (const dir of searchDirs) {
+    if (!fs.existsSync(dir)) continue;
+    try {
+      const files = fs.readdirSync(dir);
+      for (const f of files) {
+        const fullPath = path.join(dir, f);
+        if (f.endsWith('.json')) {
+          try {
+            const content = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+            if (content.apiKey && content.secretKey) {
+              apiKey = content.apiKey;
+              secretKey = content.secretKey;
+              console.log(`   Loaded API Credentials from ${fullPath}`);
+              break;
             }
-          });
-          if (apiKey && secretKey) {
-            console.log(`   Loaded API Credentials from ${envP}`);
-            break;
-          }
-        } catch (e) {}
+          } catch (e) {}
+        } else if (f === '.env' || f.endsWith('.env')) {
+          try {
+            const envText = fs.readFileSync(fullPath, 'utf8');
+            const lines = envText.split('\n');
+            lines.forEach(l => {
+              const parts = l.split('=');
+              if (parts.length >= 2) {
+                const key = parts[0].trim();
+                const val = parts.slice(1).join('=').trim().replace(/^["']|["']$/g, '');
+                if (key === 'MEXC_API_KEY' && val) apiKey = val;
+                if (key === 'MEXC_SECRET_KEY' && val) secretKey = val;
+              }
+            });
+            if (apiKey && secretKey) {
+              console.log(`   Loaded API Credentials from ${fullPath}`);
+              break;
+            }
+          } catch (e) {}
+        }
       }
-    }
+    } catch (e) {}
+    if (apiKey && secretKey) break;
   }
 
   const mexcClient = new MexcClient(apiKey, secretKey);
   if (!mexcClient.hasCredentials()) {
-    console.error("❌ MEXC API Credentials not found on local environment!");
+    console.error("❌ MEXC API Credentials not found! Please check frontend settings.");
     process.exit(1);
   }
 
@@ -74,7 +71,7 @@ async function auditExactMexcHypeTrade() {
     const openOrders = await mexcClient.getOpenOrders(symbol);
     console.log(`   Open Orders Count: ${openOrders.length}`);
     openOrders.forEach((o, i) => {
-      console.log(`   [#${i + 1}] Order ID: ${o.orderId} | Side: ${o.side} | Price: $${o.price} USDT | Qty: ${o.origQty} | Status: ${o.status}`);
+      console.log(`   [#${i + 1}] Order ID: ${o.orderId} | Side: ${o.side} | Price: $${parseFloat(o.price).toFixed(4)} USDT | Qty: ${o.origQty} | Status: ${o.status}`);
     });
   } catch (e) {
     console.log(`   Open orders query error: ${e.message}`);
