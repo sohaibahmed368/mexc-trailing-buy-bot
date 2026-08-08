@@ -1424,14 +1424,18 @@ class OrderTracker {
         const tpPct = (order.takeProfit || 0.6);
         const tpTargetPrice = execPrice * (1 + (tpPct / 100));
 
-        // 🎯 HARD GUARANTEE: If Current Market Price >= Take Profit Target Price (e.g. $8.344 >= $8.33748)
+        // 🎯 HARD GUARANTEE: If Current Market Price >= Take Profit Target Price (e.g. $55.1500 >= $55.1443)
         if (currentPrice >= (tpTargetPrice - 0.00000001)) {
+          if (order.isSellingTp) continue; // Lock: Prevent duplicate log emissions while Market Sell is in flight!
+          order.isSellingTp = true;
+
           if (order.dryRun) {
             order.status = 'TRIGGERED';
             order.sellExecutionPrice = tpTargetPrice;
             order.sellTriggeredAt = new Date().toISOString();
             this.log(`🎉 [DRY RUN TAKE PROFIT HIT] ${order.symbol} price $${currentPrice.toFixed(4)} >= TP target $${tpTargetPrice.toFixed(4)} (+${tpPct}%). Executed simulated TP sell!`, 'success', order.symbol);
             changed = true;
+            order.isSellingTp = false;
             await this.handleOrderCycleComplete(order);
             continue;
           } else {
@@ -1510,6 +1514,7 @@ class OrderTracker {
             order.status = 'TRIGGERED';
             order.sellExecutionPrice = sellPriceFound;
             order.sellTriggeredAt = new Date().toISOString();
+            order.isSellingTp = false;
             changed = true;
             await this.handleOrderCycleComplete(order);
             continue;
