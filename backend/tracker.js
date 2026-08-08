@@ -1245,6 +1245,27 @@ class OrderTracker {
         }
 
         if (dualGatePassed) {
+          // 🔒 DOUBLE SAFETY GUARD: Check if MEXC physical wallet ALREADY holds >= $10 USDT of this asset to prevent duplicate buys!
+          if (!order.dryRun) {
+            const asset = order.symbol.replace('USDT', '').toUpperCase();
+            try {
+              const balances = await this.mexcClient.getBalances();
+              const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+              const freeBal = assetBal ? (parseFloat(assetBal.free) || 0) : 0;
+              const lockedBal = assetBal ? (parseFloat(assetBal.locked) || 0) : 0;
+              const notionalVal = (freeBal + lockedBal) * currentPrice;
+
+              if (notionalVal >= 10.0) {
+                this.log(`🔒 [DUPLICATE BUY PREVENTED] ${order.symbol} physical MEXC wallet balance is already $${notionalVal.toFixed(2)} USDT (>= $10.00). Syncing card state to TP_SL_ACTIVE (Holding) without sending duplicate buy!`, 'warning', order.symbol);
+                order.status = 'TP_SL_ACTIVE';
+                order.executionPrice = order.executionPrice || currentPrice;
+                this.saveOrders();
+                changed = true;
+                continue; // DO NOT SEND DUPLICATE MARKET BUY!
+              }
+            } catch (e) {}
+          }
+
           order.status = 'PENDING_EXECUTION';
           order.activatedAt = new Date().toISOString();
           this.log(
