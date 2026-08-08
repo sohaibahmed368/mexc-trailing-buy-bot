@@ -1195,18 +1195,15 @@ class OrderTracker {
               avgObi = radarMetrics.averageObiPct;
               rsi4h = radarMetrics.averageRsi15m !== undefined ? radarMetrics.averageRsi15m : 50.0;
               const exchanges = radarMetrics.exchanges || [];
-              let lowestObiEx = 100.0;
               const exDetailsArr = [];
 
               exchanges.forEach(ex => {
                 const exName = ex.name || ex.exchangeId;
                 const obiVal = ex.obiPct !== undefined ? ex.obiPct.toFixed(1) : '50.0';
                 exDetailsArr.push(`${exName}: ${obiVal}%`);
-                if (ex.active && ex.obiPct < lowestObiEx) lowestObiEx = ex.obiPct;
               });
 
-              minExchangeObi = lowestObiEx;
-              // Dual Gate: Pure Top 10 Aggregated Avg OBI >= 55.0% AND 4h 15m RSI <= 40.0
+              // Pure Dual Gate: Top 10 Aggregated Avg OBI >= 55.0% AND 4h 15m RSI <= 40.0 (Individual exchanges ignored!)
               const obiGatePassed = (avgObi >= 55.0);
               const rsiGatePassed = (rsi4h <= 40.0);
               dualGatePassed = obiGatePassed && rsiGatePassed;
