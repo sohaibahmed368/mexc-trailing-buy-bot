@@ -1177,6 +1177,50 @@ class OrderTracker {
 
       // 1.4 Check Top 10 Exchanges OBI Dual-Lock Gate if waiting
       if (order.status === 'PENDING_ACTIVATION') {
+        // 🎯 REAL-TIME IN-TICK WALLET HOLDING GUARD: If physical MEXC spot wallet ALREADY holds >= $10 USDT of asset, FORCE status from Waiting to Holding!
+        if (!order.dryRun && this.mexcClient && this.mexcClient.hasCredentials()) {
+          const asset = order.symbol.replace('USDT', '').toUpperCase();
+          try {
+            const balances = await this.mexcClient.getBalances();
+            const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+            const freeBal = assetBal ? parseFloat(assetBal.free || 0) : 0;
+            const lockedBal = assetBal ? parseFloat(assetBal.locked || 0) : 0;
+            const totalQty = freeBal + lockedBal;
+            const notionalVal = totalQty * currentPrice;
+
+            // If physical MEXC spot wallet ALREADY holds >= $10.00 USDT or has locked coins in open sell orders:
+            if (notionalVal >= 10.0 || lockedBal > 0) {
+              let mexcSellOrderId = null;
+              let buyPrice = currentPrice;
+
+              try {
+                const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
+                if (Array.isArray(openOrders) && openOrders.length > 0) {
+                  const sellOrder = openOrders.find(o => o.side === 'SELL');
+                  if (sellOrder && sellOrder.orderId) {
+                    mexcSellOrderId = sellOrder.orderId;
+                    const openSellPrice = parseFloat(sellOrder.price || 0);
+                    if (openSellPrice > 0) {
+                      buyPrice = openSellPrice / (1 + ((order.takeProfit || 0.5) / 100));
+                    }
+                  }
+                }
+              } catch (oErr) {}
+
+              order.status = 'TP_SL_ACTIVE';
+              order.executionPrice = buyPrice;
+              order.initialPrice = buyPrice;
+              if (mexcSellOrderId) {
+                order.mexcSellOrderId = mexcSellOrderId;
+              }
+              this.log(`🔄 [TICK AUTO-SYNC WALLET HOLDING] ${order.symbol} physical wallet holds $${notionalVal.toFixed(2)} USDT (${totalQty.toFixed(4)} ${asset}). Status FORCED from Waiting to Holding (TP/SL)! Bought At: $${buyPrice.toFixed(4)}`, 'success', order.symbol);
+              this.saveOrders();
+              changed = true;
+              continue; // Immediately transition card to TP_SL_ACTIVE monitoring on this tick!
+            }
+          } catch (balErr) {}
+        }
+
         const now = Date.now();
         let dualGatePassed = false;
         let avgObi = 50.0;
