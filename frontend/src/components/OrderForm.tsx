@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Play } from 'lucide-react';
+import SearchableSymbolSelect from './SearchableSymbolSelect';
 
 interface OrderFormProps {
   onSubmit: (orderData: {
@@ -15,6 +16,8 @@ interface OrderFormProps {
     filterSmartSl: boolean;
     slBuffer: string;
     filterObi: boolean;
+    customObiThreshold?: string;
+    customRsiThreshold?: string;
     filterVolume: boolean;
     filterRsi: boolean;
     autoRepeat: boolean;
@@ -30,25 +33,14 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
   const [takeProfit, setTakeProfit] = useState('0.60');
   const [quoteOrderQty, setQuoteOrderQty] = useState('100');
   const [autoRepeat, setAutoRepeat] = useState(true);
-  const [filterObi, setFilterObi] = useState(true);
+  const [filterObi, setFilterObi] = useState(false);
+  const [customObiThreshold, setCustomObiThreshold] = useState('55.0');
+  const [customRsiThreshold, setCustomRsiThreshold] = useState('40.0');
   const [dryRun, setDryRun] = useState(false);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-
-  const predefinedSymbols = [
-    'ETHUSDT',
-    'BTCUSDT',
-    'SOLUSDT',
-    'SUIUSDT',
-    'GOLD(XAUT)USDT',
-    'UNIUSDT',
-    'NVDAONUSDT',
-    'EURUSDT'
-  ];
-
-  const combinedSymbols = Array.from(new Set([...predefinedSymbols, ...(availableSymbols || [])]));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,7 +79,9 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
         stopLoss: '0',
         filterSmartSl: false,
         slBuffer: '0.15',
-        filterObi: true,
+        filterObi,
+        customObiThreshold,
+        customRsiThreshold,
         filterVolume: false,
         filterRsi: false,
         autoRepeat,
@@ -127,20 +121,15 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
-        {/* 1. Symbol Selection Dropdown */}
+        {/* 1. Instant Searchable Symbol Selection Component */}
         <div className="form-group">
-          <label htmlFor="symbol" style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>Select Coin / Pair</label>
-          <select
-            id="symbol"
+          <label htmlFor="symbol" style={{ fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.4rem', display: 'block' }}>Select Coin / Pair</label>
+          <SearchableSymbolSelect
             value={symbol}
-            onChange={(e) => setSymbol(e.target.value)}
+            onChange={(selectedSym) => setSymbol(selectedSym)}
+            availableSymbols={availableSymbols}
             disabled={loading}
-            style={{ width: '100%', padding: '0.6rem', background: '#020617', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', fontWeight: 700 }}
-          >
-            {combinedSymbols.map((sym) => (
-              <option value={sym} key={sym}>{sym}</option>
-            ))}
-          </select>
+          />
         </div>
 
         {/* 2. Enable Auto-Cycle Loop Toggle */}
@@ -193,18 +182,59 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
           />
         </div>
 
-        {/* 5. Hardcoded Dual Gate System Badge */}
-        <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid #10b981', padding: '0.75rem 1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <input
-            type="checkbox"
-            checked={filterObi}
-            onChange={(e) => setFilterObi(e.target.checked)}
-            disabled={loading}
-            style={{ width: '18px', height: '18px', accentColor: '#10b981', cursor: 'pointer' }}
-          />
-          <span style={{ fontWeight: 800, color: '#10b981', fontSize: '0.85rem' }}>
-            🎯 Dual Gate System Active (Top 10 Avg OBI ≥ 55.0% AND 4h 15m RSI ≤ 40.0)
-          </span>
+        {/* 5. Custom Dual Gate System Container */}
+        <div style={{ background: filterObi ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255, 255, 255, 0.02)', border: `1px solid ${filterObi ? '#10b981' : '#334155'}`, padding: '0.85rem 1rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.75rem', transition: 'all 0.2s ease' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={filterObi}
+              onChange={(e) => setFilterObi(e.target.checked)}
+              disabled={loading}
+              style={{ width: '18px', height: '18px', accentColor: '#10b981', cursor: 'pointer' }}
+            />
+            <span style={{ fontWeight: 800, color: filterObi ? '#10b981' : '#cbd5e1', fontSize: '0.9rem' }}>
+              🎯 Dual Gate System Active (Custom OBI % & 4h 15m RSI)
+            </span>
+          </label>
+
+          {/* Conditional Input Textboxes when filterObi is checked */}
+          {filterObi && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(16, 185, 129, 0.2)' }}>
+              <div>
+                <label htmlFor="customObiThreshold" style={{ fontSize: '0.78rem', fontWeight: 700, color: '#10b981', display: 'block', marginBottom: '0.3rem' }}>
+                  Target Min OBI Index (%)
+                </label>
+                <input
+                  id="customObiThreshold"
+                  type="number"
+                  step="any"
+                  placeholder="e.g. 55.0"
+                  value={customObiThreshold}
+                  onChange={(e) => setCustomObiThreshold(e.target.value)}
+                  disabled={loading}
+                  style={{ width: '100%', padding: '0.5rem', background: '#020617', color: '#f8fafc', border: '1px solid #10b981', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700 }}
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="customRsiThreshold" style={{ fontSize: '0.78rem', fontWeight: 700, color: '#38bdf8', display: 'block', marginBottom: '0.3rem' }}>
+                  Target Max 4h RSI (≤)
+                </label>
+                <input
+                  id="customRsiThreshold"
+                  type="number"
+                  step="any"
+                  placeholder="e.g. 40.0"
+                  value={customRsiThreshold}
+                  onChange={(e) => setCustomRsiThreshold(e.target.value)}
+                  disabled={loading}
+                  style={{ width: '100%', padding: '0.5rem', background: '#020617', color: '#f8fafc', border: '1px solid #0284c7', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700 }}
+                  required
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {error && (

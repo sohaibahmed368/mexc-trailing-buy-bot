@@ -674,7 +674,7 @@ class OrderTracker {
     return this.orders;
   }
 
-  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately, consensusMode }) {
+  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately, consensusMode, customObiThreshold, customRsiThreshold }) {
     symbol = symbol.toUpperCase().trim();
 
     // Check if an active position is currently open for this symbol
@@ -731,7 +731,7 @@ class OrderTracker {
     const existingCard = this.orders.find(o => o.symbol === symbol);
     
     // Safety Guard: If Dual Gate System is enabled (filterObi = true), NEVER buy immediately on card creation!
-    // Card MUST start in PENDING_ACTIVATION (Waiting) mode to await OBI >= 55% & 4h 15m RSI <= 40.0!
+    // Card MUST start in PENDING_ACTIVATION (Waiting) mode to await OBI & RSI thresholds!
     let startInstantBuy = autoRepeat && startImmediately && !filterObi;
     
     // Safety Lock: If an order card ALREADY exists for this symbol, DO NOT trigger instant buy on setting update/save!
@@ -782,6 +782,8 @@ class OrderTracker {
       sellExecutionPrice: existingActivePos ? existingActivePos.sellExecutionPrice : null,
       sellTriggeredAt: existingActivePos ? existingActivePos.sellTriggeredAt : null,
       filterObi: !!filterObi,
+      customObiThreshold: customObiThreshold !== undefined && customObiThreshold !== null && customObiThreshold !== '' ? parseFloat(customObiThreshold) : 55.0,
+      customRsiThreshold: customRsiThreshold !== undefined && customRsiThreshold !== null && customRsiThreshold !== '' ? parseFloat(customRsiThreshold) : 40.0,
       filterVolume: !!filterVolume,
       filterRsi: !!filterRsi,
       filter40sVolume: filter40sVolume !== undefined ? !!filter40sVolume : true,
@@ -1357,9 +1359,12 @@ class OrderTracker {
                 exDetailsArr.push(`${exName}: ${obiVal}%`);
               });
 
-              // Pure Dual Gate: Top 10 Aggregated Avg OBI >= 55.0% AND 4h 15m RSI <= 40.0 (Individual exchanges ignored!)
-              const obiGatePassed = (avgObi >= 55.0);
-              const rsiGatePassed = (rsi4h <= 40.0);
+              // Custom Threshold Evaluation per Order Card: Default OBI >= 55.0% & 4h 15m RSI <= 40.0
+              const targetObi = order.customObiThreshold !== undefined && order.customObiThreshold !== null ? parseFloat(order.customObiThreshold) : 55.0;
+              const targetRsi = order.customRsiThreshold !== undefined && order.customRsiThreshold !== null ? parseFloat(order.customRsiThreshold) : 40.0;
+
+              const obiGatePassed = (avgObi >= targetObi);
+              const rsiGatePassed = (rsi4h <= targetRsi);
               dualGatePassed = obiGatePassed && rsiGatePassed;
 
               if (exDetailsArr.length > 0) {
@@ -1515,6 +1520,58 @@ class OrderTracker {
         const execPrice = order.executionPrice || order.initialPrice || order.currentPrice;
         const tpPct = (order.takeProfit || 0.6);
         const tpTargetPrice = execPrice * (1 + (tpPct / 100));
+
+        // 🚨 SMART RSI CRASH STOP LOSS GUARD: If 4h 15m RSI drops equal to or below 20.0 (RSI <= 20.0)
+        let currentRsi15m = 50.0;
+        try {
+          let radarMetrics = this.signalRadar ? this.signalRadar.getRadarMetrics(order.symbol) : null;
+          if (!radarMetrics && this.signalRadar) {
+            radarMetrics = await this.signalRadar.getMultiExchangeMetrics(order.symbol).catch(() => null);
+          }
+          if (radarMetrics && radarMetrics.averageRsi15m !== undefined) {
+            currentRsi15m = radarMetrics.averageRsi15m;
+          }
+        } catch (e) {}
+
+        if (currentRsi15m <= 20.0) {
+          this.log(`🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ${order.symbol}: 4h 15m RSI = ${currentRsi15m.toFixed(1)} (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...`, 'error', order.symbol);
+
+          if (!order.dryRun && this.mexcClient && this.mexcClient.hasCredentials()) {
+            if (order.mexcSellOrderId) {
+              try {
+                await this.mexcClient.cancelOrder(order.symbol, order.mexcSellOrderId);
+                await new Promise(r => setTimeout(r, 600));
+              } catch (cErr) {}
+            }
+
+            try {
+              const grossQty = order.quantity || (order.quoteOrderQty / execPrice);
+              const sellQty = await this.getFeeAdjustedBalance(order.symbol, grossQty);
+              const precisionMult = this.getSymbolQuantityPrecision(order.symbol, currentPrice);
+              const qtyToTry = Math.floor(sellQty * precisionMult) / precisionMult;
+
+              if (qtyToTry > 0) {
+                await this.mexcClient.placeOrder({
+                  symbol: order.symbol,
+                  side: 'SELL',
+                  type: 'MARKET',
+                  quantity: qtyToTry
+                });
+                this.log(`✅ [RSI CRASH MARKET SELL EXECUTED] Sold ${qtyToTry} ${order.symbol} @ $${currentPrice.toFixed(4)} USDT on MEXC!`, 'success', order.symbol);
+              }
+            } catch (mErr) {
+              this.log(`RSI Crash Market Sell Notice: ${mErr.message}`, 'warning', order.symbol);
+            }
+          }
+
+          order.status = 'TRIGGERED';
+          order.sellExecutionPrice = currentPrice;
+          order.sellTriggeredAt = new Date().toISOString();
+          order.error = `RSI Crash SL Hit (RSI = ${currentRsi15m.toFixed(1)})`;
+          changed = true;
+          await this.handleOrderCycleComplete(order);
+          continue;
+        }
 
         // 🎯 HARD GUARANTEE: If Current Market Price >= Take Profit Target Price (e.g. $55.1500 >= $55.1443)
         if (currentPrice >= (tpTargetPrice - 0.00000001)) {

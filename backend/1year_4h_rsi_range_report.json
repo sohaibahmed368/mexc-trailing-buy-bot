@@ -1,0 +1,82 @@
+[
+  {
+    "assetName": "BTC (Bitcoin)",
+    "symbol": "BTCUSDT",
+    "totalCandles": 35983,
+    "minRsi": 9.69,
+    "minRsiPrice": 87000,
+    "minRsiTimePkt": "2025-12-01 05:45 PKT",
+    "maxRsi": 86.89,
+    "maxRsiPrice": 90665.59,
+    "maxRsiTimePkt": "2025-12-02 20:00 PKT",
+    "avgRsi": 49.86,
+    "distribution": {
+      "under30Pct": 3.61,
+      "between30and40Pct": 13.18,
+      "between40and50Pct": 33.17,
+      "between50and60Pct": 33.93,
+      "between60and70Pct": 13.17,
+      "above70Pct": 2.94
+    }
+  },
+  {
+    "assetName": "ETH (Ethereum)",
+    "symbol": "ETHUSDT",
+    "totalCandles": 35983,
+    "minRsi": 9.9,
+    "minRsiPrice": 2181.16,
+    "minRsiTimePkt": "2026-03-18 20:00 PKT",
+    "maxRsi": 92.63,
+    "maxRsiPrice": 3016.76,
+    "maxRsiTimePkt": "2025-12-02 21:00 PKT",
+    "avgRsi": 50.01,
+    "distribution": {
+      "under30Pct": 3.92,
+      "between30and40Pct": 13.08,
+      "between40and50Pct": 32.5,
+      "between50and60Pct": 33.85,
+      "between60and70Pct": 13.17,
+      "above70Pct": 3.48
+    }
+  },
+  {
+    "assetName": "SOL (Solana)",
+    "symbol": "SOLUSDT",
+    "totalCandles": 35983,
+    "minRsi": 10.27,
+    "minRsiPrice": 133.19,
+    "minRsiTimePkt": "2026-01-19 05:00 PKT",
+    "maxRsi": 90.96,
+    "maxRsiPrice": 144.86,
+    "maxRsiTimePkt": "2025-12-09 22:00 PKT",
+    "avgRsi": 49.81,
+    "distribution": {
+      "under30Pct": 3.67,
+      "between30and40Pct": 14.26,
+      "between40and50Pct": 32.55,
+      "between50and60Pct": 32.56,
+      "between60and70Pct": 13.72,
+      "above70Pct": 3.24
+    }
+  },
+  {
+    "assetName": "GOLD (XAUT/PAXG)",
+    "symbol": "PAXGUSDT",
+    "totalCandles": 35983,
+    "minRsi": 9.5,
+    "minRsiPrice": 3992.01,
+    "minRsiTimePkt": "2026-07-20 03:15 PKT",
+    "maxRsi": 93.76,
+    "maxRsiPrice": 4592.65,
+    "maxRsiTimePkt": "2026-01-12 05:30 PKT",
+    "avgRsi": 51.12,
+    "distribution": {
+      "under30Pct": 2.95,
+      "between30and40Pct": 12.19,
+      "between40and50Pct": 31.53,
+      "between50and60Pct": 32.86,
+      "between60and70Pct": 15.43,
+      "above70Pct": 5.05
+    }
+  }
+]

@@ -23,6 +23,8 @@ interface Order {
   sellExecutionPrice: number | null;
   sellTriggeredAt: string | null;
   filterObi: boolean;
+  customObiThreshold?: number;
+  customRsiThreshold?: number;
   filterVolume: boolean;
   filterRsi: boolean;
   autoRepeat: boolean;
@@ -214,11 +216,16 @@ export default function ActiveOrders({ orders, onCancel }: ActiveOrdersProps) {
             )}
 
             {/* Enabled Indicators Badges */}
-            {(order.filterObi || order.filterSmartSl || order.isSlProfitLocked) && (
+            {(order.filterObi || order.status === 'TP_SL_ACTIVE' || order.filterSmartSl || order.isSlProfitLocked) && (
               <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.4rem', padding: '0 0.1rem' }}>
                 {order.filterObi && (
                   <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid #10b981', fontWeight: 700 }}>
-                    🎯 Dual Gate (OBI ≥ 55% & 4h 15m RSI ≤ 40.0)
+                    🎯 Dual Gate (OBI ≥ {order.customObiThreshold !== undefined ? order.customObiThreshold : 55}% & 4h 15m RSI ≤ {order.customRsiThreshold !== undefined ? order.customRsiThreshold : 40})
+                  </span>
+                )}
+                {order.status === 'TP_SL_ACTIVE' && (
+                  <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444', border: '1px solid #ef4444', fontWeight: 700 }}>
+                    🚨 RSI ≤ 20.0 Emergency SL Active
                   </span>
                 )}
               </div>
