@@ -839,9 +839,9 @@ app.get('/api/radar', (req, res) => {
 const backendPublicPath = path.join(__dirname, 'public');
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
 
-const staticPath = fs.existsSync(path.join(backendPublicPath, 'index.html'))
-  ? backendPublicPath
-  : (fs.existsSync(path.join(frontendDistPath, 'index.html')) ? frontendDistPath : null);
+const staticPath = fs.existsSync(path.join(frontendDistPath, 'index.html'))
+  ? frontendDistPath
+  : (fs.existsSync(path.join(backendPublicPath, 'index.html')) ? backendPublicPath : null);
 
 if (staticPath) {
   app.use(express.static(staticPath));
