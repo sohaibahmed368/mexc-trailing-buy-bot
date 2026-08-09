@@ -1367,6 +1367,9 @@ class OrderTracker {
               const rsiGatePassed = (rsi4h <= targetRsi);
               dualGatePassed = obiGatePassed && rsiGatePassed;
 
+              order._reqTargetObi = targetObi;
+              order._reqTargetRsi = targetRsi;
+
               if (exDetailsArr.length > 0) {
                 exchangeDetailsStr = ` | Exchanges Breakdown: [${exDetailsArr.join(', ')}]`;
               }
@@ -1377,6 +1380,9 @@ class OrderTracker {
             dualGatePassed = false;
           }
         }
+
+        const targetObiStr = (order._reqTargetObi !== undefined ? order._reqTargetObi : 55.0).toFixed(1);
+        const targetRsiStr = (order._reqTargetRsi !== undefined ? order._reqTargetRsi : 40.0).toFixed(1);
 
         if (dualGatePassed) {
           // 🔒 DOUBLE SAFETY GUARD: Check if MEXC physical wallet ALREADY holds >= $10 USDT of this asset to prevent duplicate buys!
@@ -1403,7 +1409,7 @@ class OrderTracker {
           order.status = 'PENDING_EXECUTION';
           order.activatedAt = new Date().toISOString();
           this.log(
-            `🎯 [DUAL GATE ENTRY CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= 55.0%) & 4h 15m RSI = ${rsi4h.toFixed(1)} (<= 40.0)!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
+            `🎯 [DUAL GATE ENTRY CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= ${targetObiStr}%) & 4h 15m RSI = ${rsi4h.toFixed(1)} (<= ${targetRsiStr})!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
             'success',
             order.symbol
           );
@@ -1417,7 +1423,7 @@ class OrderTracker {
         if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime >= 1000)) {
           order.lastHeartbeatLogTime = now;
           this.log(
-            `⚡ [DUAL GATE SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= 55.0%) | 4h 15m RSI: ${rsi4h.toFixed(1)} (Req <= 40.0)${exchangeDetailsStr}. Scanning live orderbooks & RSI...`,
+            `⚡ [DUAL GATE SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= ${targetObiStr}%) | 4h 15m RSI: ${rsi4h.toFixed(1)} (Req <= ${targetRsiStr})${exchangeDetailsStr}. Scanning live orderbooks & RSI...`,
             'info',
             order.symbol
           );
