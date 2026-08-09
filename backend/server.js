@@ -376,6 +376,86 @@ app.delete('/api/orders/purge-all', (req, res) => {
   }
 });
 
+// GET /api/audit/logs-filter - Filter live server scanner_audit.log by RSI and OBI threshold
+app.get('/api/audit/logs-filter', (req, res) => {
+  try {
+    const reqRsi = parseFloat(req.query.rsi || '45');
+    const reqObi = parseFloat(req.query.obi || '55');
+
+    const auditLogPath = path.join(__dirname, 'data/scanner_audit.log');
+    let fileSizeMb = 0;
+    let rawLinesCount = 0;
+    const matches = [];
+
+    if (fs.existsSync(auditLogPath)) {
+      const stats = fs.statSync(auditLogPath);
+      fileSizeMb = parseFloat((stats.size / (1024 * 1024)).toFixed(2));
+      const content = fs.readFileSync(auditLogPath, 'utf8');
+      const lines = content.split('\n');
+      rawLinesCount = lines.length;
+
+      lines.forEach((line, idx) => {
+        if (!line.includes('OBI') || !line.includes('RSI')) return;
+
+        let msg = line;
+        let symbol = 'COIN';
+        let timestamp = new Date().toISOString();
+
+        try {
+          const parsed = JSON.parse(line);
+          msg = parsed.message || parsed.msg || line;
+          symbol = parsed.symbol || symbol;
+          timestamp = parsed.timestamp || parsed.time || timestamp;
+        } catch (e) {}
+
+        const obiMatch = msg.match(/OBI[:\s=]+([0-9]+\.[0-9]+)%?/i) || msg.match(/Avg OBI[:\s=]+([0-9]+\.[0-9]+)%?/i);
+        const rsiMatch = msg.match(/RSI[:\s=]+([0-9]+\.[0-9]+)/i);
+        const priceMatch = msg.match(/Live Price \$?([0-9]+\.[0-9]+)/i) || msg.match(/\$([0-9]+\.[0-9]+)/);
+        const symMatch = msg.match(/\[([A-Z0-9]+USDT)\]/) || msg.match(/([A-Z0-9]+USDT):/);
+
+        if (obiMatch && rsiMatch) {
+          const obi = parseFloat(obiMatch[1]);
+          const rsi = parseFloat(rsiMatch[1]);
+          const price = priceMatch ? parseFloat(priceMatch[1]) : null;
+          const coinSym = symbol !== 'COIN' ? symbol : (symMatch ? symMatch[1] : 'COIN');
+
+          if (obi >= reqObi && rsi < reqRsi) {
+            const entryConfirmed = msg.includes('DUAL GATE ENTRY CONFIRMED') || msg.includes('EXECUTING MARKET BUY') || msg.includes('MARKET BUY FILLED');
+            matches.push({
+              lineNo: idx + 1,
+              symbol: coinSym,
+              timestamp,
+              price,
+              obi,
+              rsi,
+              entryConfirmed,
+              rawLog: msg.trim()
+            });
+          }
+        }
+      });
+    }
+
+    const coinMap = {};
+    matches.forEach(m => {
+      if (!coinMap[m.symbol]) coinMap[m.symbol] = [];
+      coinMap[m.symbol].push(m);
+    });
+
+    res.json({
+      fileSizeMb,
+      rawLinesCount,
+      totalMatches: matches.length,
+      rsiThreshold: reqRsi,
+      obiThreshold: reqObi,
+      coinCount: Object.keys(coinMap).length,
+      coins: coinMap
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // --- STOCK BOT ENDPOINTS ---
 app.get('/api/stock-orders', (req, res) => {
   res.json(stockTracker.getOrders());
