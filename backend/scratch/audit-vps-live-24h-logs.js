@@ -3,8 +3,8 @@ const path = require('path');
 
 function auditVpsLive24hLogs() {
   console.log("================================================================================");
-  console.log("🔍 REAL LIVE VPS 24-HOUR DISK LOG AUDIT (scanner_audit.log)");
-  console.log("   CRITERIA: Top 10 Avg OBI >= 50.0% AND 4h 15m RSI < 45.0 (Past 24 Hours)");
+  console.log("🔍 FULL AUDIT OF VPS DISK LOGS (scanner_audit.log)");
+  console.log("   CRITERIA: Top 10 Avg OBI >= 50.0% AND 4h 15m RSI < 50.0 (ALL TIMEFRAMES)");
   console.log("================================================================================");
 
   const possibleAuditPaths = [
@@ -34,9 +34,6 @@ function auditVpsLive24hLogs() {
   const content = fs.readFileSync(auditLogPath, 'utf8');
   const lines = content.split('\n');
 
-  const now = Date.now();
-  const twentyFourHoursMs = 24 * 60 * 60 * 1000;
-
   const matchedEntries = [];
 
   lines.forEach((line, lineIdx) => {
@@ -62,14 +59,8 @@ function auditVpsLive24hLogs() {
       if (timeMatch) entryTimeMs = new Date(timeMatch[1]).getTime();
     }
 
-    // Default to current file time if missing
     if (!entryTimeMs || isNaN(entryTimeMs)) {
       entryTimeMs = stats.mtimeMs;
-    }
-
-    // Filter strictly for the PAST 24 HOURS
-    if ((now - entryTimeMs) > twentyFourHoursMs && lines.length > 50) {
-      return; // Skip logs older than 24 hours
     }
 
     // Match OBI and RSI numbers
@@ -84,8 +75,8 @@ function auditVpsLive24hLogs() {
       const price = priceMatch ? parseFloat(priceMatch[1]) : null;
       const coinSym = symbol !== 'COIN' ? symbol : (symMatch ? symMatch[1] : 'COIN');
 
-      // CRITERIA: OBI >= 50.0% AND RSI < 45.0
-      if (obi >= 50.0 && rsi < 45.0) {
+      // CRITERIA: OBI >= 50.0% AND RSI < 50.0
+      if (obi >= 50.0 && rsi < 50.0) {
         const entryConfirmed = msg.includes('DUAL GATE ENTRY CONFIRMED') || msg.includes('EXECUTING MARKET BUY') || msg.includes('MARKET BUY FILLED');
 
         matchedEntries.push({
@@ -103,11 +94,11 @@ function auditVpsLive24hLogs() {
     }
   });
 
-  console.log(`📊 TOTAL REAL MATCHES IN PAST 24 HOURS (OBI >= 50% & RSI < 45): ${matchedEntries.length}`);
+  console.log(`📊 TOTAL MATCHED LOG LINES IN ENTIRE FILE (OBI >= 50% & RSI < 50): ${matchedEntries.length}`);
 
   if (matchedEntries.length === 0) {
-    console.log("\n⚠️ No scans matched OBI >= 50% & RSI < 45 in the last 24h.");
-    console.log("   Displaying recent live scanner heartbeat logs from file:");
+    console.log("\n⚠️ No scans matched OBI >= 50% & RSI < 50 in the log file.");
+    console.log("   Displaying 5 recent live scanner heartbeat logs from file:");
     const recentLogs = lines.filter(l => l.includes('DUAL GATE SCAN') || l.includes('RSI')).slice(-5);
     recentLogs.forEach((l, i) => console.log(`   [#${i + 1}] ${l.substring(0, 140)}`));
     return;
@@ -121,7 +112,7 @@ function auditVpsLive24hLogs() {
   });
 
   console.log("\n================================================================================");
-  console.log("🪙 REAL VPS COIN-BY-COIN AUDIT BREAKDOWN (PAST 24 HOURS):");
+  console.log("🪙 REAL VPS COIN-BY-COIN AUDIT BREAKDOWN (ALL TIMEFRAMES):");
   console.log("================================================================================");
 
   Object.keys(coinMap).forEach(sym => {
@@ -129,18 +120,17 @@ function auditVpsLive24hLogs() {
     list.sort((a, b) => a.timeMs - b.timeMs);
 
     console.log(`\n📌 COIN SYMBOL: ${sym}`);
-    console.log(`   Total Scans Matched (Past 24h): ${list.length}`);
-    console.log(`   Real Live Timepoints & Prices:`);
+    console.log(`   Total Scans Matched: ${list.length}`);
 
-    // Show up to 5 real timepoints
-    const samples = list.length <= 5 ? list : [list[0], list[Math.floor(list.length * 0.25)], list[Math.floor(list.length * 0.5)], list[Math.floor(list.length * 0.75)], list[list.length - 1]];
+    // Pick up to 3 sample timepoints
+    const samples = list.length <= 3 ? list : [list[0], list[Math.floor(list.length / 2)], list[list.length - 1]];
 
     samples.forEach((pt, i) => {
       const pktTime = new Date(pt.timeMs + (5 * 60 * 60 * 1000)).toISOString().replace('T', ' ').substring(0, 19) + ' PKT';
       console.log(`      [#${i + 1}] Time (PKT): ${pktTime}`);
-      console.log(`          💵 Exact Live Market Price: ${pt.price ? '$' + pt.price.toFixed(4) + ' USDT' : 'N/A'}`);
+      console.log(`          💵 Exact Live Price in Log: ${pt.price ? '$' + pt.price.toFixed(4) + ' USDT' : 'N/A'}`);
       console.log(`          📊 OBI Index: ${pt.obi.toFixed(1)}% | 📉 4h 15m RSI: ${pt.rsi.toFixed(1)}`);
-      console.log(`          🟢 Entry Executed: ${pt.entryConfirmed ? 'YES (Market Buy Executed)' : 'NO (Scan Heartbeat / Active Position)'}`);
+      console.log(`          🟢 Entry Executed: ${pt.entryConfirmed ? 'YES (Market Buy Executed)' : 'NO (Scan Heartbeat)'}`);
       console.log(`          📜 Raw Log Snippet: "${pt.rawLog.substring(0, 130)}..."`);
     });
     console.log("--------------------------------------------------------------------------------");
