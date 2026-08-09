@@ -1,0 +1,674 @@
+[
+  {
+    "id": "grid_1785835938191_f80x",
+    "symbol": "XRPUSDT",
+    "lowerPrice": 1,
+    "upperPrice": 1.5,
+    "gridCount": 5,
+    "stepSize": 0.125,
+    "stepPct": 12.5,
+    "totalInvestmentUsdt": 100,
+    "investmentPerGrid": 20,
+    "dryRun": true,
+    "filterObi": true,
+    "filter40sVolume": false,
+    "filterSmartSl": true,
+    "consensusMode": "SMART_CONFLUENCE",
+    "status": "RUNNING",
+    "totalNetProfitUsdt": 2.6916356435643585,
+    "gridHistory": [
+      {
+        "levelIndex": 0,
+        "buyPrice": 1.01,
+        "sellPrice": 1.1462,
+        "profitUsdt": 2.6916,
+        "timestamp": "2026-08-04T09:32:18.248Z"
+      }
+    ],
+    "levels": [
+      {
+        "index": 0,
+        "price": 1,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T09:32:18.234Z",
+        "placedBidPrice": 1.01,
+        "placedAt": 1785835938215
+      },
+      {
+        "index": 1,
+        "price": 1.125,
+        "side": "BUY",
+        "status": "CANCELLED_PRESSURE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 2,
+        "price": 1.25,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 3,
+        "price": 1.375,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 4,
+        "price": 1.5,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      }
+    ],
+    "createdAt": "2026-08-04T09:32:18.191Z",
+    "updatedAt": "2026-08-04T09:32:18.258Z",
+    "currentPrice": 1.1462
+  },
+  {
+    "id": "grid_1785835927936_d2aj",
+    "symbol": "XRPUSDT",
+    "lowerPrice": 1,
+    "upperPrice": 1.5,
+    "gridCount": 5,
+    "stepSize": 0.125,
+    "stepPct": 12.5,
+    "totalInvestmentUsdt": 100,
+    "investmentPerGrid": 20,
+    "dryRun": true,
+    "filterObi": true,
+    "filter40sVolume": false,
+    "filterSmartSl": true,
+    "consensusMode": "SMART_CONFLUENCE",
+    "status": "RUNNING",
+    "totalNetProfitUsdt": 2.6916356435643585,
+    "gridHistory": [
+      {
+        "levelIndex": 0,
+        "buyPrice": 1.01,
+        "sellPrice": 1.1462,
+        "profitUsdt": 2.6916,
+        "timestamp": "2026-08-04T09:32:18.259Z"
+      }
+    ],
+    "levels": [
+      {
+        "index": 0,
+        "price": 1,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T09:32:08.093Z",
+        "placedBidPrice": 1.01,
+        "placedAt": 1785835927966
+      },
+      {
+        "index": 1,
+        "price": 1.125,
+        "side": "BUY",
+        "status": "CANCELLED_PRESSURE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 2,
+        "price": 1.25,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 3,
+        "price": 1.375,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 4,
+        "price": 1.5,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      }
+    ],
+    "createdAt": "2026-08-04T09:32:07.936Z",
+    "updatedAt": "2026-08-04T09:32:18.273Z",
+    "currentPrice": 1.1462
+  },
+  {
+    "id": "grid_1785835915675_2slw",
+    "symbol": "XRPUSDT",
+    "lowerPrice": 1,
+    "upperPrice": 1.5,
+    "gridCount": 5,
+    "stepSize": 0.125,
+    "stepPct": 12.5,
+    "totalInvestmentUsdt": 100,
+    "investmentPerGrid": 20,
+    "dryRun": true,
+    "filterObi": true,
+    "filter40sVolume": false,
+    "filterSmartSl": true,
+    "consensusMode": "SMART_CONFLUENCE",
+    "status": "RUNNING",
+    "totalNetProfitUsdt": 2.6916356435643585,
+    "gridHistory": [
+      {
+        "levelIndex": 0,
+        "buyPrice": 1.01,
+        "sellPrice": 1.1462,
+        "profitUsdt": 2.6916,
+        "timestamp": "2026-08-04T09:32:18.274Z"
+      }
+    ],
+    "levels": [
+      {
+        "index": 0,
+        "price": 1,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T09:32:07.986Z",
+        "placedBidPrice": 1.01,
+        "placedAt": 1785835915703
+      },
+      {
+        "index": 1,
+        "price": 1.125,
+        "side": "BUY",
+        "status": "CANCELLED_PRESSURE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 2,
+        "price": 1.25,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 3,
+        "price": 1.375,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 4,
+        "price": 1.5,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      }
+    ],
+    "createdAt": "2026-08-04T09:31:55.675Z",
+    "updatedAt": "2026-08-04T09:32:18.288Z",
+    "currentPrice": 1.1462
+  },
+  {
+    "id": "grid_1785834437300_nrw5",
+    "symbol": "XRPUSDT",
+    "lowerPrice": 1,
+    "upperPrice": 1.5,
+    "gridCount": 5,
+    "stepSize": 0.125,
+    "stepPct": 12.5,
+    "totalInvestmentUsdt": 100,
+    "investmentPerGrid": 20,
+    "dryRun": true,
+    "filterObi": true,
+    "filter40sVolume": false,
+    "filterSmartSl": true,
+    "consensusMode": "SMART_CONFLUENCE",
+    "status": "RUNNING",
+    "totalNetProfitUsdt": 5.386235643564358,
+    "gridHistory": [
+      {
+        "levelIndex": 0,
+        "buyPrice": 1.01,
+        "sellPrice": 1.1462,
+        "profitUsdt": 2.6916,
+        "timestamp": "2026-08-04T09:32:18.289Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T09:07:17.409Z"
+      }
+    ],
+    "levels": [
+      {
+        "index": 0,
+        "price": 1,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T09:32:08.010Z",
+        "placedBidPrice": 1.01,
+        "placedAt": 1785835915719
+      },
+      {
+        "index": 1,
+        "price": 1.125,
+        "side": "BUY",
+        "status": "CANCELLED_PRESSURE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 2,
+        "price": 1.25,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 3,
+        "price": 1.375,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 4,
+        "price": 1.5,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      }
+    ],
+    "createdAt": "2026-08-04T09:07:17.300Z",
+    "updatedAt": "2026-08-04T09:32:18.304Z",
+    "currentPrice": 1.1462
+  },
+  {
+    "id": "grid_1785833831872_g9lr",
+    "symbol": "XRPUSDT",
+    "lowerPrice": 1,
+    "upperPrice": 1.5,
+    "gridCount": 5,
+    "stepSize": 0.125,
+    "stepPct": 12.5,
+    "totalInvestmentUsdt": 100,
+    "investmentPerGrid": 20,
+    "dryRun": true,
+    "filterObi": true,
+    "filter40sVolume": false,
+    "filterSmartSl": true,
+    "consensusMode": "SMART_CONFLUENCE",
+    "status": "RUNNING",
+    "totalNetProfitUsdt": 8.08083564356436,
+    "gridHistory": [
+      {
+        "levelIndex": 0,
+        "buyPrice": 1.01,
+        "sellPrice": 1.1462,
+        "profitUsdt": 2.6916,
+        "timestamp": "2026-08-04T09:32:18.305Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T09:07:17.425Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T08:57:11.966Z"
+      }
+    ],
+    "levels": [
+      {
+        "index": 0,
+        "price": 1,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T09:32:08.028Z",
+        "placedBidPrice": 1.01,
+        "placedAt": 1785835915735
+      },
+      {
+        "index": 1,
+        "price": 1.125,
+        "side": "BUY",
+        "status": "CANCELLED_PRESSURE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 2,
+        "price": 1.25,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 3,
+        "price": 1.375,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 4,
+        "price": 1.5,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      }
+    ],
+    "createdAt": "2026-08-04T08:57:11.872Z",
+    "updatedAt": "2026-08-04T09:32:18.319Z",
+    "currentPrice": 1.1462
+  },
+  {
+    "id": "grid_1785833820544_gxds",
+    "symbol": "XRPUSDT",
+    "lowerPrice": 1,
+    "upperPrice": 1.5,
+    "gridCount": 5,
+    "stepSize": 0.125,
+    "stepPct": 12.5,
+    "totalInvestmentUsdt": 100,
+    "investmentPerGrid": 20,
+    "dryRun": true,
+    "filterObi": true,
+    "filter40sVolume": false,
+    "filterSmartSl": true,
+    "consensusMode": "SMART_CONFLUENCE",
+    "status": "RUNNING",
+    "totalNetProfitUsdt": 16.16463564356436,
+    "gridHistory": [
+      {
+        "levelIndex": 0,
+        "buyPrice": 1.01,
+        "sellPrice": 1.1462,
+        "profitUsdt": 2.6916,
+        "timestamp": "2026-08-04T09:32:18.320Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T09:07:17.437Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T08:57:11.984Z"
+      },
+      {
+        "levelIndex": 2,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T08:57:00.700Z"
+      },
+      {
+        "levelIndex": 1,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T08:57:00.673Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T08:57:00.657Z"
+      }
+    ],
+    "levels": [
+      {
+        "index": 0,
+        "price": 1,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T09:32:08.052Z",
+        "placedBidPrice": 1.01,
+        "placedAt": 1785835915751
+      },
+      {
+        "index": 1,
+        "price": 1.125,
+        "side": "BUY",
+        "status": "CANCELLED_PRESSURE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T08:57:00.616Z"
+      },
+      {
+        "index": 2,
+        "price": 1.25,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T08:57:00.617Z"
+      },
+      {
+        "index": 3,
+        "price": 1.375,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 4,
+        "price": 1.5,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      }
+    ],
+    "createdAt": "2026-08-04T08:57:00.545Z",
+    "updatedAt": "2026-08-04T09:32:18.334Z",
+    "currentPrice": 1.1462
+  },
+  {
+    "id": "grid_1785833795515_5zlt",
+    "symbol": "XRPUSDT",
+    "lowerPrice": 1,
+    "upperPrice": 1.5,
+    "gridCount": 5,
+    "stepSize": 0.125,
+    "stepPct": 12.5,
+    "totalInvestmentUsdt": 100,
+    "investmentPerGrid": 20,
+    "dryRun": true,
+    "filterObi": true,
+    "filter40sVolume": false,
+    "filterSmartSl": true,
+    "consensusMode": "SMART_CONFLUENCE",
+    "status": "RUNNING",
+    "totalNetProfitUsdt": 13.47003564356436,
+    "gridHistory": [
+      {
+        "levelIndex": 0,
+        "buyPrice": 1.01,
+        "sellPrice": 1.1462,
+        "profitUsdt": 2.6916,
+        "timestamp": "2026-08-04T09:32:18.335Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T09:07:17.454Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T08:57:11.998Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T08:57:00.702Z"
+      },
+      {
+        "levelIndex": 0,
+        "buyPrice": 1,
+        "sellPrice": 1.135,
+        "profitUsdt": 2.6946,
+        "timestamp": "2026-08-04T08:56:35.565Z"
+      }
+    ],
+    "levels": [
+      {
+        "index": 0,
+        "price": 1,
+        "side": "BUY",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": "2026-08-04T09:32:08.075Z",
+        "placedBidPrice": 1.01,
+        "placedAt": 1785835915768
+      },
+      {
+        "index": 1,
+        "price": 1.125,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": 1.125,
+        "sellTargetPrice": 1.2656,
+        "filledAt": "2026-08-04T08:56:35.530Z"
+      },
+      {
+        "index": 2,
+        "price": 1.25,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": 1.125,
+        "sellTargetPrice": 1.2656,
+        "filledAt": "2026-08-04T08:56:35.545Z"
+      },
+      {
+        "index": 3,
+        "price": 1.375,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      },
+      {
+        "index": 4,
+        "price": 1.5,
+        "side": "SELL",
+        "status": "IDLE",
+        "mexcOrderId": null,
+        "buyExecPrice": null,
+        "sellTargetPrice": null,
+        "filledAt": null
+      }
+    ],
+    "createdAt": "2026-08-04T08:56:35.515Z",
+    "updatedAt": "2026-08-04T09:32:18.347Z",
+    "currentPrice": 1.1462
+  }
+]

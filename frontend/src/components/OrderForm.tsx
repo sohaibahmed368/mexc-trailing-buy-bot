@@ -184,22 +184,28 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
 
         {/* 5. Custom Dual Gate System Container */}
         <div style={{ background: filterObi ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255, 255, 255, 0.02)', border: `1px solid ${filterObi ? '#10b981' : '#334155'}`, padding: '0.85rem 1rem', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '0.75rem', transition: 'all 0.2s ease' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={filterObi}
-              onChange={(e) => setFilterObi(e.target.checked)}
-              disabled={loading}
-              style={{ width: '18px', height: '18px', accentColor: '#10b981', cursor: 'pointer' }}
-            />
-            <span style={{ fontWeight: 800, color: filterObi ? '#10b981' : '#cbd5e1', fontSize: '0.9rem' }}>
-              🎯 Dual Gate System Active (Custom OBI % & 4h 15m RSI)
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <label htmlFor="filterObiCheckbox" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', flex: 1, userSelect: 'none' }}>
+              <input
+                id="filterObiCheckbox"
+                type="checkbox"
+                checked={filterObi}
+                onChange={(e) => setFilterObi(e.target.checked)}
+                disabled={loading}
+                style={{ width: '20px', height: '20px', accentColor: '#10b981', cursor: 'pointer' }}
+              />
+              <span style={{ fontWeight: 800, color: filterObi ? '#10b981' : '#cbd5e1', fontSize: '0.9rem' }}>
+                🎯 Dual Gate System Active
+              </span>
+            </label>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.5rem', borderRadius: '4px', background: filterObi ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.05)', color: filterObi ? '#10b981' : '#94a3b8' }}>
+              {filterObi ? 'ENABLED 🟢' : 'DISABLED ⚪'}
             </span>
-          </label>
+          </div>
 
           {/* Conditional Input Textboxes when filterObi is checked */}
           {filterObi && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(16, 185, 129, 0.2)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', paddingTop: '0.6rem', borderTop: '1px solid rgba(16, 185, 129, 0.2)' }}>
               <div>
                 <label htmlFor="customObiThreshold" style={{ fontSize: '0.78rem', fontWeight: 700, color: '#10b981', display: 'block', marginBottom: '0.3rem' }}>
                   Target Min OBI Index (%)
@@ -213,7 +219,7 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
                   onChange={(e) => setCustomObiThreshold(e.target.value)}
                   disabled={loading}
                   style={{ width: '100%', padding: '0.5rem', background: '#020617', color: '#f8fafc', border: '1px solid #10b981', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700 }}
-                  required
+                  required={filterObi}
                 />
               </div>
 
@@ -230,7 +236,7 @@ export default function OrderForm({ onSubmit, hasCredentials, availableSymbols }
                   onChange={(e) => setCustomRsiThreshold(e.target.value)}
                   disabled={loading}
                   style={{ width: '100%', padding: '0.5rem', background: '#020617', color: '#f8fafc', border: '1px solid #0284c7', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700 }}
-                  required
+                  required={filterObi}
                 />
               </div>
             </div>

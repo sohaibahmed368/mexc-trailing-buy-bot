@@ -1,0 +1,498 @@
+[
+  {
+    "id": "glog_1785835938335_xv5z",
+    "timestamp": "2026-08-04T09:32:18.335Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1462 USDT (Buy: $1.0100). Net Profit: +$2.6916 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785835938320_wrej",
+    "timestamp": "2026-08-04T09:32:18.320Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1462 USDT (Buy: $1.0100). Net Profit: +$2.6916 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785835938305_4yu3",
+    "timestamp": "2026-08-04T09:32:18.305Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1462 USDT (Buy: $1.0100). Net Profit: +$2.6916 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785835938289_177v",
+    "timestamp": "2026-08-04T09:32:18.289Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1462 USDT (Buy: $1.0100). Net Profit: +$2.6916 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785834437300_nrw5"
+  },
+  {
+    "id": "glog_1785835938274_lxog",
+    "timestamp": "2026-08-04T09:32:18.274Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1462 USDT (Buy: $1.0100). Net Profit: +$2.6916 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835915675_2slw"
+  },
+  {
+    "id": "glog_1785835938259_72aj",
+    "timestamp": "2026-08-04T09:32:18.259Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1462 USDT (Buy: $1.0100). Net Profit: +$2.6916 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835927936_d2aj"
+  },
+  {
+    "id": "glog_1785835938248_wrl4",
+    "timestamp": "2026-08-04T09:32:18.248Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1462 USDT (Buy: $1.0100). Net Profit: +$2.6916 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835938191_f80x"
+  },
+  {
+    "id": "glog_1785835938234_mmbf",
+    "timestamp": "2026-08-04T09:32:18.234Z",
+    "message": "💰 [SMART GRID BUY FILLED] XRPUSDT Grid #1 filled at $1.0100 USDT. Placed Limit Sell target at $1.1362 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835938191_f80x"
+  },
+  {
+    "id": "glog_1785835938215_a8eb",
+    "timestamp": "2026-08-04T09:32:18.215Z",
+    "message": "🎯 [FRONT-RUNNER BUY LIMIT PLACED] XRPUSDT Grid #1: Placed #1 Queue Limit Buy at $1.01 USDT (Best Bid + $0.01). Zero Slippage!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835938191_f80x"
+  },
+  {
+    "id": "glog_1785835938198_dgz0",
+    "timestamp": "2026-08-04T09:32:18.198Z",
+    "message": "⚠️ [GRID BUY CANCELLED - HEAVY SELLING PRESSURE] XRPUSDT Grid #2 @ $1.125 cancelled (OBI: 40.0%, Taker: 55.0%). Letting price drop to lower grid!",
+    "type": "warning",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835938191_f80x"
+  },
+  {
+    "id": "glog_1785835938193_e0fz",
+    "timestamp": "2026-08-04T09:32:18.193Z",
+    "message": "Created Smart Grid Bot for XRPUSDT ($1 - $1.5, 5 Grids, $100 USDT).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835938191_f80x"
+  },
+  {
+    "id": "glog_1785835928093_3jbu",
+    "timestamp": "2026-08-04T09:32:08.093Z",
+    "message": "💰 [SMART GRID BUY FILLED] XRPUSDT Grid #1 filled at $1.0100 USDT. Placed Limit Sell target at $1.1362 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835927936_d2aj"
+  },
+  {
+    "id": "glog_1785835928075_kbh4",
+    "timestamp": "2026-08-04T09:32:08.075Z",
+    "message": "💰 [SMART GRID BUY FILLED] XRPUSDT Grid #1 filled at $1.0100 USDT. Placed Limit Sell target at $1.1362 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785835928052_bfb1",
+    "timestamp": "2026-08-04T09:32:08.052Z",
+    "message": "💰 [SMART GRID BUY FILLED] XRPUSDT Grid #1 filled at $1.0100 USDT. Placed Limit Sell target at $1.1362 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785835928028_9vj0",
+    "timestamp": "2026-08-04T09:32:08.028Z",
+    "message": "💰 [SMART GRID BUY FILLED] XRPUSDT Grid #1 filled at $1.0100 USDT. Placed Limit Sell target at $1.1362 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785835928010_3aoo",
+    "timestamp": "2026-08-04T09:32:08.010Z",
+    "message": "💰 [SMART GRID BUY FILLED] XRPUSDT Grid #1 filled at $1.0100 USDT. Placed Limit Sell target at $1.1362 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785834437300_nrw5"
+  },
+  {
+    "id": "glog_1785835927986_wamx",
+    "timestamp": "2026-08-04T09:32:07.986Z",
+    "message": "💰 [SMART GRID BUY FILLED] XRPUSDT Grid #1 filled at $1.0100 USDT. Placed Limit Sell target at $1.1362 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835915675_2slw"
+  },
+  {
+    "id": "glog_1785835927966_p4b1",
+    "timestamp": "2026-08-04T09:32:07.966Z",
+    "message": "🎯 [FRONT-RUNNER BUY LIMIT PLACED] XRPUSDT Grid #1: Placed #1 Queue Limit Buy at $1.01 USDT (Best Bid + $0.01). Zero Slippage!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835927936_d2aj"
+  },
+  {
+    "id": "glog_1785835927944_0vte",
+    "timestamp": "2026-08-04T09:32:07.944Z",
+    "message": "⚠️ [GRID BUY CANCELLED - HEAVY SELLING PRESSURE] XRPUSDT Grid #2 @ $1.125 cancelled (OBI: 40.0%, Taker: 55.0%). Letting price drop to lower grid!",
+    "type": "warning",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835927936_d2aj"
+  },
+  {
+    "id": "glog_1785835927941_cey2",
+    "timestamp": "2026-08-04T09:32:07.941Z",
+    "message": "Created Smart Grid Bot for XRPUSDT ($1 - $1.5, 5 Grids, $100 USDT).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835927936_d2aj"
+  },
+  {
+    "id": "glog_1785835915768_pot8",
+    "timestamp": "2026-08-04T09:31:55.768Z",
+    "message": "🎯 [FRONT-RUNNER BUY LIMIT PLACED] XRPUSDT Grid #1: Placed #1 Queue Limit Buy at $1.01 USDT (Best Bid + $0.01). Zero Slippage!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785835915751_axts",
+    "timestamp": "2026-08-04T09:31:55.751Z",
+    "message": "🎯 [FRONT-RUNNER BUY LIMIT PLACED] XRPUSDT Grid #1: Placed #1 Queue Limit Buy at $1.01 USDT (Best Bid + $0.01). Zero Slippage!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785835915735_kvme",
+    "timestamp": "2026-08-04T09:31:55.735Z",
+    "message": "🎯 [FRONT-RUNNER BUY LIMIT PLACED] XRPUSDT Grid #1: Placed #1 Queue Limit Buy at $1.01 USDT (Best Bid + $0.01). Zero Slippage!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785835915719_9v32",
+    "timestamp": "2026-08-04T09:31:55.719Z",
+    "message": "🎯 [FRONT-RUNNER BUY LIMIT PLACED] XRPUSDT Grid #1: Placed #1 Queue Limit Buy at $1.01 USDT (Best Bid + $0.01). Zero Slippage!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785834437300_nrw5"
+  },
+  {
+    "id": "glog_1785835915703_thnr",
+    "timestamp": "2026-08-04T09:31:55.703Z",
+    "message": "🎯 [FRONT-RUNNER BUY LIMIT PLACED] XRPUSDT Grid #1: Placed #1 Queue Limit Buy at $1.01 USDT (Best Bid + $0.01). Zero Slippage!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835915675_2slw"
+  },
+  {
+    "id": "glog_1785835915682_0twt",
+    "timestamp": "2026-08-04T09:31:55.682Z",
+    "message": "⚠️ [GRID BUY CANCELLED - HEAVY SELLING PRESSURE] XRPUSDT Grid #2 @ $1.125 cancelled (OBI: 40.0%, Taker: 55.0%). Letting price drop to lower grid!",
+    "type": "warning",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835915675_2slw"
+  },
+  {
+    "id": "glog_1785835915678_qz34",
+    "timestamp": "2026-08-04T09:31:55.678Z",
+    "message": "Created Smart Grid Bot for XRPUSDT ($1 - $1.5, 5 Grids, $100 USDT).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785835915675_2slw"
+  },
+  {
+    "id": "glog_1785834437454_0r1q",
+    "timestamp": "2026-08-04T09:07:17.454Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785834437437_xl1w",
+    "timestamp": "2026-08-04T09:07:17.437Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785834437425_bkzp",
+    "timestamp": "2026-08-04T09:07:17.425Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785834437409_grna",
+    "timestamp": "2026-08-04T09:07:17.409Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785834437300_nrw5"
+  },
+  {
+    "id": "glog_1785834437393_x2vp",
+    "timestamp": "2026-08-04T09:07:17.393Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785834437372_w302",
+    "timestamp": "2026-08-04T09:07:17.372Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785834437353_z3ik",
+    "timestamp": "2026-08-04T09:07:17.353Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785834437336_abrg",
+    "timestamp": "2026-08-04T09:07:17.336Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785834437300_nrw5"
+  },
+  {
+    "id": "glog_1785834437319_vvxw",
+    "timestamp": "2026-08-04T09:07:17.319Z",
+    "message": "⚠️ [GRID BUY CANCELLED - HEAVY SELLING PRESSURE] XRPUSDT Grid #2 @ $1.125 cancelled (OBI: 40.0%, Taker: 55.0%). Letting price drop to lower grid!",
+    "type": "warning",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785834437300_nrw5"
+  },
+  {
+    "id": "glog_1785834437311_cufw",
+    "timestamp": "2026-08-04T09:07:17.311Z",
+    "message": "Created Smart Grid Bot for XRPUSDT ($1 - $1.5, 5 Grids, $100 USDT).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785834437300_nrw5"
+  },
+  {
+    "id": "glog_1785833831998_s06l",
+    "timestamp": "2026-08-04T08:57:11.998Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785833831984_qs4v",
+    "timestamp": "2026-08-04T08:57:11.984Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833831966_kff8",
+    "timestamp": "2026-08-04T08:57:11.966Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785833831947_m3gj",
+    "timestamp": "2026-08-04T08:57:11.947Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785833831932_20px",
+    "timestamp": "2026-08-04T08:57:11.932Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833831915_u0w4",
+    "timestamp": "2026-08-04T08:57:11.915Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785833831897_o1cy",
+    "timestamp": "2026-08-04T08:57:11.897Z",
+    "message": "⚠️ [GRID BUY CANCELLED - HEAVY SELLING PRESSURE] XRPUSDT Grid #2 @ $1.125 cancelled (OBI: 40.0%, Taker: 55.0%). Letting price drop to lower grid!",
+    "type": "warning",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833831878_nfr4",
+    "timestamp": "2026-08-04T08:57:11.878Z",
+    "message": "⚠️ [GRID BUY CANCELLED - HEAVY SELLING PRESSURE] XRPUSDT Grid #2 @ $1.125 cancelled (OBI: 40.0%, Taker: 55.0%). Letting price drop to lower grid!",
+    "type": "warning",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785833831875_sq3m",
+    "timestamp": "2026-08-04T08:57:11.875Z",
+    "message": "Created Smart Grid Bot for XRPUSDT ($1 - $1.5, 5 Grids, $100 USDT).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833831872_g9lr"
+  },
+  {
+    "id": "glog_1785833820703_n5k9",
+    "timestamp": "2026-08-04T08:57:00.703Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785833820700_tkwd",
+    "timestamp": "2026-08-04T08:57:00.700Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #3 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833820673_ref3",
+    "timestamp": "2026-08-04T08:57:00.673Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #2 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833820657_oyno",
+    "timestamp": "2026-08-04T08:57:00.657Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833820637_35ym",
+    "timestamp": "2026-08-04T08:57:00.637Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785833820617_udr3",
+    "timestamp": "2026-08-04T08:57:00.617Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #3 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833820616_0m6p",
+    "timestamp": "2026-08-04T08:57:00.616Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #2 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833820597_gnvi",
+    "timestamp": "2026-08-04T08:57:00.597Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833820579_sls0",
+    "timestamp": "2026-08-04T08:57:00.579Z",
+    "message": "⚠️ [GRID BUY CANCELLED - HEAVY SELLING PRESSURE] XRPUSDT Grid #3 @ $1.25 cancelled (OBI: 40.0%, Taker: 55.0%). Letting price drop to lower grid!",
+    "type": "warning",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833820557_urdz",
+    "timestamp": "2026-08-04T08:57:00.557Z",
+    "message": "⚠️ [GRID BUY CANCELLED - HEAVY SELLING PRESSURE] XRPUSDT Grid #2 @ $1.125 cancelled (OBI: 40.0%, Taker: 55.0%). Letting price drop to lower grid!",
+    "type": "warning",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833820553_c3q4",
+    "timestamp": "2026-08-04T08:57:00.553Z",
+    "message": "Created Smart Grid Bot for XRPUSDT ($1 - $1.5, 5 Grids, $100 USDT).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833820544_gxds"
+  },
+  {
+    "id": "glog_1785833795565_hi61",
+    "timestamp": "2026-08-04T08:56:35.565Z",
+    "message": "💰 [SMART GRID SELL FILLED] XRPUSDT Grid #1 sold at $1.1350 USDT (Buy: $1.0000). Net Profit: +$2.6946 USDT!",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785833795549_nvqk",
+    "timestamp": "2026-08-04T08:56:35.549Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #1 bought at $1.0000 USDT (OBI: 70.0%, Taker: 55.0%). Placed Limit Sell target at $1.1250 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785833795545_qawr",
+    "timestamp": "2026-08-04T08:56:35.545Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #3 bought at $1.1250 USDT (OBI: 40.0%, Taker: 55.0%). Placed Limit Sell target at $1.2656 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785833795530_icll",
+    "timestamp": "2026-08-04T08:56:35.530Z",
+    "message": "🎯 [SMART GRID BUY EXECUTED] XRPUSDT Grid #2 bought at $1.1250 USDT (OBI: 40.0%, Taker: 55.0%). Placed Limit Sell target at $1.2656 USDT (+12.5% TP).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  },
+  {
+    "id": "glog_1785833795528_qvij",
+    "timestamp": "2026-08-04T08:56:35.528Z",
+    "message": "Created Smart Grid Bot for XRPUSDT ($1 - $1.5, 5 Grids, $100 USDT).",
+    "type": "success",
+    "symbol": "XRPUSDT",
+    "gridId": "grid_1785833795515_5zlt"
+  }
+]
