@@ -1763,31 +1763,6 @@ class OrderTracker {
             } catch (ghostErr) {}
           }
         }
-        // 50% Take Profit Progress Lock Guard: Lock SL Floor when price reaches 50% of TP target
-        if (order.executionPrice && !order.isSlProfitLocked) {
-          const gainPct = ((currentPrice - order.executionPrice) / order.executionPrice) * 100;
-          const tpTargetPct = (order.takeProfit || 0.6);
-          const halfTpPct = tpTargetPct * 0.50; // 50% of Take Profit offset
-
-          if (gainPct >= halfTpPct - 0.000001) {
-            order.isSlProfitLocked = true;
-            order.justProfitLocked = true;
-            
-            // Lock SL Floor at 50% TP Gain (or Break-even +0.15% Net Gain minimum)
-            const lockedSlPct = Math.max(0.15, halfTpPct * 0.70);
-            const lockedSlDollar = (lockedSlPct / 100) * order.executionPrice;
-            
-            order.lockedSlPrice = order.executionPrice + lockedSlDollar;
-            const targetGainPrice = (order.executionPrice * (1 + halfTpPct / 100)).toFixed(4);
-            const newSlTarget = order.lockedSlPrice.toFixed(4);
-            this.log(
-              `🔒 [50% TP PROFIT LOCK GUARD] Price reached 50% TP progress (+${gainPct.toFixed(2)}% gain >= ${targetGainPrice} USDT)! Stop Loss floor locked at Buy Price +${lockedSlPct.toFixed(2)}% ($${newSlTarget} USDT). Risk-Free Profit Locked!`,
-              'success',
-              order.symbol
-            );
-            changed = true;
-          }
-        }
 
 
 
@@ -1829,9 +1804,7 @@ class OrderTracker {
 
         // Common Stop Loss Target Price calculation (Dry Run & Real Mode)
         const slDollar = (order.stopLoss / 100) * order.executionPrice;
-        let targetSlPrice = order.isSlProfitLocked && order.lockedSlPrice
-          ? order.lockedSlPrice
-          : (order.executionPrice - slDollar);
+        let targetSlPrice = order.executionPrice - slDollar;
         
         if (order.filterSmartSl && order.isSlExtended && order.slBuffer) {
           const bufferDollar = (order.slBuffer / 100) * order.executionPrice;
@@ -1839,19 +1812,10 @@ class OrderTracker {
         }
 
         // Check if Stop Loss target is hit (Bypassed if 15m Trend Guard set NO_SL!)
-        if (order.justProfitLocked) {
-          delete order.justProfitLocked;
-        } else if (order.stopLoss && order.adaptiveSlMode !== 'NO_SL' && currentPrice <= targetSlPrice) {
+        if (order.stopLoss && order.adaptiveSlMode !== 'NO_SL' && currentPrice <= targetSlPrice) {
           order.status = 'PENDING_EXECUTION'; // Transition immediately to block duplicate execution!
 
-          // Smart SL Guard seller exhaustion evaluation (ONLY evaluated if Profit Lock was NOT activated!)
-          if (order.isSlProfitLocked) {
-            this.log(
-              `🔒 [PROFIT LOCK EXECUTED] Price dropped back to $${targetSlPrice.toFixed(4)} USDT after >50% TP progress! Executing IMMEDIATE MARKET SELL to lock in profit (Smart SL Extension skipped).`,
-              'success',
-              order.symbol
-            );
-          } else if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
+          if (order.filterSmartSl && !order.isSlExtended && order.slBuffer > 0) {
             let isSellerExhausted = false;
             let bidsRatioPct = '0';
             let asksRatioPct = '0';
