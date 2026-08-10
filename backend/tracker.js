@@ -1278,58 +1278,62 @@ class OrderTracker {
       // 1.4 Check Top 10 Exchanges OBI Dual-Lock Gate if waiting
       if (order.status === 'PENDING_ACTIVATION') {
         // 🎯 REAL-TIME IN-TICK WALLET HOLDING GUARD: If physical MEXC spot wallet ALREADY holds >= $10 USDT of asset, FORCE status from Waiting to Holding!
-        if (!order.dryRun && this.mexcClient && this.mexcClient.hasCredentials()) {
-          const asset = order.symbol.replace('USDT', '').toUpperCase();
-          try {
-            const balances = await this.mexcClient.getBalances();
-            const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
-            const freeBal = assetBal ? parseFloat(assetBal.free || 0) : 0;
-            const lockedBal = assetBal ? parseFloat(assetBal.locked || 0) : 0;
-            const totalQty = freeBal + lockedBal;
-            const notionalVal = totalQty * currentPrice;
+        if (!order.dryRun && !order._autoSyncBlocked && this.mexcClient && this.mexcClient.hasCredentials()) {
+          const now = Date.now();
+          if (!order._lastAutoSyncAttempt || (now - order._lastAutoSyncAttempt > 60000)) {
+            const asset = order.symbol.replace('USDT', '').toUpperCase();
+            try {
+              const balances = await this.mexcClient.getBalances();
+              const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
+              const freeBal = assetBal ? parseFloat(assetBal.free || 0) : 0;
+              const lockedBal = assetBal ? parseFloat(assetBal.locked || 0) : 0;
+              const totalQty = freeBal + lockedBal;
+              const notionalVal = totalQty * currentPrice;
 
-            // If physical MEXC spot wallet ALREADY holds >= $10.00 USDT or has locked coins in open sell orders:
-            if (notionalVal >= 10.0 || lockedBal > 0) {
-              let mexcSellOrderId = null;
-              let buyPrice = currentPrice;
+              // If physical MEXC spot wallet ALREADY holds >= $10.00 USDT or has locked coins in open sell orders:
+              if (notionalVal >= 10.0 || lockedBal > 0) {
+                order._lastAutoSyncAttempt = now;
+                let mexcSellOrderId = null;
+                let buyPrice = currentPrice;
 
-              try {
-                // Fetch actual trade history from MEXC to get the REAL exact buy fill price!
-                const trades = await this.mexcClient.getMyTrades(order.symbol, 10).catch(() => []);
-                if (Array.isArray(trades) && trades.length > 0) {
-                  const buyTrades = trades.filter(t => t.isBuyer || t.side === 'BUY' || (t.isMaker === false && parseFloat(t.qty || 0) > 0));
-                  const lastBuy = buyTrades.length > 0 ? buyTrades[buyTrades.length - 1] : null;
-                  if (lastBuy) {
-                    const realPrice = parseFloat(lastBuy.price || lastBuy.execPrice || 0);
-                    if (realPrice > 0) buyPrice = realPrice;
-                  }
-                }
-
-                const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
-                if (Array.isArray(openOrders) && openOrders.length > 0) {
-                  const sellOrder = openOrders.find(o => o.side === 'SELL');
-                  if (sellOrder && sellOrder.orderId) {
-                    mexcSellOrderId = sellOrder.orderId;
-                    const openSellPrice = parseFloat(sellOrder.price || 0);
-                    if (openSellPrice > 0 && buyPrice === currentPrice) {
-                      buyPrice = openSellPrice / (1 + ((order.takeProfit || 0.5) / 100));
+                try {
+                  // Fetch actual trade history from MEXC to get the REAL exact buy fill price!
+                  const trades = await this.mexcClient.getMyTrades(order.symbol, 10).catch(() => []);
+                  if (Array.isArray(trades) && trades.length > 0) {
+                    const buyTrades = trades.filter(t => t.isBuyer || t.side === 'BUY' || (t.isMaker === false && parseFloat(t.qty || 0) > 0));
+                    const lastBuy = buyTrades.length > 0 ? buyTrades[buyTrades.length - 1] : null;
+                    if (lastBuy) {
+                      const realPrice = parseFloat(lastBuy.price || lastBuy.execPrice || 0);
+                      if (realPrice > 0) buyPrice = realPrice;
                     }
                   }
-                }
-              } catch (oErr) {}
 
-              order.status = 'TP_SL_ACTIVE';
-              order.executionPrice = buyPrice;
-              order.initialPrice = buyPrice;
-              if (mexcSellOrderId) {
-                order.mexcSellOrderId = mexcSellOrderId;
+                  const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
+                  if (Array.isArray(openOrders) && openOrders.length > 0) {
+                    const sellOrder = openOrders.find(o => o.side === 'SELL');
+                    if (sellOrder && sellOrder.orderId) {
+                      mexcSellOrderId = sellOrder.orderId;
+                      const openSellPrice = parseFloat(sellOrder.price || 0);
+                      if (openSellPrice > 0 && buyPrice === currentPrice) {
+                        buyPrice = openSellPrice / (1 + ((order.takeProfit || 0.5) / 100));
+                      }
+                    }
+                  }
+                } catch (oErr) {}
+
+                order.status = 'TP_SL_ACTIVE';
+                order.executionPrice = buyPrice;
+                order.initialPrice = buyPrice;
+                if (mexcSellOrderId) {
+                  order.mexcSellOrderId = mexcSellOrderId;
+                }
+                this.log(`🔄 [TICK AUTO-SYNC WALLET HOLDING] ${order.symbol} physical wallet holds $${notionalVal.toFixed(2)} USDT (${totalQty.toFixed(4)} ${asset}). Status FORCED from Waiting to Holding (TP/SL)! Bought At: $${buyPrice.toFixed(4)}`, 'success', order.symbol);
+                this.saveOrders();
+                changed = true;
+                continue; // Immediately transition card to TP_SL_ACTIVE monitoring on this tick!
               }
-              this.log(`🔄 [TICK AUTO-SYNC WALLET HOLDING] ${order.symbol} physical wallet holds $${notionalVal.toFixed(2)} USDT (${totalQty.toFixed(4)} ${asset}). Status FORCED from Waiting to Holding (TP/SL)! Bought At: $${buyPrice.toFixed(4)}`, 'success', order.symbol);
-              this.saveOrders();
-              changed = true;
-              continue; // Immediately transition card to TP_SL_ACTIVE monitoring on this tick!
-            }
-          } catch (balErr) {}
+            } catch (balErr) {}
+          }
         }
 
         const now = Date.now();
@@ -1644,19 +1648,30 @@ class OrderTracker {
               try {
                 const grossQty = order.quantity || (order.quoteOrderQty / execPrice);
                 const sellQty = await this.getFeeAdjustedBalance(order.symbol, grossQty);
-                const precisionMult = this.getSymbolQuantityPrecision(order.symbol, currentPrice);
-                const qtyToTry = Math.floor(sellQty * precisionMult) / precisionMult;
+                const baseMult = this.getSymbolQuantityPrecision(order.symbol, currentPrice);
+                const uniqueMults = [...new Set([baseMult, 1, 100, 10, 10000, 1000])];
 
-                if (qtyToTry > 0) {
-                  const sellRes = await this.mexcClient.placeOrder({
-                    symbol: order.symbol,
-                    side: 'SELL',
-                    type: 'MARKET',
-                    quantity: qtyToTry
-                  });
-                  if (sellRes && sellRes.orderId) {
-                    this.log(`✅ [TP MARKET SELL EXECUTED] Market Sell executed for ${qtyToTry} ${order.symbol} @ $${currentPrice.toFixed(4)} USDT!`, 'success', order.symbol);
-                    isTpFilled = true;
+                for (const mult of uniqueMults) {
+                  const qtyToTry = Math.floor(sellQty * mult) / mult;
+                  if (qtyToTry <= 0) continue;
+                  try {
+                    const sellRes = await this.mexcClient.placeOrder({
+                      symbol: order.symbol,
+                      side: 'SELL',
+                      type: 'MARKET',
+                      quantity: qtyToTry
+                    });
+                    if (sellRes && sellRes.orderId) {
+                      this.log(`✅ [TP MARKET SELL EXECUTED] Market Sell executed for ${qtyToTry} ${order.symbol} @ $${currentPrice.toFixed(4)} USDT!`, 'success', order.symbol);
+                      isTpFilled = true;
+                      break;
+                    }
+                  } catch (pErr) {
+                    if ((pErr.message || '').includes('30002') || (pErr.message || '').includes('1USDT')) {
+                      this.log(`⚠️ [TP DUST SELL SKIPPED] Value below 1.0 USDT limit. Finalizing TP cycle.`, 'warning', order.symbol);
+                      isTpFilled = true;
+                      break;
+                    }
                   }
                 }
               } catch (mSellErr) {
