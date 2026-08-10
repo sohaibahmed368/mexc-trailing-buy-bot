@@ -148,6 +148,10 @@ class MexcClient {
     return await this._request('GET', '/api/v3/ticker/price', {}, false);
   }
 
+  async getAllPrices() {
+    return await this.getAllTickerPrices();
+  }
+
   async getExchangeInfo() {
     return await this._request('GET', '/api/v3/exchangeInfo', {}, false);
   }
