@@ -674,7 +674,7 @@ class OrderTracker {
     return this.orders;
   }
 
-  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately, consensusMode, customObiThreshold, customRsiThreshold }) {
+  async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately, consensusMode, customObiThreshold, customRsiThreshold, targetObi, targetRsi }) {
     symbol = symbol.toUpperCase().trim();
 
     // Check if an active position is currently open for this symbol
@@ -781,9 +781,11 @@ class OrderTracker {
       mexcSellOrderId: existingActivePos ? existingActivePos.mexcSellOrderId : null,
       sellExecutionPrice: existingActivePos ? existingActivePos.sellExecutionPrice : null,
       sellTriggeredAt: existingActivePos ? existingActivePos.sellTriggeredAt : null,
-      filterObi: !!filterObi,
-      customObiThreshold: customObiThreshold !== undefined && customObiThreshold !== null && customObiThreshold !== '' ? parseFloat(customObiThreshold) : 55.0,
-      customRsiThreshold: customRsiThreshold !== undefined && customRsiThreshold !== null && customRsiThreshold !== '' ? parseFloat(customRsiThreshold) : 40.0,
+      filterObi: filterObi !== false,
+      targetObi: (targetObi !== undefined && targetObi !== null && targetObi !== '') ? parseFloat(targetObi) : ((customObiThreshold !== undefined && customObiThreshold !== null && customObiThreshold !== '') ? parseFloat(customObiThreshold) : 55.0),
+      targetRsi: (targetRsi !== undefined && targetRsi !== null && targetRsi !== '') ? parseFloat(targetRsi) : ((customRsiThreshold !== undefined && customRsiThreshold !== null && customRsiThreshold !== '') ? parseFloat(customRsiThreshold) : 40.0),
+      customObiThreshold: (targetObi !== undefined && targetObi !== null && targetObi !== '') ? parseFloat(targetObi) : ((customObiThreshold !== undefined && customObiThreshold !== null && customObiThreshold !== '') ? parseFloat(customObiThreshold) : 55.0),
+      customRsiThreshold: (targetRsi !== undefined && targetRsi !== null && targetRsi !== '') ? parseFloat(targetRsi) : ((customRsiThreshold !== undefined && customRsiThreshold !== null && customRsiThreshold !== '') ? parseFloat(customRsiThreshold) : 40.0),
       filterVolume: !!filterVolume,
       filterRsi: !!filterRsi,
       filter40sVolume: filter40sVolume !== undefined ? !!filter40sVolume : true,
@@ -1795,26 +1797,34 @@ class OrderTracker {
               continue;
             }
           }
-          // Limit Sell order active on MEXC (or Dry Run mode) — UI Card handles live price display automatically.
-
+        } else if (order.mexcSellOrderId) {
+          // Real Mode: Check if Limit Sell order filled on MEXC
           order.lastStatusCheckTime = now;
-          if (order.mexcSellOrderId) {
-            try {
-              const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
-              if (queryRes && queryRes.status === 'FILLED') {
-                const tpDollar = (order.takeProfit / 100) * order.executionPrice;
-                order.status = 'TRIGGERED';
-                order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + tpDollar);
-                order.sellTriggeredAt = new Date().toISOString();
-                this.log(`[REAL] Take Profit hit! Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
-                changed = true;
-                await this.handleOrderCycleComplete(order);
-                continue;
-              }
-            } catch (e) {
-              this.log(`Error querying TP order status from MEXC: ${e.message}`, 'error', order.symbol);
+          try {
+            const queryRes = await this.mexcClient.getOrder(order.symbol, order.mexcSellOrderId);
+            if (queryRes && queryRes.status === 'FILLED') {
+              const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+              order.status = 'TRIGGERED';
+              order.sellExecutionPrice = parseFloat(queryRes.price) || (order.executionPrice + tpDollar);
+              order.sellTriggeredAt = new Date().toISOString();
+              this.log(`[REAL] Take Profit hit! Limit Sell filled on MEXC at ${order.sellExecutionPrice} USDT.`, 'success', order.symbol);
+              changed = true;
+              await this.handleOrderCycleComplete(order);
+              continue;
             }
+          } catch (e) {
+            this.log(`Error querying TP order status from MEXC: ${e.message}`, 'error', order.symbol);
           }
+        } else if (!order.dryRun && order.takeProfit && currentPrice >= (order.executionPrice + (order.takeProfit / 100) * order.executionPrice)) {
+          // Real Mode TP Price Target Fallback Check
+          const tpDollar = (order.takeProfit / 100) * order.executionPrice;
+          order.status = 'TRIGGERED';
+          order.sellExecutionPrice = order.executionPrice + tpDollar;
+          order.sellTriggeredAt = new Date().toISOString();
+          this.log(`[REAL] Take Profit Target reached at $${currentPrice} USDT! Finalizing cycle...`, 'success', order.symbol);
+          changed = true;
+          await this.handleOrderCycleComplete(order);
+          continue;
         }
 
         // Common Stop Loss Target Price calculation (Dry Run & Real Mode)

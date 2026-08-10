@@ -1,700 +1,700 @@
 [
   {
-    "id": "1786321533316-bcryi",
-    "timestamp": "2026-08-10T00:25:33.316Z",
-    "message": "Cycle #1107 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322473670-l7hzh",
+    "timestamp": "2026-08-10T00:41:13.670Z",
+    "message": "Cycle #1281 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321533316-vt9ya",
-    "timestamp": "2026-08-10T00:25:33.316Z",
+    "id": "1786322473667-mxepo",
+    "timestamp": "2026-08-10T00:41:13.667Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321531517-a3ij8",
-    "timestamp": "2026-08-10T00:25:31.517Z",
+    "id": "1786322471867-fcgwx",
+    "timestamp": "2026-08-10T00:41:11.867Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321531515-neu3l",
-    "timestamp": "2026-08-10T00:25:31.515Z",
+    "id": "1786322471866-0kvbp",
+    "timestamp": "2026-08-10T00:41:11.866Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321529714-jqa34",
-    "timestamp": "2026-08-10T00:25:29.714Z",
+    "id": "1786322470066-p5nwe",
+    "timestamp": "2026-08-10T00:41:10.066Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321527913-uce4k",
-    "timestamp": "2026-08-10T00:25:27.913Z",
-    "message": "Cycle #1106 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322468264-q0vsd",
+    "timestamp": "2026-08-10T00:41:08.264Z",
+    "message": "Cycle #1280 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321527912-7ogew",
-    "timestamp": "2026-08-10T00:25:27.912Z",
+    "id": "1786322468263-uccdz",
+    "timestamp": "2026-08-10T00:41:08.263Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321526111-w0281",
-    "timestamp": "2026-08-10T00:25:26.111Z",
+    "id": "1786322466464-wj9d9",
+    "timestamp": "2026-08-10T00:41:06.464Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321526110-u5cb2",
-    "timestamp": "2026-08-10T00:25:26.110Z",
+    "id": "1786322466463-hyhsu",
+    "timestamp": "2026-08-10T00:41:06.463Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321524311-0i8qg",
-    "timestamp": "2026-08-10T00:25:24.311Z",
+    "id": "1786322464663-knzyl",
+    "timestamp": "2026-08-10T00:41:04.663Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321522511-4ptno",
-    "timestamp": "2026-08-10T00:25:22.511Z",
-    "message": "Cycle #1105 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322462865-iyafx",
+    "timestamp": "2026-08-10T00:41:02.865Z",
+    "message": "Cycle #1279 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321522510-swy2j",
-    "timestamp": "2026-08-10T00:25:22.510Z",
+    "id": "1786322462863-20982",
+    "timestamp": "2026-08-10T00:41:02.863Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321520709-n74k8",
-    "timestamp": "2026-08-10T00:25:20.709Z",
+    "id": "1786322461061-fw3ld",
+    "timestamp": "2026-08-10T00:41:01.061Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321520708-u1ijb",
-    "timestamp": "2026-08-10T00:25:20.708Z",
+    "id": "1786322461060-7g3zw",
+    "timestamp": "2026-08-10T00:41:01.060Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321518907-1ynqc",
-    "timestamp": "2026-08-10T00:25:18.907Z",
+    "id": "1786322459258-u1cdl",
+    "timestamp": "2026-08-10T00:40:59.258Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321517105-znl9c",
-    "timestamp": "2026-08-10T00:25:17.105Z",
-    "message": "Cycle #1104 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322457459-3tfbj",
+    "timestamp": "2026-08-10T00:40:57.459Z",
+    "message": "Cycle #1278 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321517104-naxbn",
-    "timestamp": "2026-08-10T00:25:17.104Z",
+    "id": "1786322457458-2z9y5",
+    "timestamp": "2026-08-10T00:40:57.458Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321515305-79pxq",
-    "timestamp": "2026-08-10T00:25:15.305Z",
+    "id": "1786322455659-c8mab",
+    "timestamp": "2026-08-10T00:40:55.659Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321515304-crsgl",
-    "timestamp": "2026-08-10T00:25:15.304Z",
+    "id": "1786322455658-i568w",
+    "timestamp": "2026-08-10T00:40:55.658Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321513496-q4ed4",
-    "timestamp": "2026-08-10T00:25:13.496Z",
+    "id": "1786322453856-m9e37",
+    "timestamp": "2026-08-10T00:40:53.856Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321511698-lf8l7",
-    "timestamp": "2026-08-10T00:25:11.698Z",
-    "message": "Cycle #1103 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322452058-mjlo4",
+    "timestamp": "2026-08-10T00:40:52.058Z",
+    "message": "Cycle #1277 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321511696-p3umj",
-    "timestamp": "2026-08-10T00:25:11.696Z",
+    "id": "1786322452057-v7hb7",
+    "timestamp": "2026-08-10T00:40:52.057Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321509897-e0j7t",
-    "timestamp": "2026-08-10T00:25:09.897Z",
+    "id": "1786322450256-kum4q",
+    "timestamp": "2026-08-10T00:40:50.256Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321509894-1b7i5",
-    "timestamp": "2026-08-10T00:25:09.894Z",
+    "id": "1786322450255-q4g21",
+    "timestamp": "2026-08-10T00:40:50.255Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321508093-sbomj",
-    "timestamp": "2026-08-10T00:25:08.093Z",
+    "id": "1786322448453-kk2tt",
+    "timestamp": "2026-08-10T00:40:48.453Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321506294-1l6dc",
-    "timestamp": "2026-08-10T00:25:06.294Z",
-    "message": "Cycle #1102 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322446653-wmkff",
+    "timestamp": "2026-08-10T00:40:46.653Z",
+    "message": "Cycle #1276 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321506292-ycbj5",
-    "timestamp": "2026-08-10T00:25:06.292Z",
+    "id": "1786322446651-bbal6",
+    "timestamp": "2026-08-10T00:40:46.651Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321504492-74bv1",
-    "timestamp": "2026-08-10T00:25:04.492Z",
+    "id": "1786322444848-4afil",
+    "timestamp": "2026-08-10T00:40:44.848Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321504491-7yx18",
-    "timestamp": "2026-08-10T00:25:04.491Z",
+    "id": "1786322444847-bilcb",
+    "timestamp": "2026-08-10T00:40:44.847Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321502691-r25yr",
-    "timestamp": "2026-08-10T00:25:02.691Z",
+    "id": "1786322443036-1umxm",
+    "timestamp": "2026-08-10T00:40:43.036Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321500891-q46kk",
-    "timestamp": "2026-08-10T00:25:00.891Z",
-    "message": "Cycle #1101 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322441235-us2jq",
+    "timestamp": "2026-08-10T00:40:41.235Z",
+    "message": "Cycle #1275 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321500890-gza0k",
-    "timestamp": "2026-08-10T00:25:00.890Z",
+    "id": "1786322441234-rx0xk",
+    "timestamp": "2026-08-10T00:40:41.234Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321499090-nfcd3",
-    "timestamp": "2026-08-10T00:24:59.090Z",
+    "id": "1786322439434-7n64p",
+    "timestamp": "2026-08-10T00:40:39.434Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321499088-vx1ew",
-    "timestamp": "2026-08-10T00:24:59.088Z",
+    "id": "1786322439433-ilowa",
+    "timestamp": "2026-08-10T00:40:39.433Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321497287-jh8z9",
-    "timestamp": "2026-08-10T00:24:57.287Z",
+    "id": "1786322437629-s3h0r",
+    "timestamp": "2026-08-10T00:40:37.629Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321495486-zrytf",
-    "timestamp": "2026-08-10T00:24:55.486Z",
-    "message": "Cycle #1100 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322435832-lzzrf",
+    "timestamp": "2026-08-10T00:40:35.832Z",
+    "message": "Cycle #1274 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321495485-hh3sa",
-    "timestamp": "2026-08-10T00:24:55.485Z",
+    "id": "1786322435829-8e9iv",
+    "timestamp": "2026-08-10T00:40:35.829Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321493686-8zpn6",
-    "timestamp": "2026-08-10T00:24:53.686Z",
+    "id": "1786322434029-3j81u",
+    "timestamp": "2026-08-10T00:40:34.029Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321493685-s3sw9",
-    "timestamp": "2026-08-10T00:24:53.685Z",
+    "id": "1786322434027-3ltoj",
+    "timestamp": "2026-08-10T00:40:34.027Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321491883-wsbjb",
-    "timestamp": "2026-08-10T00:24:51.883Z",
+    "id": "1786322432226-f0ya7",
+    "timestamp": "2026-08-10T00:40:32.226Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321490083-ago8h",
-    "timestamp": "2026-08-10T00:24:50.083Z",
-    "message": "Cycle #1099 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322430426-lcnow",
+    "timestamp": "2026-08-10T00:40:30.426Z",
+    "message": "Cycle #1273 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321490082-ob42u",
-    "timestamp": "2026-08-10T00:24:50.082Z",
+    "id": "1786322430425-jxsdm",
+    "timestamp": "2026-08-10T00:40:30.425Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321488283-dv2eo",
-    "timestamp": "2026-08-10T00:24:48.283Z",
+    "id": "1786322428625-pi2j4",
+    "timestamp": "2026-08-10T00:40:28.625Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321488281-i8zyu",
-    "timestamp": "2026-08-10T00:24:48.281Z",
+    "id": "1786322428624-6k7m9",
+    "timestamp": "2026-08-10T00:40:28.624Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321486480-2rnct",
-    "timestamp": "2026-08-10T00:24:46.480Z",
+    "id": "1786322426822-cripv",
+    "timestamp": "2026-08-10T00:40:26.822Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321484682-2ys5u",
-    "timestamp": "2026-08-10T00:24:44.682Z",
-    "message": "Cycle #1098 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322425023-o1nel",
+    "timestamp": "2026-08-10T00:40:25.023Z",
+    "message": "Cycle #1272 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321484679-tw3si",
-    "timestamp": "2026-08-10T00:24:44.679Z",
+    "id": "1786322425022-6n2q3",
+    "timestamp": "2026-08-10T00:40:25.022Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321482876-14crm",
-    "timestamp": "2026-08-10T00:24:42.876Z",
+    "id": "1786322423222-ryam9",
+    "timestamp": "2026-08-10T00:40:23.222Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321482876-h7skw",
-    "timestamp": "2026-08-10T00:24:42.876Z",
+    "id": "1786322423222-rtr3p",
+    "timestamp": "2026-08-10T00:40:23.222Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321481074-axhvk",
-    "timestamp": "2026-08-10T00:24:41.074Z",
+    "id": "1786322421422-mq83b",
+    "timestamp": "2026-08-10T00:40:21.422Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321479274-lfzgf",
-    "timestamp": "2026-08-10T00:24:39.274Z",
-    "message": "Cycle #1097 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322419622-hndx5",
+    "timestamp": "2026-08-10T00:40:19.622Z",
+    "message": "Cycle #1271 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321479272-6fq4u",
-    "timestamp": "2026-08-10T00:24:39.272Z",
+    "id": "1786322419620-cez1m",
+    "timestamp": "2026-08-10T00:40:19.620Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321477474-qxise",
-    "timestamp": "2026-08-10T00:24:37.474Z",
+    "id": "1786322417819-suvr3",
+    "timestamp": "2026-08-10T00:40:17.819Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321477473-7pkj2",
-    "timestamp": "2026-08-10T00:24:37.473Z",
+    "id": "1786322417818-sc9ts",
+    "timestamp": "2026-08-10T00:40:17.818Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321475672-llq3v",
-    "timestamp": "2026-08-10T00:24:35.672Z",
+    "id": "1786322416016-n06sn",
+    "timestamp": "2026-08-10T00:40:16.016Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321473871-6xvd6",
-    "timestamp": "2026-08-10T00:24:33.871Z",
-    "message": "Cycle #1096 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322414216-ggn0z",
+    "timestamp": "2026-08-10T00:40:14.216Z",
+    "message": "Cycle #1270 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321473869-xfw1d",
-    "timestamp": "2026-08-10T00:24:33.869Z",
+    "id": "1786322414215-pp7yi",
+    "timestamp": "2026-08-10T00:40:14.215Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321472069-gqoae",
-    "timestamp": "2026-08-10T00:24:32.069Z",
+    "id": "1786322412416-cn63v",
+    "timestamp": "2026-08-10T00:40:12.416Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321472067-i2a54",
-    "timestamp": "2026-08-10T00:24:32.067Z",
+    "id": "1786322412413-jf89p",
+    "timestamp": "2026-08-10T00:40:12.413Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321470266-mw0zv",
-    "timestamp": "2026-08-10T00:24:30.266Z",
+    "id": "1786322410611-gwfoy",
+    "timestamp": "2026-08-10T00:40:10.611Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321468465-rr23d",
-    "timestamp": "2026-08-10T00:24:28.465Z",
-    "message": "Cycle #1095 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322408812-u73di",
+    "timestamp": "2026-08-10T00:40:08.812Z",
+    "message": "Cycle #1269 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321468465-oqdmw",
-    "timestamp": "2026-08-10T00:24:28.465Z",
+    "id": "1786322408811-9w7bq",
+    "timestamp": "2026-08-10T00:40:08.811Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321466665-99rar",
-    "timestamp": "2026-08-10T00:24:26.665Z",
+    "id": "1786322407009-zrd6i",
+    "timestamp": "2026-08-10T00:40:07.009Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321466664-2mxmr",
-    "timestamp": "2026-08-10T00:24:26.664Z",
+    "id": "1786322407008-xr1e8",
+    "timestamp": "2026-08-10T00:40:07.008Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321464864-uuy0y",
-    "timestamp": "2026-08-10T00:24:24.864Z",
+    "id": "1786322405206-l0z3n",
+    "timestamp": "2026-08-10T00:40:05.206Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321463065-83r26",
-    "timestamp": "2026-08-10T00:24:23.065Z",
-    "message": "Cycle #1094 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322403404-p8yj6",
+    "timestamp": "2026-08-10T00:40:03.404Z",
+    "message": "Cycle #1268 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321463064-nl5xk",
-    "timestamp": "2026-08-10T00:24:23.064Z",
+    "id": "1786322403404-yhmlx",
+    "timestamp": "2026-08-10T00:40:03.404Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321461264-080cj",
-    "timestamp": "2026-08-10T00:24:21.264Z",
+    "id": "1786322401602-w1c2q",
+    "timestamp": "2026-08-10T00:40:01.602Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321461263-6rm87",
-    "timestamp": "2026-08-10T00:24:21.263Z",
+    "id": "1786322401602-woax7",
+    "timestamp": "2026-08-10T00:40:01.602Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321459461-2vidg",
-    "timestamp": "2026-08-10T00:24:19.461Z",
+    "id": "1786322399795-d3u0j",
+    "timestamp": "2026-08-10T00:39:59.795Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321457661-od0js",
-    "timestamp": "2026-08-10T00:24:17.661Z",
-    "message": "Cycle #1093 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322397994-f9976",
+    "timestamp": "2026-08-10T00:39:57.994Z",
+    "message": "Cycle #1267 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321457660-1ssj5",
-    "timestamp": "2026-08-10T00:24:17.660Z",
+    "id": "1786322397993-3ydp2",
+    "timestamp": "2026-08-10T00:39:57.993Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321455860-kc6gw",
-    "timestamp": "2026-08-10T00:24:15.860Z",
+    "id": "1786322396193-wev9v",
+    "timestamp": "2026-08-10T00:39:56.193Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321455858-uqgch",
-    "timestamp": "2026-08-10T00:24:15.858Z",
+    "id": "1786322396192-b7h94",
+    "timestamp": "2026-08-10T00:39:56.192Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321454056-hnowh",
-    "timestamp": "2026-08-10T00:24:14.056Z",
+    "id": "1786322394390-yelok",
+    "timestamp": "2026-08-10T00:39:54.390Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321452254-2qdqu",
-    "timestamp": "2026-08-10T00:24:12.254Z",
-    "message": "Cycle #1092 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322392588-t08yh",
+    "timestamp": "2026-08-10T00:39:52.588Z",
+    "message": "Cycle #1266 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321452253-04omj",
-    "timestamp": "2026-08-10T00:24:12.253Z",
+    "id": "1786322392587-g7at9",
+    "timestamp": "2026-08-10T00:39:52.587Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321450453-867ju",
-    "timestamp": "2026-08-10T00:24:10.453Z",
+    "id": "1786322390789-t57xd",
+    "timestamp": "2026-08-10T00:39:50.789Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321450453-qcx4w",
-    "timestamp": "2026-08-10T00:24:10.453Z",
+    "id": "1786322390787-lq737",
+    "timestamp": "2026-08-10T00:39:50.787Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321448652-isfaj",
-    "timestamp": "2026-08-10T00:24:08.652Z",
+    "id": "1786322388984-4plnl",
+    "timestamp": "2026-08-10T00:39:48.984Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321446852-1571b",
-    "timestamp": "2026-08-10T00:24:06.852Z",
-    "message": "Cycle #1091 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322387183-xrd3q",
+    "timestamp": "2026-08-10T00:39:47.183Z",
+    "message": "Cycle #1265 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321446850-g44c1",
-    "timestamp": "2026-08-10T00:24:06.850Z",
+    "id": "1786322387182-mucmv",
+    "timestamp": "2026-08-10T00:39:47.182Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321445051-xjlz3",
-    "timestamp": "2026-08-10T00:24:05.051Z",
+    "id": "1786322385382-nwwvs",
+    "timestamp": "2026-08-10T00:39:45.382Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321445050-rph28",
-    "timestamp": "2026-08-10T00:24:05.050Z",
+    "id": "1786322385381-3gr3h",
+    "timestamp": "2026-08-10T00:39:45.381Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321443246-9qsc7",
-    "timestamp": "2026-08-10T00:24:03.246Z",
+    "id": "1786322383580-f3yda",
+    "timestamp": "2026-08-10T00:39:43.580Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321441447-i7ov2",
-    "timestamp": "2026-08-10T00:24:01.447Z",
-    "message": "Cycle #1090 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322381781-v5vch",
+    "timestamp": "2026-08-10T00:39:41.781Z",
+    "message": "Cycle #1264 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321441446-zk02e",
-    "timestamp": "2026-08-10T00:24:01.446Z",
+    "id": "1786322381779-e62rl",
+    "timestamp": "2026-08-10T00:39:41.779Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321439647-c8jbh",
-    "timestamp": "2026-08-10T00:23:59.647Z",
+    "id": "1786322379980-qjzr8",
+    "timestamp": "2026-08-10T00:39:39.980Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321439646-crtwo",
-    "timestamp": "2026-08-10T00:23:59.646Z",
+    "id": "1786322379979-uh6nd",
+    "timestamp": "2026-08-10T00:39:39.979Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321437846-svvln",
-    "timestamp": "2026-08-10T00:23:57.846Z",
+    "id": "1786322378177-bh9xq",
+    "timestamp": "2026-08-10T00:39:38.177Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321436047-24eza",
-    "timestamp": "2026-08-10T00:23:56.047Z",
-    "message": "Cycle #1089 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322376378-dlmgv",
+    "timestamp": "2026-08-10T00:39:36.378Z",
+    "message": "Cycle #1263 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321436046-x34ry",
-    "timestamp": "2026-08-10T00:23:56.046Z",
+    "id": "1786322376377-2dk8y",
+    "timestamp": "2026-08-10T00:39:36.377Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321434244-25spx",
-    "timestamp": "2026-08-10T00:23:54.244Z",
+    "id": "1786322374578-kd52t",
+    "timestamp": "2026-08-10T00:39:34.578Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321434244-tkltt",
-    "timestamp": "2026-08-10T00:23:54.244Z",
+    "id": "1786322374577-yz7ja",
+    "timestamp": "2026-08-10T00:39:34.577Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321432443-s3h0t",
-    "timestamp": "2026-08-10T00:23:52.443Z",
+    "id": "1786322372775-p0mbe",
+    "timestamp": "2026-08-10T00:39:32.775Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321430644-a1gg1",
-    "timestamp": "2026-08-10T00:23:50.644Z",
-    "message": "Cycle #1088 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
+    "id": "1786322370975-5syh3",
+    "timestamp": "2026-08-10T00:39:30.975Z",
+    "message": "Cycle #1262 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321430643-3zy70",
-    "timestamp": "2026-08-10T00:23:50.643Z",
+    "id": "1786322370974-8y1cs",
+    "timestamp": "2026-08-10T00:39:30.974Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321428842-67cu5",
-    "timestamp": "2026-08-10T00:23:48.842Z",
+    "id": "1786322369174-9omdk",
+    "timestamp": "2026-08-10T00:39:29.174Z",
     "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321428842-sjcvq",
-    "timestamp": "2026-08-10T00:23:48.842Z",
+    "id": "1786322369173-8g63z",
+    "timestamp": "2026-08-10T00:39:29.173Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
     "type": "info",
     "symbol": "ETHUSDT"
   },
   {
-    "id": "1786321427041-px18n",
-    "timestamp": "2026-08-10T00:23:47.041Z",
+    "id": "1786322367372-k2bbu",
+    "timestamp": "2026-08-10T00:39:27.372Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "ETHUSDT"

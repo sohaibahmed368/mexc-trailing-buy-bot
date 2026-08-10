@@ -1,0 +1,313 @@
+{
+  "positionSizeUsdt": 100,
+  "tpTargetPct": 0.4,
+  "totalTpHits": 1032,
+  "profitPerWinUsdt": 0.4,
+  "totalGrossProfitUsdt": 412.8,
+  "totalRsiSlHits": 30,
+  "totalGrossLossUsdt": 104.82,
+  "netProfitUsdt": 307.98,
+  "netReturnOnAccountPct": 307.98,
+  "emergencySlTradesList": [
+    {
+      "num": 1,
+      "tradeId": 125,
+      "entryTime": "2025-09-23 23:45 PKT",
+      "exitTime": "2025-09-25 00:15 PKT",
+      "buyPrice": 3787.18,
+      "sellPrice": 3731.16,
+      "lossPct": -1.48,
+      "lossUsdt": -1.48
+    },
+    {
+      "num": 2,
+      "tradeId": 126,
+      "entryTime": "2025-09-24 04:30 PKT",
+      "exitTime": "2025-09-25 00:15 PKT",
+      "buyPrice": 3779.45,
+      "sellPrice": 3731.16,
+      "lossPct": -1.28,
+      "lossUsdt": -1.28
+    },
+    {
+      "num": 3,
+      "tradeId": 128,
+      "entryTime": "2025-09-24 16:15 PKT",
+      "exitTime": "2025-09-25 00:15 PKT",
+      "buyPrice": 3769.82,
+      "sellPrice": 3731.16,
+      "lossPct": -1.03,
+      "lossUsdt": -1.03
+    },
+    {
+      "num": 4,
+      "tradeId": 129,
+      "entryTime": "2025-09-25 00:00 PKT",
+      "exitTime": "2025-09-25 00:15 PKT",
+      "buyPrice": 3735.69,
+      "sellPrice": 3731.16,
+      "lossPct": -0.12,
+      "lossUsdt": -0.12
+    },
+    {
+      "num": 5,
+      "tradeId": 565,
+      "entryTime": "2026-03-03 11:45 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5329.89,
+      "sellPrice": 4878.59,
+      "lossPct": -8.47,
+      "lossUsdt": -8.47
+    },
+    {
+      "num": 6,
+      "tradeId": 566,
+      "entryTime": "2026-03-03 15:45 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5288.45,
+      "sellPrice": 4878.59,
+      "lossPct": -7.75,
+      "lossUsdt": -7.75
+    },
+    {
+      "num": 7,
+      "tradeId": 588,
+      "entryTime": "2026-03-11 12:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5197.68,
+      "sellPrice": 4878.59,
+      "lossPct": -6.14,
+      "lossUsdt": -6.14
+    },
+    {
+      "num": 8,
+      "tradeId": 589,
+      "entryTime": "2026-03-11 16:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5187.75,
+      "sellPrice": 4878.59,
+      "lossPct": -5.96,
+      "lossUsdt": -5.96
+    },
+    {
+      "num": 9,
+      "tradeId": 590,
+      "entryTime": "2026-03-11 22:00 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5174.46,
+      "sellPrice": 4878.59,
+      "lossPct": -5.72,
+      "lossUsdt": -5.72
+    },
+    {
+      "num": 10,
+      "tradeId": 591,
+      "entryTime": "2026-03-12 03:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5174.54,
+      "sellPrice": 4878.59,
+      "lossPct": -5.72,
+      "lossUsdt": -5.72
+    },
+    {
+      "num": 11,
+      "tradeId": 594,
+      "entryTime": "2026-03-12 20:45 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5133.42,
+      "sellPrice": 4878.59,
+      "lossPct": -4.96,
+      "lossUsdt": -4.96
+    },
+    {
+      "num": 12,
+      "tradeId": 596,
+      "entryTime": "2026-03-13 06:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5118.72,
+      "sellPrice": 4878.59,
+      "lossPct": -4.69,
+      "lossUsdt": -4.69
+    },
+    {
+      "num": 13,
+      "tradeId": 597,
+      "entryTime": "2026-03-13 11:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5103.64,
+      "sellPrice": 4878.59,
+      "lossPct": -4.41,
+      "lossUsdt": -4.41
+    },
+    {
+      "num": 14,
+      "tradeId": 599,
+      "entryTime": "2026-03-13 20:45 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5065.22,
+      "sellPrice": 4878.59,
+      "lossPct": -3.68,
+      "lossUsdt": -3.68
+    },
+    {
+      "num": 15,
+      "tradeId": 601,
+      "entryTime": "2026-03-14 06:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5040.77,
+      "sellPrice": 4878.59,
+      "lossPct": -3.22,
+      "lossUsdt": -3.22
+    },
+    {
+      "num": 16,
+      "tradeId": 602,
+      "entryTime": "2026-03-14 13:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5031.21,
+      "sellPrice": 4878.59,
+      "lossPct": -3.03,
+      "lossUsdt": -3.03
+    },
+    {
+      "num": 17,
+      "tradeId": 603,
+      "entryTime": "2026-03-14 19:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5028.31,
+      "sellPrice": 4878.59,
+      "lossPct": -2.98,
+      "lossUsdt": -2.98
+    },
+    {
+      "num": 18,
+      "tradeId": 604,
+      "entryTime": "2026-03-14 23:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5025,
+      "sellPrice": 4878.59,
+      "lossPct": -2.91,
+      "lossUsdt": -2.91
+    },
+    {
+      "num": 19,
+      "tradeId": 605,
+      "entryTime": "2026-03-15 04:00 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5021.59,
+      "sellPrice": 4878.59,
+      "lossPct": -2.85,
+      "lossUsdt": -2.85
+    },
+    {
+      "num": 20,
+      "tradeId": 606,
+      "entryTime": "2026-03-15 08:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5022.11,
+      "sellPrice": 4878.59,
+      "lossPct": -2.86,
+      "lossUsdt": -2.86
+    },
+    {
+      "num": 21,
+      "tradeId": 607,
+      "entryTime": "2026-03-15 12:30 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5014.32,
+      "sellPrice": 4878.59,
+      "lossPct": -2.71,
+      "lossUsdt": -2.71
+    },
+    {
+      "num": 22,
+      "tradeId": 608,
+      "entryTime": "2026-03-15 16:30 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5013.57,
+      "sellPrice": 4878.59,
+      "lossPct": -2.69,
+      "lossUsdt": -2.69
+    },
+    {
+      "num": 23,
+      "tradeId": 610,
+      "entryTime": "2026-03-16 03:30 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5021.52,
+      "sellPrice": 4878.59,
+      "lossPct": -2.85,
+      "lossUsdt": -2.85
+    },
+    {
+      "num": 24,
+      "tradeId": 613,
+      "entryTime": "2026-03-16 17:45 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5015.11,
+      "sellPrice": 4878.59,
+      "lossPct": -2.72,
+      "lossUsdt": -2.72
+    },
+    {
+      "num": 25,
+      "tradeId": 616,
+      "entryTime": "2026-03-17 14:45 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5009.99,
+      "sellPrice": 4878.59,
+      "lossPct": -2.62,
+      "lossUsdt": -2.62
+    },
+    {
+      "num": 26,
+      "tradeId": 617,
+      "entryTime": "2026-03-17 19:00 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5019.04,
+      "sellPrice": 4878.59,
+      "lossPct": -2.8,
+      "lossUsdt": -2.8
+    },
+    {
+      "num": 27,
+      "tradeId": 618,
+      "entryTime": "2026-03-18 00:00 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 4995,
+      "sellPrice": 4878.59,
+      "lossPct": -2.33,
+      "lossUsdt": -2.33
+    },
+    {
+      "num": 28,
+      "tradeId": 619,
+      "entryTime": "2026-03-18 04:15 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 4991.3,
+      "sellPrice": 4878.59,
+      "lossPct": -2.26,
+      "lossUsdt": -2.26
+    },
+    {
+      "num": 29,
+      "tradeId": 620,
+      "entryTime": "2026-03-18 08:30 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 4986.49,
+      "sellPrice": 4878.59,
+      "lossPct": -2.16,
+      "lossUsdt": -2.16
+    },
+    {
+      "num": 30,
+      "tradeId": 621,
+      "entryTime": "2026-03-18 12:45 PKT",
+      "exitTime": "2026-03-18 19:30 PKT",
+      "buyPrice": 5000.02,
+      "sellPrice": 4878.59,
+      "lossPct": -2.43,
+      "lossUsdt": -2.43
+    }
+  ]
+}
