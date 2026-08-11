@@ -1079,7 +1079,7 @@ class OrderTracker {
     this.syncLiveWalletOrders().catch(() => {});
   }
 
-  // Automatically scan MEXC Spot Wallet on server boot and restore Active Tracking Cards for whitelist crypto assets in wallet
+  // Automatically scan MEXC Spot Wallet on server boot (Informational sync only, no forced card state hijacking)
   async syncLiveWalletOrders() {
     if (!this.mexcClient || !this.mexcClient.hasCredentials()) return;
     try {
@@ -1104,114 +1104,16 @@ class OrderTracker {
 
         let existingOrder = this.orders.find(o => o.symbol === symbol);
 
-        // 🎯 STRICT PHYSICAL HOLDING GUARD: If MEXC wallet holds >= $10.00 USDT or has locked coins in open sell orders
-        if (notionalUsdt >= 10.0 || lockedQty > 0) {
-          let mexcSellOrderId = null;
-          let buyPrice = currentPrice;
-
-          try {
-            // Fetch actual trade history from MEXC to get the REAL exact buy fill price!
-            const trades = await this.mexcClient.getMyTrades(symbol, 10).catch(() => []);
-            if (Array.isArray(trades) && trades.length > 0) {
-              const buyTrades = trades.filter(t => t.isBuyer || t.side === 'BUY' || (t.isMaker === false && parseFloat(t.qty || 0) > 0));
-              const lastBuy = buyTrades.length > 0 ? buyTrades[buyTrades.length - 1] : null;
-              if (lastBuy) {
-                const realPrice = parseFloat(lastBuy.price || lastBuy.execPrice || 0);
-                if (realPrice > 0) buyPrice = realPrice;
-              }
-            }
-
-            const openOrders = await this.mexcClient.getOpenOrders(symbol);
-            if (Array.isArray(openOrders) && openOrders.length > 0) {
-              const sellOrder = openOrders.find(o => o.side === 'SELL');
-              if (sellOrder && sellOrder.orderId) {
-                mexcSellOrderId = sellOrder.orderId;
-                const openSellPrice = parseFloat(sellOrder.price || 0);
-                if (openSellPrice > 0 && buyPrice === currentPrice) {
-                  const tpPct = existingOrder ? (existingOrder.takeProfit || 0.5) : 0.5;
-                  buyPrice = openSellPrice / (1 + (tpPct / 100));
-                }
-              }
-            }
-          } catch (e) {}
-
-          if (!existingOrder) {
-            const newOrder = {
-              id: 'ord_restored_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-              symbol,
-              trailValue: 0.25,
-              quantity: null,
-              quoteOrderQty: Math.max(15, Math.round(notionalUsdt)),
-              orderType: 'MARKET',
-              dryRun: false,
-              status: 'TP_SL_ACTIVE',
-              activationPrice: null,
-              activationDirection: null,
-              activatedAt: new Date().toISOString(),
-              takeProfit: 0.5,
-              stopLoss: 0.0,
-              filterSmartSl: false,
-              slBuffer: 0.0,
-              isSlExtended: false,
-              isSlProfitLocked: false,
-              lockedSlPrice: null,
-              mexcSellOrderId,
-              sellExecutionPrice: null,
-              sellTriggeredAt: null,
-              filterObi: true,
-              autoRepeat: true,
-              startImmediately: false,
-              executionPrice: buyPrice,
-              initialPrice: buyPrice,
-              currentPrice,
-              createdAt: new Date().toISOString(),
-              triggeredAt: new Date().toISOString(),
-              mexcOrderId: 'restored_' + Date.now(),
-              error: null,
-              localBottom: buyPrice
-            };
-
-            this.orders.push(newOrder);
-            this.log(`🔄 [AUTO-RESTORED WALLET ASSET] Found ${totalQty.toFixed(4)} ${asset} in MEXC wallet ($${notionalUsdt.toFixed(2)} USDT). Restored Active Card with status TP_SL_ACTIVE!`, 'success', symbol);
-          } else {
-            // FORCE SYNC EXISTING CARD STATUS TO TP_SL_ACTIVE FOR PHYSICAL WALLET HOLDING!
-            existingOrder.status = 'TP_SL_ACTIVE';
-            if (!existingOrder.executionPrice || existingOrder.executionPrice <= 0) {
-              existingOrder.executionPrice = buyPrice;
-            }
-            if (mexcSellOrderId) {
-              existingOrder.mexcSellOrderId = mexcSellOrderId;
-            }
-            this.log(`🔄 [AUTO-SYNCED WALLET ASSET] Forced ${symbol} card status to TP_SL_ACTIVE for physical wallet holding ($${notionalUsdt.toFixed(2)} USDT)! (Bought At: $${existingOrder.executionPrice.toFixed(4)})`, 'success', symbol);
+        // Informational sync ONLY for cards that are ALREADY in TP_SL_ACTIVE state
+        if (existingOrder && existingOrder.status === 'TP_SL_ACTIVE') {
+          if (!existingOrder.executionPrice || existingOrder.executionPrice <= 0) {
+            if (currentPrice > 0) existingOrder.executionPrice = currentPrice;
           }
-          this.saveOrders();
-        }
-      }
-
-      // 🎯 REBOOT TP SYNC: Check all TP_SL_ACTIVE cards to finalize filled / completed TP orders immediately
-      for (const order of this.orders) {
-        if (order.status === 'TP_SL_ACTIVE') {
-          const buyPrice = order.executionPrice || order.initialPrice || order.currentPrice;
-          const tpPct = order.takeProfit || 0.6;
-          const tpPrice = buyPrice * (1 + (tpPct / 100));
-          const currentPrice = prices[order.symbol] || order.currentPrice || buyPrice;
-
-          try {
-            const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
-            const sellOrderOpen = Array.isArray(openOrders) && openOrders.some(o => o.side === 'SELL');
-
-            if (!sellOrderOpen || currentPrice >= (tpPrice - 0.00000001)) {
-              this.log(`🎯 [REBOOT TP SYNC] ${order.symbol}: Target $${tpPrice.toFixed(4)} reached or limit sell filled on MEXC! Finalizing TP cycle...`, 'success', order.symbol);
-              order.status = 'TRIGGERED';
-              order.sellExecutionPrice = Math.max(currentPrice, tpPrice);
-              order.sellTriggeredAt = new Date().toISOString();
-              await this.handleOrderCycleComplete(order);
-            }
-          } catch (syncErr) {}
+          this.log(`ℹ️ [WALLET BALANCE SYNC] Verified active position ${symbol}: physical wallet holds ${totalQty.toFixed(4)} ${asset} ($${notionalUsdt.toFixed(2)} USDT).`, 'info', symbol);
         }
       }
     } catch (e) {
-      this.log(`Failed to sync live wallet assets: ${e.message}`, 'warning');
+      this.log(`Wallet sync notice: ${e.message}`, 'info');
     }
   }
 
@@ -1279,65 +1181,6 @@ class OrderTracker {
 
       // 1.4 Check Top 10 Exchanges OBI Dual-Lock Gate if waiting
       if (order.status === 'PENDING_ACTIVATION') {
-        // 🎯 REAL-TIME IN-TICK WALLET HOLDING GUARD: If physical MEXC spot wallet ALREADY holds >= $10 USDT of asset, FORCE status from Waiting to Holding!
-        if (!order.dryRun && !order._autoSyncBlocked && this.mexcClient && this.mexcClient.hasCredentials()) {
-          const now = Date.now();
-          if (!order._lastAutoSyncAttempt || (now - order._lastAutoSyncAttempt > 60000)) {
-            const asset = order.symbol.replace('USDT', '').toUpperCase();
-            try {
-              const balances = await this.mexcClient.getBalances();
-              const assetBal = Array.isArray(balances) ? balances.find(b => b.asset.toUpperCase() === asset) : null;
-              const freeBal = assetBal ? parseFloat(assetBal.free || 0) : 0;
-              const lockedBal = assetBal ? parseFloat(assetBal.locked || 0) : 0;
-              const totalQty = freeBal + lockedBal;
-              const notionalVal = totalQty * currentPrice;
-
-              // If physical MEXC spot wallet ALREADY holds >= $10.00 USDT or has locked coins in open sell orders:
-              if (notionalVal >= 10.0 || lockedBal > 0) {
-                order._lastAutoSyncAttempt = now;
-                let mexcSellOrderId = null;
-                let buyPrice = currentPrice;
-
-                try {
-                  // Fetch actual trade history from MEXC to get the REAL exact buy fill price!
-                  const trades = await this.mexcClient.getMyTrades(order.symbol, 10).catch(() => []);
-                  if (Array.isArray(trades) && trades.length > 0) {
-                    const buyTrades = trades.filter(t => t.isBuyer || t.side === 'BUY' || (t.isMaker === false && parseFloat(t.qty || 0) > 0));
-                    const lastBuy = buyTrades.length > 0 ? buyTrades[buyTrades.length - 1] : null;
-                    if (lastBuy) {
-                      const realPrice = parseFloat(lastBuy.price || lastBuy.execPrice || 0);
-                      if (realPrice > 0) buyPrice = realPrice;
-                    }
-                  }
-
-                  const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
-                  if (Array.isArray(openOrders) && openOrders.length > 0) {
-                    const sellOrder = openOrders.find(o => o.side === 'SELL');
-                    if (sellOrder && sellOrder.orderId) {
-                      mexcSellOrderId = sellOrder.orderId;
-                      const openSellPrice = parseFloat(sellOrder.price || 0);
-                      if (openSellPrice > 0 && buyPrice === currentPrice) {
-                        buyPrice = openSellPrice / (1 + ((order.takeProfit || 0.5) / 100));
-                      }
-                    }
-                  }
-                } catch (oErr) {}
-
-                order.status = 'TP_SL_ACTIVE';
-                order.executionPrice = buyPrice;
-                order.initialPrice = buyPrice;
-                if (mexcSellOrderId) {
-                  order.mexcSellOrderId = mexcSellOrderId;
-                }
-                this.log(`🔄 [TICK AUTO-SYNC WALLET HOLDING] ${order.symbol} physical wallet holds $${notionalVal.toFixed(2)} USDT (${totalQty.toFixed(4)} ${asset}). Status FORCED from Waiting to Holding (TP/SL)! Bought At: $${buyPrice.toFixed(4)}`, 'success', order.symbol);
-                this.saveOrders();
-                changed = true;
-                continue; // Immediately transition card to TP_SL_ACTIVE monitoring on this tick!
-              }
-            } catch (balErr) {}
-          }
-        }
-
         const now = Date.now();
         let dualGatePassed = false;
         let avgObi = 50.0;
