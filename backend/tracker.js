@@ -1277,18 +1277,84 @@ class OrderTracker {
             } catch (e) {}
           }
 
-          order.status = 'PENDING_EXECUTION';
+          order.obiPersistenceCount = 0; // Reset counter post execution confirmation
           order.activatedAt = new Date().toISOString();
-          this.log(
-            `🎯 [DUAL GATE 3-TICK PERSISTENCE CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= ${targetObiStr}%) & 4h 15m RSI = ${rsi4h.toFixed(1)} (<= ${targetRsiStr}) sustained continuously for 3/3 ticks (3s)!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
-            'success',
-            order.symbol
-          );
-          order.obiPersistenceCount = 0; // Reset counter post execution
-          changed = true;
-          // Immediate Market Buy trigger!
-          order.status = 'PENDING_BUY';
-          continue;
+
+          // 🛡️ SPREAD EVALUATION & DUAL EXECUTION ROUTER (Market Buy vs Top Maker Peg Limit Buy)
+          let spreadPct = 0.0;
+          let bestBid = currentPrice;
+          let bestAsk = currentPrice;
+
+          try {
+            const depth = await this.mexcClient.getDepth(order.symbol, 10);
+            if (depth && Array.isArray(depth.bids) && depth.bids.length > 0 && Array.isArray(depth.asks) && depth.asks.length > 0) {
+              bestBid = parseFloat(depth.bids[0][0]) || currentPrice;
+              bestAsk = parseFloat(depth.asks[0][0]) || currentPrice;
+              if (bestBid > 0) {
+                spreadPct = ((bestAsk - bestBid) / bestBid) * 100;
+              }
+            }
+          } catch (dErr) {}
+
+          const maxSpreadLimit = order.maxSpreadPct || 0.30;
+
+          if (spreadPct <= maxSpreadLimit) {
+            // TIGHT SPREAD (<= 0.30% e.g. BTC, ETH, SOL, Gold, EUR) -> Immediate Market Buy!
+            this.log(
+              `🎯 [DUAL GATE CONFIRMED - TIGHT SPREAD ${spreadPct.toFixed(2)}% <= ${maxSpreadLimit}%] ${order.symbol}: Top 10 Avg OBI = ${avgObi.toFixed(1)}% & RSI = ${rsi4h.toFixed(1)} sustained for 3/3 ticks! Executing Immediate Market Buy...`,
+              'success',
+              order.symbol
+            );
+            order.status = 'PENDING_BUY';
+            changed = true;
+            continue;
+          } else {
+            // WIDE SPREAD (> 0.30% e.g. AAPLX, NVDAX) -> MAKER PEG LIMIT BUY AT BEST BID + $0.01
+            const pegStep = currentPrice > 10.0 ? 0.01 : 0.0001;
+            const pegBuyPrice = parseFloat((bestBid + pegStep).toFixed(4));
+            this.log(
+              `🛡️ [WIDE SPREAD DETECTED: ${spreadPct.toFixed(2)}% > ${maxSpreadLimit}%] ${order.symbol}: Blocking Market Buy to prevent high ask trap! Placing MAKER PEG LIMIT BUY at Top Bid + $${pegStep} ($${pegBuyPrice} USDT)...`,
+              'warning',
+              order.symbol
+            );
+
+            order.status = 'PENDING_LIMIT_BUY';
+            order.limitBuyPlacedAt = Date.now();
+            order.targetBuyPrice = pegBuyPrice;
+            
+            if (order.dryRun) {
+              order.mexcBuyOrderId = `dry_limit_buy_${Date.now()}`;
+              this.log(`[DRY RUN] Placed Top Maker Peg Limit Buy order at $${pegBuyPrice} USDT. Waiting 30s for fill...`, 'info', order.symbol);
+            } else {
+              try {
+                const grossQty = order.quantity || (order.quoteOrderQty / pegBuyPrice);
+                const precisionMult = this.getSymbolQuantityPrecision(order.symbol, pegBuyPrice);
+                const qtyToTry = Math.floor(grossQty * precisionMult) / precisionMult;
+
+                const limitBuyRes = await this.mexcClient.placeOrder({
+                  symbol: order.symbol,
+                  side: 'BUY',
+                  type: 'LIMIT',
+                  quantity: qtyToTry,
+                  price: pegBuyPrice
+                });
+
+                if (limitBuyRes && limitBuyRes.orderId) {
+                  order.mexcBuyOrderId = limitBuyRes.orderId;
+                  this.log(`🎯 [REAL LIMIT BUY PLACED] Top Limit Buy order for ${qtyToTry} ${order.symbol} placed at $${pegBuyPrice} USDT (Order ID: ${limitBuyRes.orderId}). Waiting 30s for fill...`, 'success', order.symbol);
+                } else {
+                  throw new Error('Failed to place Limit Buy order');
+                }
+              } catch (limitErr) {
+                this.log(`❌ [LIMIT BUY FAILED] ${limitErr.message}. Resetting to PENDING_ACTIVATION...`, 'error', order.symbol);
+                order.status = 'PENDING_ACTIVATION';
+                changed = true;
+                continue;
+              }
+            }
+            changed = true;
+            continue;
+          }
         }
 
         // Live 1-Second Heartbeat OBI Scan Log Stream
@@ -1391,6 +1457,90 @@ class OrderTracker {
           order.error = buyErr.message;
           this.log(`❌ [MEXC BUY ERROR] Market Buy failed: ${buyErr.message}`, 'error', order.symbol);
         }
+        continue;
+      }
+
+      // 1.48 Handle 30-Second Top Maker Peg Limit Buy Monitoring & Fill Verification
+      if (order.status === 'PENDING_LIMIT_BUY') {
+        const now = Date.now();
+        const timeElapsed = now - (order.limitBuyPlacedAt || now);
+
+        let isFilled = false;
+        let fillPrice = order.targetBuyPrice || currentPrice;
+
+        if (order.dryRun) {
+          // In Dry Run, fill if current price touches or drops to/below target buy price
+          if (currentPrice <= (order.targetBuyPrice || currentPrice) || timeElapsed >= 15000) {
+            isFilled = true;
+          }
+        } else if (order.mexcBuyOrderId) {
+          try {
+            const qRes = await this.mexcClient.getOrder(order.symbol, order.mexcBuyOrderId);
+            if (qRes && (qRes.status === 'FILLED' || parseFloat(qRes.executedQty || 0) > 0)) {
+              isFilled = true;
+              fillPrice = parseFloat(qRes.price) || order.targetBuyPrice || currentPrice;
+            }
+          } catch (qErr) {}
+        }
+
+        if (isFilled) {
+          order.executionPrice = fillPrice;
+          order.status = 'TP_SL_ACTIVE';
+          this.log(`🎉 [MAKER PEG LIMIT BUY FILLED] ${order.symbol} Top Limit Buy filled at $${fillPrice.toFixed(4)} USDT! Transitioning to TP_SL_ACTIVE (+${order.takeProfit}% TP).`, 'success', order.symbol);
+
+          // Place TP Limit Sell if Real mode
+          if (!order.dryRun) {
+            try {
+              const tpPct = order.takeProfit || 0.6;
+              const tpPrice = fillPrice * (1 + (tpPct / 100));
+              const grossQty = order.quantity || (order.quoteOrderQty / fillPrice);
+              const sellQty = await this.getFeeAdjustedBalance(order.symbol, grossQty);
+              const safeQty = sellQty * 0.998;
+              const mult = this.getSymbolQuantityPrecision(order.symbol, fillPrice);
+              const qtyToTry = Math.floor(safeQty * mult) / mult;
+
+              const tpRes = await this.mexcClient.placeOrder({
+                symbol: order.symbol,
+                side: 'SELL',
+                type: 'LIMIT',
+                quantity: qtyToTry,
+                price: tpPrice
+              });
+              if (tpRes && tpRes.orderId) {
+                order.mexcSellOrderId = tpRes.orderId;
+                this.log(`🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for ${qtyToTry} ${order.symbol} @ $${tpPrice.toFixed(4)} USDT (+${tpPct}% TP Target)! (MEXC Order ID: ${tpRes.orderId})`, 'success', order.symbol);
+              }
+            } catch (tpErr) {}
+          }
+
+          changed = true;
+          continue;
+        }
+
+        // Check if 30-Second Timeout Expired
+        if (timeElapsed >= 30000) {
+          this.log(`⏳ [30s LIMIT BUY TIMEOUT] ${order.symbol} Limit Buy at $${order.targetBuyPrice} not filled after 30 seconds. Cancelling order & resetting to PENDING_ACTIVATION for fresh scanning...`, 'warning', order.symbol);
+
+          if (!order.dryRun && order.mexcBuyOrderId) {
+            try {
+              await this.mexcClient.cancelOrder(order.symbol, order.mexcBuyOrderId);
+            } catch (cErr) {}
+          }
+
+          order.mexcBuyOrderId = null;
+          order.status = 'PENDING_ACTIVATION';
+          order.obiPersistenceCount = 0;
+          changed = true;
+          continue;
+        }
+
+        // Still within 30s window, waiting for fill
+        if (!order.lastLimitBuyLogTime || (now - order.lastLimitBuyLogTime >= 5000)) {
+          order.lastLimitBuyLogTime = now;
+          const remainingSec = Math.ceil((30000 - timeElapsed) / 1000);
+          this.log(`⏳ [PENDING_LIMIT_BUY IN PROGRESS] ${order.symbol}: Top Limit Buy order active at $${order.targetBuyPrice} USDT. Waiting for seller fill (${remainingSec}s remaining)...`, 'info', order.symbol);
+        }
+
         continue;
       }
 
