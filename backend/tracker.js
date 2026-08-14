@@ -1129,7 +1129,7 @@ class OrderTracker {
     if (this.isTicking) return;
     this.isTicking = true;
     try {
-      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'PENDING_BUY' || o.status === 'PENDING_EXECUTION' || o.status === 'TP_SL_ACTIVE');
+      const activeOrders = this.orders.filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'PENDING_BUY' || o.status === 'PENDING_LIMIT_BUY' || o.status === 'PENDING_EXECUTION' || o.status === 'TP_SL_ACTIVE');
       if (activeOrders.length === 0) {
         const now = Date.now();
         if (!this.lastStandbyHeartbeat || (now - this.lastStandbyHeartbeat > 30000)) {
@@ -1460,9 +1460,10 @@ class OrderTracker {
         continue;
       }
 
-      // 1.48 Handle 30-Second Top Maker Peg Limit Buy Monitoring & Fill Verification
+      // 1.48 Handle 60-Second Top Maker Peg Limit Buy Monitoring, Auto Re-Peg & Spread Re-Evaluation Loop
       if (order.status === 'PENDING_LIMIT_BUY') {
         const now = Date.now();
+        const limitTimeoutMs = 60000; // 60 seconds (1 minute per user request)
         const timeElapsed = now - (order.limitBuyPlacedAt || now);
 
         let isFilled = false;
@@ -1470,7 +1471,7 @@ class OrderTracker {
 
         if (order.dryRun) {
           // In Dry Run, fill if current price touches or drops to/below target buy price
-          if (currentPrice <= (order.targetBuyPrice || currentPrice) || timeElapsed >= 15000) {
+          if (currentPrice <= (order.targetBuyPrice || currentPrice)) {
             isFilled = true;
           }
         } else if (order.mexcBuyOrderId) {
@@ -1517,28 +1518,98 @@ class OrderTracker {
           continue;
         }
 
-        // Check if 30-Second Timeout Expired
-        if (timeElapsed >= 30000) {
-          this.log(`⏳ [30s LIMIT BUY TIMEOUT] ${order.symbol} Limit Buy at $${order.targetBuyPrice} not filled after 30 seconds. Cancelling order & resetting to PENDING_ACTIVATION for fresh scanning...`, 'warning', order.symbol);
+        // Check if 60-Second (1 Minute) Timeout Expired
+        if (timeElapsed >= limitTimeoutMs) {
+          this.log(`⏳ [60s LIMIT BUY TIMEOUT] ${order.symbol} Limit Buy at $${order.targetBuyPrice} not filled after 60s. Cancelling order & re-evaluating live order book spread...`, 'warning', order.symbol);
 
+          // 1. Cancel un-filled Limit Buy order
           if (!order.dryRun && order.mexcBuyOrderId) {
             try {
               await this.mexcClient.cancelOrder(order.symbol, order.mexcBuyOrderId);
             } catch (cErr) {}
           }
-
           order.mexcBuyOrderId = null;
-          order.status = 'PENDING_ACTIVATION';
-          order.obiPersistenceCount = 0;
-          changed = true;
-          continue;
+
+          // 2. Fetch live order book depth & calculate current Bid-Ask Spread
+          let spreadPct = 0.0;
+          let bestBid = currentPrice;
+          let bestAsk = currentPrice;
+
+          try {
+            const depth = await this.mexcClient.getDepth(order.symbol, 10);
+            if (depth && Array.isArray(depth.bids) && depth.bids.length > 0 && Array.isArray(depth.asks) && depth.asks.length > 0) {
+              bestBid = parseFloat(depth.bids[0][0]) || currentPrice;
+              bestAsk = parseFloat(depth.asks[0][0]) || currentPrice;
+              if (bestBid > 0) {
+                spreadPct = ((bestAsk - bestBid) / bestBid) * 100;
+              }
+            }
+          } catch (dErr) {}
+
+          const maxSpreadLimit = order.maxSpreadPct || 0.30;
+
+          if (spreadPct <= maxSpreadLimit) {
+            // SPREAD NARROWED (<= 0.30%) -> SWITCH TO IMMEDIATE MARKET BUY!
+            this.log(
+              `⚡ [RE-EVALUATION: SPREAD NARROWED ${spreadPct.toFixed(2)}% <= ${maxSpreadLimit}%] ${order.symbol}: Spread is now tight! Switching from Limit Buy to IMMEDIATE MARKET BUY...`,
+              'success',
+              order.symbol
+            );
+            order.status = 'PENDING_BUY';
+            changed = true;
+            continue;
+          } else {
+            // SPREAD STILL WIDE (> 0.30%) -> RE-PEG MAKER LIMIT BUY AT NEW TOP BID + $0.01 & RESTART 60s TIMER!
+            const pegStep = currentPrice > 10.0 ? 0.01 : 0.0001;
+            const newPegBuyPrice = parseFloat((bestBid + pegStep).toFixed(4));
+            this.log(
+              `🛡️ [RE-EVALUATION: SPREAD STILL WIDE ${spreadPct.toFixed(2)}% > ${maxSpreadLimit}%] ${order.symbol}: Re-pegging Maker Limit Buy at updated Top Bid + $${pegStep} ($${newPegBuyPrice} USDT). Restarting 60s timer...`,
+              'warning',
+              order.symbol
+            );
+
+            order.limitBuyPlacedAt = Date.now();
+            order.targetBuyPrice = newPegBuyPrice;
+
+            if (order.dryRun) {
+              order.mexcBuyOrderId = `dry_limit_buy_${Date.now()}`;
+            } else {
+              try {
+                const grossQty = order.quantity || (order.quoteOrderQty / newPegBuyPrice);
+                const precisionMult = this.getSymbolQuantityPrecision(order.symbol, newPegBuyPrice);
+                const qtyToTry = Math.floor(grossQty * precisionMult) / precisionMult;
+
+                const limitBuyRes = await this.mexcClient.placeOrder({
+                  symbol: order.symbol,
+                  side: 'BUY',
+                  type: 'LIMIT',
+                  quantity: qtyToTry,
+                  price: newPegBuyPrice
+                });
+
+                if (limitBuyRes && limitBuyRes.orderId) {
+                  order.mexcBuyOrderId = limitBuyRes.orderId;
+                  this.log(`🎯 [NEW LIMIT BUY RE-PLACED] Top Limit Buy for ${qtyToTry} ${order.symbol} placed at $${newPegBuyPrice} USDT. Waiting 60s for fill...`, 'success', order.symbol);
+                } else {
+                  throw new Error('Failed to re-place Limit Buy order');
+                }
+              } catch (reErr) {
+                this.log(`❌ [RE-PLACE LIMIT BUY FAILED] ${reErr.message}. Resetting to PENDING_ACTIVATION...`, 'error', order.symbol);
+                order.status = 'PENDING_ACTIVATION';
+                changed = true;
+                continue;
+              }
+            }
+            changed = true;
+            continue;
+          }
         }
 
-        // Still within 30s window, waiting for fill
+        // Still within 60s window, waiting for fill
         if (!order.lastLimitBuyLogTime || (now - order.lastLimitBuyLogTime >= 5000)) {
           order.lastLimitBuyLogTime = now;
-          const remainingSec = Math.ceil((30000 - timeElapsed) / 1000);
-          this.log(`⏳ [PENDING_LIMIT_BUY IN PROGRESS] ${order.symbol}: Top Limit Buy order active at $${order.targetBuyPrice} USDT. Waiting for seller fill (${remainingSec}s remaining)...`, 'info', order.symbol);
+          const remainingSec = Math.ceil((limitTimeoutMs - timeElapsed) / 1000);
+          this.log(`⏳ [PENDING_LIMIT_BUY IN PROGRESS] ${order.symbol}: Top Limit Buy order active at $${order.targetBuyPrice} USDT. Waiting for seller fill (${remainingSec}s remaining in 60s cycle)...`, 'info', order.symbol);
         }
 
         continue;

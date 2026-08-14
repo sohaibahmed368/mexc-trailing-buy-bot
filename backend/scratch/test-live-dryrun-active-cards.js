@@ -124,6 +124,7 @@ async function runScenarioTestForCard(cardConfig, cardIndex, totalCards) {
   tracker.ordersPath = tmpOrdersFile;
   tracker.logsPath   = tmpLogsFile;
   tracker.orders     = [];
+  tracker.placeOrderDelayMs = 50;
 
   let currentRadar = NEUTRAL;
   tracker.signalRadar = {
@@ -187,30 +188,31 @@ async function runScenarioTestForCard(cardConfig, cardIndex, totalCards) {
   // ── STEP 3: Both Conditions Valid (OBI >= customObi AND RSI <= customRsi) -> ENTRY ──
   currentRadar = { averageObiPct: obiOk, averageRsi15m: rsiOk, exchanges: [{ name: 'Binance', obiPct: obiOk }] };
   client.prices[sym] = initialPrice;
-  await tracker.tick();
-  await wait(400);
-  await tracker.tick();
-  await wait(400);
-  currentRadar = NEUTRAL;
+  await tracker.tick(); // Tick 1 (persistence 1/3)
+  await tracker.tick(); // Tick 2 (persistence 2/3)
+  await tracker.tick(); // Tick 3 (persistence 3/3 -> PENDING_BUY)
+  await tracker.tick(); // Tick 4 (executes Dry Run Buy -> TP_SL_ACTIVE)
+  
   cardState = tracker.getOrders()[0];
+  currentRadar = NEUTRAL;
 
-  if (['TP_SL_ACTIVE', 'PENDING_BUY'].includes(cardState.status)) {
+  if (cardState.status === 'TP_SL_ACTIVE') {
     const execP = cardState.executionPrice || initialPrice;
     console.log(`   ✅ STEP 3 PASSED: OBI ${obiOk}% >= ${customObi}% & RSI ${rsiOk} <= ${customRsi} → ENTRY CONFIRMED! Status: ${cardState.status} | Exec Price: $${execP}`);
     passedSteps++;
   } else {
-    console.error(`   ❌ STEP 3 FAILED: Expected TP_SL_ACTIVE/PENDING_BUY but got ${cardState.status}`);
+    console.error(`   ❌ STEP 3 FAILED: Expected TP_SL_ACTIVE but got ${cardState.status}`);
   }
 
   // ── STEP 4: 100% Take Profit Hit -> Market/Limit Sell & Reset ──────────────
   currentRadar = NEUTRAL; // Keep radar neutral so card doesn't re-trigger buy immediately
   const buyPrice = cardState.executionPrice || initialPrice;
-  const tpTargetPrice = buyPrice * (1 + (tpPct / 100));
+  const tpTargetPrice = buyPrice * (1 + (tpPct / 100)) + 0.01;
   
   // Update mock client price to TP target price + offset
-  client.prices[sym] = tpTargetPrice + 0.001;
-  await tracker.tick();
-  await wait(400);
+  client.prices[sym] = tpTargetPrice;
+  await tracker.tick(); // Checks TP, executes 100% TP sell, resets to PENDING_ACTIVATION
+  
   cardState = tracker.getOrders()[0];
   const cyclesCompleted = Array.isArray(cardState.tradeHistory) ? cardState.tradeHistory.length : 0;
 
@@ -224,20 +226,19 @@ async function runScenarioTestForCard(cardConfig, cardIndex, totalCards) {
   // ── STEP 5: Re-entry and Emergency RSI <= 20 Stop Loss Test ────────────────
   currentRadar = { averageObiPct: obiOk, averageRsi15m: rsiOk, exchanges: [{ name: 'Binance', obiPct: obiOk }] };
   client.prices[sym] = initialPrice;
-  await tracker.tick();
-  await wait(400);
-  await tracker.tick();
-  await wait(400);
+  await tracker.tick(); // Tick 1 (persistence 1/3)
+  await tracker.tick(); // Tick 2 (persistence 2/3)
+  await tracker.tick(); // Tick 3 (persistence 3/3 -> PENDING_BUY)
+  await tracker.tick(); // Tick 4 (executes Dry Run Buy -> TP_SL_ACTIVE)
+
   cardState = tracker.getOrders()[0];
   console.log(`   ✓ Re-entered Card → Status: ${cardState.status}`);
 
   // Crash RSI to 18.0 (<= 20.0)
   currentRadar = { averageObiPct: 35.0, averageRsi15m: 18.0, exchanges: [{ name: 'Binance', obiPct: 35.0 }] };
   client.prices[sym] = initialPrice * 0.98;
-  await tracker.tick();
-  await wait(400);
-  await tracker.tick();
-  await wait(400);
+  await tracker.tick(); // Triggers RSI Emergency Crash SL, resets to PENDING_ACTIVATION
+
   currentRadar = NEUTRAL;
   cardState = tracker.getOrders()[0];
   const finalCycles = Array.isArray(cardState.tradeHistory) ? cardState.tradeHistory.length : 0;
