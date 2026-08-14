@@ -1214,7 +1214,27 @@ class OrderTracker {
 
               const obiGatePassed = (avgObi >= targetObi);
               const rsiGatePassed = (rsi4h <= targetRsi);
-              dualGatePassed = obiGatePassed && rsiGatePassed;
+              const rawGateMatch = obiGatePassed && rsiGatePassed;
+
+              // ⏳ 3-TICK OBI PERSISTENCE FILTER (3-Second Continuous Stability Check)
+              const requiredPersistenceTicks = 3;
+              if (rawGateMatch) {
+                order.obiPersistenceCount = (order.obiPersistenceCount || 0) + 1;
+                if (order.obiPersistenceCount < requiredPersistenceTicks) {
+                  dualGatePassed = false;
+                  this.log(
+                    `⏳ [3-TICK OBI PERSISTENCE ${order.obiPersistenceCount}/3] ${order.symbol}: Top 10 Avg OBI = ${avgObi.toFixed(1)}% (>= ${targetObi.toFixed(1)}%) & 4h 15m RSI = ${rsi4h.toFixed(1)} (<= ${targetRsi.toFixed(1)}). Sustained ${order.obiPersistenceCount}/3 ticks...`,
+                    'info',
+                    order.symbol
+                  );
+                } else {
+                  dualGatePassed = true; // Sustained continuously for 3 consecutive ticks (3 seconds)!
+                }
+              } else {
+                // Immediately reset persistence counter if OBI or RSI drops below threshold at any tick
+                order.obiPersistenceCount = 0;
+                dualGatePassed = false;
+              }
 
               order._reqTargetObi = targetObi;
               order._reqTargetRsi = targetRsi;
@@ -1223,9 +1243,11 @@ class OrderTracker {
                 exchangeDetailsStr = ` | Exchanges Breakdown: [${exDetailsArr.join(', ')}]`;
               }
             } else {
+              order.obiPersistenceCount = 0;
               dualGatePassed = false;
             }
           } catch (e) {
+            order.obiPersistenceCount = 0;
             dualGatePassed = false;
           }
         }
@@ -1258,10 +1280,11 @@ class OrderTracker {
           order.status = 'PENDING_EXECUTION';
           order.activatedAt = new Date().toISOString();
           this.log(
-            `🎯 [DUAL GATE ENTRY CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= ${targetObiStr}%) & 4h 15m RSI = ${rsi4h.toFixed(1)} (<= ${targetRsiStr})!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
+            `🎯 [DUAL GATE 3-TICK PERSISTENCE CONFIRMED] ${order.symbol}: Top 10 Aggregated Avg OBI = ${avgObi.toFixed(1)}% (>= ${targetObiStr}%) & 4h 15m RSI = ${rsi4h.toFixed(1)} (<= ${targetRsiStr}) sustained continuously for 3/3 ticks (3s)!${exchangeDetailsStr}. Executing Immediate Market Buy...`,
             'success',
             order.symbol
           );
+          order.obiPersistenceCount = 0; // Reset counter post execution
           changed = true;
           // Immediate Market Buy trigger!
           order.status = 'PENDING_BUY';
@@ -1271,8 +1294,9 @@ class OrderTracker {
         // Live 1-Second Heartbeat OBI Scan Log Stream
         if (!order.lastHeartbeatLogTime || (now - order.lastHeartbeatLogTime >= 1000)) {
           order.lastHeartbeatLogTime = now;
+          const currPriceNum = parseFloat(currentPrice) || 0;
           this.log(
-            `⚡ [DUAL GATE SCAN] ${order.symbol}: Live Price $${currentPrice.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= ${targetObiStr}%) | 4h 15m RSI: ${rsi4h.toFixed(1)} (Req <= ${targetRsiStr})${exchangeDetailsStr}. Scanning live orderbooks & RSI...`,
+            `⚡ [DUAL GATE SCAN] ${order.symbol}: Live Price $${currPriceNum.toFixed(4)} USDT | Top 10 Avg OBI: ${avgObi.toFixed(1)}% (Req >= ${targetObiStr}%) | 4h 15m RSI: ${rsi4h.toFixed(1)} (Req <= ${targetRsiStr})${exchangeDetailsStr}. Scanning live orderbooks & RSI...`,
             'info',
             order.symbol
           );
@@ -1286,9 +1310,10 @@ class OrderTracker {
         this.log(`🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ${order.symbol}...`, 'info', order.symbol);
         
         if (order.dryRun) {
-          order.executionPrice = currentPrice;
+          order.executionPrice = parseFloat(currentPrice) || 0;
           order.status = 'TP_SL_ACTIVE';
-          this.log(`[DRY RUN] Simulated Market Buy executed for ${order.symbol} at $${currentPrice.toFixed(4)} USDT. Transitioning to TP/SL monitoring.`, 'success', order.symbol);
+          const execPriceNum = parseFloat(currentPrice) || 0;
+          this.log(`[DRY RUN] Simulated Market Buy executed for ${order.symbol} at $${execPriceNum.toFixed(4)} USDT. Transitioning to TP/SL monitoring.`, 'success', order.symbol);
           changed = true;
           continue;
         }

@@ -100,7 +100,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 async function main() {
   console.log('================================================================================');
   console.log('🧪  USER CUSTOM CARD SCENARIOS — Full Lifecycle Verification');
-  console.log('    3 Independent Scenarios: Custom OBI/RSI Entry, TP Execution,');
+  console.log('    3 Independent Scenarios: Custom OBI/RSI Entry, 3-Tick Persistence, TP Execution,');
   console.log('    Auto-Repeat Cycle Reset, RSI ≤ 20 Emergency Market Sell');
   console.log('================================================================================');
 
@@ -149,39 +149,45 @@ async function main() {
     s = tracker.getOrders()[0];
     console.log(`   ✓ RSI 48 > 45 → ${s.status} (Expected: PENDING_ACTIVATION)`);
 
-    // 2C: BOTH valid → ENTRY!
+    // 2C: BOTH valid → 3 Ticks → ENTRY!
     radar = { averageObiPct:65, averageRsi15m:38, exchanges:[{name:'Binance',obiPct:65}] };
-    await tracker.tick({'BTCUSDT':65000});
-    await wait(1200);
+    await tracker.tick({'BTCUSDT':65000}); // 1/3
+    await tracker.tick({'BTCUSDT':65000}); // 2/3
+    await tracker.tick({'BTCUSDT':65000}); // 3/3 -> PENDING_BUY
+    await tracker.tick({'BTCUSDT':65000}); // Execute buy -> TP_SL_ACTIVE
+    await wait(500);
     radar = NEUTRAL; // neutralise after entry fires
     s = tracker.getOrders()[0];
-    console.log(`   ✓ OBI 65% RSI 38 → Entry! Status: ${s.status} | Exec Price: $${s.executionPrice}`);
+    console.log(`   ✓ OBI 65% RSI 38 (3 Ticks) → Entry! Status: ${s.status} | Exec Price: $${s.executionPrice}`);
 
     // Cycle 1 → TP hit (+0.60%)
     client.tpFilled['BTCUSDT'] = true;
     await tracker.tick({'BTCUSDT':65390});
-    await wait(1200);
+    await wait(500);
     await tracker.tick({'BTCUSDT':65390});
-    await wait(1200);
+    await wait(500);
     client.tpFilled['BTCUSDT'] = false;
     s = tracker.getOrders()[0];
     const btcCycles1 = Array.isArray(s.tradeHistory) ? s.tradeHistory.length : 0;
     console.log(`   ✓ TP +0.60% Hit → Status: ${s.status} | Cycles completed: ${btcCycles1}`);
 
-    // Cycle 2 → re-entry
+    // Cycle 2 → re-entry (3 ticks)
     radar = { averageObiPct:68, averageRsi15m:35, exchanges:[{name:'Binance',obiPct:68}] };
-    await tracker.tick({'BTCUSDT':65000});
-    await wait(1200);
+    await tracker.tick({'BTCUSDT':65000}); // 1/3
+    await tracker.tick({'BTCUSDT':65000}); // 2/3
+    await tracker.tick({'BTCUSDT':65000}); // 3/3 -> PENDING_BUY
+    await tracker.tick({'BTCUSDT':65000}); // Execute buy -> TP_SL_ACTIVE
+    await wait(500);
     radar = NEUTRAL;
     s = tracker.getOrders()[0];
-    console.log(`   ✓ Re-entered → Status: ${s.status}`);
+    console.log(`   ✓ Re-entered (3 Ticks) → Status: ${s.status}`);
 
     // RSI crash ≤ 20 → Emergency SL
     radar = { averageObiPct:40, averageRsi15m:17.5, exchanges:[{name:'Binance',obiPct:40}] };
     await tracker.tick({'BTCUSDT':63500});
-    await wait(1200);
+    await wait(500);
     await tracker.tick({'BTCUSDT':63500});
-    await wait(1200);
+    await wait(500);
     radar = NEUTRAL;
     s = tracker.getOrders()[0];
     const btcCycles2 = Array.isArray(s.tradeHistory) ? s.tradeHistory.length : 0;
@@ -191,7 +197,7 @@ async function main() {
         && btcCycles2 >= 2
         && s.customObiThreshold === 60.0
         && s.customRsiThreshold === 45.0) {
-      console.log('   ✅ SCENARIO 1 PASSED: BTC — Custom 60% OBI & 45 RSI, TP Cycle + Emergency RSI SL verified!');
+      console.log('   ✅ SCENARIO 1 PASSED: BTC — Custom 60% OBI & 45 RSI (3-Tick Persistence), TP Cycle + Emergency RSI SL verified!');
       passed++;
     } else {
       console.error('   ❌ SCENARIO 1 FAILED');
@@ -240,20 +246,23 @@ async function main() {
     s = tracker.getOrders()[0];
     console.log(`   ✓ RSI 42 > 40 → ${s.status} (Expected: PENDING_ACTIVATION)`);
 
-    // Entry: OBI 58% ≥ 55%, RSI 36 ≤ 40
+    // Entry: OBI 58% ≥ 55%, RSI 36 ≤ 40 (3 ticks)
     radar = { averageObiPct:58, averageRsi15m:36, exchanges:[{name:'Binance',obiPct:58}] };
-    await tracker.tick({'XAUTUSDT':2400});
-    await wait(1200);
+    await tracker.tick({'XAUTUSDT':2400}); // 1/3
+    await tracker.tick({'XAUTUSDT':2400}); // 2/3
+    await tracker.tick({'XAUTUSDT':2400}); // 3/3 -> PENDING_BUY
+    await tracker.tick({'XAUTUSDT':2400}); // Execute buy -> TP_SL_ACTIVE
+    await wait(500);
     radar = NEUTRAL;
     s = tracker.getOrders()[0];
-    console.log(`   ✓ OBI 58% RSI 36 → Entry! Status: ${s.status} | Exec: $${s.executionPrice}`);
+    console.log(`   ✓ OBI 58% RSI 36 (3 Ticks) → Entry! Status: ${s.status} | Exec: $${s.executionPrice}`);
 
     // TP hit (+0.40% of $2400 = $2409.60)
     client.tpFilled['XAUTUSDT'] = true;
     await tracker.tick({'XAUTUSDT':2410});
-    await wait(1200);
+    await wait(500);
     await tracker.tick({'XAUTUSDT':2410});
-    await wait(1200);
+    await wait(500);
     client.tpFilled['XAUTUSDT'] = false;
     s = tracker.getOrders()[0];
     const xautCycles = Array.isArray(s.tradeHistory) ? s.tradeHistory.length : 0;
@@ -263,7 +272,7 @@ async function main() {
         && xautCycles >= 1
         && s.customObiThreshold === 55.0
         && s.customRsiThreshold === 40.0) {
-      console.log('   ✅ SCENARIO 2 PASSED: Gold — Custom 55% OBI & 40 RSI, TP hit & Cycle Reset verified!');
+      console.log('   ✅ SCENARIO 2 PASSED: Gold — Custom 55% OBI & 40 RSI (3-Tick Persistence), TP hit & Cycle Reset verified!');
       passed++;
     } else {
       console.error('   ❌ SCENARIO 2 FAILED');
@@ -312,20 +321,23 @@ async function main() {
     s = tracker.getOrders()[0];
     console.log(`   ✓ RSI 52 > 50 → ${s.status} (Expected: PENDING_ACTIVATION)`);
 
-    // Entry: OBI 56% ≥ 55%, RSI 47 ≤ 50
+    // Entry: OBI 56% ≥ 55%, RSI 47 ≤ 50 (3 ticks)
     radar = { averageObiPct:56, averageRsi15m:47, exchanges:[{name:'Binance',obiPct:56}] };
-    await tracker.tick({'EURUSDT':1.0850});
-    await wait(1200);
+    await tracker.tick({'EURUSDT':1.0850}); // 1/3
+    await tracker.tick({'EURUSDT':1.0850}); // 2/3
+    await tracker.tick({'EURUSDT':1.0850}); // 3/3 -> PENDING_BUY
+    await tracker.tick({'EURUSDT':1.0850}); // Execute buy -> TP_SL_ACTIVE
+    await wait(500);
     radar = NEUTRAL;
     s = tracker.getOrders()[0];
-    console.log(`   ✓ OBI 56% RSI 47 → Entry! Status: ${s.status} | Exec: $${s.executionPrice}`);
+    console.log(`   ✓ OBI 56% RSI 47 (3 Ticks) → Entry! Status: ${s.status} | Exec: $${s.executionPrice}`);
 
     // TP hit (+0.20% of $1.0850 = $1.0872)
     client.tpFilled['EURUSDT'] = true;
     await tracker.tick({'EURUSDT':1.0872});
-    await wait(1200);
+    await wait(500);
     await tracker.tick({'EURUSDT':1.0872});
-    await wait(1200);
+    await wait(500);
     client.tpFilled['EURUSDT'] = false;
     s = tracker.getOrders()[0];
     const eurCycles = Array.isArray(s.tradeHistory) ? s.tradeHistory.length : 0;
@@ -335,7 +347,7 @@ async function main() {
         && eurCycles >= 1
         && s.customObiThreshold === 55.0
         && s.customRsiThreshold === 50.0) {
-      console.log('   ✅ SCENARIO 3 PASSED: EUR — Custom 55% OBI & 50 RSI, TP hit & Cycle Reset verified!');
+      console.log('   ✅ SCENARIO 3 PASSED: EUR — Custom 55% OBI & 50 RSI (3-Tick Persistence), TP hit & Cycle Reset verified!');
       passed++;
     } else {
       console.error('   ❌ SCENARIO 3 FAILED');
