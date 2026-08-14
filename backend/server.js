@@ -113,7 +113,9 @@ if (process.env.ALPACA_API_KEY_ID && process.env.ALPACA_SECRET_KEY) {
 try { tracker.startTracking(); } catch (e) { console.error('Error starting MEXC tracker:', e.message); }
 try { stockTracker.startTracking(); } catch (e) { console.error('Error starting Stock tracker:', e.message); }
 try { alpacaStockTracker.startTracking(); } catch (e) { console.error('Error starting Alpaca tracker:', e.message); }
-try { smartGridTracker.startTracking(); } catch (e) { console.error('Error starting Smart Grid tracker:', e.message); }
+if (typeof smartGridTracker !== 'undefined' && smartGridTracker && typeof smartGridTracker.startTracking === 'function') {
+  try { smartGridTracker.startTracking(); } catch (e) { console.error('Error starting Smart Grid tracker:', e.message); }
+}
 
 // Pre-populate symbolsCache immediately with popular pairs so server is instantly ready in 0ms
 let symbolsCache = [
