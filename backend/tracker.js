@@ -1220,6 +1220,7 @@ class OrderTracker {
               const requiredPersistenceTicks = 3;
               if (rawGateMatch) {
                 order.obiPersistenceCount = (order.obiPersistenceCount || 0) + 1;
+                changed = true;
                 if (order.obiPersistenceCount < requiredPersistenceTicks) {
                   dualGatePassed = false;
                   this.log(
@@ -1232,7 +1233,10 @@ class OrderTracker {
                 }
               } else {
                 // Immediately reset persistence counter if OBI or RSI drops below threshold at any tick
-                order.obiPersistenceCount = 0;
+                if (order.obiPersistenceCount !== 0) {
+                  order.obiPersistenceCount = 0;
+                  changed = true;
+                }
                 dualGatePassed = false;
               }
 
