@@ -529,12 +529,17 @@ class MultiExchangeSignalRadar {
         trendColor = '#ef4444'; // Red
       }
 
+      const spotObiPct = (sumSpotBuyVol + sumSpotSellVol > 0) ? ((sumSpotBuyVol / (sumSpotBuyVol + sumSpotSellVol)) * 100) : avgObiPct;
+      const futObiPct = (sumFutBuyVol + sumFutSellVol > 0) ? ((sumFutBuyVol / (sumFutBuyVol + sumFutSellVol)) * 100) : avgObiPct;
+
       newCache[sym] = {
         symbol: sym,
         averagePrice: parseFloat(avgPrice.toFixed(4)),
         averageEma20: parseFloat(avgEma20.toFixed(4)),
         averageRsi15m: parseFloat(avgRsi15m.toFixed(2)),
         averageObiPct: parseFloat(avgObiPct.toFixed(2)),
+        spotObiPct: parseFloat(spotObiPct.toFixed(2)),
+        futObiPct: parseFloat(futObiPct.toFixed(2)),
         averageTakerBuyPct: parseFloat(avgTakerBuyPct.toFixed(2)),
         totalSpotBuyVol: parseFloat(sumSpotBuyVol.toFixed(2)),
         totalSpotSellVol: parseFloat(sumSpotSellVol.toFixed(2)),
@@ -606,6 +611,8 @@ class MultiExchangeSignalRadar {
     const avgEma20 = countEma > 0 ? (sumEma / countEma) : avgPrice;
     const avgObiPct = countObi > 0 ? (sumObi / countObi) : 50.0;
     const avgTakerBuyPct = countTaker > 0 ? (sumTaker / countTaker) : 50.0;
+    const spotObiPct = (sumSpotBuyVol + sumSpotSellVol > 0) ? ((sumSpotBuyVol / (sumSpotBuyVol + sumSpotSellVol)) * 100) : avgObiPct;
+    const futObiPct = (sumFutBuyVol + sumFutSellVol > 0) ? ((sumFutBuyVol / (sumFutBuyVol + sumFutSellVol)) * 100) : avgObiPct;
 
     let trendStatus = 'NEUTRAL / CONSOLIDATION';
     let trendBadge = '🛡️ SIDEWAYS CONSOLIDATION';
@@ -627,6 +634,8 @@ class MultiExchangeSignalRadar {
       averageEma20: parseFloat(avgEma20.toFixed(4)),
       averageRsi15m: parseFloat(avgRsi15m.toFixed(2)),
       averageObiPct: parseFloat(avgObiPct.toFixed(2)),
+      spotObiPct: parseFloat(spotObiPct.toFixed(2)),
+      futObiPct: parseFloat(futObiPct.toFixed(2)),
       averageTakerBuyPct: parseFloat(avgTakerBuyPct.toFixed(2)),
       totalSpotBuyVol: parseFloat(sumSpotBuyVol.toFixed(2)),
       totalSpotSellVol: parseFloat(sumSpotSellVol.toFixed(2)),
