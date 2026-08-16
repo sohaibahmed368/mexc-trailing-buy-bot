@@ -837,6 +837,16 @@ app.get('/api/radar', (req, res) => {
   res.json(signalRadar.getRadarMetrics(req.query.symbol));
 });
 
+// Diagnostic Version Endpoint
+app.get('/api/version', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.json({
+    version: '2.5.0-spot-futures-radar',
+    release: 'Combined Spot + Futures 100-Depth UI Active',
+    buildTime: new Date().toISOString()
+  });
+});
+
 // Serve frontend build in production with strict NO-CACHE headers
 const backendPublicPath = path.join(__dirname, 'public');
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
