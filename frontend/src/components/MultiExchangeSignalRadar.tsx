@@ -119,7 +119,7 @@ export const MultiExchangeSignalRadar: React.FC = () => {
       </div>
 
       {/* Symbol Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
         {symbolKeys.map(sym => {
           const m = data?.symbols ? data.symbols[sym] : null;
           const avgObi = m ? m.averageObiPct : 50.0;
@@ -151,10 +151,10 @@ export const MultiExchangeSignalRadar: React.FC = () => {
                 </span>
               </div>
 
-              {/* Combined OBI Bar */}
+              {/* Top 10 Combined (Spot + Fut) OBI Bar */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '4px' }}>
-                  <span style={{ color: '#94a3b8', fontWeight: 600 }}>Top 10 Combined (Spot+Fut) OBI</span>
+                  <span style={{ color: '#94a3b8', fontWeight: 600 }}>Top 10 Combined OBI</span>
                   <span style={{ fontWeight: 800, color: avgObi >= 55 ? '#10b981' : (avgObi <= 45 ? '#ef4444' : '#f59e0b') }}>
                     {avgObi.toFixed(1)}% {avgObi >= 50 ? '🟢 Buyers' : '🔴 Sellers'}
                   </span>
@@ -168,32 +168,32 @@ export const MultiExchangeSignalRadar: React.FC = () => {
               {/* Distinct Spot vs Futures OBI Breakdown Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', background: '#0b1329', padding: '8px', borderRadius: '8px', border: '1px solid #1e293b' }}>
                 {/* Spot OBI */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.7rem', marginBottom: '3px' }}>
-                    <span style={{ color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 600 }}>
-                      <Layers size={11} /> Spot OBI
+                <div style={{ background: '#020617', padding: '6px 8px', borderRadius: '6px', border: '1px solid #334155' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', marginBottom: '4px' }}>
+                    <span style={{ color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 700 }}>
+                      <Layers size={12} /> SPOT OBI
                     </span>
                     <span style={{ fontWeight: 800, color: spotObi >= 55 ? '#10b981' : (spotObi <= 45 ? '#ef4444' : '#fbbf24') }}>
                       {spotObi.toFixed(1)}%
                     </span>
                   </div>
-                  <div style={{ height: '4px', background: '#1e293b', borderRadius: '2px', overflow: 'hidden', display: 'flex' }}>
+                  <div style={{ height: '5px', background: '#1e293b', borderRadius: '3px', overflow: 'hidden', display: 'flex' }}>
                     <div style={{ width: `${Math.min(100, Math.max(0, spotObi))}%`, background: '#fbbf24' }} />
                     <div style={{ width: `${Math.min(100, Math.max(0, 100 - spotObi))}%`, background: '#475569' }} />
                   </div>
                 </div>
 
                 {/* Futures OBI */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.7rem', marginBottom: '3px' }}>
-                    <span style={{ color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 600 }}>
-                      <Zap size={11} /> Futures OBI
+                <div style={{ background: '#020617', padding: '6px 8px', borderRadius: '6px', border: '1px solid #334155' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', marginBottom: '4px' }}>
+                    <span style={{ color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 700 }}>
+                      <Zap size={12} /> FUTURES OBI
                     </span>
                     <span style={{ fontWeight: 800, color: futObi >= 55 ? '#10b981' : (futObi <= 45 ? '#ef4444' : '#38bdf8') }}>
                       {futObi.toFixed(1)}%
                     </span>
                   </div>
-                  <div style={{ height: '4px', background: '#1e293b', borderRadius: '2px', overflow: 'hidden', display: 'flex' }}>
+                  <div style={{ height: '5px', background: '#1e293b', borderRadius: '3px', overflow: 'hidden', display: 'flex' }}>
                     <div style={{ width: `${Math.min(100, Math.max(0, futObi))}%`, background: '#38bdf8' }} />
                     <div style={{ width: `${Math.min(100, Math.max(0, 100 - futObi))}%`, background: '#475569' }} />
                   </div>
