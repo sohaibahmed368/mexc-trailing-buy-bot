@@ -837,20 +837,33 @@ app.get('/api/radar', (req, res) => {
   res.json(signalRadar.getRadarMetrics(req.query.symbol));
 });
 
-// Serve frontend build in production (prioritize committed backend/public, fallback to frontend/dist)
+// Serve frontend build in production with strict NO-CACHE headers
 const backendPublicPath = path.join(__dirname, 'public');
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
 
-const staticPath = fs.existsSync(path.join(frontendDistPath, 'index.html'))
-  ? frontendDistPath
-  : (fs.existsSync(path.join(backendPublicPath, 'index.html')) ? backendPublicPath : null);
+const staticPath = fs.existsSync(path.join(backendPublicPath, 'index.html'))
+  ? backendPublicPath
+  : (fs.existsSync(path.join(frontendDistPath, 'index.html')) ? frontendDistPath : null);
 
 if (staticPath) {
-  app.use(express.static(staticPath));
+  app.use(express.static(staticPath, {
+    etag: false,
+    maxAge: 0,
+    setHeaders: (res) => {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.setHeader('Surrogate-Control', 'no-store');
+    }
+  }));
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ error: `API route ${req.path} not found` });
     }
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
     res.sendFile(path.join(staticPath, 'index.html'));
   });
 } else {
