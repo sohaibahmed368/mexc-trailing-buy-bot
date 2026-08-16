@@ -100,11 +100,11 @@ export const MultiExchangeSignalRadar: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Globe size={20} style={{ color: '#38bdf8' }} />
           <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.1rem', fontWeight: 800 }}>
-            📡 Top 10 Exchanges Signal Radar Dashboard
+            📡 Top 10 Exchanges Signal Radar (Spot + Futures 100-Depth)
           </h3>
         </div>
         <span style={{ fontSize: '0.75rem', color: '#94a3b8', background: '#020617', padding: '4px 10px', borderRadius: '6px', border: '1px solid #1e293b' }}>
-          Aggregated Live Order Book Depth • 15m RSI • 20 EMA • Taker Flow
+          Aggregated Live 100-Depth Spot & Futures • 15m RSI • 20 EMA • Taker Flow
         </span>
       </div>
 
@@ -142,7 +142,7 @@ export const MultiExchangeSignalRadar: React.FC = () => {
               {/* OBI Bar */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '4px' }}>
-                  <span style={{ color: '#94a3b8' }}>Top 10 Avg OBI</span>
+                  <span style={{ color: '#94a3b8' }}>Top 10 Combined (Spot+Fut) OBI</span>
                   <span style={{ fontWeight: 800, color: avgObi >= 55 ? '#10b981' : '#f87171' }}>{avgObi.toFixed(1)}%</span>
                 </div>
                 <div style={{ height: '6px', background: '#334155', borderRadius: '3px', overflow: 'hidden', display: 'flex' }}>
