@@ -1170,7 +1170,11 @@ class OrderTracker {
 
         const symbol = asset + 'USDT';
         const currentPrice = parseFloat(prices[symbol] || prices[asset + 'USDT'] || 0);
-        const notionalUsdt = currentPrice > 0 ? (totalQty * currentPrice) : 100;
+
+        // Skip assets with no active trading pair on MEXC
+        if (!currentPrice || currentPrice <= 0) continue;
+
+        const notionalUsdt = totalQty * currentPrice;
 
         // Skip dust balances under $0.50 unless it has locked quantity
         if (notionalUsdt < 0.50 && lockedQty <= 0) continue;
@@ -1299,7 +1303,15 @@ class OrderTracker {
         const price = await this.mexcClient.getTickerPrice(symbol);
         prices[symbol] = price;
       } catch (e) {
-        this.log(`Error fetching price for ${symbol}: ${e.message}`, 'warning', symbol);
+        if (e.message && (e.message.includes('-1121') || e.message.includes('invalid symbol'))) {
+          // Auto-prune dead/delisted symbols from active polling
+          const deadOrder = this.orders.find(o => o.symbol === symbol);
+          if (deadOrder && deadOrder.status === 'PENDING_ACTIVATION') {
+            deadOrder.status = 'CANCELLED';
+          }
+        } else {
+          this.log(`Error fetching price for ${symbol}: ${e.message}`, 'warning', symbol);
+        }
       }
     }
 
