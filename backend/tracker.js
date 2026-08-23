@@ -173,21 +173,23 @@ class OrderTracker {
       }
     }
 
-    // If active cards are 0, populate guaranteed seed orders
-    const activeCards = (this.orders || []).filter(o => o.status === 'RUNNING' || o.status === 'PENDING_ACTIVATION' || o.status === 'PENDING_BUY' || o.status === 'PENDING_LIMIT_BUY' || o.status === 'PENDING_EXECUTION' || o.status === 'TP_SL_ACTIVE');
-
-    if (activeCards.length === 0) {
-      const seedPath = path.join(__dirname, 'seed-orders.json');
-      if (fs.existsSync(seedPath)) {
-        try {
-          const seedOrders = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-          if (Array.isArray(seedOrders) && seedOrders.length > 0) {
-            this.orders = seedOrders;
-          }
-        } catch (e) {
-          this.orders = [];
+    // Always merge seed orders watchlist so all 37 pairs are permanently present
+    const seedPath = path.join(__dirname, 'seed-orders.json');
+    if (fs.existsSync(seedPath)) {
+      try {
+        const seedOrders = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+        if (Array.isArray(seedOrders)) {
+          if (!Array.isArray(this.orders)) this.orders = [];
+          const currentSymbols = new Set(this.orders.map(o => (o.symbol || '').toUpperCase().trim()));
+          seedOrders.forEach(seedCard => {
+            const sym = (seedCard.symbol || '').toUpperCase().trim();
+            if (sym && !currentSymbols.has(sym)) {
+              this.orders.push(seedCard);
+              currentSymbols.add(sym);
+            }
+          });
         }
-      }
+      } catch (e) {}
     }
 
     if (Array.isArray(this.orders) && this.orders.length > 0) {
