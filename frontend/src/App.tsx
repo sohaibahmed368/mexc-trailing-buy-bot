@@ -198,17 +198,22 @@ export default function App() {
   useEffect(() => {
     const fetchOrdersAndLogs = async () => {
       try {
+        const timestamp = Date.now();
         const [ordRes, logRes] = await Promise.all([
-          fetch(`${BACKEND_URL}/api/orders`),
-          fetch(`${BACKEND_URL}/api/logs`)
+          fetch(`${BACKEND_URL}/api/orders?_t=${timestamp}`),
+          fetch(`${BACKEND_URL}/api/logs?_t=${timestamp}`)
         ]);
         if (ordRes.ok) {
           const ordData = await ordRes.json();
-          setOrders(ordData);
+          if (Array.isArray(ordData)) {
+            setOrders(ordData);
+          }
         }
         if (logRes.ok) {
           const logData = await logRes.json();
-          setLogs(logData);
+          if (Array.isArray(logData)) {
+            setLogs(logData);
+          }
         }
       } catch (e) {
         // ignore polling errors

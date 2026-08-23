@@ -19,15 +19,25 @@ mkdir -p "$BOT_DIR/backend/data" "$BOT_DIR/backend/config"
 cp -f "$BOT_DIR/backend/seed-orders.json" "$BOT_DIR/backend/data/orders.json"
 echo "   ✅ orders.json physically populated ($(wc -c < "$BOT_DIR/backend/data/orders.json") bytes)"
 
-# 3. Synchronize with ~/www if present
+# 3. Synchronize with ~/www and all web root destinations
 if [ -d "$HOME/www" ] && [ "$BOT_DIR" != "$HOME/www" ]; then
   echo "🔄 [3/6] Synchronizing with ~/www..."
-  mkdir -p "$HOME/www/backend/data" "$HOME/www/backend/public"
+  mkdir -p "$HOME/www/backend/data" "$HOME/www/backend/public" "$HOME/www/frontend/dist" "$HOME/www/dist"
   cp -rf "$BOT_DIR/backend/public/"* "$HOME/www/backend/public/" 2>/dev/null || true
+  cp -rf "$BOT_DIR/backend/public/"* "$HOME/www/frontend/dist/" 2>/dev/null || true
+  cp -rf "$BOT_DIR/backend/public/"* "$HOME/www/dist/" 2>/dev/null || true
   cp -f "$BOT_DIR/backend/seed-orders.json" "$HOME/www/backend/data/orders.json" 2>/dev/null || true
   [ -f "$BOT_DIR/backend/config/credentials.json" ] && cp -f "$BOT_DIR/backend/config/credentials.json" "$HOME/www/backend/config/" 2>/dev/null || true
   [ -f "$HOME/www/backend/config/credentials.json" ] && cp -f "$HOME/www/backend/config/credentials.json" "$BOT_DIR/backend/config/" 2>/dev/null || true
 fi
+
+# Sync to local frontend/dist
+mkdir -p "$BOT_DIR/frontend/dist"
+cp -rf "$BOT_DIR/backend/public/"* "$BOT_DIR/frontend/dist/" 2>/dev/null || true
+
+# Reload Nginx web server if running
+echo "🌐 Reloading Nginx configuration..."
+( sudo systemctl reload nginx 2>/dev/null || sudo nginx -s reload 2>/dev/null || true )
 
 # 4. Restart PM2 Process cleanly
 echo "⚡ [4/6] Restarting Node Backend via PM2..."

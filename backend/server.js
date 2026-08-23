@@ -36,6 +36,14 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
+// Global strict anti-cache middleware: Guarantees browser never serves stale orders/logs
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
 // Initialize MEXC client, Alpaca client, Trackers, Real US Stock Board, and Standalone Signal Radar
 const mexcClient = new MexcClient();
 const tracker = new OrderTracker(mexcClient, io);
