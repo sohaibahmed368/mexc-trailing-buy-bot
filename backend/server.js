@@ -302,7 +302,9 @@ app.get('/api/balances', async (req, res) => {
 
 // Get orders list
 app.get('/api/orders', (req, res) => {
-  res.json(tracker.getOrders());
+  const ords = tracker.getOrders();
+  console.log(`📡 [API GET /api/orders] Serving ${ords.length} active orders to client (${req.ip})`);
+  res.json(ords);
 });
 
 // Create trailing stop order

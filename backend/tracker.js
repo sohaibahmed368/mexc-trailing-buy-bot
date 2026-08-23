@@ -217,9 +217,11 @@ class OrderTracker {
       });
       this.orders = uniqueOrders;
       try { fs.writeFileSync(this.ordersPath, JSON.stringify(this.orders, null, 2), 'utf8'); } catch (e) {}
+      console.log(`📦 [INIT STORAGE COMPLETE] Loaded ${this.orders.length} cards:`, this.orders.map(o => `${o.symbol}(${o.status})`).join(', '));
     } else {
       this.orders = [];
       try { fs.writeFileSync(this.ordersPath, JSON.stringify([]), 'utf8'); } catch (e) {}
+      console.log('📦 [INIT STORAGE COMPLETE] 0 cards loaded.');
     }
 
     if (fs.existsSync(this.logsPath)) {
