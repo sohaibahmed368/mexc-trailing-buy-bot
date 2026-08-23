@@ -51,10 +51,10 @@ async function runCompleteE2ELiveDashboardTest() {
     console.log(`   [Card ${i + 1}] ${o.symbol.padEnd(16)} | Status: ${o.status.padEnd(14)} | TP: +${o.takeProfit}% | Price: $${o.currentPrice}`);
   });
 
-  if (apiOrders.length !== 7) {
-    throw new Error(`Expected 7 orders from REST API, got ${apiOrders.length}`);
+  if (apiOrders.length < 35) {
+    throw new Error(`Expected at least 35 orders from REST API, got ${apiOrders.length}`);
   }
-  console.log('   ✅ STEP 1 PASSED: REST API /api/orders returns all 7 active cards!');
+  console.log(`   ✅ STEP 1 PASSED: REST API /api/orders returns all ${apiOrders.length} active + watchlist cards!`);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // 2. Static Web Application (HTML + React Bundle) Verification

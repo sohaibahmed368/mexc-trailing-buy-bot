@@ -1148,7 +1148,7 @@ class OrderTracker {
     this.syncLiveWalletOrders().catch(() => {});
   }
 
-  // Automatically scan MEXC Spot Wallet on server boot (Informational sync only, no forced card state hijacking)
+  // Automatically scan MEXC Spot Wallet & Open Orders to Auto-Generate Cards for ANY coins held in the wallet
   async syncLiveWalletOrders() {
     if (!this.mexcClient || !this.mexcClient.hasCredentials()) return;
     try {
@@ -1156,6 +1156,7 @@ class OrderTracker {
       if (!Array.isArray(balances)) return;
 
       const prices = await this.mexcClient.getAllPrices().catch(() => ({}));
+      let newCardsAdded = false;
 
       for (const bal of balances) {
         const freeQty = parseFloat(bal.free || 0);
@@ -1169,17 +1170,80 @@ class OrderTracker {
 
         const symbol = asset + 'USDT';
         const currentPrice = parseFloat(prices[symbol] || prices[asset + 'USDT'] || 0);
-        const notionalUsdt = totalQty * currentPrice;
+        const notionalUsdt = currentPrice > 0 ? (totalQty * currentPrice) : 100;
+
+        // Skip dust balances under $0.50 unless it has locked quantity
+        if (notionalUsdt < 0.50 && lockedQty <= 0) continue;
 
         let existingOrder = this.orders.find(o => o.symbol === symbol);
 
-        // Informational sync ONLY for cards that are ALREADY in TP_SL_ACTIVE state
-        if (existingOrder && existingOrder.status === 'TP_SL_ACTIVE') {
-          if (!existingOrder.executionPrice || existingOrder.executionPrice <= 0) {
-            if (currentPrice > 0) existingOrder.executionPrice = currentPrice;
+        if (existingOrder) {
+          if (existingOrder.status === 'TP_SL_ACTIVE') {
+            if (!existingOrder.executionPrice || existingOrder.executionPrice <= 0) {
+              if (currentPrice > 0) existingOrder.executionPrice = currentPrice;
+            }
           }
           this.log(`ℹ️ [WALLET BALANCE SYNC] Verified active position ${symbol}: physical wallet holds ${totalQty.toFixed(4)} ${asset} ($${notionalUsdt.toFixed(2)} USDT).`, 'info', symbol);
+        } else {
+          // AUTO-CREATE ACTIVE CARD FOR THIS WALLET ASSET!
+          const newCard = {
+            id: `ord_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+            symbol: symbol,
+            trailValue: '0.15',
+            quantity: totalQty,
+            quoteOrderQty: Math.max(100, Math.round(notionalUsdt)),
+            orderType: 'MARKET',
+            dryRun: false,
+            status: 'TP_SL_ACTIVE',
+            activationPrice: null,
+            activationDirection: 'DOWN',
+            activatedAt: new Date().toISOString(),
+            takeProfit: symbol.includes('GOLD') ? 0.4 : (symbol.includes('ETH') || symbol.includes('BTC') ? 0.6 : 0.5),
+            stopLoss: 0,
+            filterSmartSl: false,
+            slBuffer: 0.15,
+            isSlExtended: false,
+            isSlProfitLocked: false,
+            lockedSlPrice: null,
+            mexcSellOrderId: null,
+            sellExecutionPrice: null,
+            sellTriggeredAt: null,
+            filterObi: true,
+            targetObi: 55,
+            targetRsi: 49,
+            customObiThreshold: 55,
+            customRsiThreshold: 49,
+            filterVolume: false,
+            filterRsi: false,
+            filter40sVolume: true,
+            consensusMode: 'SMART_CONFLUENCE',
+            autoRepeat: true,
+            startImmediately: true,
+            activationOffset: 0.15,
+            peakPrice: currentPrice || null,
+            totalNetProfit: 0,
+            tradeHistory: [],
+            initialPrice: currentPrice || null,
+            bottomPrice: null,
+            triggerPrice: null,
+            currentPrice: currentPrice || null,
+            createdAt: new Date().toISOString(),
+            triggeredAt: null,
+            mexcOrderId: null,
+            executionPrice: currentPrice || null,
+            error: null,
+            _reqTargetObi: 55,
+            _reqTargetRsi: 49
+          };
+
+          this.orders.push(newCard);
+          newCardsAdded = true;
+          this.log(`🌟 [AUTO-IMPORT WALLET HOLDING] Auto-created active TP/SL tracking card for ${symbol} ($${notionalUsdt.toFixed(2)} USDT in wallet)!`, 'success', symbol);
         }
+      }
+
+      if (newCardsAdded) {
+        this.saveOrders();
       }
     } catch (e) {
       this.log(`Wallet sync notice: ${e.message}`, 'info');

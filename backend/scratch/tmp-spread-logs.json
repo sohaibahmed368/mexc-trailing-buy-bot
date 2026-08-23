@@ -1,87 +1,185 @@
 [
   {
-    "id": "1786742177587-r9nv4",
-    "timestamp": "2026-08-14T21:16:17.587Z",
-    "message": "Cycle #1 completed (TAKE_PROFIT). Profit: 0.4000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2409.6",
+    "id": "1786742442717-n01ai",
+    "timestamp": "2026-08-14T21:20:42.717Z",
+    "message": "🎉 [MAKER PEG LIMIT BUY FILLED] AAPLXUSDT Top Limit Buy filled at $204.0100 USDT! Transitioning to TP_SL_ACTIVE (+0.6% TP).",
     "type": "success",
-    "symbol": "XAUTUSDT"
+    "symbol": "AAPLXUSDT"
   },
   {
-    "id": "1786742177585-dd640",
-    "timestamp": "2026-08-14T21:16:17.585Z",
-    "message": "🎉 [REAL TAKE PROFIT FILLED] Limit Sell order ord_9002 filled on MEXC @ $2409.6000 USDT!",
+    "id": "1786742442705-k19hj",
+    "timestamp": "2026-08-14T21:20:42.705Z",
+    "message": "[DRY RUN] Simulated Market Buy executed for AAPLXUSDT at $204.1000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
-    "symbol": "XAUTUSDT"
+    "symbol": "AAPLXUSDT"
   },
   {
-    "id": "1786742177080-e208m",
-    "timestamp": "2026-08-14T21:16:17.081Z",
-    "message": "🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for 0.0413 XAUTUSDT @ $2409.6000 USDT (+0.4% TP Target)! (MEXC Order ID: ord_9002)",
+    "id": "1786742442703-wmm7p",
+    "timestamp": "2026-08-14T21:20:42.703Z",
+    "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for AAPLXUSDT...",
+    "type": "info",
+    "symbol": "AAPLXUSDT"
+  },
+  {
+    "id": "1786742442693-7qptr",
+    "timestamp": "2026-08-14T21:20:42.693Z",
+    "message": "⚡ [RE-EVALUATION: SPREAD NARROWED 0.15% <= 0.3%] AAPLXUSDT: Spread is now tight! Switching from Limit Buy to IMMEDIATE MARKET BUY...",
     "type": "success",
-    "symbol": "XAUTUSDT"
+    "symbol": "AAPLXUSDT"
   },
   {
-    "id": "1786742177079-fndeu",
-    "timestamp": "2026-08-14T21:16:17.079Z",
-    "message": "Fetched confirmed asset balance for XAUT: free balance is 0.041666666666666664 (used safe qty: 0.0414).",
+    "id": "1786742442688-gvbel",
+    "timestamp": "2026-08-14T21:20:42.688Z",
+    "message": "⏳ [60s LIMIT BUY TIMEOUT] AAPLXUSDT Limit Buy at $204.01 not filled after 60s. Cancelling order & re-evaluating live order book spread...",
+    "type": "warning",
+    "symbol": "AAPLXUSDT"
+  },
+  {
+    "id": "1786742442675-iipaa",
+    "timestamp": "2026-08-14T21:20:42.675Z",
+    "message": "🛡️ [RE-EVALUATION: SPREAD STILL WIDE 1.47% > 0.3%] AAPLXUSDT: Re-pegging Maker Limit Buy at updated Top Bid + $0.01 ($204.01 USDT). Restarting 60s timer...",
+    "type": "warning",
+    "symbol": "AAPLXUSDT"
+  },
+  {
+    "id": "1786742442673-qdlfz",
+    "timestamp": "2026-08-14T21:20:42.673Z",
+    "message": "⏳ [60s LIMIT BUY TIMEOUT] AAPLXUSDT Limit Buy at $200.01 not filled after 60s. Cancelling order & re-evaluating live order book spread...",
+    "type": "warning",
+    "symbol": "AAPLXUSDT"
+  },
+  {
+    "id": "1786742442663-xrivd",
+    "timestamp": "2026-08-14T21:20:42.663Z",
+    "message": "[DRY RUN] Placed Top Maker Peg Limit Buy order at $200.01 USDT. Waiting 30s for fill...",
     "type": "info",
-    "symbol": "XAUTUSDT"
+    "symbol": "AAPLXUSDT"
   },
   {
-    "id": "1786742176274-tqa7e",
-    "timestamp": "2026-08-14T21:16:16.274Z",
-    "message": "✅ [MARKET BUY FILLED] Order ord_9001 executed on MEXC at $2400.0000 USDT!",
+    "id": "1786742442661-zx4z0",
+    "timestamp": "2026-08-14T21:20:42.661Z",
+    "message": "🛡️ [WIDE SPREAD DETECTED: 1.50% > 0.3%] AAPLXUSDT: Blocking Market Buy to prevent high ask trap! Placing MAKER PEG LIMIT BUY at Top Bid + $0.01 ($200.01 USDT)...",
+    "type": "warning",
+    "symbol": "AAPLXUSDT"
+  },
+  {
+    "id": "1786742442650-1pbe4",
+    "timestamp": "2026-08-14T21:20:42.650Z",
+    "message": "⏳ [3-TICK OBI PERSISTENCE 2/3] AAPLXUSDT: Top 10 Avg OBI = 65.0% (>= 60.0%) & 4h 15m RSI = 38.0 (<= 45.0). Sustained 2/3 ticks...",
+    "type": "info",
+    "symbol": "AAPLXUSDT"
+  },
+  {
+    "id": "1786742442636-zvpnz",
+    "timestamp": "2026-08-14T21:20:42.636Z",
+    "message": "⚡ [DUAL GATE SCAN] AAPLXUSDT: Live Price $201.5000 USDT | Top 10 Avg OBI: 65.0% (Req >= 60.0%) | 4h 15m RSI: 38.0 (Req <= 45.0) | Exchanges Breakdown: [Binance: 65.0%]. Scanning live orderbooks & RSI...",
+    "type": "info",
+    "symbol": "AAPLXUSDT"
+  },
+  {
+    "id": "1786742442635-ma616",
+    "timestamp": "2026-08-14T21:20:42.635Z",
+    "message": "⏳ [3-TICK OBI PERSISTENCE 1/3] AAPLXUSDT: Top 10 Avg OBI = 65.0% (>= 60.0%) & 4h 15m RSI = 38.0 (<= 45.0). Sustained 1/3 ticks...",
+    "type": "info",
+    "symbol": "AAPLXUSDT"
+  },
+  {
+    "id": "1786742442606-5by8c",
+    "timestamp": "2026-08-14T21:20:42.607Z",
+    "message": "[DRY RUN] Simulated Market Buy executed for NVDAXUSDT at $100.0000 USDT. Transitioning to TP/SL monitoring.",
     "type": "success",
-    "symbol": "XAUTUSDT"
+    "symbol": "NVDAXUSDT"
   },
   {
-    "id": "1786742176272-h8k2b",
-    "timestamp": "2026-08-14T21:16:16.272Z",
-    "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for XAUTUSDT...",
+    "id": "1786742442605-lb4lg",
+    "timestamp": "2026-08-14T21:20:42.605Z",
+    "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for NVDAXUSDT...",
     "type": "info",
-    "symbol": "XAUTUSDT"
+    "symbol": "NVDAXUSDT"
   },
   {
-    "id": "1786742176247-2le9q",
-    "timestamp": "2026-08-14T21:16:16.247Z",
-    "message": "🎯 [DUAL GATE CONFIRMED - TIGHT SPREAD 0.02% <= 0.3%] XAUTUSDT: Top 10 Avg OBI = 58.0% & RSI = 36.0 sustained for 3/3 ticks! Executing Immediate Market Buy...",
+    "id": "1786742442592-e6d2f",
+    "timestamp": "2026-08-14T21:20:42.592Z",
+    "message": "🎯 [DUAL GATE CONFIRMED - TIGHT SPREAD 0.20% <= 0.3%] NVDAXUSDT: Top 10 Avg OBI = 65.0% & RSI = 38.0 sustained for 3/3 ticks! Executing Immediate Market Buy...",
     "type": "success",
-    "symbol": "XAUTUSDT"
+    "symbol": "NVDAXUSDT"
   },
   {
-    "id": "1786742176224-b9h56",
-    "timestamp": "2026-08-14T21:16:16.224Z",
-    "message": "⏳ [3-TICK OBI PERSISTENCE 2/3] XAUTUSDT: Top 10 Avg OBI = 58.0% (>= 55.0%) & 4h 15m RSI = 36.0 (<= 40.0). Sustained 2/3 ticks...",
+    "id": "1786742442574-eas65",
+    "timestamp": "2026-08-14T21:20:42.574Z",
+    "message": "⏳ [3-TICK OBI PERSISTENCE 2/3] NVDAXUSDT: Top 10 Avg OBI = 65.0% (>= 60.0%) & 4h 15m RSI = 38.0 (<= 45.0). Sustained 2/3 ticks...",
     "type": "info",
-    "symbol": "XAUTUSDT"
+    "symbol": "NVDAXUSDT"
   },
   {
-    "id": "1786742176222-b5faa",
-    "timestamp": "2026-08-14T21:16:16.222Z",
-    "message": "⏳ [3-TICK OBI PERSISTENCE 1/3] XAUTUSDT: Top 10 Avg OBI = 58.0% (>= 55.0%) & 4h 15m RSI = 36.0 (<= 40.0). Sustained 1/3 ticks...",
+    "id": "1786742442572-2ophg",
+    "timestamp": "2026-08-14T21:20:42.572Z",
+    "message": "⚡ [DUAL GATE SCAN] NVDAXUSDT: Live Price $100.0000 USDT | Top 10 Avg OBI: 65.0% (Req >= 60.0%) | 4h 15m RSI: 38.0 (Req <= 45.0) | Exchanges Breakdown: [Binance: 65.0%]. Scanning live orderbooks & RSI...",
     "type": "info",
-    "symbol": "XAUTUSDT"
+    "symbol": "NVDAXUSDT"
   },
   {
-    "id": "1786742176196-e44hh",
-    "timestamp": "2026-08-14T21:16:16.196Z",
-    "message": "⚡ [DUAL GATE SCAN] XAUTUSDT: Live Price $2400.0000 USDT | Top 10 Avg OBI: 54.0% (Req >= 55.0%) | 4h 15m RSI: 38.0 (Req <= 40.0) | Exchanges Breakdown: [Binance: 54.0%]. Scanning live orderbooks & RSI...",
+    "id": "1786742442549-2338k",
+    "timestamp": "2026-08-14T21:20:42.549Z",
+    "message": "⏳ [3-TICK OBI PERSISTENCE 1/3] NVDAXUSDT: Top 10 Avg OBI = 65.0% (>= 60.0%) & 4h 15m RSI = 38.0 (<= 45.0). Sustained 1/3 ticks...",
     "type": "info",
-    "symbol": "XAUTUSDT"
+    "symbol": "NVDAXUSDT"
   },
   {
-    "id": "1786742176194-mxkzv",
-    "timestamp": "2026-08-14T21:16:16.194Z",
-    "message": "Created [REAL] trailing stop buy for XAUTUSDT. Initial price: 2400. Waiting for activation price: null (Direction: DOWN). Trail: undefined",
-    "type": "info",
-    "symbol": "XAUTUSDT"
+    "id": "1786742408070-7962y",
+    "timestamp": "2026-08-14T21:20:08.070Z",
+    "message": "[DRY RUN] Simulated Market Buy executed for NVDAXUSDT at $100.5000 USDT. Transitioning to TP/SL monitoring.",
+    "type": "success",
+    "symbol": "NVDAXUSDT"
   },
   {
-    "id": "1786742176190-ofrty",
-    "timestamp": "2026-08-14T21:16:16.190Z",
-    "message": "Fetching initial price for XAUTUSDT...",
+    "id": "1786742408069-r7ww5",
+    "timestamp": "2026-08-14T21:20:08.070Z",
+    "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for NVDAXUSDT...",
     "type": "info",
-    "symbol": "XAUTUSDT"
+    "symbol": "NVDAXUSDT"
+  },
+  {
+    "id": "1786742408068-zhh0i",
+    "timestamp": "2026-08-14T21:20:08.068Z",
+    "message": "⚡ [RE-EVALUATION: SPREAD NARROWED 0.20% <= 0.3%] NVDAXUSDT: Spread is now tight! Switching from Limit Buy to IMMEDIATE MARKET BUY...",
+    "type": "success",
+    "symbol": "NVDAXUSDT"
+  },
+  {
+    "id": "1786742408067-w07kg",
+    "timestamp": "2026-08-14T21:20:08.067Z",
+    "message": "⏳ [60s LIMIT BUY TIMEOUT] NVDAXUSDT Limit Buy at $100.01 not filled after 60s. Cancelling order & re-evaluating live order book spread...",
+    "type": "warning",
+    "symbol": "NVDAXUSDT"
+  },
+  {
+    "id": "1786742408065-vz5w5",
+    "timestamp": "2026-08-14T21:20:08.065Z",
+    "message": "🛡️ [RE-EVALUATION: SPREAD STILL WIDE 1.00% > 0.3%] NVDAXUSDT: Re-pegging Maker Limit Buy at updated Top Bid + $0.01 ($100.01 USDT). Restarting 60s timer...",
+    "type": "warning",
+    "symbol": "NVDAXUSDT"
+  },
+  {
+    "id": "1786742408064-4vbki",
+    "timestamp": "2026-08-14T21:20:08.064Z",
+    "message": "⏳ [60s LIMIT BUY TIMEOUT] NVDAXUSDT Limit Buy at $100.01 not filled after 60s. Cancelling order & re-evaluating live order book spread...",
+    "type": "warning",
+    "symbol": "NVDAXUSDT"
+  },
+  {
+    "id": "1786742408062-jurry",
+    "timestamp": "2026-08-14T21:20:08.062Z",
+    "message": "[DRY RUN] Placed Top Maker Peg Limit Buy order at $100.01 USDT. Waiting 30s for fill...",
+    "type": "info",
+    "symbol": "NVDAXUSDT"
+  },
+  {
+    "id": "1786742407949-xfsud",
+    "timestamp": "2026-08-14T21:20:07.949Z",
+    "message": "🛡️ [WIDE SPREAD DETECTED: 1.00% > 0.3%] NVDAXUSDT: Blocking Market Buy to prevent high ask trap! Placing MAKER PEG LIMIT BUY at Top Bid + $0.01 ($100.01 USDT)...",
+    "type": "warning",
+    "symbol": "NVDAXUSDT"
   },
   {
     "id": "1786740487594-y3jp7",
@@ -599,104 +697,6 @@
     "timestamp": "2026-08-10T02:57:09.857Z",
     "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
     "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330628058-bm15u",
-    "timestamp": "2026-08-10T02:57:08.058Z",
-    "message": "Cycle #2790 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
-    "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330628056-4yokm",
-    "timestamp": "2026-08-10T02:57:08.056Z",
-    "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
-    "type": "error",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330626257-h6obv",
-    "timestamp": "2026-08-10T02:57:06.257Z",
-    "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
-    "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330626255-z31lc",
-    "timestamp": "2026-08-10T02:57:06.255Z",
-    "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
-    "type": "info",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330624454-4fcgt",
-    "timestamp": "2026-08-10T02:57:04.454Z",
-    "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
-    "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330622657-9bb2s",
-    "timestamp": "2026-08-10T02:57:02.657Z",
-    "message": "Cycle #2789 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
-    "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330622654-70ars",
-    "timestamp": "2026-08-10T02:57:02.654Z",
-    "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
-    "type": "error",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330620857-2qkzh",
-    "timestamp": "2026-08-10T02:57:00.857Z",
-    "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
-    "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330620854-5cth3",
-    "timestamp": "2026-08-10T02:57:00.854Z",
-    "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
-    "type": "info",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330619054-s9546",
-    "timestamp": "2026-08-10T02:56:59.054Z",
-    "message": "🎯 [DUAL GATE ENTRY CONFIRMED] ETHUSDT: Top 10 Aggregated Avg OBI = 65.0% (>= 55.0%) & 4h 15m RSI = 18.5 (<= 40.0)! | Exchanges Breakdown: [Binance: 65.0%, MEXC: 65.0%, OKX: 65.0%, Bybit: 65.0%]. Executing Immediate Market Buy...",
-    "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330617256-o4llh",
-    "timestamp": "2026-08-10T02:56:57.256Z",
-    "message": "Cycle #2788 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 2950",
-    "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330617253-dj3q0",
-    "timestamp": "2026-08-10T02:56:57.253Z",
-    "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] ETHUSDT: 4h 15m RSI = 18.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
-    "type": "error",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330615455-w7cbp",
-    "timestamp": "2026-08-10T02:56:55.455Z",
-    "message": "[DRY RUN] Simulated Market Buy executed for ETHUSDT at $2950.0000 USDT. Transitioning to TP/SL monitoring.",
-    "type": "success",
-    "symbol": "ETHUSDT"
-  },
-  {
-    "id": "1786330615453-i41ie",
-    "timestamp": "2026-08-10T02:56:55.453Z",
-    "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for ETHUSDT...",
-    "type": "info",
     "symbol": "ETHUSDT"
   }
 ]

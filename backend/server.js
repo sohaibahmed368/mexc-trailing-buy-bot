@@ -382,6 +382,17 @@ app.delete('/api/orders/purge-all', (req, res) => {
   }
 });
 
+// Force-Sync MEXC Wallet Holdings to Auto-Create Cards
+app.post('/api/orders/sync-wallet', async (req, res) => {
+  try {
+    await tracker.syncLiveWalletOrders();
+    const currentOrders = tracker.getOrders();
+    res.json({ success: true, ordersCount: currentOrders.length, orders: currentOrders });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to sync wallet: ' + error.message });
+  }
+});
+
 // GET /api/audit/logs-filter - Filter live server scanner_audit.log by RSI and OBI threshold
 app.get('/api/audit/logs-filter', (req, res) => {
   try {

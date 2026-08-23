@@ -1,0 +1,19 @@
+[
+  {
+    "id": "card_sol_1786742209643",
+    "symbol": "SOLUSDT",
+    "quantity": 1,
+    "quoteOrderQty": 150,
+    "enableObiCheck": true,
+    "customObiThreshold": 60,
+    "customRsiThreshold": 45,
+    "takeProfit": 1.5,
+    "maxSpreadPct": 0.3,
+    "dryRun": false,
+    "status": "PENDING_ACTIVATION",
+    "tradeHistory": [],
+    "obiPersistenceCount": 0,
+    "currentPrice": 150,
+    "lastHeartbeatLogTime": 1786742209653
+  }
+]

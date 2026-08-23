@@ -1,168 +1,168 @@
 [
   {
-    "id": "1786740500604-kjaee",
-    "timestamp": "2026-08-14T20:48:20.604Z",
+    "id": "1786742175681-2ykcw",
+    "timestamp": "2026-08-14T21:16:15.681Z",
     "message": "⚡ [DUAL GATE SCAN] BTCUSDT: Live Price $65000.0000 USDT | Top 10 Avg OBI: 40.0% (Req >= 60.0%) | 4h 15m RSI: 17.5 (Req <= 45.0) | Exchanges Breakdown: [Binance: 40.0%]. Scanning live orderbooks & RSI...",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740500100-ivbex",
-    "timestamp": "2026-08-14T20:48:20.100Z",
+    "id": "1786742175174-fqoin",
+    "timestamp": "2026-08-14T21:16:15.174Z",
     "message": "Cycle #2 completed (MANUAL_SELL). Profit: 0.0000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 65000",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740500099-r49gq",
-    "timestamp": "2026-08-14T20:48:20.099Z",
+    "id": "1786742175173-tnds2",
+    "timestamp": "2026-08-14T21:16:15.173Z",
     "message": "✅ [RSI CRASH MARKET SELL EXECUTED] Sold 0.00153 BTCUSDT @ $65000.0000 USDT on MEXC!",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740500096-zmkwn",
-    "timestamp": "2026-08-14T20:48:20.096Z",
+    "id": "1786742175171-3vrpk",
+    "timestamp": "2026-08-14T21:16:15.171Z",
     "message": "Fetched confirmed asset balance for BTC: free balance is 0.0015384615384615385 (used safe qty: 0.00153).",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740498691-9xao4",
-    "timestamp": "2026-08-14T20:48:18.691Z",
+    "id": "1786742173766-vyy0o",
+    "timestamp": "2026-08-14T21:16:13.766Z",
     "message": "🚨 [RSI EMERGENCY CRASH SL TRIGGERED] BTCUSDT: 4h 15m RSI = 17.5 (<= 20.0)! Cancelling limit sell order & executing IMMEDIATE MARKET SELL on MEXC...",
     "type": "error",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740498185-xwizw",
-    "timestamp": "2026-08-14T20:48:18.185Z",
+    "id": "1786742173257-p9rgw",
+    "timestamp": "2026-08-14T21:16:13.257Z",
     "message": "🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for 0.0015 BTCUSDT @ $65390.0000 USDT (+0.6% TP Target)! (MEXC Order ID: ord_9004)",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740498183-j4uf1",
-    "timestamp": "2026-08-14T20:48:18.183Z",
+    "id": "1786742173249-r6w8s",
+    "timestamp": "2026-08-14T21:16:13.249Z",
     "message": "Fetched confirmed asset balance for BTC: free balance is 0.0015384615384615385 (used safe qty: 0.00153).",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740497381-dkpb1",
-    "timestamp": "2026-08-14T20:48:17.381Z",
+    "id": "1786742172447-5hbwo",
+    "timestamp": "2026-08-14T21:16:12.447Z",
     "message": "✅ [MARKET BUY FILLED] Order ord_9003 executed on MEXC at $65000.0000 USDT!",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740497379-azh9p",
-    "timestamp": "2026-08-14T20:48:17.379Z",
+    "id": "1786742172445-gro5z",
+    "timestamp": "2026-08-14T21:16:12.445Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for BTCUSDT...",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740497367-on1c9",
-    "timestamp": "2026-08-14T20:48:17.367Z",
+    "id": "1786742172419-gv7hf",
+    "timestamp": "2026-08-14T21:16:12.419Z",
     "message": "🎯 [DUAL GATE CONFIRMED - TIGHT SPREAD 0.02% <= 0.3%] BTCUSDT: Top 10 Avg OBI = 68.0% & RSI = 35.0 sustained for 3/3 ticks! Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740497351-zgs4c",
-    "timestamp": "2026-08-14T20:48:17.351Z",
+    "id": "1786742172394-yvk48",
+    "timestamp": "2026-08-14T21:16:12.394Z",
     "message": "⏳ [3-TICK OBI PERSISTENCE 2/3] BTCUSDT: Top 10 Avg OBI = 68.0% (>= 60.0%) & 4h 15m RSI = 35.0 (<= 45.0). Sustained 2/3 ticks...",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740497347-2ejoz",
-    "timestamp": "2026-08-14T20:48:17.347Z",
+    "id": "1786742172391-p3rbq",
+    "timestamp": "2026-08-14T21:16:12.391Z",
     "message": "⏳ [3-TICK OBI PERSISTENCE 1/3] BTCUSDT: Top 10 Avg OBI = 68.0% (>= 60.0%) & 4h 15m RSI = 35.0 (<= 45.0). Sustained 1/3 ticks...",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740496338-nc90h",
-    "timestamp": "2026-08-14T20:48:16.338Z",
+    "id": "1786742171377-8od2a",
+    "timestamp": "2026-08-14T21:16:11.377Z",
     "message": "Cycle #1 completed (TAKE_PROFIT). Profit: 0.6000 USDT. Fees: 0.0000 USDT. Resetting to PENDING_ACTIVATION. New peak: 65390",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740496337-u0fxt",
-    "timestamp": "2026-08-14T20:48:16.337Z",
+    "id": "1786742171375-nnexo",
+    "timestamp": "2026-08-14T21:16:11.375Z",
     "message": "🎉 [REAL TAKE PROFIT FILLED] Limit Sell order ord_9002 filled on MEXC @ $65390.0000 USDT!",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740495830-89j5n",
-    "timestamp": "2026-08-14T20:48:15.830Z",
+    "id": "1786742170867-vo4o6",
+    "timestamp": "2026-08-14T21:16:10.867Z",
     "message": "🎯 [REAL TP LIMIT SELL PLACED] Placed Limit Sell for 0.0015 BTCUSDT @ $65390.0000 USDT (+0.6% TP Target)! (MEXC Order ID: ord_9002)",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740495828-hrq24",
-    "timestamp": "2026-08-14T20:48:15.828Z",
+    "id": "1786742170866-xmc6o",
+    "timestamp": "2026-08-14T21:16:10.866Z",
     "message": "Fetched confirmed asset balance for BTC: free balance is 0.0015384615384615385 (used safe qty: 0.00153).",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740495025-z378p",
-    "timestamp": "2026-08-14T20:48:15.025Z",
+    "id": "1786742170060-6p23o",
+    "timestamp": "2026-08-14T21:16:10.060Z",
     "message": "✅ [MARKET BUY FILLED] Order ord_9001 executed on MEXC at $65000.0000 USDT!",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740495023-lpzbm",
-    "timestamp": "2026-08-14T20:48:15.023Z",
+    "id": "1786742170057-qsxsx",
+    "timestamp": "2026-08-14T21:16:10.057Z",
     "message": "🚀 [EXECUTING MARKET BUY] Top 10 OBI Gate Passed! Sending MARKET BUY order to MEXC server for BTCUSDT...",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740495004-cobwg",
-    "timestamp": "2026-08-14T20:48:15.004Z",
+    "id": "1786742170040-40nna",
+    "timestamp": "2026-08-14T21:16:10.040Z",
     "message": "🎯 [DUAL GATE CONFIRMED - TIGHT SPREAD 0.02% <= 0.3%] BTCUSDT: Top 10 Avg OBI = 65.0% & RSI = 38.0 sustained for 3/3 ticks! Executing Immediate Market Buy...",
     "type": "success",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740494988-7pqoc",
-    "timestamp": "2026-08-14T20:48:14.988Z",
+    "id": "1786742170018-wn7kv",
+    "timestamp": "2026-08-14T21:16:10.018Z",
     "message": "⏳ [3-TICK OBI PERSISTENCE 2/3] BTCUSDT: Top 10 Avg OBI = 65.0% (>= 60.0%) & 4h 15m RSI = 38.0 (<= 45.0). Sustained 2/3 ticks...",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740494967-hzr7m",
-    "timestamp": "2026-08-14T20:48:14.967Z",
+    "id": "1786742169997-veqp7",
+    "timestamp": "2026-08-14T21:16:09.997Z",
     "message": "⏳ [3-TICK OBI PERSISTENCE 1/3] BTCUSDT: Top 10 Avg OBI = 65.0% (>= 60.0%) & 4h 15m RSI = 38.0 (<= 45.0). Sustained 1/3 ticks...",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740494953-nub2d",
-    "timestamp": "2026-08-14T20:48:14.953Z",
+    "id": "1786742169978-1ag66",
+    "timestamp": "2026-08-14T21:16:09.978Z",
     "message": "⚡ [DUAL GATE SCAN] BTCUSDT: Live Price $65000.0000 USDT | Top 10 Avg OBI: 58.0% (Req >= 60.0%) | 4h 15m RSI: 42.0 (Req <= 45.0) | Exchanges Breakdown: [Binance: 58.0%]. Scanning live orderbooks & RSI...",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740494940-4qq3w",
-    "timestamp": "2026-08-14T20:48:14.940Z",
+    "id": "1786742169967-0641w",
+    "timestamp": "2026-08-14T21:16:09.967Z",
     "message": "Created [REAL] trailing stop buy for BTCUSDT. Initial price: 65000. Waiting for activation price: null (Direction: DOWN). Trail: undefined",
     "type": "info",
     "symbol": "BTCUSDT"
   },
   {
-    "id": "1786740494894-qlldu",
-    "timestamp": "2026-08-14T20:48:14.894Z",
+    "id": "1786742169831-qqp15",
+    "timestamp": "2026-08-14T21:16:09.831Z",
     "message": "Fetching initial price for BTCUSDT...",
     "type": "info",
     "symbol": "BTCUSDT"
