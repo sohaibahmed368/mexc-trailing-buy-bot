@@ -112,46 +112,91 @@ class OrderTracker {
       fs.mkdirSync(dataDir, { recursive: true });
     }
 
+    let rawOrders = '';
     if (fs.existsSync(this.ordersPath)) {
-      try {
-        this.orders = JSON.parse(fs.readFileSync(this.ordersPath, 'utf8'));
-        // Sanitize & Purge old synthetic stress-test histories on server load
-        if (Array.isArray(this.orders)) {
-          this.orders.forEach(o => {
-            o.filterObi = true;
-            if (o.status === 'RUNNING' || o.status === 'PENDING_BUY' || o.status === 'PENDING_EXECUTION') {
-              o.status = 'PENDING_ACTIVATION';
-            }
-            if (Array.isArray(o.tradeHistory) && o.tradeHistory.length > 20) {
-              o.tradeHistory = [];
-              o.totalNetProfit = 0;
-            }
-          });
+      rawOrders = fs.readFileSync(this.ordersPath, 'utf8').trim();
+    }
 
-          // Strict Single-Card-Per-Symbol Deduplication: Ensure strictly AT MOST 1 card per symbol!
-          const seenSymbols = new Set();
-          const uniqueOrders = [];
-          // Sort active positions first so active orders take priority over inactive ones
-          const sorted = [...this.orders].sort((a, b) => {
-            const aActive = a.status === 'TP_SL_ACTIVE' || a.status === 'PENDING_EXECUTION';
-            const bActive = b.status === 'TP_SL_ACTIVE' || b.status === 'PENDING_EXECUTION';
-            if (aActive && !bActive) return -1;
-            if (!aActive && bActive) return 1;
-            return 0;
-          });
-          sorted.forEach(o => {
-            const sym = (o.symbol || '').toUpperCase().trim();
-            if (sym && !seenSymbols.has(sym)) {
-              seenSymbols.add(sym);
-              uniqueOrders.push(o);
-            }
-          });
-          this.orders = uniqueOrders;
+    // Fallback: If current orders.json is empty or missing, check www directory
+    if (!rawOrders || rawOrders === '[]') {
+      const wwwOrdersPath = path.join(process.env.HOME || '/home/mexcbot786', 'www', 'backend', 'data', 'orders.json');
+      if (fs.existsSync(wwwOrdersPath)) {
+        const wwwContent = fs.readFileSync(wwwOrdersPath, 'utf8').trim();
+        if (wwwContent && wwwContent !== '[]') {
+          rawOrders = wwwContent;
+          try { fs.writeFileSync(this.ordersPath, rawOrders, 'utf8'); } catch (e) {}
         }
+      }
+    }
+
+    if (rawOrders) {
+      try {
+        this.orders = JSON.parse(rawOrders);
       } catch (e) {
-        this.orders = [];
+        // Robust regex/block-based auto-repair for truncated JSON
+        const cardBlocks = [];
+        let depth = 0;
+        let inString = false;
+        let escape = false;
+        let startIndex = -1;
+
+        for (let i = 0; i < rawOrders.length; i++) {
+          const char = rawOrders[i];
+          if (escape) { escape = false; continue; }
+          if (char === '\\') { escape = true; continue; }
+          if (char === '"') { inString = !inString; continue; }
+          if (!inString) {
+            if (char === '{') {
+              if (depth === 0) startIndex = i;
+              depth++;
+            } else if (char === '}') {
+              depth--;
+              if (depth === 0 && startIndex !== -1) {
+                const block = rawOrders.slice(startIndex, i + 1);
+                try {
+                  const parsed = JSON.parse(block);
+                  if (parsed.symbol || parsed.id) cardBlocks.push(parsed);
+                } catch (pe) {}
+                startIndex = -1;
+              }
+            }
+          }
+        }
+        this.orders = cardBlocks;
+        if (cardBlocks.length > 0) {
+          try { fs.writeFileSync(this.ordersPath, JSON.stringify(cardBlocks, null, 2), 'utf8'); } catch (se) {}
+        }
+      }
+
+      if (Array.isArray(this.orders) && this.orders.length > 0) {
+        this.orders.forEach(o => {
+          o.filterObi = true;
+          if (o.status === 'RUNNING' || o.status === 'PENDING_BUY' || o.status === 'PENDING_EXECUTION') {
+            o.status = 'PENDING_ACTIVATION';
+          }
+        });
+
+        // Strict Single-Card-Per-Symbol Deduplication
+        const seenSymbols = new Set();
+        const uniqueOrders = [];
+        const sorted = [...this.orders].sort((a, b) => {
+          const aActive = a.status === 'TP_SL_ACTIVE';
+          const bActive = b.status === 'TP_SL_ACTIVE';
+          if (aActive && !bActive) return -1;
+          if (!aActive && bActive) return 1;
+          return 0;
+        });
+        sorted.forEach(o => {
+          const sym = (o.symbol || '').toUpperCase().trim();
+          if (sym && !seenSymbols.has(sym)) {
+            seenSymbols.add(sym);
+            uniqueOrders.push(o);
+          }
+        });
+        this.orders = uniqueOrders;
       }
     } else {
+      this.orders = [];
       fs.writeFileSync(this.ordersPath, JSON.stringify([]));
     }
 
