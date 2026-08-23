@@ -1359,9 +1359,8 @@ class OrderTracker {
               const targetObi = order.customObiThreshold !== undefined && order.customObiThreshold !== null ? parseFloat(order.customObiThreshold) : 55.0;
               const targetRsi = order.customRsiThreshold !== undefined && order.customRsiThreshold !== null ? parseFloat(order.customRsiThreshold) : 40.0;
 
-              // Use standard 0.05 tolerance to prevent floating-point precision mismatches (e.g. 49.02 displayed as 49.0)
-              const obiGatePassed = (avgObi >= targetObi - 0.05);
-              const rsiGatePassed = (rsi4h <= targetRsi + 0.05);
+              const obiGatePassed = (avgObi >= targetObi);
+              const rsiGatePassed = (rsi4h <= targetRsi);
               const rawGateMatch = obiGatePassed && rsiGatePassed;
 
               // ⏳ 3-TICK OBI PERSISTENCE FILTER (3-Second Continuous Stability Check)
