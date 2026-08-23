@@ -117,15 +117,22 @@ class OrderTracker {
       rawOrders = fs.readFileSync(this.ordersPath, 'utf8').trim();
     }
 
-    // Fallback: If current orders.json is empty or missing, check www directory
-    if (!rawOrders || rawOrders === '[]') {
+    // Fallback 1: If current orders.json is empty, check www directory
+    if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
       const wwwOrdersPath = path.join(process.env.HOME || '/home/mexcbot786', 'www', 'backend', 'data', 'orders.json');
       if (fs.existsSync(wwwOrdersPath)) {
         const wwwContent = fs.readFileSync(wwwOrdersPath, 'utf8').trim();
-        if (wwwContent && wwwContent !== '[]') {
+        if (wwwContent && wwwContent !== '[]' && wwwContent.length > 20) {
           rawOrders = wwwContent;
-          try { fs.writeFileSync(this.ordersPath, rawOrders, 'utf8'); } catch (e) {}
         }
+      }
+    }
+
+    // Fallback 2: Guaranteed Seed Orders Recovery
+    if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
+      const seedPath = path.join(__dirname, 'seed-orders.json');
+      if (fs.existsSync(seedPath)) {
+        rawOrders = fs.readFileSync(seedPath, 'utf8').trim();
       }
     }
 
@@ -163,41 +170,51 @@ class OrderTracker {
           }
         }
         this.orders = cardBlocks;
-        if (cardBlocks.length > 0) {
-          try { fs.writeFileSync(this.ordersPath, JSON.stringify(cardBlocks, null, 2), 'utf8'); } catch (se) {}
+      }
+    }
+
+    // If still empty or 0 cards, load guaranteed seed orders
+    if (!Array.isArray(this.orders) || this.orders.length === 0) {
+      const seedPath = path.join(__dirname, 'seed-orders.json');
+      if (fs.existsSync(seedPath)) {
+        try {
+          this.orders = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+        } catch (e) {
+          this.orders = [];
         }
       }
+    }
 
-      if (Array.isArray(this.orders) && this.orders.length > 0) {
-        this.orders.forEach(o => {
-          o.filterObi = true;
-          if (o.status === 'RUNNING' || o.status === 'PENDING_BUY' || o.status === 'PENDING_EXECUTION') {
-            o.status = 'PENDING_ACTIVATION';
-          }
-        });
+    if (Array.isArray(this.orders) && this.orders.length > 0) {
+      this.orders.forEach(o => {
+        o.filterObi = true;
+        if (o.status === 'RUNNING' || o.status === 'PENDING_BUY' || o.status === 'PENDING_EXECUTION') {
+          o.status = 'PENDING_ACTIVATION';
+        }
+      });
 
-        // Strict Single-Card-Per-Symbol Deduplication
-        const seenSymbols = new Set();
-        const uniqueOrders = [];
-        const sorted = [...this.orders].sort((a, b) => {
-          const aActive = a.status === 'TP_SL_ACTIVE';
-          const bActive = b.status === 'TP_SL_ACTIVE';
-          if (aActive && !bActive) return -1;
-          if (!aActive && bActive) return 1;
-          return 0;
-        });
-        sorted.forEach(o => {
-          const sym = (o.symbol || '').toUpperCase().trim();
-          if (sym && !seenSymbols.has(sym)) {
-            seenSymbols.add(sym);
-            uniqueOrders.push(o);
-          }
-        });
-        this.orders = uniqueOrders;
-      }
+      // Strict Single-Card-Per-Symbol Deduplication
+      const seenSymbols = new Set();
+      const uniqueOrders = [];
+      const sorted = [...this.orders].sort((a, b) => {
+        const aActive = a.status === 'TP_SL_ACTIVE';
+        const bActive = b.status === 'TP_SL_ACTIVE';
+        if (aActive && !bActive) return -1;
+        if (!aActive && bActive) return 1;
+        return 0;
+      });
+      sorted.forEach(o => {
+        const sym = (o.symbol || '').toUpperCase().trim();
+        if (sym && !seenSymbols.has(sym)) {
+          seenSymbols.add(sym);
+          uniqueOrders.push(o);
+        }
+      });
+      this.orders = uniqueOrders;
+      try { fs.writeFileSync(this.ordersPath, JSON.stringify(this.orders, null, 2), 'utf8'); } catch (e) {}
     } else {
       this.orders = [];
-      fs.writeFileSync(this.ordersPath, JSON.stringify([]));
+      try { fs.writeFileSync(this.ordersPath, JSON.stringify([]), 'utf8'); } catch (e) {}
     }
 
     if (fs.existsSync(this.logsPath)) {
