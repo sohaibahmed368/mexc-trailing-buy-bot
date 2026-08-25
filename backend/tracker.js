@@ -1252,9 +1252,41 @@ class OrderTracker {
       order.currentPrice = currentPrice;
       changed = true;
 
-      // 1.4 Check Top 10 Exchanges OBI Dual-Lock Gate if waiting
+      // 1.4 Check Trailing Buy Activation & Top 10 Exchanges OBI Dual-Lock Gate if waiting
       if (order.status === 'PENDING_ACTIVATION') {
         const now = Date.now();
+
+        // 1. Initial Dip Activation Gate: If activationPrice is set, wait for price to drop to/below it
+        if (order.activationPrice && !order.startImmediately) {
+          if (currentPrice > order.activationPrice) {
+            order.obiPersistenceCount = 0;
+            if (!order.lastActivationLogTime || (now - order.lastActivationLogTime >= 5000)) {
+              order.lastActivationLogTime = now;
+              this.log(`⏳ [WAITING FOR ACTIVATION DIP] ${order.symbol}: Current price $${currentPrice} > Activation Target $${order.activationPrice.toFixed(4)}. Waiting for dip...`, 'info', order.symbol);
+            }
+            continue;
+          }
+        }
+
+        // 2. Trailing Local Bottom Tracking
+        if (!order.bottomPrice || currentPrice < order.bottomPrice) {
+          order.bottomPrice = currentPrice;
+          const trailPct = parseFloat(order.trailValue) || 0.15;
+          order.triggerPrice = order.bottomPrice * (1 + trailPct / 100);
+          changed = true;
+        }
+
+        // 3. Trailing Rebound Check: Price must rebound from bottom and reach triggerPrice
+        const isReboundTriggered = currentPrice >= (order.triggerPrice || currentPrice);
+        if (!isReboundTriggered) {
+          order.obiPersistenceCount = 0;
+          if (!order.lastTrailingLogTime || (now - order.lastTrailingLogTime >= 5000)) {
+            order.lastTrailingLogTime = now;
+            this.log(`📉 [TRAILING BOTTOM] ${order.symbol}: Local bottom $${order.bottomPrice.toFixed(4)} | Buy Trigger: $${order.triggerPrice.toFixed(4)} (Current: $${currentPrice.toFixed(4)}). Waiting for +${order.trailValue}% rebound...`, 'info', order.symbol);
+          }
+          continue;
+        }
+
         let dualGatePassed = false;
         let avgObi = 50.0;
         let rsi4h = 50.0;
@@ -2735,13 +2767,15 @@ class OrderTracker {
 
     // Reset to pending activation for next cycle (REQUIRE FRESH HIGH PEAK AFTER SELL)
     order.status = 'PENDING_ACTIVATION';
+    order.startImmediately = false; // MUST wait for fresh dip after selling!
     order.peakPrice = sellPrice;
-    const offsetPct = order.activationOffset || 0.6;
+    const offsetPct = order.activationOffset || 0.15;
     order.activationPrice = sellPrice * (1 - (offsetPct / 100));
     order.activationDirection = 'DOWN';
     order.localBottom = sellPrice;
     order.bottomPrice = null;
     order.triggerPrice = null;
+    order.obiPersistenceCount = 0;
     order.mexcOrderId = null;
     order.executionPrice = null;
     order.mexcSellOrderId = null;
