@@ -1280,9 +1280,14 @@ class OrderTracker {
                 exDetailsArr.push(`${exName}: ${obiVal}%`);
               });
 
-              // Custom Threshold Evaluation per Order Card: Default OBI >= 55.0% & 4h 15m RSI <= 40.0
-              const targetObi = order.customObiThreshold !== undefined && order.customObiThreshold !== null ? parseFloat(order.customObiThreshold) : 55.0;
-              const targetRsi = order.customRsiThreshold !== undefined && order.customRsiThreshold !== null ? parseFloat(order.customRsiThreshold) : 40.0;
+              // Dynamic Custom Threshold Evaluation per Order Card (NO hardcoding - respects each card's specific configuration)
+              const targetObi = order.customObiThreshold !== undefined && order.customObiThreshold !== null
+                ? parseFloat(order.customObiThreshold)
+                : (order.targetObi !== undefined && order.targetObi !== null ? parseFloat(order.targetObi) : 55.0);
+
+              const targetRsi = order.customRsiThreshold !== undefined && order.customRsiThreshold !== null
+                ? parseFloat(order.customRsiThreshold)
+                : (order.targetRsi !== undefined && order.targetRsi !== null ? parseFloat(order.targetRsi) : 49.0);
 
               const obiGatePassed = (avgObi >= targetObi);
               const rsiGatePassed = (rsi4h <= targetRsi);
