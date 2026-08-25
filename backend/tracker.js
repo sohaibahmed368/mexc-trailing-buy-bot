@@ -173,25 +173,6 @@ class OrderTracker {
       }
     }
 
-    // Always merge seed orders watchlist so all 37 pairs are permanently present
-    const seedPath = path.join(__dirname, 'seed-orders.json');
-    if (fs.existsSync(seedPath)) {
-      try {
-        const seedOrders = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
-        if (Array.isArray(seedOrders)) {
-          if (!Array.isArray(this.orders)) this.orders = [];
-          const currentSymbols = new Set(this.orders.map(o => (o.symbol || '').toUpperCase().trim()));
-          seedOrders.forEach(seedCard => {
-            const sym = (seedCard.symbol || '').toUpperCase().trim();
-            if (sym && !currentSymbols.has(sym)) {
-              this.orders.push(seedCard);
-              currentSymbols.add(sym);
-            }
-          });
-        }
-      } catch (e) {}
-    }
-
     if (Array.isArray(this.orders) && this.orders.length > 0) {
       this.orders.forEach(o => {
         o.filterObi = true;
@@ -1190,61 +1171,6 @@ class OrderTracker {
             }
           }
           this.log(`ℹ️ [WALLET BALANCE SYNC] Verified active position ${symbol}: physical wallet holds ${totalQty.toFixed(4)} ${asset} ($${notionalUsdt.toFixed(2)} USDT).`, 'info', symbol);
-        } else {
-          // AUTO-CREATE ACTIVE CARD FOR THIS WALLET ASSET!
-          const newCard = {
-            id: `ord_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-            symbol: symbol,
-            trailValue: '0.15',
-            quantity: totalQty,
-            quoteOrderQty: Math.max(100, Math.round(notionalUsdt)),
-            orderType: 'MARKET',
-            dryRun: false,
-            status: 'TP_SL_ACTIVE',
-            activationPrice: null,
-            activationDirection: 'DOWN',
-            activatedAt: new Date().toISOString(),
-            takeProfit: symbol.includes('GOLD') ? 0.4 : (symbol.includes('ETH') || symbol.includes('BTC') ? 0.6 : 0.5),
-            stopLoss: 0,
-            filterSmartSl: false,
-            slBuffer: 0.15,
-            isSlExtended: false,
-            isSlProfitLocked: false,
-            lockedSlPrice: null,
-            mexcSellOrderId: null,
-            sellExecutionPrice: null,
-            sellTriggeredAt: null,
-            filterObi: true,
-            targetObi: 55,
-            targetRsi: 49,
-            customObiThreshold: 55,
-            customRsiThreshold: 49,
-            filterVolume: false,
-            filterRsi: false,
-            filter40sVolume: true,
-            consensusMode: 'SMART_CONFLUENCE',
-            autoRepeat: true,
-            startImmediately: true,
-            activationOffset: 0.15,
-            peakPrice: currentPrice || null,
-            totalNetProfit: 0,
-            tradeHistory: [],
-            initialPrice: currentPrice || null,
-            bottomPrice: null,
-            triggerPrice: null,
-            currentPrice: currentPrice || null,
-            createdAt: new Date().toISOString(),
-            triggeredAt: null,
-            mexcOrderId: null,
-            executionPrice: currentPrice || null,
-            error: null,
-            _reqTargetObi: 55,
-            _reqTargetRsi: 49
-          };
-
-          this.orders.push(newCard);
-          newCardsAdded = true;
-          this.log(`🌟 [AUTO-IMPORT WALLET HOLDING] Auto-created active TP/SL tracking card for ${symbol} ($${notionalUsdt.toFixed(2)} USDT in wallet)!`, 'success', symbol);
         }
       }
 
