@@ -59,18 +59,24 @@ export const GlobalGoldLiquidityRadar: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'futures' | 'interbank' | 'retail_ecn' | 'crypto'>('all');
   const [showLadder, setShowLadder] = useState<boolean>(false);
 
+  const [lastTickTime, setLastTickTime] = useState<string>('');
+
   useEffect(() => {
-    // 1. Initial REST fetch
+    // 1. Live REST fetch with cache-busting timestamp
     const fetchGoldRadar = async () => {
       try {
+        const ts = Date.now();
         const [metricsRes, bookRes] = await Promise.all([
-          fetch(`${BACKEND_URL}/api/gold-radar/metrics`),
-          fetch(`${BACKEND_URL}/api/gold-radar/orderbook`)
+          fetch(`${BACKEND_URL}/api/gold-radar/metrics?_t=${ts}`),
+          fetch(`${BACKEND_URL}/api/gold-radar/orderbook?_t=${ts}`)
         ]);
 
         if (metricsRes.ok) {
           const json = await metricsRes.json();
-          if (json.success && json.data) setData(json.data);
+          if (json.success && json.data) {
+            setData(json.data);
+            setLastTickTime(new Date().toLocaleTimeString());
+          }
         }
 
         if (bookRes.ok) {
@@ -84,7 +90,7 @@ export const GlobalGoldLiquidityRadar: React.FC = () => {
     };
 
     fetchGoldRadar();
-    const intervalId = setInterval(fetchGoldRadar, 4000);
+    const intervalId = setInterval(fetchGoldRadar, 2500);
 
     // 2. WebSocket live feed
     const socket = io(BACKEND_URL);
@@ -92,6 +98,7 @@ export const GlobalGoldLiquidityRadar: React.FC = () => {
       if (payload && payload.data) {
         setData(payload.data);
         if (payload.orderBook) setOrderBook(payload.orderBook);
+        setLastTickTime(new Date().toLocaleTimeString());
         setLoading(false);
       }
     });
@@ -106,7 +113,7 @@ export const GlobalGoldLiquidityRadar: React.FC = () => {
     return (
       <div style={{ padding: '1.5rem', background: '#0b1329', borderRadius: '12px', border: '1px solid #1e293b', textAlign: 'center', color: '#94a3b8' }}>
         <Activity className="animate-spin" style={{ margin: '0 auto 0.5rem auto', color: '#eab308' }} size={24} />
-        <p style={{ margin: 0, fontSize: '0.9rem' }}>Loading Global Institutional Gold Liquidity Radar (25 Venues)...</p>
+        <p style={{ margin: 0, fontSize: '0.9rem' }}>Connecting to 25 Global Gold Exchange Feeds (CME, LMAX, Binance, MEXC)...</p>
       </div>
     );
   }
@@ -141,8 +148,9 @@ export const GlobalGoldLiquidityRadar: React.FC = () => {
           <div>
             <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, letterSpacing: '0.3px', color: '#fef08a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               Global Institutional Gold Liquidity Radar
-              <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', borderRadius: '999px', background: 'rgba(234, 179, 8, 0.2)', color: '#fde047', border: '1px solid rgba(234, 179, 8, 0.4)', fontWeight: 600 }}>
-                25 Global Venues Active
+              <span style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', borderRadius: '999px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                25 Venues Live Streaming (2.5s)
               </span>
             </h2>
             <p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8' }}>
@@ -163,6 +171,12 @@ export const GlobalGoldLiquidityRadar: React.FC = () => {
           <div style={{ background: 'rgba(15, 23, 42, 0.8)', padding: '0.35rem 0.75rem', borderRadius: '8px', border: `1px solid ${data?.sentimentColor || '#10b981'}`, color: data?.sentimentColor || '#10b981', fontWeight: 800, fontSize: '0.75rem' }}>
             {data?.sentimentBadge || 'NEUTRAL / BALANCED'}
           </div>
+
+          {lastTickTime && (
+            <span style={{ fontSize: '0.7rem', color: '#38bdf8', background: '#020617', padding: '0.35rem 0.6rem', borderRadius: '6px', border: '1px solid #1e293b', fontWeight: 600 }}>
+              ⚡ {lastTickTime}
+            </span>
+          )}
 
           <button
             type="button"
