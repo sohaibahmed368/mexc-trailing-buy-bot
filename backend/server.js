@@ -21,6 +21,8 @@ const MultiExchangeSignalRadar = require('./multi-exchange-radar');
 
 const RealUSStockTracker = require('./real-us-stock-tracker');
 const createRealUsStockRouter = require('./routes/real-us-stock-routes');
+const GlobalGoldLiquidityRadar = require('./gold-liquidity-radar');
+const createGoldRadarRouter = require('./routes/gold-radar-routes');
 
 const app = express();
 const server = http.createServer(app);
@@ -44,7 +46,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Initialize MEXC client, Alpaca client, Trackers, Real US Stock Board, and Standalone Signal Radar
+// Initialize MEXC client, Alpaca client, Trackers, Real US Stock Board, Standalone Signal Radar, and Global Gold Radar
 const mexcClient = new MexcClient();
 const tracker = new OrderTracker(mexcClient, io);
 const stockTracker = new StockOrderTracker(mexcClient, io);
@@ -52,9 +54,11 @@ const alpacaClient = new AlpacaClient();
 const alpacaStockTracker = new AlpacaStockOrderTracker(alpacaClient, io);
 const realUsStockTracker = new RealUSStockTracker(alpacaClient, io);
 const signalRadar = new MultiExchangeSignalRadar(mexcClient, io);
+const goldRadar = new GlobalGoldLiquidityRadar(mexcClient, io);
 tracker.setSignalRadar(signalRadar);
 
 app.use('/api/real-us-stocks', createRealUsStockRouter(realUsStockTracker));
+app.use('/api/gold-radar', createGoldRadarRouter(goldRadar));
 
 // Port configuration (Default to 8100 to match VPS Nginx upstream proxy)
 const PORT = process.env.PORT || 8100;

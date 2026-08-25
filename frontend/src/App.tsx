@@ -11,6 +11,7 @@ import OrderBookAnalysis from './components/OrderBookAnalysis';
 import { StockBotTab } from './components/StockBotTab';
 import { RealUSStockBoard } from './components/RealUSStockBoard';
 import { MultiExchangeSignalRadar } from './components/MultiExchangeSignalRadar';
+import { GlobalGoldLiquidityRadar } from './components/GlobalGoldLiquidityRadar';
 
 const BACKEND_URL = import.meta.env.DEV ? 'http://localhost:3001' : window.location.origin;
 
@@ -453,6 +454,9 @@ export default function App() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
               {/* Top 10 Exchanges Signal Radar Dashboard */}
               <MultiExchangeSignalRadar />
+
+              {/* 🪙 Global Institutional Gold Liquidity Radar (25 Venues) */}
+              <GlobalGoldLiquidityRadar />
 
               {/* Set Trailing Buy order form */}
               <OrderForm 
