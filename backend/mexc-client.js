@@ -138,10 +138,11 @@ class MexcClient {
     }
   }
 
-  // Symbol Alias Auto-Normalization (e.g. PAXGUSDT -> GOLD(PAXG)USDT on MEXC)
+  // Symbol Alias Auto-Normalization (e.g. NIKEONUSDT -> NKEONUSDT, PAXGUSDT -> GOLD(PAXG)USDT on MEXC)
   normalizeSymbol(symbol) {
     if (!symbol) return '';
     let sym = symbol.toUpperCase().trim();
+    if (sym === 'NIKEONUSDT' || sym === 'NIKEXUSDT' || sym === 'NIKEUSDT' || sym === 'NIKE' || sym === 'NKEUSDT') return 'NKEONUSDT';
     if (sym === 'PAXGUSDT' || sym === 'PAXG') return 'GOLD(PAXG)USDT';
     if (sym === 'XAUTUSDT' || sym === 'XAUT') return 'GOLD(XAUT)USDT';
     if (sym === 'USOONUSDT' || sym === 'USOON') return 'OIL(USOON)USDT';

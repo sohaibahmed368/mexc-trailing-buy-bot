@@ -141,10 +141,13 @@ async function loadSymbolsCache() {
     try {
       const info = await mexcClient.getExchangeInfo();
       if (info && Array.isArray(info.symbols)) {
-        symbolsCache = info.symbols
+        const fetched = info.symbols
           .filter(s => s.quoteAsset === 'USDT' && (s.status === '1' || s.status === 'ENABLED' || s.status === 'TRADING' || s.status === 'online'))
-          .map(s => s.symbol)
-          .sort();
+          .map(s => s.symbol);
+        
+        // Add common friendly aliases
+        const aliases = ['NIKEONUSDT', 'NIKEXUSDT', 'PAXGUSDT', 'XAUTUSDT', 'USOONUSDT'];
+        symbolsCache = Array.from(new Set([...fetched, ...aliases])).sort();
         tracker.log(`Successfully cached ${symbolsCache.length} active USDT trading pairs from MEXC.`, 'success');
       }
     } catch (e) {
