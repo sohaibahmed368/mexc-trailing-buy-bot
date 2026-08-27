@@ -138,9 +138,20 @@ class MexcClient {
     }
   }
 
+  // Symbol Alias Auto-Normalization (e.g. PAXGUSDT -> GOLD(PAXG)USDT on MEXC)
+  normalizeSymbol(symbol) {
+    if (!symbol) return '';
+    let sym = symbol.toUpperCase().trim();
+    if (sym === 'PAXGUSDT' || sym === 'PAXG') return 'GOLD(PAXG)USDT';
+    if (sym === 'XAUTUSDT' || sym === 'XAUT') return 'GOLD(XAUT)USDT';
+    if (sym === 'USOONUSDT' || sym === 'USOON') return 'OIL(USOON)USDT';
+    return sym;
+  }
+
   // Public Endpoints
   async getTickerPrice(symbol) {
-    const data = await this._request('GET', '/api/v3/ticker/price', { symbol: symbol.toUpperCase() }, false);
+    const sym = this.normalizeSymbol(symbol);
+    const data = await this._request('GET', '/api/v3/ticker/price', { symbol: sym }, false);
     return parseFloat(data.price);
   }
 
@@ -157,15 +168,18 @@ class MexcClient {
   }
 
   async getDepth(symbol, limit = 100) {
-    return await this._request('GET', '/api/v3/depth', { symbol: symbol.toUpperCase(), limit }, false);
+    const sym = this.normalizeSymbol(symbol);
+    return await this._request('GET', '/api/v3/depth', { symbol: sym, limit }, false);
   }
 
   async getRecentTrades(symbol, limit = 100) {
-    return await this._request('GET', '/api/v3/trades', { symbol: symbol.toUpperCase(), limit }, false);
+    const sym = this.normalizeSymbol(symbol);
+    return await this._request('GET', '/api/v3/trades', { symbol: sym, limit }, false);
   }
 
   async getKlines(symbol, interval, limit = 500, startTime = null, endTime = null) {
-    const params = { symbol: symbol.toUpperCase(), interval, limit };
+    const sym = this.normalizeSymbol(symbol);
+    const params = { symbol: sym, interval, limit };
     if (startTime) params.startTime = startTime;
     if (endTime) params.endTime = endTime;
     return await this._request('GET', '/api/v3/klines', params, false);
@@ -195,8 +209,9 @@ class MexcClient {
   }
 
   async placeOrder({ symbol, side, type, quantity, quoteOrderQty, price }) {
+    const sym = this.normalizeSymbol(symbol);
     const params = {
-      symbol: symbol.toUpperCase(),
+      symbol: sym,
       side: side.toUpperCase(), // BUY or SELL
       type: type.toUpperCase()   // LIMIT or MARKET
     };
@@ -231,15 +246,17 @@ class MexcClient {
   }
 
   async getOrder(symbol, orderId) {
+    const sym = this.normalizeSymbol(symbol);
     return await this._request('GET', '/api/v3/order', {
-      symbol: symbol.toUpperCase(),
+      symbol: sym,
       orderId
     }, true);
   }
 
   async cancelOrder(symbol, orderId) {
+    const sym = this.normalizeSymbol(symbol);
     return await this._request('DELETE', '/api/v3/order', {
-      symbol: symbol.toUpperCase(),
+      symbol: sym,
       orderId
     }, true);
   }
@@ -250,7 +267,8 @@ class MexcClient {
       return { makerCommission: 0.0004, takerCommission: 0.0000 };
     }
     try {
-      const data = await this._request('GET', '/api/v3/tradeFee', { symbol: symbol.toUpperCase() }, true);
+      const sym = this.normalizeSymbol(symbol);
+      const data = await this._request('GET', '/api/v3/tradeFee', { symbol: sym }, true);
       if (Array.isArray(data) && data.length > 0) {
         return {
           makerCommission: parseFloat(data[0].makerCommission) || 0.0004,
@@ -270,8 +288,9 @@ class MexcClient {
   }
 
   async getMyTrades(symbol, limit = 1000) {
+    const sym = this.normalizeSymbol(symbol);
     return await this._request('GET', '/api/v3/myTrades', {
-      symbol: symbol.toUpperCase(),
+      symbol: sym,
       limit
     }, true);
   }
