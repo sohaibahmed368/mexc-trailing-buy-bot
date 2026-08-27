@@ -2,8 +2,13 @@ const fs = require('fs');
 const path = require('path');
 
 class OrderTracker {
-  constructor(mexcClient, io) {
-    this.mexcClient = mexcClient;
+  constructor(mexcClient = null, io = null) {
+    if (!mexcClient) {
+      const MexcClient = require('./mexc-client');
+      this.mexcClient = new MexcClient();
+    } else {
+      this.mexcClient = mexcClient;
+    }
     this.io = io;
     this.ordersPath = path.join(__dirname, 'data', 'orders.json');
     this.logsPath = path.join(__dirname, 'data', 'logs.json');
@@ -759,7 +764,10 @@ class OrderTracker {
   }
 
   async addOrder({ symbol, trailValue, quantity, quoteOrderQty, orderType, dryRun, activationPrice, takeProfit, stopLoss, filterSmartSl, slBuffer, filterObi, filterVolume, filterRsi, filter40sVolume, autoRepeat, activationOffset, startImmediately, consensusMode, customObiThreshold, customRsiThreshold, targetObi, targetRsi }) {
-    symbol = symbol.toUpperCase().trim();
+    if (this.mexcClient && typeof this.mexcClient.normalizeSymbol === 'function') {
+      symbol = this.mexcClient.normalizeSymbol(symbol);
+    }
+    symbol = (symbol || '').toUpperCase().trim();
 
     // Check if an active position is currently open for this symbol
     const existingActivePos = this.orders.find(o => o.symbol === symbol && (o.status === 'TP_SL_ACTIVE' || o.status === 'PENDING_EXECUTION'));
