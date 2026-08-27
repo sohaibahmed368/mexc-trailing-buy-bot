@@ -8,25 +8,38 @@ echo "==========================================================================
 BOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "📂 Working directory: $BOT_DIR"
 
-# 1. Update repo cleanly
-echo "⬇️ [1/6] Pulling latest code from GitHub main..."
+# 1. Backup live orders before any git pull
+echo "💾 [1/6] Backing up live tracking cards..."
+[ -f "$BOT_DIR/backend/data/orders.json" ] && cp -f "$BOT_DIR/backend/data/orders.json" /tmp/orders_live_backup.json 2>/dev/null || true
+[ -f "$HOME/www/backend/data/orders.json" ] && cp -f "$HOME/www/backend/data/orders.json" /tmp/orders_live_backup.json 2>/dev/null || true
+
+# 2. Update repo cleanly
+echo "⬇️ [2/6] Pulling latest code from GitHub main..."
 git reset --hard origin/main
 git pull origin main
 
-# 2. Ensure data directory & seed orders exist
-echo "📦 [2/6] Populating active trading cards..."
+# 3. Restore and ensure data directory & persistent orders exist
+echo "📦 [3/6] Ensuring active tracking cards persistence..."
 mkdir -p "$BOT_DIR/backend/data" "$BOT_DIR/backend/config"
-cp -f "$BOT_DIR/backend/seed-orders.json" "$BOT_DIR/backend/data/orders.json"
-echo "   ✅ orders.json physically populated ($(wc -c < "$BOT_DIR/backend/data/orders.json") bytes)"
 
-# 3. Synchronize with ~/www and all web root destinations
+if [ -f /tmp/orders_live_backup.json ] && [ -s /tmp/orders_live_backup.json ]; then
+  cp -f /tmp/orders_live_backup.json "$BOT_DIR/backend/data/orders.json"
+  echo "   ✅ Preserved and restored live orders.json from backup ($(wc -c < "$BOT_DIR/backend/data/orders.json") bytes)"
+elif [ ! -f "$BOT_DIR/backend/data/orders.json" ] || [ ! -s "$BOT_DIR/backend/data/orders.json" ]; then
+  cp -f "$BOT_DIR/backend/seed-orders.json" "$BOT_DIR/backend/data/orders.json"
+  echo "   ✅ Initialized orders.json from seed-orders.json"
+fi
+
+# 4. Synchronize with ~/www without overwriting active orders
 if [ -d "$HOME/www" ] && [ "$BOT_DIR" != "$HOME/www" ]; then
-  echo "🔄 [3/6] Synchronizing with ~/www..."
+  echo "🔄 Synchronizing with ~/www..."
   mkdir -p "$HOME/www/backend/data" "$HOME/www/backend/public" "$HOME/www/frontend/dist" "$HOME/www/dist"
   cp -rf "$BOT_DIR/backend/public/"* "$HOME/www/backend/public/" 2>/dev/null || true
   cp -rf "$BOT_DIR/backend/public/"* "$HOME/www/frontend/dist/" 2>/dev/null || true
   cp -rf "$BOT_DIR/backend/public/"* "$HOME/www/dist/" 2>/dev/null || true
-  cp -f "$BOT_DIR/backend/seed-orders.json" "$HOME/www/backend/data/orders.json" 2>/dev/null || true
+  if [ ! -f "$HOME/www/backend/data/orders.json" ] || [ ! -s "$HOME/www/backend/data/orders.json" ]; then
+    cp -f "$BOT_DIR/backend/data/orders.json" "$HOME/www/backend/data/orders.json" 2>/dev/null || true
+  fi
   [ -f "$BOT_DIR/backend/config/credentials.json" ] && cp -f "$BOT_DIR/backend/config/credentials.json" "$HOME/www/backend/config/" 2>/dev/null || true
   [ -f "$HOME/www/backend/config/credentials.json" ] && cp -f "$HOME/www/backend/config/credentials.json" "$BOT_DIR/backend/config/" 2>/dev/null || true
 fi

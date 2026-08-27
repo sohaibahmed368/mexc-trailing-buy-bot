@@ -117,7 +117,29 @@ class OrderTracker {
       rawOrders = fs.readFileSync(this.ordersPath, 'utf8').trim();
     }
 
-    // Fallback 1: If current orders.json is empty, check www directory
+    // Fallback 1: Check local backup file (orders.bak.json)
+    if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
+      const backupPath = path.join(dataDir, 'orders.bak.json');
+      if (fs.existsSync(backupPath)) {
+        const backupContent = fs.readFileSync(backupPath, 'utf8').trim();
+        if (backupContent && backupContent !== '[]' && backupContent.length > 20) {
+          rawOrders = backupContent;
+        }
+      }
+    }
+
+    // Fallback 2: Check persistent root backup file (mexc_orders_persistent.json)
+    if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
+      const persistentPath = path.join(process.env.HOME || '/home/mexcbot786', 'mexc_orders_persistent.json');
+      if (fs.existsSync(persistentPath)) {
+        const pContent = fs.readFileSync(persistentPath, 'utf8').trim();
+        if (pContent && pContent !== '[]' && pContent.length > 20) {
+          rawOrders = pContent;
+        }
+      }
+    }
+
+    // Fallback 3: Check www directory
     if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
       const wwwOrdersPath = path.join(process.env.HOME || '/home/mexcbot786', 'www', 'backend', 'data', 'orders.json');
       if (fs.existsSync(wwwOrdersPath)) {
@@ -128,7 +150,7 @@ class OrderTracker {
       }
     }
 
-    // Fallback 2: Guaranteed Seed Orders Recovery
+    // Fallback 4: Guaranteed Seed Orders Recovery
     if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
       const seedPath = path.join(__dirname, 'seed-orders.json');
       if (fs.existsSync(seedPath)) {
@@ -219,7 +241,17 @@ class OrderTracker {
   }
 
   saveOrders() {
-    fs.writeFileSync(this.ordersPath, JSON.stringify(this.orders, null, 2));
+    try {
+      fs.writeFileSync(this.ordersPath, JSON.stringify(this.orders, null, 2));
+      const backupPath = path.join(__dirname, 'data', 'orders.bak.json');
+      fs.writeFileSync(backupPath, JSON.stringify(this.orders, null, 2));
+      const persistentDir = process.env.HOME || '/home/mexcbot786';
+      if (fs.existsSync(persistentDir)) {
+        try { fs.writeFileSync(path.join(persistentDir, 'mexc_orders_persistent.json'), JSON.stringify(this.orders, null, 2)); } catch (pErr) {}
+      }
+    } catch (e) {
+      console.error('Error saving orders to disk:', e.message);
+    }
     if (this.io && typeof this.io.emit === 'function') {
       this.io.emit('orders_update', this.orders);
     }
@@ -1228,18 +1260,12 @@ class OrderTracker {
     for (const symbol of symbols) {
       if (prices[symbol] !== undefined) continue;
       try {
-        const price = await this.mexcClient.getTickerPrice(symbol);
+        const cleanSym = symbol.replace('GOLD(XAUT)', 'XAUT').replace('GOLD(PAXG)', 'PAXG').replace('OIL(USOON)', 'USOON').replace(/[^A-Z0-9]/g, '');
+        const price = await this.mexcClient.getTickerPrice(cleanSym);
         prices[symbol] = price;
       } catch (e) {
-        if (e.message && (e.message.includes('-1121') || e.message.includes('invalid symbol'))) {
-          // Auto-prune dead/delisted symbols from active polling
-          const deadOrder = this.orders.find(o => o.symbol === symbol);
-          if (deadOrder && deadOrder.status === 'PENDING_ACTIVATION') {
-            deadOrder.status = 'CANCELLED';
-          }
-        } else {
-          this.log(`Error fetching price for ${symbol}: ${e.message}`, 'warning', symbol);
-        }
+        // NEVER auto-cancel user cards on network/symbol error! Log warning and keep card alive
+        this.log(`Warning fetching price for ${symbol}: ${e.message}`, 'warning', symbol);
       }
     }
 
@@ -2668,10 +2694,13 @@ class OrderTracker {
 
   // Handle cycle completion, trade recording, and auto-repeat re-activation with exact MEXC Fee Deduction
   async handleOrderCycleComplete(order) {
-    // Guard: only run if this order is set for auto-repeat
-    if (!order.autoRepeat) {
+    // Guaranteed continuous looping: Auto-repeat defaults to true for all active tracking cards
+    if (order.autoRepeat === false) {
+      order.status = 'TRIGGERED';
+      this.saveOrders();
       return;
     }
+    order.autoRepeat = true;
 
     const cycleNum = (order.tradeHistory ? order.tradeHistory.length : 0) + 1;
     const buyPrice = order.executionPrice || 0;
