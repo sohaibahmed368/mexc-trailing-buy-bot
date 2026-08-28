@@ -120,46 +120,11 @@ class OrderTracker {
     let rawOrders = '';
     if (fs.existsSync(this.ordersPath)) {
       rawOrders = fs.readFileSync(this.ordersPath, 'utf8').trim();
-    }
-
-    // Fallback 1: Check local backup file (orders.bak.json)
-    if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
+    } else {
+      // If primary orders.json doesn't exist, check local backup
       const backupPath = path.join(dataDir, 'orders.bak.json');
       if (fs.existsSync(backupPath)) {
-        const backupContent = fs.readFileSync(backupPath, 'utf8').trim();
-        if (backupContent && backupContent !== '[]' && backupContent.length > 20) {
-          rawOrders = backupContent;
-        }
-      }
-    }
-
-    // Fallback 2: Check persistent root backup file (mexc_orders_persistent.json)
-    if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
-      const persistentPath = path.join(process.env.HOME || '/home/mexcbot786', 'mexc_orders_persistent.json');
-      if (fs.existsSync(persistentPath)) {
-        const pContent = fs.readFileSync(persistentPath, 'utf8').trim();
-        if (pContent && pContent !== '[]' && pContent.length > 20) {
-          rawOrders = pContent;
-        }
-      }
-    }
-
-    // Fallback 3: Check www directory
-    if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
-      const wwwOrdersPath = path.join(process.env.HOME || '/home/mexcbot786', 'www', 'backend', 'data', 'orders.json');
-      if (fs.existsSync(wwwOrdersPath)) {
-        const wwwContent = fs.readFileSync(wwwOrdersPath, 'utf8').trim();
-        if (wwwContent && wwwContent !== '[]' && wwwContent.length > 20) {
-          rawOrders = wwwContent;
-        }
-      }
-    }
-
-    // Fallback 4: Guaranteed Seed Orders Recovery
-    if (!rawOrders || rawOrders === '[]' || rawOrders.length < 20) {
-      const seedPath = path.join(__dirname, 'seed-orders.json');
-      if (fs.existsSync(seedPath)) {
-        rawOrders = fs.readFileSync(seedPath, 'utf8').trim();
+        rawOrders = fs.readFileSync(backupPath, 'utf8').trim();
       }
     }
 
