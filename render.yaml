@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: mexc-trailing-bot
+    name: mexc-trailing-buy-bot
     env: node
     plan: free
-    buildCommand: npm install && cd backend && npm install && cd ../frontend && npm install && npm run build && cp -rf dist/* ../backend/public/
+    buildCommand: npm install
     startCommand: node backend/server.js
     envVars:
       - key: NODE_ENV
