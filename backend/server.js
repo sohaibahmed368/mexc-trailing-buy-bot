@@ -60,6 +60,29 @@ tracker.setSignalRadar(signalRadar);
 app.use('/api/real-us-stocks', createRealUsStockRouter(realUsStockTracker));
 app.use('/api/gold-radar', createGoldRadarRouter(goldRadar));
 
+// 🔄 24/7 CLOUD KEEP-ALIVE WATCHDOG (Prevents Render from sleeping)
+app.get('/api/ping', (req, res) => {
+  res.json({
+    status: 'online',
+    uptimeSeconds: Math.floor(process.uptime()),
+    activeCards: tracker.getOrders().length,
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime() });
+});
+
+// Automatic self-ping every 8 minutes so Render instance never goes to sleep
+const RENDER_APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://mexc-trailing-buy-bot.onrender.com';
+setInterval(() => {
+  try {
+    const pingUrl = `${RENDER_APP_URL}/api/ping`;
+    axios.get(pingUrl, { timeout: 10000 }).catch(() => {});
+  } catch (e) {}
+}, 8 * 60 * 1000);
+
 // Port configuration (Default to 8100 to match VPS Nginx upstream proxy)
 const PORT = process.env.PORT || 8100;
 
