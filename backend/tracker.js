@@ -1826,10 +1826,15 @@ class OrderTracker {
                     }
                   }
                 }
-              } catch (e) {}
+              } catch (e) {
+                if (e.message && (e.message.includes('-2013') || e.message.includes('does not exist'))) {
+                  order.mexcSellOrderId = null;
+                  changed = true;
+                }
+              }
 
               // 2. Check if order is no longer in open orders (Filled!)
-              if (!isTpFilled) {
+              if (!isTpFilled && order.mexcSellOrderId) {
                 try {
                   const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
                   const stillOpen = Array.isArray(openOrders) && openOrders.some(o => o.orderId === order.mexcSellOrderId || o.side === 'SELL');
@@ -1921,10 +1926,15 @@ class OrderTracker {
                     }
                   }
                 }
-              } catch (e) {}
+              } catch (e) {
+                if (e.message && (e.message.includes('-2013') || e.message.includes('does not exist'))) {
+                  order.mexcSellOrderId = null;
+                  changed = true;
+                }
+              }
 
               // Secondary Fallback: Check if order is NO LONGER in MEXC open orders (Order filled!)
-              if (!isTpFilled) {
+              if (!isTpFilled && order.mexcSellOrderId) {
                 try {
                   const openOrders = await this.mexcClient.getOpenOrders(order.symbol);
                   const sellOrderStillOpen = Array.isArray(openOrders) && openOrders.some(o => o.orderId === order.mexcSellOrderId || o.side === 'SELL');
