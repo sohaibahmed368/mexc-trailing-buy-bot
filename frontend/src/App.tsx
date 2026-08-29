@@ -217,7 +217,7 @@ export default function App() {
     }
   };
 
-  // Polling fallback every 6000ms for Crypto Bot orders and logs
+  // Polling fallback every 1800ms (1.8 seconds) for Crypto Bot orders and logs
   useEffect(() => {
     const fetchOrdersAndLogs = async () => {
       try {
@@ -241,7 +241,7 @@ export default function App() {
     };
 
     fetchOrdersAndLogs();
-    const interval = setInterval(fetchOrdersAndLogs, 6000);
+    const interval = setInterval(fetchOrdersAndLogs, 1800);
     return () => clearInterval(interval);
   }, []);
 
