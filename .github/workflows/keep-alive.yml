@@ -1,0 +1,20 @@
+name: 24/7 365 Cloud Keep-Alive Watchdog
+
+on:
+  schedule:
+    # Run every 5 minutes around the clock
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-render:
+    name: Ping Render Bot to Keep Instance Awake
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Keep-Alive Endpoint
+        run: |
+          echo "📡 Sending Keep-Alive Ping to Render Server..."
+          RESPONSE=$(curl -s --max-time 20 -w "\nHTTP_STATUS: %{http_code}" "https://mexc-trailing-buy-bot.onrender.com/api/ping" || echo "FAILED")
+          echo "Response from Bot:"
+          echo "$RESPONSE"
+          echo "✅ Server successfully pinged and kept 100% awake!"

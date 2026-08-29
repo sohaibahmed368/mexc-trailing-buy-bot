@@ -420,6 +420,20 @@ app.delete('/api/orders/purge-all', (req, res) => {
   }
 });
 
+// Bulk-Sync / Restore Persistent Client Cards
+app.post('/api/orders/bulk-sync', async (req, res) => {
+  try {
+    const { orders: clientOrders } = req.body;
+    if (Array.isArray(clientOrders) && clientOrders.length > 0) {
+      tracker.bulkSyncOrders(clientOrders);
+    }
+    const currentOrders = tracker.getOrders();
+    res.json({ success: true, ordersCount: currentOrders.length, orders: currentOrders });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to bulk sync orders: ' + error.message });
+  }
+});
+
 // Force-Sync MEXC Wallet Holdings to Auto-Create Cards
 app.post('/api/orders/sync-wallet', async (req, res) => {
   try {

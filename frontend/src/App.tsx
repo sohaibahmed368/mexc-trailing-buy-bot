@@ -153,12 +153,14 @@ export default function App() {
       setWsConnected(true);
     });
 
-    socket.on('disconnect', () => {
-      setWsConnected(false);
-    });
-
     socket.on('orders_update', (updatedOrders: Order[]) => {
       setOrders(updatedOrders);
+      if (Array.isArray(updatedOrders)) {
+        const activeOnly = updatedOrders.filter(o => o.status !== 'TRIGGERED' && o.status !== 'CANCELLED' && o.status !== 'FAILED');
+        if (activeOnly.length > 0) {
+          localStorage.setItem('mexc_persistent_cards', JSON.stringify(activeOnly));
+        }
+      }
     });
 
     socket.on('logs_init', (initialLogs: LogEntry[]) => {
@@ -195,6 +197,26 @@ export default function App() {
     };
   }, []);
 
+  // Auto-restore persistent cards from browser storage if server woke up fresh with 0 orders
+  const restoreSavedCards = async () => {
+    try {
+      const cached = localStorage.getItem('mexc_persistent_cards');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          console.log(`🔄 Auto-Restoring ${parsed.length} persistent cards to server...`);
+          await fetch(`${BACKEND_URL}/api/orders/bulk-sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orders: parsed })
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Failed to restore persistent cards:', e);
+    }
+  };
+
   // Polling fallback every 2000ms for Crypto Bot orders and logs
   useEffect(() => {
     const fetchOrdersAndLogs = async () => {
@@ -208,6 +230,13 @@ export default function App() {
           const ordData = await ordRes.json();
           if (Array.isArray(ordData)) {
             setOrders(ordData);
+            const activeOnly = ordData.filter(o => o.status !== 'TRIGGERED' && o.status !== 'CANCELLED' && o.status !== 'FAILED');
+            if (activeOnly.length > 0) {
+              localStorage.setItem('mexc_persistent_cards', JSON.stringify(activeOnly));
+            } else if (ordData.length === 0) {
+              // Server is empty on fresh boot: attempt auto-restore
+              restoreSavedCards();
+            }
           }
         }
         if (logRes.ok) {
@@ -297,6 +326,15 @@ export default function App() {
 
   // Cancel order
   const handleCancelOrder = async (orderId: string) => {
+    try {
+      const cached = localStorage.getItem('mexc_persistent_cards');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        const filtered = parsed.filter((o: Order) => o.id !== orderId);
+        localStorage.setItem('mexc_persistent_cards', JSON.stringify(filtered));
+      }
+    } catch (e) {}
+
     const res = await fetch(`${BACKEND_URL}/api/orders/${orderId}`, {
       method: 'DELETE'
     });

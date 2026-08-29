@@ -1124,6 +1124,25 @@ class OrderTracker {
     return this.orders;
   }
 
+  // Restore client-side cached cards upon server wake-up/reboot
+  bulkSyncOrders(newOrders) {
+    if (!Array.isArray(newOrders) || newOrders.length === 0) return;
+    const existingSymbols = new Set((this.orders || []).map(o => (o.symbol || '').toUpperCase()));
+    let added = false;
+    newOrders.forEach(o => {
+      const sym = (o.symbol || '').toUpperCase().trim();
+      if (sym && !existingSymbols.has(sym)) {
+        existingSymbols.add(sym);
+        this.orders.push(o);
+        added = true;
+      }
+    });
+    if (added) {
+      this.saveOrders();
+      this.log(`📥 [PERSISTENT RESTORE] Automatically restored ${newOrders.length} active tracking cards from browser persistent storage!`, 'success');
+    }
+  }
+
   async startTracking() {
     if (this.intervalId) return;
 
