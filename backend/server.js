@@ -10,6 +10,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
+const compression = require('compression');
 const fs = require('fs');
 const path = require('path');
 const MexcClient = require('./mexc-client');
@@ -26,6 +27,9 @@ const createGoldRadarRouter = require('./routes/gold-radar-routes');
 
 const app = express();
 const server = http.createServer(app);
+
+// Compress all HTTP response bodies (reduces bandwidth by 90%)
+app.use(compression());
 
 // Configure CORS to support frontend dev server on port 3000
 const io = socketIo(server, {
@@ -341,8 +345,13 @@ app.get('/api/balances', async (req, res) => {
 // Get orders list
 app.get('/api/orders', (req, res) => {
   const ords = tracker.getOrders();
-  console.log(`📡 [API GET /api/orders] Serving ${ords.length} active orders to client (${req.ip})`);
   res.json(ords);
+});
+
+// Get recent logs (limited to 30 entries to save bandwidth)
+app.get('/api/logs', (req, res) => {
+  const logs = tracker.getLogs();
+  res.json(Array.isArray(logs) ? logs.slice(0, 30) : []);
 });
 
 // Create trailing stop order

@@ -217,15 +217,11 @@ export default function App() {
     }
   };
 
-  // Polling fallback every 2000ms for Crypto Bot orders and logs
+  // Polling fallback every 6000ms for Crypto Bot orders and logs
   useEffect(() => {
     const fetchOrdersAndLogs = async () => {
       try {
-        const timestamp = Date.now();
-        const [ordRes, logRes] = await Promise.all([
-          fetch(`${BACKEND_URL}/api/orders?_t=${timestamp}`),
-          fetch(`${BACKEND_URL}/api/logs?_t=${timestamp}`)
-        ]);
+        const ordRes = await fetch(`${BACKEND_URL}/api/orders`);
         if (ordRes.ok) {
           const ordData = await ordRes.json();
           if (Array.isArray(ordData)) {
@@ -239,19 +235,13 @@ export default function App() {
             }
           }
         }
-        if (logRes.ok) {
-          const logData = await logRes.json();
-          if (Array.isArray(logData)) {
-            setLogs(logData);
-          }
-        }
       } catch (e) {
         // ignore polling errors
       }
     };
 
     fetchOrdersAndLogs();
-    const interval = setInterval(fetchOrdersAndLogs, 2000);
+    const interval = setInterval(fetchOrdersAndLogs, 6000);
     return () => clearInterval(interval);
   }, []);
 
