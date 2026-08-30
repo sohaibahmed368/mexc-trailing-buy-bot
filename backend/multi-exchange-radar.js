@@ -49,12 +49,15 @@ class MultiExchangeSignalRadar {
   startAutoRefresh() {
     if (this.intervalId) clearInterval(this.intervalId);
     
-    // Fetch initial metrics immediately
+    this.updateIntervalMs = 8000; // 8-second bandwidth-optimized refresh
     this.refreshAllMetrics().catch(() => {});
 
-    // Refresh every 5 seconds
+    // Refresh every 8 seconds and only broadcast if clients are actively connected
     this.intervalId = setInterval(async () => {
       try {
+        const hasClients = this.io && this.io.engine && this.io.engine.clientsCount > 0;
+        if (!hasClients) return; // Zero bandwidth waste when no browser is viewing
+
         await this.refreshAllMetrics();
         if (this.io) {
           this.io.emit('signal_radar_update', {

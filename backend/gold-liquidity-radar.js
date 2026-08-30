@@ -71,12 +71,15 @@ class GlobalGoldLiquidityRadar {
   startAutoRefresh() {
     if (this.intervalId) clearInterval(this.intervalId);
 
-    // Initial load
+    this.updateIntervalMs = 6000; // 6-second bandwidth-optimized refresh
     this.refreshGoldMetrics().catch(() => {});
 
-    // Refresh every 2.5 seconds
+    // Refresh every 6 seconds and only broadcast if clients are actively connected
     this.intervalId = setInterval(async () => {
       try {
+        const hasClients = this.io && this.io.engine && this.io.engine.clientsCount > 0;
+        if (!hasClients) return; // Zero bandwidth waste when no browser is viewing
+
         await this.refreshGoldMetrics();
         if (this.io && this.metricsCache) {
           this.io.emit('gold_radar_update', {
