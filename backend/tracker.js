@@ -1268,7 +1268,6 @@ class OrderTracker {
       if (currentPrice === undefined || currentPrice === null) continue;
 
       order.currentPrice = currentPrice;
-      changed = true;
 
       // 1.4 Check Top 10 Exchanges OBI & 4h 15m RSI Dual-Lock Gate if waiting
       if (order.status === 'PENDING_ACTIVATION') {

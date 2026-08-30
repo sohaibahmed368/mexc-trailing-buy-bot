@@ -78,15 +78,6 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
 });
 
-// Automatic self-ping every 8 minutes so Render instance never goes to sleep
-const RENDER_APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://mexc-trailing-buy-bot.onrender.com';
-setInterval(() => {
-  try {
-    const pingUrl = `${RENDER_APP_URL}/api/ping`;
-    axios.get(pingUrl, { timeout: 10000 }).catch(() => {});
-  } catch (e) {}
-}, 8 * 60 * 1000);
-
 // Port configuration (Default to 8100 to match VPS Nginx upstream proxy)
 const PORT = process.env.PORT || 8100;
 

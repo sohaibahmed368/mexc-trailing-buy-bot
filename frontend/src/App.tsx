@@ -217,9 +217,10 @@ export default function App() {
     }
   };
 
-  // Polling fallback every 1800ms (1.8 seconds) for Crypto Bot orders and logs
+  // Polling fallback only if WebSocket is disconnected
   useEffect(() => {
     const fetchOrdersAndLogs = async () => {
+      if (wsConnected) return; // Skip HTTP polling when WebSocket is active
       try {
         const ordRes = await fetch(`${BACKEND_URL}/api/orders`);
         if (ordRes.ok) {
@@ -240,10 +241,9 @@ export default function App() {
       }
     };
 
-    fetchOrdersAndLogs();
-    const interval = setInterval(fetchOrdersAndLogs, 1800);
+    const interval = setInterval(fetchOrdersAndLogs, 8000);
     return () => clearInterval(interval);
-  }, []);
+  }, [wsConnected]);
 
   // Update credentials
   const handleSaveCredentials = async (apiKey: string, secretKey: string, saveToDisk: boolean) => {
