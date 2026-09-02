@@ -5,18 +5,14 @@ echo "==========================================================================
 echo "🚀 1-CLICK COMPLETE SETUP FOR FRESH DEDICATED LINUX VPS"
 echo "================================================================================"
 
-# 1. Update system packages (Non-interactive mode)
-echo "📦 [1/5] Updating system packages..."
+# 1. Update package list and install prerequisites (Fast & Prompt-Free)
+echo "📦 [1/4] Installing Git, Curl, Nginx, UFW, and essentials..."
 export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update -y
-sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade -y
+sudo apt-get install -y git curl ufw nginx
 
-# 2. Install Git, Curl, UFW, and Nginx
-echo "🌐 [2/5] Installing Git, Curl, Nginx, and essential tools..."
-sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y git curl ufw nginx
-
-# 3. Install Node.js 20 LTS & PM2
-echo "⚡ [3/5] Installing Node.js 20 LTS & PM2..."
+# 2. Install Node.js 20 LTS & PM2
+echo "⚡ [2/4] Installing Node.js 20 LTS & PM2..."
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g pm2
