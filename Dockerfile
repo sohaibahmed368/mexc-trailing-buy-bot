@@ -18,12 +18,12 @@ COPY backend/ ./backend/
 # Copy pre-compiled frontend production build
 COPY frontend/dist/ ./frontend/dist/
 
-# Expose backend server port
-EXPOSE 3001
+# Expose backend server port (7860 is default for Hugging Face Spaces, or override via $PORT)
+EXPOSE 7860
 
 # Set production environment variables
 ENV NODE_ENV=production
-ENV PORT=3001
+ENV PORT=7860
 
 # Start the application
 CMD ["node", "backend/server.js"]
