@@ -23,15 +23,20 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g pm2
 
-# 4. Clone or update repository
-echo "📂 [4/5] Setting up mexc-trailing-buy-bot..."
+# 3. Clone or update repository
+echo "📂 [3/4] Setting up mexc-trailing-buy-bot repository..."
 cd "$HOME"
+REPO_URL="https://github.com/sohaibahmed368/mexc-trailing-buy-bot.git"
+if [ -n "$GITHUB_TOKEN" ]; then
+  REPO_URL="https://${GITHUB_TOKEN}@github.com/sohaibahmed368/mexc-trailing-buy-bot.git"
+fi
+
 if [ -d "mexc-trailing-buy-bot" ]; then
   cd mexc-trailing-buy-bot
   git reset --hard origin/main
   git pull origin main
 else
-  git clone https://github.com/sohaibahmed368/mexc-trailing-buy-bot.git
+  git clone "$REPO_URL"
   cd mexc-trailing-buy-bot
 fi
 
