@@ -5,13 +5,15 @@ echo "==========================================================================
 echo "🚀 1-CLICK COMPLETE SETUP FOR FRESH DEDICATED LINUX VPS"
 echo "================================================================================"
 
-# 1. Update system packages
+# 1. Update system packages (Non-interactive mode)
 echo "📦 [1/5] Updating system packages..."
-sudo apt-get update -y && sudo apt-get upgrade -y
+export DEBIAN_FRONTEND=noninteractive
+sudo apt-get update -y
+sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade -y
 
 # 2. Install Git, Curl, UFW, and Nginx
 echo "🌐 [2/5] Installing Git, Curl, Nginx, and essential tools..."
-sudo apt-get install -y git curl ufw nginx
+sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y git curl ufw nginx
 
 # 3. Install Node.js 20 LTS & PM2
 echo "⚡ [3/5] Installing Node.js 20 LTS & PM2..."
