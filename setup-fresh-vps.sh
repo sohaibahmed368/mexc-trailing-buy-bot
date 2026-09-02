@@ -23,22 +23,12 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g pm2
 
-# 3. Clone or update repository
-echo "📂 [3/4] Setting up mexc-trailing-buy-bot repository..."
+# 3. Clone or update repository (Foolproof Direct Download)
+echo "📂 [3/4] Downloading and setting up mexc-trailing-buy-bot..."
 cd "$HOME"
-REPO_URL="https://github.com/sohaibahmed368/mexc-trailing-buy-bot.git"
-if [ -n "$GITHUB_TOKEN" ]; then
-  REPO_URL="https://${GITHUB_TOKEN}@github.com/sohaibahmed368/mexc-trailing-buy-bot.git"
-fi
-
-if [ -d "mexc-trailing-buy-bot" ]; then
-  cd mexc-trailing-buy-bot
-  git reset --hard origin/main
-  git pull origin main
-else
-  git clone "$REPO_URL"
-  cd mexc-trailing-buy-bot
-fi
+mkdir -p mexc-trailing-buy-bot
+curl -sSL "https://github.com/sohaibahmed368/mexc-trailing-buy-bot/archive/refs/heads/main.tar.gz" | tar -xz --strip-components=1 -C mexc-trailing-buy-bot
+cd mexc-trailing-buy-bot
 
 # Install backend dependencies
 cd backend && npm install --omit=dev
