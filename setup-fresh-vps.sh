@@ -5,9 +5,12 @@ echo "==========================================================================
 echo "🚀 1-CLICK COMPLETE SETUP FOR FRESH DEDICATED LINUX VPS"
 echo "================================================================================"
 
-# 1. Update package list and install prerequisites (Fast & Prompt-Free)
+# 1. Clean any stuck background apt processes & Install prerequisites
 echo "📦 [1/4] Installing Git, Curl, Nginx, UFW, and essentials..."
 export DEBIAN_FRONTEND=noninteractive
+sudo killall -9 apt-get apt dpkg 2>/dev/null || true
+sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
+sudo dpkg --configure -a 2>/dev/null || true
 sudo apt-get update -y
 sudo apt-get install -y git curl ufw nginx
 
