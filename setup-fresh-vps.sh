@@ -8,9 +8,12 @@ echo "==========================================================================
 # 1. Clean any stuck background apt processes & Install prerequisites
 echo "📦 [1/4] Installing Git, Curl, Nginx, UFW, and essentials..."
 export DEBIAN_FRONTEND=noninteractive
-sudo killall -9 apt-get apt dpkg 2>/dev/null || true
-sudo rm -f /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
+sudo pkill -9 -f apt || true
+sudo pkill -9 -f dpkg || true
+sudo fuser -k -9 /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock 2>/dev/null || true
+sudo rm -rf /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lock /var/cache/apt/archives/lock
 sudo dpkg --configure -a 2>/dev/null || true
+sleep 1
 sudo apt-get update -y
 sudo apt-get install -y git curl ufw nginx
 
