@@ -1261,6 +1261,11 @@ class OrderTracker {
       }
     }
 
+    // Broadcast real-time live market prices to connected UI clients (ultra-lightweight ~50 bytes)
+    if (this.io && Object.keys(prices).length > 0) {
+      this.io.emit('prices_tick', prices);
+    }
+
     let changed = false;
 
     for (const order of activeOrders) {

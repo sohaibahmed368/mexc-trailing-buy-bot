@@ -163,6 +163,17 @@ export default function App() {
       }
     });
 
+    // Real-time live price tick listener (updates UI cards every 1.8s seamlessly)
+    socket.on('prices_tick', (freshPrices: Record<string, number>) => {
+      if (!freshPrices) return;
+      setOrders(prevOrders => prevOrders.map(ord => {
+        if (freshPrices[ord.symbol] !== undefined && freshPrices[ord.symbol] !== ord.currentPrice) {
+          return { ...ord, currentPrice: freshPrices[ord.symbol] };
+        }
+        return ord;
+      }));
+    });
+
     socket.on('logs_init', (initialLogs: LogEntry[]) => {
       setLogs((initialLogs || []).slice(0, 60));
     });
